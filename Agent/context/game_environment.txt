@@ -1,0 +1,77 @@
+Game Environment Details:
+=======================
+
+Map Dimensions:
+- Width: 2000
+- Height: 2000
+
+Screen Settings:
+- Width: 800
+- Height: 600
+
+Player Settings:
+- Initial Position: [100, 100]
+- Current Position: [265, 305]
+- Speed: 5
+- Radius: 12
+- Initial Health: 5
+- Current Health: 5
+
+Game Objects:
+1. Walls (20 total):
+   - Width Range: 100-200 pixels
+   - Height Range: 20-40 pixels
+   - Random rotation angle: 0-360 degrees
+   - Color: (100, 100, 100) - Gray
+   - Random position within map bounds (100px from edges)
+   - IDs: wall_0 to wall_19
+   - Current Positions: Randomly distributed across the map
+   - Each wall has unique position and rotation
+
+2. Bombs (10 total):
+   - Size: 40x40 pixels
+   - Status: idle
+   - Random position within map bounds (100px from edges)
+   - IDs: bomb_0 to bomb_9
+   - Damage: -2 HP on collection
+   - Current Positions: Randomly distributed across the map
+   - Each bomb has unique position
+
+3. Hearts (10 total):
+   - Size: 30x30 pixels
+   - Status: idle
+   - Random position within map bounds (100px from edges)
+   - IDs: heart_0 to heart_9
+   - Effect: +1 HP on collection
+   - Current Positions: Randomly distributed across the map
+   - Each heart has unique position
+
+4. Treasure (1 total):
+   - Size: 100x100 pixels
+   - Status: idle
+   - Position: Random in upper-right quadrant (map_width/2 to map_width-200, map_height/2 to map_height-200)
+   - ID: treasure
+   - Effect: Win condition when collected
+   - Current Position: Randomly placed in upper-right quadrant
+
+5. Fires (Dynamic):
+   - Size: 40x40 pixels
+   - Duration: 3.0 seconds
+   - Spawn Radius: 400 pixels around player
+   - Spawn Chance: 0.01 (1%)
+   - Damage: -1 HP on contact
+   - Alpha fade effect based on remaining duration
+   - Current Position: One fire at [29.1, 405.1]
+
+Game State:
+- Game Over: false
+- Game Won: false
+
+Object Properties:
+- All objects have a "collected" status (true/false)
+- Objects disappear when collected
+- Collision detection based on object type:
+  * Walls: Rectangle collision with rotation
+  * Other objects: Circular collision (player_radius + object_size)
+
+Note: Object positions are randomly generated at game start and change each time the game is restarted. The positions listed above are the current positions in this game session. 

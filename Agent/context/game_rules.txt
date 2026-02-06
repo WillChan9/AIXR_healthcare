@@ -1,0 +1,103 @@
+Game Rules, Elements, and States
+==============================
+
+Game Elements:
+-------------
+1. Player
+   - Controlled with WASD keys
+   - Has health points
+   - Can collect items
+   - Must avoid fires and bombs
+   - Goal is to find treasure
+
+2. Objects
+   - Walls: Solid obstacles
+   - Hearts: Health restoration (+1 HP)
+   - Bombs: Harmful objects (-2 HP)
+   - Treasure: Win condition
+   - Fires: Dynamic hazards (-1 HP)
+
+3. Environment
+   - 2D space with walls and obstacles
+   - Dynamic fire spawning system
+   - Mini-map for navigation
+   - Camera follows player
+
+Game Rules:
+----------
+1. Movement
+   - Player moves in four directions
+   - Cannot pass through walls
+   - Movement speed is constant
+
+2. Health System
+   - Player starts with initial health
+   - Health can be restored with hearts
+   - Health is reduced by:
+     * Fire contact (-1 HP)
+     * Bomb explosion (-2 HP)
+   - Game over when health reaches 0
+
+3. Fire Mechanics
+   - Fires spawn randomly around player
+   - Fires have limited duration
+   - Fires disappear after contact
+   - Multiple fires can exist simultaneously
+
+4. Win Conditions
+   - Collect the treasure to win
+   - Game can be restarted after win/loss
+   - Press SPACE to restart
+
+Game States:
+-----------
+1. Active Game
+   - Player can move
+   - Objects can be collected
+   - Fires spawn and damage player
+   - Health system is active
+
+2. Game Over
+   - Triggered by health reaching 0
+   - Displays game over screen
+   - Can be restarted with SPACE
+   - All game elements remain visible
+
+3. Win State
+   - Triggered by collecting treasure
+   - Displays win screen
+   - Can be restarted with SPACE
+   - Game elements remain visible
+
+4. Pause State
+   - Can be triggered by external commands
+   - Game elements remain visible
+   - Player movement is disabled
+   - Can be resumed with external commands
+
+Technical States:
+----------------
+1. Game Configuration
+   - Screen dimensions
+   - Player speed
+   - Health values
+   - Fire spawn rates
+   - Object properties
+
+2. Object States
+   - Collected/Uncollected
+   - Active/Inactive
+   - Position and rotation
+   - Visual properties
+
+3. Player State
+   - Position
+   - Health
+   - Movement direction
+   - Collision status
+
+4. Environment State
+   - Active fires
+   - Object positions
+   - Camera position
+   - Mini-map state 

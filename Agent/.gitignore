@@ -1,0 +1,10 @@
+.env
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.DS_Store
+api_files/*.log
+api_files/actions.json
+api_files/reflection.json
