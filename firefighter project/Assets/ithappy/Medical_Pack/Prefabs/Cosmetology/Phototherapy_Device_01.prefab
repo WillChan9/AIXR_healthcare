@@ -1,0 +1,264 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &2532208609841239443
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 1629543239554590823}
+    m_Modifications:
+    - target: {fileID: 8622886723745646526, guid: a214c7a764173294da115d9ca5ac8447, type: 3}
+      propertyPath: m_Name
+      value: Phototherapy_Device_01_Part_03
+      objectReference: {fileID: 0}
+    - target: {fileID: 8998602613859212548, guid: a214c7a764173294da115d9ca5ac8447, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8998602613859212548, guid: a214c7a764173294da115d9ca5ac8447, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8998602613859212548, guid: a214c7a764173294da115d9ca5ac8447, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.0334
+      objectReference: {fileID: 0}
+    - target: {fileID: 8998602613859212548, guid: a214c7a764173294da115d9ca5ac8447, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.513
+      objectReference: {fileID: 0}
+    - target: {fileID: 8998602613859212548, guid: a214c7a764173294da115d9ca5ac8447, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8998602613859212548, guid: a214c7a764173294da115d9ca5ac8447, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8998602613859212548, guid: a214c7a764173294da115d9ca5ac8447, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8998602613859212548, guid: a214c7a764173294da115d9ca5ac8447, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8998602613859212548, guid: a214c7a764173294da115d9ca5ac8447, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8998602613859212548, guid: a214c7a764173294da115d9ca5ac8447, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8998602613859212548, guid: a214c7a764173294da115d9ca5ac8447, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: a214c7a764173294da115d9ca5ac8447, type: 3}
+--- !u!1001 &2582591197022871472
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 2a4775964a58c744dbd5b8c12c82fd30, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 2a4775964a58c744dbd5b8c12c82fd30, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 2a4775964a58c744dbd5b8c12c82fd30, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 2a4775964a58c744dbd5b8c12c82fd30, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 2a4775964a58c744dbd5b8c12c82fd30, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 2a4775964a58c744dbd5b8c12c82fd30, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 2a4775964a58c744dbd5b8c12c82fd30, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 2a4775964a58c744dbd5b8c12c82fd30, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 2a4775964a58c744dbd5b8c12c82fd30, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 2a4775964a58c744dbd5b8c12c82fd30, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 2a4775964a58c744dbd5b8c12c82fd30, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2a4775964a58c744dbd5b8c12c82fd30, type: 3}
+      propertyPath: m_Name
+      value: Phototherapy_Device_01
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 2a4775964a58c744dbd5b8c12c82fd30, type: 3}
+--- !u!4 &2620405038713157723 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 2a4775964a58c744dbd5b8c12c82fd30, type: 3}
+  m_PrefabInstance: {fileID: 2582591197022871472}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &3393001432030667489 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 2a4775964a58c744dbd5b8c12c82fd30, type: 3}
+  m_PrefabInstance: {fileID: 2582591197022871472}
+  m_PrefabAsset: {fileID: 0}
+--- !u!64 &-6073280111991405691
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3393001432030667489}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -6235696698114165201, guid: 2a4775964a58c744dbd5b8c12c82fd30, type: 3}
+--- !u!1001 &3324483534917450748
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 2620405038713157723}
+    m_Modifications:
+    - target: {fileID: 8586412200224404608, guid: 2f424ec4b2fbe6442baf844b03617919, type: 3}
+      propertyPath: m_Name
+      value: Phototherapy_Device_01_Part_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 8962938190218718778, guid: 2f424ec4b2fbe6442baf844b03617919, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8962938190218718778, guid: 2f424ec4b2fbe6442baf844b03617919, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8962938190218718778, guid: 2f424ec4b2fbe6442baf844b03617919, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.595
+      objectReference: {fileID: 0}
+    - target: {fileID: 8962938190218718778, guid: 2f424ec4b2fbe6442baf844b03617919, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.077
+      objectReference: {fileID: 0}
+    - target: {fileID: 8962938190218718778, guid: 2f424ec4b2fbe6442baf844b03617919, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8962938190218718778, guid: 2f424ec4b2fbe6442baf844b03617919, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8962938190218718778, guid: 2f424ec4b2fbe6442baf844b03617919, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8962938190218718778, guid: 2f424ec4b2fbe6442baf844b03617919, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8962938190218718778, guid: 2f424ec4b2fbe6442baf844b03617919, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8962938190218718778, guid: 2f424ec4b2fbe6442baf844b03617919, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8962938190218718778, guid: 2f424ec4b2fbe6442baf844b03617919, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 2f424ec4b2fbe6442baf844b03617919, type: 3}
+--- !u!4 &5926790859451749830 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8962938190218718778, guid: 2f424ec4b2fbe6442baf844b03617919, type: 3}
+  m_PrefabInstance: {fileID: 3324483534917450748}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &8836640625626332806
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 5926790859451749830}
+    m_Modifications:
+    - target: {fileID: 7454743302198529115, guid: 3efbf9f417db6d142b6befbce5205ebe, type: 3}
+      propertyPath: m_Name
+      value: Phototherapy_Device_01_Part_02
+      objectReference: {fileID: 0}
+    - target: {fileID: 7800024710186817249, guid: 3efbf9f417db6d142b6befbce5205ebe, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7800024710186817249, guid: 3efbf9f417db6d142b6befbce5205ebe, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7800024710186817249, guid: 3efbf9f417db6d142b6befbce5205ebe, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.0337
+      objectReference: {fileID: 0}
+    - target: {fileID: 7800024710186817249, guid: 3efbf9f417db6d142b6befbce5205ebe, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7800024710186817249, guid: 3efbf9f417db6d142b6befbce5205ebe, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7800024710186817249, guid: 3efbf9f417db6d142b6befbce5205ebe, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7800024710186817249, guid: 3efbf9f417db6d142b6befbce5205ebe, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7800024710186817249, guid: 3efbf9f417db6d142b6befbce5205ebe, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7800024710186817249, guid: 3efbf9f417db6d142b6befbce5205ebe, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7800024710186817249, guid: 3efbf9f417db6d142b6befbce5205ebe, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7800024710186817249, guid: 3efbf9f417db6d142b6befbce5205ebe, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 3efbf9f417db6d142b6befbce5205ebe, type: 3}
+--- !u!4 &1629543239554590823 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7800024710186817249, guid: 3efbf9f417db6d142b6befbce5205ebe, type: 3}
+  m_PrefabInstance: {fileID: 8836640625626332806}
+  m_PrefabAsset: {fileID: 0}

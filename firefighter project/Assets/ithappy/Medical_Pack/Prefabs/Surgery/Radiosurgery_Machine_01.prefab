@@ -1,0 +1,564 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &230265099697638360
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 850852146484474295}
+    m_Modifications:
+    - target: {fileID: 4748341569196758452, guid: 166305abc2422334cb9dcbb70f8254ef, type: 3}
+      propertyPath: m_Name
+      value: Radiosurgery_Machine_01_Table_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 5381431926643085070, guid: 166305abc2422334cb9dcbb70f8254ef, type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5381431926643085070, guid: 166305abc2422334cb9dcbb70f8254ef, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -3.178
+      objectReference: {fileID: 0}
+    - target: {fileID: 5381431926643085070, guid: 166305abc2422334cb9dcbb70f8254ef, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5381431926643085070, guid: 166305abc2422334cb9dcbb70f8254ef, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5381431926643085070, guid: 166305abc2422334cb9dcbb70f8254ef, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5381431926643085070, guid: 166305abc2422334cb9dcbb70f8254ef, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5381431926643085070, guid: 166305abc2422334cb9dcbb70f8254ef, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5381431926643085070, guid: 166305abc2422334cb9dcbb70f8254ef, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5381431926643085070, guid: 166305abc2422334cb9dcbb70f8254ef, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5381431926643085070, guid: 166305abc2422334cb9dcbb70f8254ef, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5381431926643085070, guid: 166305abc2422334cb9dcbb70f8254ef, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 166305abc2422334cb9dcbb70f8254ef, type: 3}
+--- !u!1001 &716257383887172472
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 6986875784942387752}
+    m_Modifications:
+    - target: {fileID: 4687647968308335240, guid: 878dd7c9930304140a4dc4702bdb67cc, type: 3}
+      propertyPath: m_Name
+      value: Radiosurgery_Machine_01_Part_04
+      objectReference: {fileID: 0}
+    - target: {fileID: 5351980949131872306, guid: 878dd7c9930304140a4dc4702bdb67cc, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5351980949131872306, guid: 878dd7c9930304140a4dc4702bdb67cc, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.465
+      objectReference: {fileID: 0}
+    - target: {fileID: 5351980949131872306, guid: 878dd7c9930304140a4dc4702bdb67cc, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.128
+      objectReference: {fileID: 0}
+    - target: {fileID: 5351980949131872306, guid: 878dd7c9930304140a4dc4702bdb67cc, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.2326
+      objectReference: {fileID: 0}
+    - target: {fileID: 5351980949131872306, guid: 878dd7c9930304140a4dc4702bdb67cc, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5351980949131872306, guid: 878dd7c9930304140a4dc4702bdb67cc, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5351980949131872306, guid: 878dd7c9930304140a4dc4702bdb67cc, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5351980949131872306, guid: 878dd7c9930304140a4dc4702bdb67cc, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5351980949131872306, guid: 878dd7c9930304140a4dc4702bdb67cc, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5351980949131872306, guid: 878dd7c9930304140a4dc4702bdb67cc, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5351980949131872306, guid: 878dd7c9930304140a4dc4702bdb67cc, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 878dd7c9930304140a4dc4702bdb67cc, type: 3}
+--- !u!1001 &883951246076581468
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: b102fa7e90f37354e975c3e3cb282f32, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b102fa7e90f37354e975c3e3cb282f32, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b102fa7e90f37354e975c3e3cb282f32, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b102fa7e90f37354e975c3e3cb282f32, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b102fa7e90f37354e975c3e3cb282f32, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b102fa7e90f37354e975c3e3cb282f32, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b102fa7e90f37354e975c3e3cb282f32, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b102fa7e90f37354e975c3e3cb282f32, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b102fa7e90f37354e975c3e3cb282f32, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b102fa7e90f37354e975c3e3cb282f32, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b102fa7e90f37354e975c3e3cb282f32, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b102fa7e90f37354e975c3e3cb282f32, type: 3}
+      propertyPath: m_Name
+      value: Radiosurgery_Machine_01
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b102fa7e90f37354e975c3e3cb282f32, type: 3}
+--- !u!1 &37441843157641997 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: b102fa7e90f37354e975c3e3cb282f32, type: 3}
+  m_PrefabInstance: {fileID: 883951246076581468}
+  m_PrefabAsset: {fileID: 0}
+--- !u!64 &7717611482827647807
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 37441843157641997}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -1526196109833765240, guid: b102fa7e90f37354e975c3e3cb282f32, type: 3}
+--- !u!4 &850852146484474295 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: b102fa7e90f37354e975c3e3cb282f32, type: 3}
+  m_PrefabInstance: {fileID: 883951246076581468}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &3115411540866845482
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 850852146484474295}
+    m_Modifications:
+    - target: {fileID: 319987284383044895, guid: 08bbce6da1ce041438cafe703d74034c, type: 3}
+      propertyPath: m_Name
+      value: Radiosurgery_Machine_01_Part_05
+      objectReference: {fileID: 0}
+    - target: {fileID: 1097473210409766821, guid: 08bbce6da1ce041438cafe703d74034c, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1097473210409766821, guid: 08bbce6da1ce041438cafe703d74034c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.1252
+      objectReference: {fileID: 0}
+    - target: {fileID: 1097473210409766821, guid: 08bbce6da1ce041438cafe703d74034c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.3706
+      objectReference: {fileID: 0}
+    - target: {fileID: 1097473210409766821, guid: 08bbce6da1ce041438cafe703d74034c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.5426
+      objectReference: {fileID: 0}
+    - target: {fileID: 1097473210409766821, guid: 08bbce6da1ce041438cafe703d74034c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1097473210409766821, guid: 08bbce6da1ce041438cafe703d74034c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1097473210409766821, guid: 08bbce6da1ce041438cafe703d74034c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1097473210409766821, guid: 08bbce6da1ce041438cafe703d74034c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1097473210409766821, guid: 08bbce6da1ce041438cafe703d74034c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1097473210409766821, guid: 08bbce6da1ce041438cafe703d74034c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1097473210409766821, guid: 08bbce6da1ce041438cafe703d74034c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 08bbce6da1ce041438cafe703d74034c, type: 3}
+--- !u!4 &2596088084571227279 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1097473210409766821, guid: 08bbce6da1ce041438cafe703d74034c, type: 3}
+  m_PrefabInstance: {fileID: 3115411540866845482}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &4808437309392120029
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 2596088084571227279}
+    m_Modifications:
+    - target: {fileID: 1606961579501475151, guid: 8998eae95b8176244aaf4c8e155871c1, type: 3}
+      propertyPath: m_Name
+      value: Radiosurgery_Machine_01_Part_06
+      objectReference: {fileID: 0}
+    - target: {fileID: 2091574196761169909, guid: 8998eae95b8176244aaf4c8e155871c1, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2091574196761169909, guid: 8998eae95b8176244aaf4c8e155871c1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.4324
+      objectReference: {fileID: 0}
+    - target: {fileID: 2091574196761169909, guid: 8998eae95b8176244aaf4c8e155871c1, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.0631
+      objectReference: {fileID: 0}
+    - target: {fileID: 2091574196761169909, guid: 8998eae95b8176244aaf4c8e155871c1, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.2494
+      objectReference: {fileID: 0}
+    - target: {fileID: 2091574196761169909, guid: 8998eae95b8176244aaf4c8e155871c1, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2091574196761169909, guid: 8998eae95b8176244aaf4c8e155871c1, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2091574196761169909, guid: 8998eae95b8176244aaf4c8e155871c1, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2091574196761169909, guid: 8998eae95b8176244aaf4c8e155871c1, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2091574196761169909, guid: 8998eae95b8176244aaf4c8e155871c1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2091574196761169909, guid: 8998eae95b8176244aaf4c8e155871c1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2091574196761169909, guid: 8998eae95b8176244aaf4c8e155871c1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 8998eae95b8176244aaf4c8e155871c1, type: 3}
+--- !u!4 &6898885604535166760 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2091574196761169909, guid: 8998eae95b8176244aaf4c8e155871c1, type: 3}
+  m_PrefabInstance: {fileID: 4808437309392120029}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &5474611663824604608
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 4627344200291027078}
+    m_Modifications:
+    - target: {fileID: 7089474856940383781, guid: 7ba31a3030abfc24a93e92dd3488a767, type: 3}
+      propertyPath: m_Name
+      value: Radiosurgery_Machine_01_Part_02
+      objectReference: {fileID: 0}
+    - target: {fileID: 7577604884037301407, guid: 7ba31a3030abfc24a93e92dd3488a767, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7577604884037301407, guid: 7ba31a3030abfc24a93e92dd3488a767, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.59
+      objectReference: {fileID: 0}
+    - target: {fileID: 7577604884037301407, guid: 7ba31a3030abfc24a93e92dd3488a767, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.075
+      objectReference: {fileID: 0}
+    - target: {fileID: 7577604884037301407, guid: 7ba31a3030abfc24a93e92dd3488a767, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.5103
+      objectReference: {fileID: 0}
+    - target: {fileID: 7577604884037301407, guid: 7ba31a3030abfc24a93e92dd3488a767, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7577604884037301407, guid: 7ba31a3030abfc24a93e92dd3488a767, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7577604884037301407, guid: 7ba31a3030abfc24a93e92dd3488a767, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7577604884037301407, guid: 7ba31a3030abfc24a93e92dd3488a767, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7577604884037301407, guid: 7ba31a3030abfc24a93e92dd3488a767, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7577604884037301407, guid: 7ba31a3030abfc24a93e92dd3488a767, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7577604884037301407, guid: 7ba31a3030abfc24a93e92dd3488a767, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7ba31a3030abfc24a93e92dd3488a767, type: 3}
+--- !u!4 &2508704227123476831 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7577604884037301407, guid: 7ba31a3030abfc24a93e92dd3488a767, type: 3}
+  m_PrefabInstance: {fileID: 5474611663824604608}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &7083746381961093289
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 850852146484474295}
+    m_Modifications:
+    - target: {fileID: 2484057098408716335, guid: 925825a68ea0b014eb861c45d1d2690f, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2484057098408716335, guid: 925825a68ea0b014eb861c45d1d2690f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.54
+      objectReference: {fileID: 0}
+    - target: {fileID: 2484057098408716335, guid: 925825a68ea0b014eb861c45d1d2690f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.446
+      objectReference: {fileID: 0}
+    - target: {fileID: 2484057098408716335, guid: 925825a68ea0b014eb861c45d1d2690f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2484057098408716335, guid: 925825a68ea0b014eb861c45d1d2690f, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2484057098408716335, guid: 925825a68ea0b014eb861c45d1d2690f, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2484057098408716335, guid: 925825a68ea0b014eb861c45d1d2690f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2484057098408716335, guid: 925825a68ea0b014eb861c45d1d2690f, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2484057098408716335, guid: 925825a68ea0b014eb861c45d1d2690f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2484057098408716335, guid: 925825a68ea0b014eb861c45d1d2690f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2484057098408716335, guid: 925825a68ea0b014eb861c45d1d2690f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2968703838392955541, guid: 925825a68ea0b014eb861c45d1d2690f, type: 3}
+      propertyPath: m_Name
+      value: Radiosurgery_Machine_01_Part_01
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 925825a68ea0b014eb861c45d1d2690f, type: 3}
+--- !u!4 &4627344200291027078 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2484057098408716335, guid: 925825a68ea0b014eb861c45d1d2690f, type: 3}
+  m_PrefabInstance: {fileID: 7083746381961093289}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &7426240961788596271
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 2508704227123476831}
+    m_Modifications:
+    - target: {fileID: 574508351113155079, guid: 72c043d892e17f744b95eeb1801260a3, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 574508351113155079, guid: 72c043d892e17f744b95eeb1801260a3, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.396
+      objectReference: {fileID: 0}
+    - target: {fileID: 574508351113155079, guid: 72c043d892e17f744b95eeb1801260a3, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.065
+      objectReference: {fileID: 0}
+    - target: {fileID: 574508351113155079, guid: 72c043d892e17f744b95eeb1801260a3, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.005
+      objectReference: {fileID: 0}
+    - target: {fileID: 574508351113155079, guid: 72c043d892e17f744b95eeb1801260a3, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 574508351113155079, guid: 72c043d892e17f744b95eeb1801260a3, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 574508351113155079, guid: 72c043d892e17f744b95eeb1801260a3, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 574508351113155079, guid: 72c043d892e17f744b95eeb1801260a3, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 574508351113155079, guid: 72c043d892e17f744b95eeb1801260a3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 574508351113155079, guid: 72c043d892e17f744b95eeb1801260a3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 574508351113155079, guid: 72c043d892e17f744b95eeb1801260a3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 915005749965883581, guid: 72c043d892e17f744b95eeb1801260a3, type: 3}
+      propertyPath: m_Name
+      value: Radiosurgery_Machine_01_Part_03
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 72c043d892e17f744b95eeb1801260a3, type: 3}
+--- !u!4 &6986875784942387752 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 574508351113155079, guid: 72c043d892e17f744b95eeb1801260a3, type: 3}
+  m_PrefabInstance: {fileID: 7426240961788596271}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &9018856331134743192
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 6898885604535166760}
+    m_Modifications:
+    - target: {fileID: 2875574490971448125, guid: 6e95781e45c1ebd42bde7a98b369afb1, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2875574490971448125, guid: 6e95781e45c1ebd42bde7a98b369afb1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.52
+      objectReference: {fileID: 0}
+    - target: {fileID: 2875574490971448125, guid: 6e95781e45c1ebd42bde7a98b369afb1, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.127
+      objectReference: {fileID: 0}
+    - target: {fileID: 2875574490971448125, guid: 6e95781e45c1ebd42bde7a98b369afb1, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.026
+      objectReference: {fileID: 0}
+    - target: {fileID: 2875574490971448125, guid: 6e95781e45c1ebd42bde7a98b369afb1, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2875574490971448125, guid: 6e95781e45c1ebd42bde7a98b369afb1, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2875574490971448125, guid: 6e95781e45c1ebd42bde7a98b369afb1, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2875574490971448125, guid: 6e95781e45c1ebd42bde7a98b369afb1, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2875574490971448125, guid: 6e95781e45c1ebd42bde7a98b369afb1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2875574490971448125, guid: 6e95781e45c1ebd42bde7a98b369afb1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2875574490971448125, guid: 6e95781e45c1ebd42bde7a98b369afb1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3216633838448376199, guid: 6e95781e45c1ebd42bde7a98b369afb1, type: 3}
+      propertyPath: m_Name
+      value: Radiosurgery_Machine_01_Part_07
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6e95781e45c1ebd42bde7a98b369afb1, type: 3}

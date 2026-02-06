@@ -1,0 +1,445 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &315448529660805411
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 4656899660612223983}
+    m_Modifications:
+    - target: {fileID: 3809259433536606463, guid: b3f22f398eb855145a3b7621d46a0568, type: 3}
+      propertyPath: m_Name
+      value: Surgericlal_Light_03_Part_06
+      objectReference: {fileID: 0}
+    - target: {fileID: 4582102461328722501, guid: b3f22f398eb855145a3b7621d46a0568, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4582102461328722501, guid: b3f22f398eb855145a3b7621d46a0568, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.2097
+      objectReference: {fileID: 0}
+    - target: {fileID: 4582102461328722501, guid: b3f22f398eb855145a3b7621d46a0568, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.2897
+      objectReference: {fileID: 0}
+    - target: {fileID: 4582102461328722501, guid: b3f22f398eb855145a3b7621d46a0568, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.5792
+      objectReference: {fileID: 0}
+    - target: {fileID: 4582102461328722501, guid: b3f22f398eb855145a3b7621d46a0568, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4582102461328722501, guid: b3f22f398eb855145a3b7621d46a0568, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4582102461328722501, guid: b3f22f398eb855145a3b7621d46a0568, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4582102461328722501, guid: b3f22f398eb855145a3b7621d46a0568, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4582102461328722501, guid: b3f22f398eb855145a3b7621d46a0568, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4582102461328722501, guid: b3f22f398eb855145a3b7621d46a0568, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4582102461328722501, guid: b3f22f398eb855145a3b7621d46a0568, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b3f22f398eb855145a3b7621d46a0568, type: 3}
+--- !u!1001 &2728633316222633541
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 8015300494631427380}
+    m_Modifications:
+    - target: {fileID: 332207721391858474, guid: 2d3a6d70e93890d4c9878c5f47316fc6, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 332207721391858474, guid: 2d3a6d70e93890d4c9878c5f47316fc6, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 332207721391858474, guid: 2d3a6d70e93890d4c9878c5f47316fc6, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.1973
+      objectReference: {fileID: 0}
+    - target: {fileID: 332207721391858474, guid: 2d3a6d70e93890d4c9878c5f47316fc6, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 332207721391858474, guid: 2d3a6d70e93890d4c9878c5f47316fc6, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 332207721391858474, guid: 2d3a6d70e93890d4c9878c5f47316fc6, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 332207721391858474, guid: 2d3a6d70e93890d4c9878c5f47316fc6, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 332207721391858474, guid: 2d3a6d70e93890d4c9878c5f47316fc6, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 332207721391858474, guid: 2d3a6d70e93890d4c9878c5f47316fc6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 332207721391858474, guid: 2d3a6d70e93890d4c9878c5f47316fc6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 332207721391858474, guid: 2d3a6d70e93890d4c9878c5f47316fc6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1141642186107156880, guid: 2d3a6d70e93890d4c9878c5f47316fc6, type: 3}
+      propertyPath: m_Name
+      value: Surgericlal_Light_03_Part_04
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 2d3a6d70e93890d4c9878c5f47316fc6, type: 3}
+--- !u!4 &2396531427656803695 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 332207721391858474, guid: 2d3a6d70e93890d4c9878c5f47316fc6, type: 3}
+  m_PrefabInstance: {fileID: 2728633316222633541}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &3556189121256152910
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 8015300494631427380}
+    m_Modifications:
+    - target: {fileID: 6293232423817122871, guid: 7d4d42b060eb389468fc21346a665286, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6293232423817122871, guid: 7d4d42b060eb389468fc21346a665286, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6293232423817122871, guid: 7d4d42b060eb389468fc21346a665286, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.1045
+      objectReference: {fileID: 0}
+    - target: {fileID: 6293232423817122871, guid: 7d4d42b060eb389468fc21346a665286, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6293232423817122871, guid: 7d4d42b060eb389468fc21346a665286, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6293232423817122871, guid: 7d4d42b060eb389468fc21346a665286, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6293232423817122871, guid: 7d4d42b060eb389468fc21346a665286, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6293232423817122871, guid: 7d4d42b060eb389468fc21346a665286, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6293232423817122871, guid: 7d4d42b060eb389468fc21346a665286, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6293232423817122871, guid: 7d4d42b060eb389468fc21346a665286, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6293232423817122871, guid: 7d4d42b060eb389468fc21346a665286, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6637704587470392973, guid: 7d4d42b060eb389468fc21346a665286, type: 3}
+      propertyPath: m_Name
+      value: Surgericlal_Light_03_Part_01
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7d4d42b060eb389468fc21346a665286, type: 3}
+--- !u!4 &7353272778180774777 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6293232423817122871, guid: 7d4d42b060eb389468fc21346a665286, type: 3}
+  m_PrefabInstance: {fileID: 3556189121256152910}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &6018782531485650730
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 2396531427656803695}
+    m_Modifications:
+    - target: {fileID: 1380251322072861893, guid: d4c0fffde9720b84d8183655b5e63b71, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1380251322072861893, guid: d4c0fffde9720b84d8183655b5e63b71, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.4553
+      objectReference: {fileID: 0}
+    - target: {fileID: 1380251322072861893, guid: d4c0fffde9720b84d8183655b5e63b71, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.648
+      objectReference: {fileID: 0}
+    - target: {fileID: 1380251322072861893, guid: d4c0fffde9720b84d8183655b5e63b71, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.002
+      objectReference: {fileID: 0}
+    - target: {fileID: 1380251322072861893, guid: d4c0fffde9720b84d8183655b5e63b71, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1380251322072861893, guid: d4c0fffde9720b84d8183655b5e63b71, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1380251322072861893, guid: d4c0fffde9720b84d8183655b5e63b71, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1380251322072861893, guid: d4c0fffde9720b84d8183655b5e63b71, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1380251322072861893, guid: d4c0fffde9720b84d8183655b5e63b71, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1380251322072861893, guid: d4c0fffde9720b84d8183655b5e63b71, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1380251322072861893, guid: d4c0fffde9720b84d8183655b5e63b71, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1759909025305777791, guid: d4c0fffde9720b84d8183655b5e63b71, type: 3}
+      propertyPath: m_Name
+      value: Surgericlal_Light_03_Part_05
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d4c0fffde9720b84d8183655b5e63b71, type: 3}
+--- !u!4 &4656899660612223983 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1380251322072861893, guid: d4c0fffde9720b84d8183655b5e63b71, type: 3}
+  m_PrefabInstance: {fileID: 6018782531485650730}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &7545403116535528159
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: dc0f212bc6e33b941a8331dcbc9b96f8, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: dc0f212bc6e33b941a8331dcbc9b96f8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: dc0f212bc6e33b941a8331dcbc9b96f8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: dc0f212bc6e33b941a8331dcbc9b96f8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: dc0f212bc6e33b941a8331dcbc9b96f8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: dc0f212bc6e33b941a8331dcbc9b96f8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: dc0f212bc6e33b941a8331dcbc9b96f8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: dc0f212bc6e33b941a8331dcbc9b96f8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: dc0f212bc6e33b941a8331dcbc9b96f8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: dc0f212bc6e33b941a8331dcbc9b96f8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: dc0f212bc6e33b941a8331dcbc9b96f8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: dc0f212bc6e33b941a8331dcbc9b96f8, type: 3}
+      propertyPath: m_Name
+      value: Surgericlal_Light_03
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: dc0f212bc6e33b941a8331dcbc9b96f8, type: 3}
+--- !u!1 &7239468203967285134 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: dc0f212bc6e33b941a8331dcbc9b96f8, type: 3}
+  m_PrefabInstance: {fileID: 7545403116535528159}
+  m_PrefabAsset: {fileID: 0}
+--- !u!64 &-8130793001915450733
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7239468203967285134}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4027570881453967228, guid: dc0f212bc6e33b941a8331dcbc9b96f8, type: 3}
+--- !u!4 &8015300494631427380 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: dc0f212bc6e33b941a8331dcbc9b96f8, type: 3}
+  m_PrefabInstance: {fileID: 7545403116535528159}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &8011447756653112653
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 2042713036049514139}
+    m_Modifications:
+    - target: {fileID: 3549980613558670253, guid: 52c9491f74cff7944956e934ed270421, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3549980613558670253, guid: 52c9491f74cff7944956e934ed270421, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.0943
+      objectReference: {fileID: 0}
+    - target: {fileID: 3549980613558670253, guid: 52c9491f74cff7944956e934ed270421, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.3901
+      objectReference: {fileID: 0}
+    - target: {fileID: 3549980613558670253, guid: 52c9491f74cff7944956e934ed270421, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.5433
+      objectReference: {fileID: 0}
+    - target: {fileID: 3549980613558670253, guid: 52c9491f74cff7944956e934ed270421, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3549980613558670253, guid: 52c9491f74cff7944956e934ed270421, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3549980613558670253, guid: 52c9491f74cff7944956e934ed270421, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3549980613558670253, guid: 52c9491f74cff7944956e934ed270421, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3549980613558670253, guid: 52c9491f74cff7944956e934ed270421, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3549980613558670253, guid: 52c9491f74cff7944956e934ed270421, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3549980613558670253, guid: 52c9491f74cff7944956e934ed270421, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4183773838292568343, guid: 52c9491f74cff7944956e934ed270421, type: 3}
+      propertyPath: m_Name
+      value: Surgericlal_Light_03_Part_03
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 52c9491f74cff7944956e934ed270421, type: 3}
+--- !u!1001 &8138660761396092129
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 7353272778180774777}
+    m_Modifications:
+    - target: {fileID: 7485168217482508480, guid: 1a238b9ce15842e4eadf82ade4486804, type: 3}
+      propertyPath: m_Name
+      value: Surgericlal_Light_03_Part_02
+      objectReference: {fileID: 0}
+    - target: {fileID: 7830484840173986426, guid: 1a238b9ce15842e4eadf82ade4486804, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7830484840173986426, guid: 1a238b9ce15842e4eadf82ade4486804, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.4488
+      objectReference: {fileID: 0}
+    - target: {fileID: 7830484840173986426, guid: 1a238b9ce15842e4eadf82ade4486804, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.62
+      objectReference: {fileID: 0}
+    - target: {fileID: 7830484840173986426, guid: 1a238b9ce15842e4eadf82ade4486804, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.0801
+      objectReference: {fileID: 0}
+    - target: {fileID: 7830484840173986426, guid: 1a238b9ce15842e4eadf82ade4486804, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7830484840173986426, guid: 1a238b9ce15842e4eadf82ade4486804, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7830484840173986426, guid: 1a238b9ce15842e4eadf82ade4486804, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7830484840173986426, guid: 1a238b9ce15842e4eadf82ade4486804, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7830484840173986426, guid: 1a238b9ce15842e4eadf82ade4486804, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7830484840173986426, guid: 1a238b9ce15842e4eadf82ade4486804, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7830484840173986426, guid: 1a238b9ce15842e4eadf82ade4486804, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 1a238b9ce15842e4eadf82ade4486804, type: 3}
+--- !u!4 &2042713036049514139 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7830484840173986426, guid: 1a238b9ce15842e4eadf82ade4486804, type: 3}
+  m_PrefabInstance: {fileID: 8138660761396092129}
+  m_PrefabAsset: {fileID: 0}

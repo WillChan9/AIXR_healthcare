@@ -1,0 +1,22 @@
+# Unity 生成的大文件夹
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+[Cc]rash[Rr]eports/
+
+# VS / Rider / IDE
+.vs/
+.vscode/
+.idea/
+*.csproj
+*.sln
+*.user
+*.unityproj
+
+# 操作系统杂项
+.DS_Store
+Thumbs.db

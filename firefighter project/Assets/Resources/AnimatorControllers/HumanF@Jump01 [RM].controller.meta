@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 11053d9eed645ef4abb35cdd6f4c25fc
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 157744
+  packageName: Human Basic Motions
+  packageVersion: 2.4.1
+  assetPath: Assets/Kevin Iglesias/Human Animations/Unity Demo Scenes/Human Basic
+    Motions/AnimatorControllers/HumanF@Jump01 [RM].controller
+  uploadId: 824618
