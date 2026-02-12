@@ -1337,6 +1337,10 @@ MonoBehaviour:
   mainDirectionalLight: {fileID: 0}
   defaultHumanModel: {fileID: 919132149155446097, guid: da2ed2e1aae1da34684fe894590efa54,
     type: 3}
+  ithappyFurniturePrefab: {fileID: 0}
+  ithappyPropPrefab: {fileID: 0}
+  ithappyCharacterPrefab: {fileID: 0}
+  ithappyCharacterController: {fileID: 0}
 --- !u!4 &722357675
 Transform:
   m_ObjectHideFlags: 0

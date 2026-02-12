@@ -12,7 +12,7 @@ from pydantic import BaseModel, Field
 # Unity <-> Python 协议模型（与 Unity 端 AgentNetworkBridge.cs 对齐：扁平字段）
 # -----------------------------
 class UnityCommand(BaseModel):
-    action: str = Field(..., description="Unity side action name, e.g. SetTimeOfDay / PlaceObject")
+    action: str = Field(..., description="Unity side action name, e.g. SetTimeOfDay / PlaceObject / PlaceHuman / SetHumanAnimationController / PlayHumanAnimationFromResources")
 
     # Environment params
     hour: Optional[float] = None
@@ -24,12 +24,18 @@ class UnityCommand(BaseModel):
     gravityY: Optional[float] = None
     scale: Optional[float] = None
 
-    # Object placement
+    # Object / human placement
     objectName: Optional[str] = None
+    humanName: Optional[str] = None  # e.g. "Models/HumanM_Model" for PlaceHuman
     x: Optional[float] = None
     y: Optional[float] = None
     z: Optional[float] = None
     rotationY: Optional[float] = None
+
+    # Human animation (SetHumanAnimationController / PlayHumanAnimationFromResources)
+    controllerPathInResources: Optional[str] = None  # e.g. "AnimatorControllers/HumanM@Walk01_Forward"
+    stateName: Optional[str] = None                   # e.g. "HumanM@Walk01_Forward"
+    crossFadeTime: Optional[float] = None            # default 0.25
 
 
 app = FastAPI(title="Firefighter Agent Bridge", version="0.1.0")

@@ -12,6 +12,7 @@ from openai import OpenAI
 from .Decision_module import GameDecision, ActionType
 from .Sensing_module import GameSensor, Position, ObjectType, GameObject
 from game.game_state import GameState
+from . import unity_bridge
 
 class OperationResult:
     """Result of an operation execution."""
@@ -174,6 +175,29 @@ class GameOperator:
             return OperationResult(True, f"Deleted object: {object_id}")
         except Exception as e:
             return OperationResult(False, f"Error in execute_delete: {str(e)}")
+
+    def execute_unity_action(self, action_dict: Dict) -> OperationResult:
+        """将一条 Unity 环境指令入队（POST 到 FastAPI /enqueue），由 Unity AgentNetworkBridge 轮询执行。"""
+        try:
+            # 协议与 main.py UnityCommand 一致：action 必填，其余按需
+            action_name = action_dict.get("action") or action_dict.get("unity_action")
+            if not action_name:
+                return OperationResult(False, "Unity action missing 'action' or 'unity_action'")
+            # 只传 UnityCommand 支持的键
+            allowed = {
+                "action", "hour", "enabled", "density", "r", "g", "b",
+                "gravityY", "scale", "objectName", "humanName",
+                "x", "y", "z", "rotationY",
+                "controllerPathInResources", "stateName", "crossFadeTime",
+            }
+            cmd = {k: v for k, v in action_dict.items() if k in allowed and v is not None}
+            cmd["action"] = action_name
+            out = unity_bridge.enqueue_command(cmd)
+            if out.get("error"):
+                return OperationResult(False, f"Unity bridge: {out['error']}")
+            return OperationResult(True, f"Queued Unity action '{action_name}' (queue_size={out.get('queue_size', 0)})")
+        except Exception as e:
+            return OperationResult(False, f"execute_unity_action: {str(e)}")
     
     def load_actions_from_file(self) -> List[Dict]:
         """Load actions from actions.json file."""
@@ -222,13 +246,17 @@ class GameOperator:
             if action.get("complete", False):
                 continue
             
-            # Convert action dict to GameDecision
             try:
-                print(f"Executing action {i+1}: {action.get('action_type')} - {action.get('object_type') or action.get('object_id')}")
-                decision = self._action_dict_to_decision(action)
-                result = self.execute_decision(decision)
-                results.append(result)
+                # Unity 环境指令：直接入队，不转 GameDecision
+                if action.get("action_type") == "unity":
+                    print(f"Executing action {i+1}: unity -> {action.get('action') or action.get('unity_action')}")
+                    result = self.execute_unity_action(action)
+                else:
+                    print(f"Executing action {i+1}: {action.get('action_type')} - {action.get('object_type') or action.get('object_id')}")
+                    decision = self._action_dict_to_decision(action)
+                    result = self.execute_decision(decision)
                 
+                results.append(result)
                 if result.success:
                     print(f"  ✓ Success: {result.message}")
                 else:
@@ -327,6 +355,17 @@ class GameOperator:
         """Check if two actions match (same action_type, object_id, etc.)."""
         if action1.get("action_type") != action2.get("action_type"):
             return False
+
+        # Unity 指令：按 action 名 + 关键参数匹配
+        if action1.get("action_type") == "unity":
+            a1 = action1.get("action") or action1.get("unity_action")
+            a2 = action2.get("action") or action2.get("unity_action")
+            if a1 != a2:
+                return False
+            # 同 action 且同 objectName/humanName 或同位置视为同一条
+            if action1.get("objectName") or action1.get("humanName"):
+                return action1.get("objectName") == action2.get("objectName") and action1.get("humanName") == action2.get("humanName")
+            return True
         
         # For generate actions, match by object_id (most reliable) or object_type + first position
         if action1.get("action_type") == "generate":
