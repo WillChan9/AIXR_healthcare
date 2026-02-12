@@ -3,19 +3,19 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 /// <summary>
-/// 负责和外部 Python FastAPI 通信的桥接脚本。
-/// Unity 作为客户端，定期轮询 Python 的 /command 接口，
-/// 收到指令后调用 EnvironmentAgent 来修改环境。
+/// Bridge script for communicating with the external Python FastAPI server.
+/// Unity acts as a client, periodically polling the Python /command endpoint
+/// and forwarding received commands to EnvironmentAgent to modify the scene.
 /// </summary>
 public class AgentNetworkBridge : MonoBehaviour
 {
-    [Header("Python FastAPI 服务器地址，例如 http://192.168.1.10:8000")]
+    [Header("Python FastAPI server base URL, e.g. http://192.168.1.10:8000")]
     public string serverBaseUrl = "http://127.0.0.1:8000";
 
-    [Header("轮询间隔（秒）")]
+    [Header("Polling interval (seconds)")]
     public float pollIntervalSeconds = 1.0f;
 
-    [Header("环境控制脚本引用")]
+    [Header("Reference to EnvironmentAgent script")]
     public EnvironmentAgent environmentAgent;
 
     [System.Serializable]
@@ -23,7 +23,7 @@ public class AgentNetworkBridge : MonoBehaviour
     {
         public string action;
 
-        // 通用参数（根据 action 使用）
+        // Common parameters shared by multiple actions
         public float hour;
         public bool enabled;
         public float density;
@@ -86,7 +86,7 @@ public class AgentNetworkBridge : MonoBehaviour
             if (www.result == UnityWebRequest.Result.ConnectionError ||
                 www.result == UnityWebRequest.Result.ProtocolError)
             {
-                // 可以根据需要打印日志，但避免每帧刷屏
+                // You may choose to log this, but avoid spamming every frame
                 yield break;
             }
 
@@ -101,7 +101,7 @@ public class AgentNetworkBridge : MonoBehaviour
             }
             catch
             {
-                Debug.LogWarning("AgentNetworkBridge: 无法解析 JSON 指令：" + json);
+                Debug.LogWarning("AgentNetworkBridge: Failed to parse JSON command: " + json);
             }
 
             if (cmd == null || string.IsNullOrEmpty(cmd.action) || environmentAgent == null)
@@ -167,7 +167,7 @@ public class AgentNetworkBridge : MonoBehaviour
                 break;
 
             default:
-                Debug.LogWarning("AgentNetworkBridge: 未知指令 action = " + cmd.action);
+                Debug.LogWarning("AgentNetworkBridge: Unknown command action = " + cmd.action);
                 break;
         }
     }
