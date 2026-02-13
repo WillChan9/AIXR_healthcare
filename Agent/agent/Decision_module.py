@@ -70,6 +70,7 @@ class ActionType(Enum):
     MOVE = "move"
     DELETE = "delete"
     GENERATE = "generate"
+    UNITY = "unity"  # Unity environment actions (PlaceObject, PlaceHuman, etc.)
 
 @dataclass
 class GameDecision:
@@ -85,6 +86,29 @@ class GameDecision:
     width: Optional[int] = None
     height: Optional[int] = None
     angle: Optional[int] = None
+    
+    # UNITY action parameters (for Unity environment control)
+    unity_action: Optional[str] = None      # Unity action name (e.g., "PlaceObject", "PlaceHuman", "SetTimeOfDay")
+    object_name: Optional[str] = None       # For PlaceObject: prefab name in Resources/Prefabs/
+    human_name: Optional[str] = None       # For PlaceHuman: prefab name in Resources/Prefabs/
+    x: Optional[float] = None              # Position X (Unity world space)
+    y: Optional[float] = None              # Position Y (Unity world space)
+    z: Optional[float] = None              # Position Z (Unity world space)
+    rotation_y: Optional[float] = None     # Rotation Y (degrees)
+    scale_x: Optional[float] = None         # Scale X (for CreateObjectByName)
+    scale_y: Optional[float] = None         # Scale Y (for CreateObjectByName)
+    scale_z: Optional[float] = None         # Scale Z (for CreateObjectByName)
+    hour: Optional[float] = None           # For SetTimeOfDay
+    enabled: Optional[bool] = None         # For SetFogEnabled, etc.
+    density: Optional[float] = None        # For SetFogDensity
+    r: Optional[float] = None              # Color R component (0-1)
+    g: Optional[float] = None              # Color G component (0-1)
+    b: Optional[float] = None              # Color B component (0-1)
+    gravity_y: Optional[float] = None     # For SetGravity
+    scale: Optional[float] = None          # For SetTimeScale, SetLightIntensity
+    controller_path: Optional[str] = None  # For animation: controller path in Resources/
+    state_name: Optional[str] = None       # For animation: state name
+    cross_fade_time: Optional[float] = None # For animation: cross fade duration
     
     def __post_init__(self):
         # Validate action parameters
@@ -110,10 +134,28 @@ class GameDecision:
                 if not all(v is not None for v in [self.width, self.height, self.angle]):
                     raise ValueError("Wall generation requires width, height, and angle")
             # object_id is optional for GENERATE (will be auto-generated if not provided)
+        
+        elif self.action_type == ActionType.UNITY:
+            if not self.unity_action:
+                raise ValueError("UNITY action requires unity_action field")
+            # Validate Unity action specific parameters
+            if self.unity_action == "PlaceObject":
+                if not self.object_name:
+                    raise ValueError("PlaceObject requires object_name")
+                if self.x is None or self.y is None or self.z is None:
+                    raise ValueError("PlaceObject requires x, y, z coordinates")
+            elif self.unity_action == "PlaceHuman":
+                if not self.human_name:
+                    raise ValueError("PlaceHuman requires human_name")
+                if self.x is None or self.y is None or self.z is None:
+                    raise ValueError("PlaceHuman requires x, y, z coordinates")
+            elif self.unity_action == "SetTimeOfDay":
+                if self.hour is None:
+                    raise ValueError("SetTimeOfDay requires hour")
     
     def to_dict(self) -> Dict:
         """Convert the decision to a dictionary for JSON serialization."""
-        return {
+        result = {
             "action_type": self.action_type.value,
             "object_id": self.object_id,
             "position": self.position,
@@ -123,6 +165,53 @@ class GameDecision:
             "height": self.height,
             "angle": self.angle
         }
+        
+        # Add Unity action fields if this is a Unity action
+        if self.action_type == ActionType.UNITY:
+            result["unity_action"] = self.unity_action
+            result["action"] = self.unity_action  # Also add as "action" for Operation_module compatibility
+            if self.object_name is not None:
+                result["objectName"] = self.object_name
+            if self.human_name is not None:
+                result["humanName"] = self.human_name
+            if self.x is not None:
+                result["x"] = self.x
+            if self.y is not None:
+                result["y"] = self.y
+            if self.z is not None:
+                result["z"] = self.z
+            if self.rotation_y is not None:
+                result["rotationY"] = self.rotation_y
+            if self.scale_x is not None:
+                result["scaleX"] = self.scale_x
+            if self.scale_y is not None:
+                result["scaleY"] = self.scale_y
+            if self.scale_z is not None:
+                result["scaleZ"] = self.scale_z
+            if self.hour is not None:
+                result["hour"] = self.hour
+            if self.enabled is not None:
+                result["enabled"] = self.enabled
+            if self.density is not None:
+                result["density"] = self.density
+            if self.r is not None:
+                result["r"] = self.r
+            if self.g is not None:
+                result["g"] = self.g
+            if self.b is not None:
+                result["b"] = self.b
+            if self.gravity_y is not None:
+                result["gravityY"] = self.gravity_y
+            if self.scale is not None:
+                result["scale"] = self.scale
+            if self.controller_path is not None:
+                result["controllerPathInResources"] = self.controller_path
+            if self.state_name is not None:
+                result["stateName"] = self.state_name
+            if self.cross_fade_time is not None:
+                result["crossFadeTime"] = self.cross_fade_time
+        
+        return result
     
 
 class DecisionMaker:
@@ -705,14 +794,34 @@ class DecisionMaker:
              Return a JSON array of actions in the following format:
              [
                  {{
-                     "action_type": "one of: move, delete, generate",
-                     "object_id": "the object ID to interact with (for move/delete), or null for generate",
-                     "position": [x,y] (destination for move, null for delete/generate),
+                     "action_type": "one of: move, delete, generate, unity",
+                     "object_id": "the object ID to interact with (for move/delete), or null for generate/unity",
+                     "position": [x,y] (destination for move, null for delete/generate/unity),
                     "object_type": "type of object to generate (for generate): bomb, heart, wall, fire, treasure, watergun",
                      "positions": [[x1,y1], ...] (for generate, one position per object),
                      "width": int (for wall generation only),
                      "height": int (for wall generation only),
-                     "angle": int (for wall generation only)
+                     "angle": int (for wall generation only),
+                     
+                     // For Unity actions (action_type="unity"):
+                     "unity_action": "Unity action name: PlaceObject, PlaceHuman, SetTimeOfDay, SetFogEnabled, SetFogDensity, SetLightIntensity, SetLightColor, SetAmbientColor, SetGravity, SetTimeScale, SetHumanAnimationController, PlayHumanAnimationFromResources",
+                     "objectName": "prefab name in Resources/Prefabs/ (for PlaceObject)",
+                     "humanName": "prefab name in Resources/Prefabs/ (for PlaceHuman)",
+                     "x": float (Unity world X coordinate),
+                     "y": float (Unity world Y coordinate),
+                     "z": float (Unity world Z coordinate),
+                     "rotationY": float (rotation in degrees, default 0),
+                     "hour": float (0-24, for SetTimeOfDay),
+                     "enabled": bool (for SetFogEnabled),
+                     "density": float (for SetFogDensity),
+                     "r": float (0-1, color red component),
+                     "g": float (0-1, color green component),
+                     "b": float (0-1, color blue component),
+                     "gravityY": float (for SetGravity),
+                     "scale": float (for SetTimeScale, SetLightIntensity),
+                     "controllerPathInResources": "path in Resources/ (for animation)",
+                     "stateName": "animation state name",
+                     "crossFadeTime": float (animation blend duration, default 0.25)
                  }},
                  ...
              ]
@@ -730,17 +839,29 @@ class DecisionMaker:
              4. For DELETE actions:
                 - object_id must be a valid game object ID
                 - position should be null
-             5. IMPORTANT: All positions must be within the CURRENT VIEWPORT bounds:
+             5. For UNITY actions (action_type="unity"):
+                - Use unity_action to specify the Unity action name
+                - For PlaceObject: require objectName, x, y, z (rotationY optional, default 0)
+                - For PlaceHuman: require humanName, x, y, z (rotationY optional, default 0)
+                - For SetTimeOfDay: require hour (0-24)
+                - For SetFogEnabled: require enabled (bool)
+                - For SetFogDensity: require density (float)
+                - For SetLightIntensity: require scale (float, 0-2)
+                - For SetLightColor/SetAmbientColor: require r, g, b (0-1)
+                - For SetGravity: require gravityY (float)
+                - For SetTimeScale: require scale (float, 0-2)
+                - Unity coordinates are in 3D world space (x, y, z), not 2D game coordinates
+             6. IMPORTANT: All game positions (for move/generate) must be within the CURRENT VIEWPORT bounds:
                 - X range: {viewport_min_x:.0f} to {viewport_max_x:.0f}
                 - Y range: {viewport_min_y:.0f} to {viewport_max_y:.0f}
                 - Player is at [{player_x:.0f}, {player_y:.0f}]
                 - Screen size: {screen_width}x{screen_height}
                 - Only generate objects visible in the current viewport
-             6. Generate actions for the current step(s) in the plan
-             7. If the planning step conditions are met, no further actions are needed.
-             8. Consider the game state, especially player health and position
-             9. Use visual context from both screenshots to make informed decisions
-             10. Return only the JSON array, no explanation
+             7. Generate actions for the current step(s) in the plan
+             8. If the planning step conditions are met, no further actions are needed.
+             9. Consider the game state, especially player health and position
+             10. Use visual context from both screenshots to make informed decisions
+             11. Return only the JSON array, no explanation
 
         Current Game State:
         {game_state_str}
@@ -960,6 +1081,35 @@ class DecisionMaker:
                         angle=angle
                     )
                     decisions.append(decision)
+            elif action_type_str == "unity":
+                # Unity action - extract unity_action (or use "action" field as fallback)
+                unity_action = action_dict.get("unity_action") or action_dict.get("action")
+                if not unity_action:
+                    logger.warning("Unity action missing unity_action field, skipping")
+                    continue
+                
+                decision = GameDecision(
+                    action_type=ActionType.UNITY,
+                    unity_action=unity_action,
+                    object_name=action_dict.get("objectName"),
+                    human_name=action_dict.get("humanName"),
+                    x=action_dict.get("x"),
+                    y=action_dict.get("y"),
+                    z=action_dict.get("z"),
+                    rotation_y=action_dict.get("rotationY"),
+                    hour=action_dict.get("hour"),
+                    enabled=action_dict.get("enabled"),
+                    density=action_dict.get("density"),
+                    r=action_dict.get("r"),
+                    g=action_dict.get("g"),
+                    b=action_dict.get("b"),
+                    gravity_y=action_dict.get("gravityY"),
+                    scale=action_dict.get("scale"),
+                    controller_path=action_dict.get("controllerPathInResources"),
+                    state_name=action_dict.get("stateName"),
+                    cross_fade_time=action_dict.get("crossFadeTime")
+                )
+                decisions.append(decision)
             else:
                 raise ValueError(f"Invalid action type: {action_type_str}")
         

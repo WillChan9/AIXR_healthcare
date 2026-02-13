@@ -12,7 +12,6 @@ from openai import OpenAI
 from .Decision_module import GameDecision, ActionType
 from .Sensing_module import GameSensor, Position, ObjectType, GameObject
 from game.game_state import GameState
-from . import unity_bridge
 
 class OperationResult:
     """Result of an operation execution."""
@@ -159,8 +158,65 @@ class GameOperator:
             return self.execute_generate(decision)
         elif decision.action_type == ActionType.DELETE:
             return self.execute_delete(decision)
+        elif decision.action_type == ActionType.UNITY:
+            return self.execute_unity_decision(decision)
         else:
             return OperationResult(False, f"Unknown action type: {decision.action_type}")
+    
+    def execute_unity_decision(self, decision: GameDecision) -> OperationResult:
+        """Execute a Unity action decision by converting it to a Unity command."""
+        try:
+            # Convert GameDecision to Unity command dictionary
+            unity_cmd = {
+                "action": decision.unity_action,
+            }
+            
+            # Add fields based on the Unity action type
+            if decision.object_name is not None:
+                unity_cmd["objectName"] = decision.object_name
+            if decision.human_name is not None:
+                unity_cmd["humanName"] = decision.human_name
+            if decision.x is not None:
+                unity_cmd["x"] = decision.x
+            if decision.y is not None:
+                unity_cmd["y"] = decision.y
+            if decision.z is not None:
+                unity_cmd["z"] = decision.z
+            if decision.rotation_y is not None:
+                unity_cmd["rotationY"] = decision.rotation_y
+            if decision.scale_x is not None:
+                unity_cmd["scaleX"] = decision.scale_x
+            if decision.scale_y is not None:
+                unity_cmd["scaleY"] = decision.scale_y
+            if decision.scale_z is not None:
+                unity_cmd["scaleZ"] = decision.scale_z
+            if decision.hour is not None:
+                unity_cmd["hour"] = decision.hour
+            if decision.enabled is not None:
+                unity_cmd["enabled"] = decision.enabled
+            if decision.density is not None:
+                unity_cmd["density"] = decision.density
+            if decision.r is not None:
+                unity_cmd["r"] = decision.r
+            if decision.g is not None:
+                unity_cmd["g"] = decision.g
+            if decision.b is not None:
+                unity_cmd["b"] = decision.b
+            if decision.gravity_y is not None:
+                unity_cmd["gravityY"] = decision.gravity_y
+            if decision.scale is not None:
+                unity_cmd["scale"] = decision.scale
+            if decision.controller_path is not None:
+                unity_cmd["controllerPathInResources"] = decision.controller_path
+            if decision.state_name is not None:
+                unity_cmd["stateName"] = decision.state_name
+            if decision.cross_fade_time is not None:
+                unity_cmd["crossFadeTime"] = decision.cross_fade_time
+            
+            # Execute the Unity command
+            return self.execute_unity_action(unity_cmd)
+        except Exception as e:
+            return OperationResult(False, f"Error executing Unity decision: {str(e)}")
     
     def execute_delete(self, decision: GameDecision) -> OperationResult:
         """Execute a delete action."""
@@ -177,7 +233,7 @@ class GameOperator:
             return OperationResult(False, f"Error in execute_delete: {str(e)}")
 
     def execute_unity_action(self, action_dict: Dict) -> OperationResult:
-        """将一条 Unity 环境指令入队（POST 到 FastAPI /enqueue），由 Unity AgentNetworkBridge 轮询执行。"""
+        """将一条 Unity 环境指令写入 JSON 文件，由 Unity AgentNetworkBridge 读取执行。"""
         try:
             # 协议与 main.py UnityCommand 一致：action 必填，其余按需
             action_name = action_dict.get("action") or action_dict.get("unity_action")
@@ -188,14 +244,47 @@ class GameOperator:
                 "action", "hour", "enabled", "density", "r", "g", "b",
                 "gravityY", "scale", "objectName", "humanName",
                 "x", "y", "z", "rotationY",
+                "scaleX", "scaleY", "scaleZ",
                 "controllerPathInResources", "stateName", "crossFadeTime",
             }
             cmd = {k: v for k, v in action_dict.items() if k in allowed and v is not None}
             cmd["action"] = action_name
-            out = unity_bridge.enqueue_command(cmd)
-            if out.get("error"):
-                return OperationResult(False, f"Unity bridge: {out['error']}")
-            return OperationResult(True, f"Queued Unity action '{action_name}' (queue_size={out.get('queue_size', 0)})")
+            
+            # 写入 JSON 文件到 Unity 项目的 Assets/Scripts/ 文件夹
+            project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            unity_project = os.path.join(project_root, "firefighter project")
+            scripts_dir = os.path.join(unity_project, "Assets", "Scripts")
+            os.makedirs(scripts_dir, exist_ok=True)
+            
+            commands_file = os.path.join(scripts_dir, "unity_commands.json")
+            
+            # 读取现有命令列表
+            commands = []
+            if os.path.exists(commands_file):
+                try:
+                    with open(commands_file, 'r', encoding='utf-8') as f:
+                        content = f.read().strip()
+                        if content:
+                            commands = json.loads(content)
+                            if not isinstance(commands, list):
+                                commands = []
+                except (json.JSONDecodeError, IOError):
+                    commands = []
+            
+            # 添加新命令（带时间戳和执行状态）
+            new_command = {
+                "id": f"cmd_{int(time.time() * 1000)}_{len(commands)}",  # 唯一ID
+                "timestamp": time.time(),
+                "executed": False,
+                **cmd
+            }
+            commands.append(new_command)
+            
+            # 写入文件
+            with open(commands_file, 'w', encoding='utf-8') as f:
+                json.dump(commands, f, indent=2, ensure_ascii=False)
+            
+            return OperationResult(True, f"Wrote Unity action '{action_name}' to {commands_file} (total commands: {len(commands)})")
         except Exception as e:
             return OperationResult(False, f"execute_unity_action: {str(e)}")
     
