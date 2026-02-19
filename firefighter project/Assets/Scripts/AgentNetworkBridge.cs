@@ -12,6 +12,12 @@ public class AgentNetworkBridge : MonoBehaviour
     [Header("Python FastAPI server base URL, e.g. http://192.168.1.10:8000")]
     public string serverBaseUrl = "http://127.0.0.1:8000";
 
+    [Header("Read commands from local JSON file instead of HTTP")]
+    public bool useFileCommands = true;
+
+    [Header("Relative to Assets/, default: Scripts/unity_commands.json")]
+    public string commandsFileRelativePath = "Scripts/unity_commands.json";
+
     [Header("Polling interval (seconds)")]
     public float pollIntervalSeconds = 1.0f;
 
@@ -21,6 +27,8 @@ public class AgentNetworkBridge : MonoBehaviour
     [System.Serializable]
     private class AgentCommand
     {
+        public string id;
+        public bool executed;
         public string action;
 
         // Common parameters shared by multiple actions
@@ -44,6 +52,15 @@ public class AgentNetworkBridge : MonoBehaviour
         public float y;
         public float z;
         public float rotationY;
+        public float scaleX;
+        public float scaleY;
+        public float scaleZ;
+    }
+
+    [System.Serializable]
+    private class AgentCommandList
+    {
+        public AgentCommand[] commands;
     }
 
     private void Awake()
@@ -70,6 +87,12 @@ public class AgentNetworkBridge : MonoBehaviour
 
     private IEnumerator PollOnce()
     {
+        if (useFileCommands)
+        {
+            PollFromFile();
+            yield break;
+        }
+
         if (string.IsNullOrEmpty(serverBaseUrl))
             yield break;
 
@@ -108,6 +131,61 @@ public class AgentNetworkBridge : MonoBehaviour
                 yield break;
 
             HandleCommand(cmd);
+        }
+    }
+
+    private void PollFromFile()
+    {
+        var path = System.IO.Path.Combine(Application.dataPath, commandsFileRelativePath);
+        if (!System.IO.File.Exists(path))
+            return;
+
+        string json = "";
+        try
+        {
+            json = System.IO.File.ReadAllText(path);
+        }
+        catch
+        {
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(json))
+            return;
+
+        AgentCommandList list = null;
+        try
+        {
+            // File is a JSON array; wrap it so JsonUtility can parse it.
+            var wrapped = "{\"commands\":" + json + "}";
+            list = JsonUtility.FromJson<AgentCommandList>(wrapped);
+        }
+        catch
+        {
+            Debug.LogWarning("AgentNetworkBridge: Failed to parse JSON file: " + path);
+            return;
+        }
+
+        if (list?.commands == null || list.commands.Length == 0 || environmentAgent == null)
+            return;
+
+        foreach (var cmd in list.commands)
+        {
+            if (cmd == null || string.IsNullOrEmpty(cmd.action))
+                continue;
+            if (cmd.executed)
+                continue;
+            HandleCommand(cmd);
+        }
+
+        // Clear file after processing to avoid re-executing commands.
+        try
+        {
+            System.IO.File.WriteAllText(path, "[]");
+        }
+        catch
+        {
+            // If we can't clear it, commands will repeat; log once in Console if needed.
         }
     }
 
@@ -150,6 +228,18 @@ public class AgentNetworkBridge : MonoBehaviour
             case "PlaceObject":
                 var pos = new Vector3(cmd.x, cmd.y, cmd.z);
                 environmentAgent.PlaceObject(cmd.objectName, pos, cmd.rotationY);
+                break;
+
+            case "CreateObjectByName":
+                var createPos = new Vector3(cmd.x, cmd.y, cmd.z);
+                environmentAgent.CreateObjectByName(
+                    cmd.objectName,
+                    createPos,
+                    cmd.rotationY,
+                    cmd.scaleX,
+                    cmd.scaleY,
+                    cmd.scaleZ
+                );
                 break;
 
             case "PlaceHuman":

@@ -73,6 +73,48 @@ public class EnvironmentAgent : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Called by Agent: create by name. Prefer prefab in Resources/Prefabs/, else primitive, else empty GameObject.
+    /// scaleX/Y/Z: if <= 0, keep default 1.
+    /// </summary>
+    public void CreateObjectByName(string objectName, Vector3 position, float rotationY, float scaleX, float scaleY, float scaleZ)
+    {
+        GameObject spawned = null;
+        string path = "Prefabs/" + objectName;
+        GameObject prefab = Resources.Load<GameObject>(path);
+
+        if (prefab != null)
+        {
+            spawned = Instantiate(prefab, position, Quaternion.Euler(0, rotationY, 0));
+            Debug.Log($"AI Agent created prefab: {objectName} at {position}");
+        }
+        else
+        {
+            if (TryCreatePrimitive(objectName, out spawned))
+            {
+                spawned.transform.position = position;
+                spawned.transform.rotation = Quaternion.Euler(0, rotationY, 0);
+                Debug.Log($"AI Agent created primitive: {objectName} at {position}");
+            }
+            else
+            {
+                spawned = new GameObject(objectName);
+                spawned.transform.position = position;
+                spawned.transform.rotation = Quaternion.Euler(0, rotationY, 0);
+                Debug.Log($"AI Agent created empty object: {objectName} at {position}");
+            }
+        }
+
+        if (spawned != null)
+        {
+            var sx = scaleX > 0 ? scaleX : 1f;
+            var sy = scaleY > 0 ? scaleY : 1f;
+            var sz = scaleZ > 0 ? scaleZ : 1f;
+            spawned.transform.localScale = new Vector3(sx, sy, sz);
+            SnapToFloor(spawned);
+        }
+    }
+
     /// <summary>Called by Agent: place a human prefab from Resources/Prefabs/ (same usage as Chair/Table). After placement it becomes the "current human"; subsequent PlayHumanAnimation(null, ...) etc. will target it. humanName is the prefab name, e.g. "HumanM_Idle01".</summary>
     public void PlaceHuman(string humanName, Vector3 position, float rotationY)
     {
@@ -276,6 +318,22 @@ public class EnvironmentAgent : MonoBehaviour
         {
             obj.transform.position = hit.point;
         }
+    }
+
+    private bool TryCreatePrimitive(string objectName, out GameObject spawned)
+    {
+        spawned = null;
+        if (string.IsNullOrEmpty(objectName)) return false;
+        string name = objectName.ToLowerInvariant();
+
+        if (name == "cube" || name == "box") spawned = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        else if (name == "sphere" || name == "ball") spawned = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        else if (name == "capsule") spawned = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+        else if (name == "cylinder") spawned = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+        else if (name == "plane") spawned = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        else if (name == "quad") spawned = GameObject.CreatePrimitive(PrimitiveType.Quad);
+
+        return spawned != null;
     }
 
     // --- Inspector test buttons (ithappy Medical Pack) ---
