@@ -45,6 +45,8 @@ public class AgentNetworkBridge : MonoBehaviour
 
         public string objectName;
         public string humanName;
+        public string controllerPath;
+        // Legacy: keep for backwards compatibility with older JSON files.
         public string controllerPathInResources;
         public string stateName;
         public float crossFadeTime;
@@ -55,6 +57,14 @@ public class AgentNetworkBridge : MonoBehaviour
         public float scaleX;
         public float scaleY;
         public float scaleZ;
+
+        // Animation params
+        public string paramName;
+        public float value;
+        public bool boolValue;
+
+        // Status flags (optional)
+        public bool done;
     }
 
     [System.Serializable]
@@ -176,17 +186,147 @@ public class AgentNetworkBridge : MonoBehaviour
             if (cmd.executed)
                 continue;
             HandleCommand(cmd);
+            cmd.executed = true;
+            cmd.done = true;
         }
 
-        // Clear file after processing to avoid re-executing commands.
+        // Write back with done/executed flags so history is preserved.
         try
         {
-            System.IO.File.WriteAllText(path, "[]");
+            System.IO.File.WriteAllText(path, SerializeCommandArray(list.commands));
         }
         catch
         {
-            // If we can't clear it, commands will repeat; log once in Console if needed.
+            // If we can't write back, commands may repeat; log once in Console if needed.
         }
+    }
+
+    private string SerializeCommandArray(AgentCommand[] commands)
+    {
+        if (commands == null || commands.Length == 0)
+            return "[]";
+
+        var sb = new System.Text.StringBuilder();
+        sb.Append("[");
+        for (int i = 0; i < commands.Length; i++)
+        {
+            if (i > 0) sb.Append(",");
+            sb.Append(SerializeCommand(commands[i]));
+        }
+        sb.Append("]");
+        return sb.ToString();
+    }
+
+    private string SerializeCommand(AgentCommand cmd)
+    {
+        var sb = new System.Text.StringBuilder();
+        sb.Append("{");
+        bool first = true;
+
+        void AddString(string key, string value)
+        {
+            if (string.IsNullOrEmpty(value)) return;
+            if (!first) sb.Append(",");
+            first = false;
+            sb.Append($"\"{key}\":\"{EscapeJson(value)}\"");
+        }
+
+        void AddBool(string key, bool value)
+        {
+            if (!first) sb.Append(",");
+            first = false;
+            sb.Append($"\"{key}\":{(value ? "true" : "false")}");
+        }
+
+        void AddFloat(string key, float value)
+        {
+            if (!first) sb.Append(",");
+            first = false;
+            sb.Append($"\"{key}\":{value.ToString(System.Globalization.CultureInfo.InvariantCulture)}");
+        }
+
+        AddString("id", cmd.id);
+        AddBool("executed", cmd.executed);
+        AddBool("done", cmd.done);
+        AddString("action", cmd.action);
+
+        switch (cmd.action)
+        {
+            case "SetTimeOfDay":
+                AddFloat("hour", cmd.hour);
+                break;
+            case "SetFogEnabled":
+                AddBool("enabled", cmd.enabled);
+                break;
+            case "SetFogDensity":
+                AddFloat("density", cmd.density);
+                break;
+            case "SetLightIntensity":
+                AddFloat("scale", cmd.scale);
+                break;
+            case "SetLightColor":
+                AddFloat("r", cmd.r); AddFloat("g", cmd.g); AddFloat("b", cmd.b);
+                break;
+            case "SetAmbientColor":
+                AddFloat("r", cmd.r); AddFloat("g", cmd.g); AddFloat("b", cmd.b);
+                break;
+            case "SetGravity":
+                AddFloat("gravityY", cmd.gravityY);
+                break;
+            case "SetTimeScale":
+                AddFloat("scale", cmd.scale);
+                break;
+            case "PlaceObject":
+                AddString("objectName", cmd.objectName);
+                AddFloat("x", cmd.x); AddFloat("y", cmd.y); AddFloat("z", cmd.z);
+                AddFloat("rotationY", cmd.rotationY);
+                break;
+            case "CreateObjectByName":
+                AddString("objectName", cmd.objectName);
+                AddFloat("x", cmd.x); AddFloat("y", cmd.y); AddFloat("z", cmd.z);
+                AddFloat("rotationY", cmd.rotationY);
+                AddFloat("scaleX", cmd.scaleX); AddFloat("scaleY", cmd.scaleY); AddFloat("scaleZ", cmd.scaleZ);
+                break;
+            case "PlaceHuman":
+                AddString("humanName", cmd.humanName ?? cmd.objectName);
+                AddFloat("x", cmd.x); AddFloat("y", cmd.y); AddFloat("z", cmd.z);
+                AddFloat("rotationY", cmd.rotationY);
+                break;
+            case "SetHumanAnimationController":
+                AddString("controllerPath", cmd.controllerPath ?? cmd.controllerPathInResources);
+                break;
+            case "PlayHumanAnimation":
+                AddString("stateName", cmd.stateName);
+                AddFloat("crossFadeTime", cmd.crossFadeTime);
+                break;
+            case "PlayHumanAnimationFromResources":
+                AddString("controllerPath", cmd.controllerPath ?? cmd.controllerPathInResources);
+                AddString("stateName", cmd.stateName);
+                AddFloat("crossFadeTime", cmd.crossFadeTime);
+                break;
+            case "SetHumanAnimatorFloat":
+                AddString("paramName", cmd.paramName);
+                AddFloat("value", cmd.value);
+                break;
+            case "SetHumanAnimatorBool":
+                AddString("paramName", cmd.paramName);
+                AddBool("boolValue", cmd.boolValue);
+                break;
+            case "SetHumanAnimatorTrigger":
+                AddString("paramName", cmd.paramName);
+                break;
+            default:
+                break;
+        }
+
+        sb.Append("}");
+        return sb.ToString();
+    }
+
+    private string EscapeJson(string s)
+    {
+        if (string.IsNullOrEmpty(s)) return "";
+        return s.Replace("\\", "\\\\").Replace("\"", "\\\"");
     }
 
     private void HandleCommand(AgentCommand cmd)
@@ -248,12 +388,29 @@ public class AgentNetworkBridge : MonoBehaviour
                 break;
 
             case "SetHumanAnimationController":
-                environmentAgent.SetHumanAnimationController(null, cmd.controllerPathInResources ?? "");
+                environmentAgent.SetHumanAnimationController(null, (cmd.controllerPath ?? cmd.controllerPathInResources) ?? "");
+                break;
+
+            case "PlayHumanAnimation":
+                float blend = cmd.crossFadeTime > 0 ? cmd.crossFadeTime : 0.25f;
+                environmentAgent.PlayHumanAnimation(null, cmd.stateName ?? "", blend);
                 break;
 
             case "PlayHumanAnimationFromResources":
                 float t = cmd.crossFadeTime > 0 ? cmd.crossFadeTime : 0.25f;
-                environmentAgent.PlayHumanAnimationFromResources(null, cmd.controllerPathInResources ?? "", cmd.stateName ?? "", t);
+                environmentAgent.PlayHumanAnimationFromResources(null, (cmd.controllerPath ?? cmd.controllerPathInResources) ?? "", cmd.stateName ?? "", t);
+                break;
+
+            case "SetHumanAnimatorFloat":
+                environmentAgent.SetHumanAnimatorFloat(null, cmd.paramName ?? "", cmd.value);
+                break;
+
+            case "SetHumanAnimatorBool":
+                environmentAgent.SetHumanAnimatorBool(null, cmd.paramName ?? "", cmd.boolValue);
+                break;
+
+            case "SetHumanAnimatorTrigger":
+                environmentAgent.SetHumanAnimatorTrigger(null, cmd.paramName ?? "");
                 break;
 
             default:

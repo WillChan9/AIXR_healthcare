@@ -1,3 +1,0 @@
-The environment would be a maze, the user need to find the path to the treasure.
-The maze is made by walls, with 3 bombs, 6 hearts and 1 fire on the side.
-If the player is near the treasure, add 2 fires at the right side of the treasure and 1 watergun below the treasure.

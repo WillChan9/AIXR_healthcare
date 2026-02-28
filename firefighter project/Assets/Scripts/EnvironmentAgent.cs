@@ -58,8 +58,7 @@ public class EnvironmentAgent : MonoBehaviour
     /// <summary>Called by Agent: place a prefab at the given position. Prefab must be under Resources/Prefabs/.</summary>
     public void PlaceObject(string objectName, Vector3 position, float rotationY)
     {
-        string path = "Prefabs/" + objectName;
-        GameObject prefab = Resources.Load<GameObject>(path);
+        GameObject prefab = LoadPrefabByName(objectName);
 
         if (prefab != null)
         {
@@ -118,8 +117,7 @@ public class EnvironmentAgent : MonoBehaviour
     /// <summary>Called by Agent: place a human prefab from Resources/Prefabs/ (same usage as Chair/Table). After placement it becomes the "current human"; subsequent PlayHumanAnimation(null, ...) etc. will target it. humanName is the prefab name, e.g. "HumanM_Idle01".</summary>
     public void PlaceHuman(string humanName, Vector3 position, float rotationY)
     {
-        string path = "Prefabs/" + humanName;
-        GameObject prefab = Resources.Load<GameObject>(path);
+        GameObject prefab = LoadHumanPrefabByName(humanName);
 
         if (prefab != null)
         {
@@ -130,7 +128,7 @@ public class EnvironmentAgent : MonoBehaviour
         }
         else
         {
-            Debug.LogError($"AI Agent Error: Human prefab '{humanName}' not found in Resources/Prefabs/. Place human prefabs under Assets/Resources/Prefabs/.");
+            Debug.LogError($"AI Agent Error: Human prefab '{humanName}' not found in Resources. Place human prefabs under Assets/Resources/...");
         }
     }
 
@@ -229,7 +227,7 @@ public class EnvironmentAgent : MonoBehaviour
         Animator anim = GetHumanAnimator(target);
         if (anim == null) { Debug.LogWarning("EnvironmentAgent: human model has no Animator."); return; }
 
-        RuntimeAnimatorController ctrl = Resources.Load<RuntimeAnimatorController>(controllerPathInResources);
+        RuntimeAnimatorController ctrl = LoadAnimatorControllerByName(controllerPathInResources);
         if (ctrl == null) { Debug.LogError($"EnvironmentAgent: AnimatorController not found at Resources/{controllerPathInResources}"); return; }
 
         anim.runtimeAnimatorController = ctrl;
@@ -271,7 +269,7 @@ public class EnvironmentAgent : MonoBehaviour
 
         if (anim.runtimeAnimatorController == null)
         {
-            RuntimeAnimatorController ctrl = Resources.Load<RuntimeAnimatorController>(controllerPathInResources);
+            RuntimeAnimatorController ctrl = LoadAnimatorControllerByName(controllerPathInResources);
             if (ctrl == null)
             {
                 Debug.LogError($"EnvironmentAgent: AnimatorController not found at Resources/{controllerPathInResources}");
@@ -334,6 +332,73 @@ public class EnvironmentAgent : MonoBehaviour
         else if (name == "quad") spawned = GameObject.CreatePrimitive(PrimitiveType.Quad);
 
         return spawned != null;
+    }
+
+    private static readonly System.Collections.Generic.Dictionary<string, GameObject> PrefabCache =
+        new System.Collections.Generic.Dictionary<string, GameObject>();
+
+    private static readonly System.Collections.Generic.Dictionary<string, RuntimeAnimatorController> AnimatorCache =
+        new System.Collections.Generic.Dictionary<string, RuntimeAnimatorController>();
+
+    private static bool _prefabCacheLoaded = false;
+    private static bool _animatorCacheLoaded = false;
+
+    private void EnsurePrefabCache()
+    {
+        if (_prefabCacheLoaded) return;
+        PrefabCache.Clear();
+        var all = Resources.LoadAll<GameObject>("");
+        foreach (var go in all)
+        {
+            if (go == null) continue;
+            var key = go.name.ToLowerInvariant();
+            if (!PrefabCache.ContainsKey(key))
+                PrefabCache[key] = go;
+        }
+        Debug.Log($"EnvironmentAgent: Prefab cache loaded ({PrefabCache.Count} prefabs)");
+        _prefabCacheLoaded = true;
+    }
+
+    private void EnsureAnimatorCache()
+    {
+        if (_animatorCacheLoaded) return;
+        AnimatorCache.Clear();
+        var all = Resources.LoadAll<RuntimeAnimatorController>("");
+        foreach (var ctrl in all)
+        {
+            if (ctrl == null) continue;
+            var key = ctrl.name.ToLowerInvariant();
+            if (!AnimatorCache.ContainsKey(key))
+                AnimatorCache[key] = ctrl;
+        }
+        Debug.Log($"EnvironmentAgent: Animator cache loaded ({AnimatorCache.Count} controllers)");
+        _animatorCacheLoaded = true;
+    }
+
+    private GameObject LoadPrefabByName(string name)
+    {
+        if (string.IsNullOrEmpty(name)) return null;
+        EnsurePrefabCache();
+        PrefabCache.TryGetValue(name.ToLowerInvariant(), out var prefab);
+        return prefab;
+    }
+
+    private GameObject LoadHumanPrefabByName(string name)
+    {
+        // Same lookup as other prefabs (humans are also prefabs).
+        return LoadPrefabByName(name);
+    }
+
+    private RuntimeAnimatorController LoadAnimatorControllerByName(string nameOrPath)
+    {
+        if (string.IsNullOrEmpty(nameOrPath)) return null;
+        // Try direct path first (Resources.Load supports relative paths).
+        var direct = Resources.Load<RuntimeAnimatorController>(nameOrPath);
+        if (direct != null) return direct;
+
+        EnsureAnimatorCache();
+        AnimatorCache.TryGetValue(nameOrPath.ToLowerInvariant(), out var ctrl);
+        return ctrl;
     }
 
     // --- Inspector test buttons (ithappy Medical Pack) ---
