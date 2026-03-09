@@ -1,6 +1,8 @@
 CT Examination Room (compact, clean, efficient)
 
-This is a small, functional CT room (approx. 6m x 6m) with a clean, minimal layout. The CT scanner is the anchor and everything is placed close to it for a tight clinical workflow. Keep the layout compact (no big gaps), with a clear walking lane around the scanner and table.
+This is a small, functional CT room (approx. 6m x 6m) with a clean, minimal layout. A patient is walking around the room.
+The CT scanner is the anchor and everything is placed close to it for a tight clinical workflow.
+ Keep the layout compact (no big gaps), with a clear walking lane around the scanner and table.
 
 Placement guidance:
 - Tomograph: centered as the focal point (near the middle of the room).
@@ -13,15 +15,5 @@ Placement guidance:
 - Sanitizer: mounted near the entry wall.
 - Clock: mounted high on the wall above or near the monitor.
 - Caution Sign: placed near the scanner, slightly in front.
+- patient: Walking around the room
 
-From the asset pack (use these exact item names when possible):
-Tomograph
-X-Ray Monitor (dual screen)
-Table
-Chair
-IV Drip
-Utility Cart
-Waste Bucket
-Sanitizer
-Clock
-Caution Sign

@@ -233,13 +233,13 @@ class GameOperator:
             return OperationResult(False, f"Error in execute_delete: {str(e)}")
 
     def execute_unity_action(self, action_dict: Dict) -> OperationResult:
-        """将一条 Unity 环境指令写入 JSON 文件，由 Unity AgentNetworkBridge 读取执行。"""  # EN: Write a Unity environment command to JSON so Unity AgentNetworkBridge can read and execute it.
+        """Write a Unity environment command to JSON so Unity AgentNetworkBridge can read and execute it."""
         try:
-            # 协议与 main.py UnityCommand 一致：action 必填，其余按需  # EN: Protocol matches main.py UnityCommand: action is required, others are optional.
+            # Protocol matches main.py UnityCommand: action is required, others are optional.
             action_name = action_dict.get("action") or action_dict.get("unity_action")
             if not action_name:
                 return OperationResult(False, "Unity action missing 'action' or 'unity_action'")
-            # 只传 UnityCommand 支持的键  # EN: Only pass keys supported by UnityCommand.
+            # Only pass keys supported by UnityCommand.
             allowed = {
                 "action", "hour", "enabled", "density", "r", "g", "b",
                 "gravityY", "scale", "objectName", "humanName",
@@ -250,7 +250,7 @@ class GameOperator:
             cmd = {k: v for k, v in action_dict.items() if k in allowed and v is not None}
             cmd["action"] = action_name
             
-            # 写入 JSON 文件到 Unity 项目的 Assets/Scripts/ 文件夹  # EN: Write JSON file into the Unity project's Assets/Scripts folder.
+            # Write JSON file into the Unity project's Assets/Scripts folder.
             project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
             unity_project = os.path.join(project_root, "firefighter project")
             scripts_dir = os.path.join(unity_project, "Assets", "Scripts")
@@ -258,7 +258,7 @@ class GameOperator:
             
             commands_file = os.path.join(scripts_dir, "unity_commands.json")
             
-            # 读取现有命令列表  # EN: Read existing command list.
+            # Read existing command list.
             commands = []
             if os.path.exists(commands_file):
                 try:
@@ -271,16 +271,16 @@ class GameOperator:
                 except (json.JSONDecodeError, IOError):
                     commands = []
             
-            # 添加新命令（带时间戳和执行状态）  # EN: Add a new command (with timestamp and execution status).
+            # Add a new command (with timestamp and execution status).
             new_command = {
-                "id": f"cmd_{int(time.time() * 1000)}_{len(commands)}",  # 唯一ID  # EN: Unique ID.
+                "id": f"cmd_{int(time.time() * 1000)}_{len(commands)}",  # Unique ID.
                 "timestamp": time.time(),
                 "executed": False,
                 **cmd
             }
             commands.append(new_command)
             
-            # 写入文件  # EN: Write to file.
+            # Write to file.
             with open(commands_file, 'w', encoding='utf-8') as f:
                 json.dump(commands, f, indent=2, ensure_ascii=False)
             
@@ -336,7 +336,7 @@ class GameOperator:
                 continue
             
             try:
-                # Unity 环境指令：直接入队，不转 GameDecision  # EN: Unity environment command: enqueue directly without converting to GameDecision.
+                # Unity environment command: enqueue directly without converting to GameDecision.
                 if action.get("action_type") == "unity":
                     print(f"Executing action {i+1}: unity -> {action.get('action') or action.get('unity_action')}")
                     result = self.execute_unity_action(action)
@@ -445,13 +445,13 @@ class GameOperator:
         if action1.get("action_type") != action2.get("action_type"):
             return False
 
-        # Unity 指令：按 action 名 + 关键参数匹配  # EN: Unity commands: match by action name plus key parameters.
+        # Unity commands: match by action name plus key parameters.
         if action1.get("action_type") == "unity":
             a1 = action1.get("action") or action1.get("unity_action")
             a2 = action2.get("action") or action2.get("unity_action")
             if a1 != a2:
                 return False
-            # 同 action 且同 objectName/humanName 或同位置视为同一条  # EN: Same action and same objectName/humanName (or same position) is treated as the same command.
+            # Same action and same objectName/humanName (or same position) is treated as the same command.
             if action1.get("objectName") or action1.get("humanName"):
                 return action1.get("objectName") == action2.get("objectName") and action1.get("humanName") == action2.get("humanName")
             return True

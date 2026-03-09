@@ -31,27 +31,7 @@ public class EnvironmentAgent : MonoBehaviour
         if (mainDirectionalLight == null)
             mainDirectionalLight = FindFirstObjectByType<Light>();
 
-        // When no human is assigned: prefer an Animator whose name contains "Human" to avoid binding XR/Camera etc.
-        if (defaultHumanModel == null)
-        {
-            Animator[] all = FindObjectsByType<Animator>(FindObjectsSortMode.None);
-            Animator chosen = null;
-            foreach (Animator a in all)
-            {
-                if (a.gameObject.name.IndexOf("Human", System.StringComparison.OrdinalIgnoreCase) >= 0)
-                {
-                    chosen = a;
-                    break;
-                }
-            }
-            if (chosen == null && all.Length > 0)
-                chosen = all[0];
-            if (chosen != null)
-            {
-                defaultHumanModel = chosen.gameObject;
-                Debug.Log($"EnvironmentAgent: auto-bound human = {defaultHumanModel.name}");
-            }
-        }
+        AutoBindDefaultHumanIfNeeded();
     }
 
     // ========== Object placement (same as Chair/Table; all loaded from Resources/Prefabs/) ==========
@@ -124,6 +104,12 @@ public class EnvironmentAgent : MonoBehaviour
             GameObject spawned = Instantiate(prefab, position, Quaternion.Euler(0, rotationY, 0));
             SnapToFloor(spawned);
             defaultHumanModel = spawned;
+            // Ensure only the main Animator drives the humanoid rig (remove extra Animators on clothing, etc.)
+            Animator mainAnim = FindPrimaryAnimator(spawned);
+            if (mainAnim != null)
+            {
+                HardCleanupHumanRig(spawned, mainAnim);
+            }
             Debug.Log($"AI Agent placed human: {humanName} at {position} (set as default human)");
         }
         else
@@ -202,10 +188,11 @@ public class EnvironmentAgent : MonoBehaviour
     // Usage: human must have an Animator; for upper/lower body blend, attach SpineProxy on B-spineProxy.
 
     /// <summary>Get the human GameObject used for animation (prefer the passed-in one, else Inspector-assigned defaultHumanModel).</summary>
-    static GameObject GetHumanTarget(GameObject human, GameObject defaultHuman)
+    GameObject GetHumanTarget(GameObject human)
     {
         if (human != null) return human;
-        return defaultHuman;
+        AutoBindDefaultHumanIfNeeded();
+        return defaultHumanModel;
     }
 
     /// <summary>Find Animator on the human itself, its children, or parent (Kevin Iglesias human sometimes has Animator on child or parent).</summary>
@@ -218,14 +205,257 @@ public class EnvironmentAgent : MonoBehaviour
         if (a != null) return a;
         return target.GetComponentInParent<Animator>();
     }
+
+    static Animator FindPrimaryAnimator(GameObject root)
+    {
+        if (root == null) return null;
+        var animators = root.GetComponentsInChildren<Animator>(true);
+        if (animators == null || animators.Length == 0) return null;
+        if (animators.Length == 1) return animators[0];
+
+        // Prefer an Animator that sits on the main humanoid bone hierarchy.
+        var humanoidAnimator = FindAnimatorFromHumanoidBones(root);
+        if (humanoidAnimator != null) return humanoidAnimator;
+
+        // Prefer the Animator that drives the "Body" mesh (if present).
+        var bodyRenderer = FindBodySkinnedMesh(root);
+        if (bodyRenderer != null)
+        {
+            var bodyAnimator = bodyRenderer.GetComponentInParent<Animator>(true);
+            if (bodyAnimator != null) return bodyAnimator;
+        }
+
+        Animator best = null;
+        int bestScore = int.MinValue;
+        foreach (var anim in animators)
+        {
+            if (anim == null) continue;
+            int score = 0;
+
+            // Prefer animators closer to the root.
+            score -= GetDepth(anim.transform);
+
+            // Prefer animators that have an Avatar assigned.
+            if (anim.avatar != null) score += 100;
+            if (anim.avatar != null && anim.avatar.isHuman) score += 100;
+
+            // Prefer animators that drive more skinned meshes.
+            int meshCount = anim.GetComponentsInChildren<SkinnedMeshRenderer>(true).Length;
+            score += meshCount * 10;
+
+            // Prefer animators with more child bones.
+            int boneCount = anim.transform.GetComponentsInChildren<Transform>(true).Length;
+            score += boneCount / 10;
+
+            if (score > bestScore)
+            {
+                bestScore = score;
+                best = anim;
+            }
+        }
+        return best;
+    }
+
+    static Animator FindAnimatorFromHumanoidBones(GameObject root)
+    {
+        var bones = root.GetComponentsInChildren<Transform>(true);
+        string[] keyBones = { "Hips", "Pelvis", "Spine", "Root", "B-root" };
+        Animator best = null;
+        int bestScore = int.MinValue;
+
+        foreach (var t in bones)
+        {
+            if (t == null) continue;
+            bool isKeyBone = false;
+            for (int i = 0; i < keyBones.Length; i++)
+            {
+                if (t.name.IndexOf(keyBones[i], System.StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    isKeyBone = true;
+                    break;
+                }
+            }
+            if (!isKeyBone) continue;
+
+            var anim = t.GetComponentInParent<Animator>(true);
+            if (anim == null) continue;
+
+            int score = 0;
+            score -= GetDepth(anim.transform);
+            if (anim.avatar != null) score += 100;
+            if (anim.avatar != null && anim.avatar.isHuman) score += 100;
+            score += anim.transform.GetComponentsInChildren<Transform>(true).Length / 10;
+
+            if (score > bestScore)
+            {
+                bestScore = score;
+                best = anim;
+            }
+        }
+        return best;
+    }
+
+    static SkinnedMeshRenderer FindBodySkinnedMesh(GameObject root)
+    {
+        var renderers = root.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+        foreach (var r in renderers)
+        {
+            if (r == null) continue;
+            var name = r.name;
+            if (name.IndexOf("body", System.StringComparison.OrdinalIgnoreCase) >= 0)
+                return r;
+        }
+        return null;
+    }
+
+    static void RebindSkinnedMeshesToAnimator(GameObject root, Animator anim)
+    {
+        if (root == null || anim == null) return;
+        var boneMap = new System.Collections.Generic.Dictionary<string, Transform>(System.StringComparer.OrdinalIgnoreCase);
+        foreach (var t in anim.GetComponentsInChildren<Transform>(true))
+        {
+            if (!boneMap.ContainsKey(t.name))
+                boneMap[t.name] = t;
+        }
+
+        var renderers = root.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+        foreach (var r in renderers)
+        {
+            if (r == null) continue;
+
+            // If already bound to the animator hierarchy, skip.
+            if (r.rootBone != null && r.rootBone.IsChildOf(anim.transform))
+                continue;
+
+            var newBones = new Transform[r.bones.Length];
+            bool anyMissing = false;
+            for (int i = 0; i < r.bones.Length; i++)
+            {
+                var b = r.bones[i];
+                if (b != null && boneMap.TryGetValue(b.name, out var mapped))
+                    newBones[i] = mapped;
+                else
+                    anyMissing = true;
+            }
+
+            if (anyMissing)
+                continue;
+
+            r.bones = newBones;
+
+            if (r.rootBone != null && boneMap.TryGetValue(r.rootBone.name, out var mappedRoot))
+                r.rootBone = mappedRoot;
+            else if (boneMap.TryGetValue("Hips", out var hips))
+                r.rootBone = hips;
+            else if (boneMap.TryGetValue("Root", out var rootBone))
+                r.rootBone = rootBone;
+        }
+    }
+
+    static void HardCleanupHumanRig(GameObject root, Animator anim)
+    {
+        if (root == null || anim == null) return;
+        RemoveChildAnimators(root, anim);
+        RebindSkinnedMeshesToAnimator(root, anim);
+
+        // Force all skinned meshes to use the same Animator GameObject for update.
+        var renderers = root.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+        foreach (var r in renderers)
+        {
+            if (r == null) continue;
+            r.updateWhenOffscreen = true;
+            r.forceMatrixRecalculationPerRender = true;
+        }
+
+        Debug.Log($"[HumanRig] Hard cleanup applied to {root.name}, using Animator {anim.name}");
+    }
+
+    static int GetDepth(Transform t)
+    {
+        int depth = 0;
+        while (t != null && t.parent != null)
+        {
+            depth++;
+            t = t.parent;
+        }
+        return depth;
+    }
+
+    static void RemoveChildAnimators(GameObject root, Animator keep)
+    {
+        if (root == null || keep == null) return;
+        var animators = root.GetComponentsInChildren<Animator>(true);
+        foreach (var anim in animators)
+        {
+            if (anim == keep) continue;
+            Destroy(anim);
+        }
+    }
+
+    void AutoBindDefaultHumanIfNeeded()
+    {
+        if (defaultHumanModel != null && GetHumanAnimator(defaultHumanModel) != null)
+            return;
+
+        // Choose the best Animator in the scene (avoid accessories like hats/shoes).
+        Animator[] all = FindObjectsByType<Animator>(FindObjectsSortMode.None);
+        Animator chosen = ChooseBestSceneAnimator(all);
+        if (chosen != null)
+        {
+            defaultHumanModel = chosen.gameObject;
+            Debug.Log($"EnvironmentAgent: auto-bound human = {defaultHumanModel.name}");
+        }
+    }
+
+    static Animator ChooseBestSceneAnimator(Animator[] animators)
+    {
+        if (animators == null || animators.Length == 0) return null;
+        Animator best = null;
+        int bestScore = int.MinValue;
+
+        foreach (var a in animators)
+        {
+            if (a == null) continue;
+            int score = 0;
+
+            string name = a.gameObject.name;
+            if (name.IndexOf("human", System.StringComparison.OrdinalIgnoreCase) >= 0) score += 50;
+            if (name.IndexOf("doctor", System.StringComparison.OrdinalIgnoreCase) >= 0) score += 50;
+
+            // Penalize accessories.
+            if (name.IndexOf("hat", System.StringComparison.OrdinalIgnoreCase) >= 0) score -= 200;
+            if (name.IndexOf("shoe", System.StringComparison.OrdinalIgnoreCase) >= 0) score -= 200;
+            if (name.IndexOf("pants", System.StringComparison.OrdinalIgnoreCase) >= 0) score -= 150;
+            if (name.IndexOf("shirt", System.StringComparison.OrdinalIgnoreCase) >= 0) score -= 150;
+
+            if (a.avatar != null) score += 100;
+            if (a.avatar != null && a.avatar.isHuman) score += 100;
+
+            // Prefer animators that drive more skinned meshes (full body beats accessory).
+            int meshCount = a.GetComponentsInChildren<SkinnedMeshRenderer>(true).Length;
+            score += meshCount * 20;
+
+            // Prefer animators with deeper bone hierarchies.
+            int boneCount = a.transform.GetComponentsInChildren<Transform>(true).Length;
+            score += boneCount / 10;
+
+            if (score > bestScore)
+            {
+                bestScore = score;
+                best = a;
+            }
+        }
+        return best;
+    }
     /// <summary>Called by Agent: switch the human's Animator Controller. controllerPath is path under Resources, e.g. "AnimatorControllers/HumanM@Walk01_Forward" (place Kevin Iglesias .controller under Resources/AnimatorControllers/).</summary>
     public void SetHumanAnimationController(GameObject human, string controllerPathInResources)
     {
-        GameObject target = GetHumanTarget(human, defaultHumanModel);
+        GameObject target = GetHumanTarget(human);
         if (target == null) { Debug.LogWarning("EnvironmentAgent: no human model assigned."); return; }
 
-        Animator anim = GetHumanAnimator(target);
+        Animator anim = FindPrimaryAnimator(target);
         if (anim == null) { Debug.LogWarning("EnvironmentAgent: human model has no Animator."); return; }
+        HardCleanupHumanRig(target, anim);
 
         RuntimeAnimatorController ctrl = LoadAnimatorControllerByName(controllerPathInResources);
         if (ctrl == null) { Debug.LogError($"EnvironmentAgent: AnimatorController not found at Resources/{controllerPathInResources}"); return; }
@@ -237,11 +467,12 @@ public class EnvironmentAgent : MonoBehaviour
     /// <summary>Called by Agent: play the given animation state (state name inside current Controller), e.g. "HumanM@Walk01_Forward". crossFadeTime is blend duration.</summary>
     public void PlayHumanAnimation(GameObject human, string stateName, float crossFadeTime = 0.25f)
     {
-        GameObject target = GetHumanTarget(human, defaultHumanModel);
+        GameObject target = GetHumanTarget(human);
         if (target == null) { Debug.LogWarning("EnvironmentAgent: no human model assigned."); return; }
 
-        Animator anim = GetHumanAnimator(target);
+        Animator anim = FindPrimaryAnimator(target);
         if (anim == null) { Debug.LogWarning("EnvironmentAgent: human model has no Animator."); return; }
+        HardCleanupHumanRig(target, anim);
 
         if (anim.runtimeAnimatorController == null)
         {
@@ -261,11 +492,12 @@ public class EnvironmentAgent : MonoBehaviour
     /// </summary>
     public void PlayHumanAnimationFromResources(GameObject human, string controllerPathInResources, string stateName, float crossFadeTime = 0.25f)
     {
-        GameObject target = GetHumanTarget(human, defaultHumanModel);
+        GameObject target = GetHumanTarget(human);
         if (target == null) { Debug.LogWarning("EnvironmentAgent: no human model assigned."); return; }
 
-        Animator anim = GetHumanAnimator(target);
+        Animator anim = FindPrimaryAnimator(target);
         if (anim == null) { Debug.LogWarning("EnvironmentAgent: human model has no Animator."); return; }
+        HardCleanupHumanRig(target, anim);
 
         if (anim.runtimeAnimatorController == null)
         {
@@ -282,10 +514,67 @@ public class EnvironmentAgent : MonoBehaviour
         Debug.Log($"Agent: human playing state '{stateName}' (controller ensured: {controllerPathInResources})");
     }
 
+    [ContextMenu("Debug Human Rig (Default)")]
+    void DebugHumanRigDefault()
+    {
+        DebugHumanRig(null);
+    }
+
+    /// <summary>Log animators and skinned mesh bindings for the current/default human.</summary>
+    public void DebugHumanRig(GameObject human)
+    {
+        GameObject target = GetHumanTarget(human);
+        if (target == null)
+        {
+            Debug.LogWarning("EnvironmentAgent: no human model assigned.");
+            return;
+        }
+
+        Debug.Log($"[HumanRig] Target = {target.name}");
+
+        var animators = target.GetComponentsInChildren<Animator>(true);
+        Debug.Log($"[HumanRig] Animators: {animators.Length}");
+        foreach (var a in animators)
+        {
+            if (a == null) continue;
+            string avatar = a.avatar != null ? a.avatar.name : "None";
+            string isHuman = (a.avatar != null && a.avatar.isHuman) ? "Human" : "Generic/None";
+            Debug.Log($"[HumanRig] Animator: {a.name} | Avatar: {avatar} ({isHuman}) | Path: {GetHierarchyPath(a.transform)}");
+        }
+
+        var renderers = target.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+        Debug.Log($"[HumanRig] SkinnedMeshRenderers: {renderers.Length}");
+        foreach (var r in renderers)
+        {
+            if (r == null) continue;
+            string rootBone = r.rootBone != null ? r.rootBone.name : "None";
+            string rootPath = r.rootBone != null ? GetHierarchyPath(r.rootBone) : "None";
+            Debug.Log($"[HumanRig] Mesh: {r.name} | RootBone: {rootBone} | RootPath: {rootPath} | Bones: {r.bones.Length}");
+            for (int i = 0; i < Mathf.Min(5, r.bones.Length); i++)
+            {
+                var b = r.bones[i];
+                Debug.Log($"[HumanRig]   Bone[{i}]: {(b != null ? b.name : "None")}");
+            }
+        }
+    }
+
+    static string GetHierarchyPath(Transform t)
+    {
+        if (t == null) return "None";
+        var path = t.name;
+        var current = t.parent;
+        while (current != null)
+        {
+            path = current.name + "/" + path;
+            current = current.parent;
+        }
+        return path;
+    }
+
     /// <summary>Set an Animator Float parameter (e.g. Speed).</summary>
     public void SetHumanAnimatorFloat(GameObject human, string paramName, float value)
     {
-        GameObject target = GetHumanTarget(human, defaultHumanModel);
+        GameObject target = GetHumanTarget(human);
         if (target == null) return;
         Animator anim = GetHumanAnimator(target);
         if (anim != null) anim.SetFloat(paramName, value);
@@ -294,7 +583,7 @@ public class EnvironmentAgent : MonoBehaviour
     /// <summary>Set an Animator Bool parameter.</summary>
     public void SetHumanAnimatorBool(GameObject human, string paramName, bool value)
     {
-        GameObject target = GetHumanTarget(human, defaultHumanModel);
+        GameObject target = GetHumanTarget(human);
         if (target == null) return;
         Animator anim = GetHumanAnimator(target);
         if (anim != null) anim.SetBool(paramName, value);
@@ -303,7 +592,7 @@ public class EnvironmentAgent : MonoBehaviour
     /// <summary>Trigger an Animator Trigger parameter.</summary>
     public void SetHumanAnimatorTrigger(GameObject human, string paramName)
     {
-        GameObject target = GetHumanTarget(human, defaultHumanModel);
+        GameObject target = GetHumanTarget(human);
         if (target == null) return;
         Animator anim = GetHumanAnimator(target);
         if (anim != null) anim.SetTrigger(paramName);

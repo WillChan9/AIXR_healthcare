@@ -367,7 +367,14 @@ public class AgentNetworkBridge : MonoBehaviour
 
             case "PlaceObject":
                 var pos = new Vector3(cmd.x, cmd.y, cmd.z);
-                environmentAgent.PlaceObject(cmd.objectName, pos, cmd.rotationY);
+                if (TryGetFullCharacterName(cmd.objectName, out var fullHumanName))
+                {
+                    environmentAgent.PlaceHuman(fullHumanName, pos, cmd.rotationY);
+                }
+                else
+                {
+                    environmentAgent.PlaceObject(cmd.objectName, pos, cmd.rotationY);
+                }
                 break;
 
             case "CreateObjectByName":
@@ -417,6 +424,39 @@ public class AgentNetworkBridge : MonoBehaviour
                 Debug.LogWarning("AgentNetworkBridge: Unknown command action = " + cmd.action);
                 break;
         }
+    }
+
+    private static bool TryGetFullCharacterName(string name, out string fullName)
+    {
+        fullName = null;
+        if (string.IsNullOrEmpty(name)) return false;
+
+        string lower = name.ToLowerInvariant();
+        string[] prefixes = { "doctor_", "nurse_", "emt_", "patient_", "surgeon_", "infectiologist_" };
+        bool hasPrefix = false;
+        foreach (var p in prefixes)
+        {
+            if (lower.StartsWith(p))
+            {
+                hasPrefix = true;
+                break;
+            }
+        }
+        if (!hasPrefix) return false;
+
+        string[] parts = { "_body", "_face", "_coat", "_hat", "_pants", "_shoes", "_sneakers", "_hair", "_mask", "_gloves", "_slippers", "_suit", "_shirt", "_beard", "_glasses" };
+        foreach (var part in parts)
+        {
+            if (lower.EndsWith(part))
+            {
+                fullName = name.Substring(0, name.Length - part.Length);
+                return true;
+            }
+        }
+
+        // Name already looks like a full character prefab (e.g., Doctor_01)
+        fullName = name;
+        return true;
     }
 }
 

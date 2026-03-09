@@ -1,116 +1,104 @@
-# Kevin Iglesias Human Animations — 文件夹与文件对应说明
+# Kevin Iglesias Human Animations - Folder and File Mapping
 
-本资源包在项目中的路径：`Assets/Kevin Iglesias/Human Animations/`。下面列出各子文件夹用途，以及和 EnvironmentAgent（Resources）的对应关系。
+Project path: `Assets/Kevin Iglesias/Human Animations/`.
+This document lists what each folder is for and how it maps to EnvironmentAgent usage (Resources).
 
----
+## 1. Overview: Folder Purpose
 
-## 一、总览：各文件夹用途
+| Folder | Purpose | How to use in EnvironmentAgent |
+|---|---|---|
+| **Models** | Humanoid skeleton models (FBX) | Use to build human prefabs, then place under `Resources/Prefabs/` |
+| **Animations** | Animation clips (.fbx) | Referenced by controllers; usually no manual drag needed |
+| **Unity Demo Scenes / AnimatorControllers** | Animator controllers (.controller) | Copy into `Resources/AnimatorControllers/`, then call `SetHumanAnimationController(null, "AnimatorControllers/xxx")` |
+| **Scripts** | SpineProxy and related scripts | Attach SpineProxy to B-spineProxy for upper/lower body blending |
+| **Materials** | Materials | Used for human meshes |
+| **Textures** | Textures | Used for human meshes |
 
-| 文件夹 | 用途 | EnvironmentAgent 里怎么用 |
-|--------|------|---------------------------|
-| **Models** | 人形骨骼模型（FBX） | 用来做人形预制体 → 放到 `Resources/Prefabs/` |
-| **Animations** | 动画片段（.fbx） | 已被 Controller 引用，一般不用手动拖 |
-| **Unity Demo Scenes / AnimatorControllers** | 动画控制器（.controller） | 复制到 `Resources/AnimatorControllers/` 后，用 `SetHumanAnimationController(null, "AnimatorControllers/xxx")` |
-| **Scripts** | SpineProxy 等脚本 | 给人形 B-spineProxy 挂 SpineProxy.cs（上下半身混合时用） |
-| **Materials** | 材质 | 给人形贴图用 |
-| **Textures** | 贴图 | 同上 |
+## 2. Human Models (for prefabs)
 
----
+Path: `Assets/Kevin Iglesias/Human Animations/Models/`
 
-## 二、人形模型（做预制体用）
+| File | Notes |
+|---|---|
+| **HumanM_Model.fbx** | Male humanoid model (rigged) |
+| **HumanF_Model.fbx** | Female humanoid model (rigged) |
+| **Avatar Masks/** | Upper-body/arm masks for layered animation |
 
-路径：`Assets/Kevin Iglesias/Human Animations/Models/`
+**EnvironmentAgent mapping:**
+Use `HumanM_Model` or `HumanF_Model` in a scene, add an Animator + Controller, then make a prefab and place it under `Resources/Prefabs/`.
+Example prefab name: `HumanM_Idle01`. In code: `PlaceHuman("HumanM_Idle01", position, rotation)`.
 
-| 文件 | 说明 |
-|------|------|
-| **HumanM_Model.fbx** | 男性人形模型（骨骼+蒙皮） |
-| **HumanF_Model.fbx** | 女性人形模型（骨骼+蒙皮） |
-| **Avatar Masks/** | 上半身/手臂等遮罩，做分层动画时用 |
+## 3. Animator Controllers (.controller) to copy into Resources
 
-**对应到 EnvironmentAgent**：用 `HumanM_Model` 或 `HumanF_Model` 在场景里做人形，挂 Animator + 指定一个 Controller，再拖成预制体放到 `Resources/Prefabs/`，名字如 `HumanM_Idle01`，代码里用 `PlaceHuman("HumanM_Idle01", position, rotation)`。
+Path: `Assets/Kevin Iglesias/Human Animations/Unity Demo Scenes/Human Basic Motions/AnimatorControllers/`
 
----
+### Male (HumanM@...)
 
-## 三、动画控制器（.controller）— 要复制到 Resources 的
+| Controller name | Action |
+|---|---|
+| HumanM@Idles | Idle (multiple idle states) |
+| HumanM@Walk01_Forward / _Backward / _Left / _Right / _ForwardLeft / _ForwardRight / _BackwardLeft / _BackwardRight | 8-direction walk |
+| HumanM@Run01_Forward / _Backward / _Left / _Right / ... | 8-direction run |
+| HumanM@Sprint01_Forward / _Left / _Right / ... | Sprint |
+| HumanM@Turn01_Left [RM] / HumanM@Turn01_Right [RM] | In-place turn (root motion) |
+| HumanM@Jump01 [RM] | Jump (root motion) |
+| HumanM@Fall01 | Fall |
+| HumanM@Talking | Talk |
+| HumanM@MaskedWalking | Walk + upper-body actions (wave, question, etc.) |
 
-路径：`Assets/Kevin Iglesias/Human Animations/Unity Demo Scenes/Human Basic Motions/AnimatorControllers/`
+### Female (HumanF@...)
 
-### 男性（HumanM@...）
+| Controller name | Action |
+|---|---|
+| HumanF@Walk01_Forward / _ForwardLeft / _ForwardRight / _Left / _Right / ... | Multi-direction walk |
+| HumanF@Jump01 [RM] | Jump (root motion) |
+| Other actions follow the same pattern as the male controllers (F prefix) |
 
-| .controller 文件名 | 动作 |
-|-------------------|------|
-| HumanM@Idles | 待机（多个 Idle 切换） |
-| HumanM@Walk01_Forward / _Backward / _Left / _Right / _ForwardLeft / _ForwardRight / _BackwardLeft / _BackwardRight | 走路 8 方向 |
-| HumanM@Run01_Forward / _Backward / _Left / _Right / ... | 跑步 8 方向 |
-| HumanM@Sprint01_Forward / _Left / _Right / ... | 冲刺 |
-| HumanM@Turn01_Left [RM] / HumanM@Turn01_Right [RM] | 原地转向（Root Motion） |
-| HumanM@Jump01 [RM] | 跳跃（Root Motion） |
-| HumanM@Fall01 | 倒地 |
-| HumanM@Talking | 说话 |
-| HumanM@MaskedWalking | 走路 + 上半身多种动作（挥手、疑问等） |
+**EnvironmentAgent mapping:**
+Copy the needed `.controller` files into `Assets/Resources/AnimatorControllers/`, then call:
+`SetHumanAnimationController(null, "AnimatorControllers/HumanM@Walk01_Forward")`
 
-### 女性（HumanF@...）
+Paths are relative to `Resources` and should not include file extensions.
 
-| .controller 文件名 | 动作 |
-|-------------------|------|
-| HumanF@Walk01_Forward / _ForwardLeft / _ForwardRight / _Left / _Right / ... | 走路多方向 |
-| HumanF@Jump01 [RM] | 跳跃（Root Motion） |
-| （其他与 Male 类似，按 F 前缀） |
+## 4. Animation Clips (.fbx)
 
-**对应到 EnvironmentAgent**：把需要的 .controller **复制**到 `Assets/Resources/AnimatorControllers/`，代码里用：  
-`SetHumanAnimationController(null, "AnimatorControllers/HumanM@Walk01_Forward")`  
-（路径不要写扩展名，且相对 Resources 根目录。）
+Path: `Assets/Kevin Iglesias/Human Animations/Animations/`
 
----
+### Male
+- `Movement/Walk/` - HumanM@Walk01_Forward.fbx and others; `RootMotion/` contains [RM] variants
+- `Movement/Run/` - run clips; `RootMotion/` contains [RM] variants
+- `Movement/Sprint/` - sprint clips; `RootMotion/` contains [RM] variants
+- `Movement/Turn/` - HumanM@Turn01_Left.fbx / Right; [RM] variants
+- `Movement/Jump/` - HumanM@Jump01.fbx, Begin, Land, and [RM] versions
 
-## 四、动画片段（.fbx）— 被 Controller 引用，通常不用单独拖
+### Female
+- Structure is similar: `Animations/Female/` with Idles, Movement/Walk, Run, Sprint, Turn, Jump, Social, etc.
 
-路径：`Assets/Kevin Iglesias/Human Animations/Animations/`
+These `.fbx` clips are referenced by the controllers listed above. Usually you only need to copy the controllers into `Resources`.
 
-### Male（男性）
+## 5. Scripts
 
-- **Idles/** — HumanM@Idle01.fbx, HumanM@Idle02.fbx, ...
-- **Movement/Walk/** — HumanM@Walk01_Forward.fbx 等；子文件夹 **RootMotion/** 里是带 [RM] 的走路
-- **Movement/Run/** — 跑步；**RootMotion/** 里是带 [RM] 的跑步
-- **Movement/Sprint/** — 冲刺；**RootMotion/** 同上
-- **Movement/Turn/** — HumanM@Turn01_Left.fbx / Right，带 [RM] 的转向
-- **Movement/Jump/** — HumanM@Jump01.fbx、Begin、Land、以及 [RM] 版本
-- **Social/Conversation/** — HumanM@Talk01.fbx
+Path: `Assets/Kevin Iglesias/Human Animations/Scripts/`
 
-### Female（女性）
+| File | Use |
+|---|---|
+| **SpineProxy.cs** | Attach to **B-spineProxy** on the humanoid rig for layered upper/lower body animation (e.g., MaskedWalking) |
 
-- 结构类似：`Animations/Female/` 下 Idles、Movement/Walk、Run、Sprint、Turn、Jump、Social 等。
+**EnvironmentAgent mapping:**
+If using controllers with separate upper-body actions (e.g., HumanM@MaskedWalking), find B-spineProxy, attach SpineProxy, and assign B-spine as Original Spine.
 
-这些 .fbx 已经被上面列出的 .controller 引用，你只要把 .controller 复制到 Resources 即可，无需单独复制 .fbx。
+## 6. Summary mapping to EnvironmentAgent
 
----
+1. **Human prefabs**
+   - Source: `Models/HumanM_Model.fbx` or `HumanF_Model.fbx` (add Animator + Controller, then prefab)
+   - Target: `Resources/Prefabs/` (e.g., `HumanM_Idle01.prefab`)
+   - Code: `PlaceHuman("HumanM_Idle01", position, rotation)`
 
-## 五、脚本
+2. **Animator controllers**
+   - Source: `Unity Demo Scenes/Human Basic Motions/AnimatorControllers/*.controller`
+   - Target: `Resources/AnimatorControllers/`
+   - Code: `SetHumanAnimationController(null, "AnimatorControllers/HumanM@Walk01_Forward")`
 
-路径：`Assets/Kevin Iglesias/Human Animations/Scripts/`
-
-| 文件 | 用途 |
-|------|------|
-| **SpineProxy.cs** | 挂在人形的 **B-spineProxy** 骨骼上，配合 Avatar Mask 做上下半身分层动画（如 MaskedWalking）时用 |
-
-**对应到 EnvironmentAgent**：若使用带“上半身单独动作”的 Controller（如 HumanM@MaskedWalking），需在人形骨骼里找到 B-spineProxy，挂 SpineProxy，并把 B-spine 赋给 Original Spine。
-
----
-
-## 六、和 EnvironmentAgent 的对应小结
-
-1. **人形预制体**  
-   - 来源：`Models/HumanM_Model.fbx` 或 `HumanF_Model.fbx`（在场景里加 Animator + Controller 后做成 Prefab）。  
-   - 目标：放到 `Resources/Prefabs/`，例如 `HumanM_Idle01.prefab`。  
-   - 代码：`PlaceHuman("HumanM_Idle01", position, rotation)`。
-
-2. **动画控制器**  
-   - 来源：`Unity Demo Scenes/Human Basic Motions/AnimatorControllers/*.controller`。  
-   - 目标：复制到 `Resources/AnimatorControllers/`。  
-   - 代码：`SetHumanAnimationController(null, "AnimatorControllers/HumanM@Walk01_Forward")` 等。
-
-3. **SpineProxy**  
-   - 来源：`Scripts/SpineProxy.cs`。  
-   - 使用：挂到人形骨骼的 B-spineProxy 上（做上下半身混合时）。
-
-按上表在 Kevin Iglesias 文件夹下找对应文件即可。
+3. **SpineProxy**
+   - Source: `Scripts/SpineProxy.cs`
+   - Use: Attach to B-spineProxy for layered upper/lower body animation

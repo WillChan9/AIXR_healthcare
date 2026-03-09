@@ -35,6 +35,12 @@ def _build_prefab_lookup(prefabs: List[str]) -> Dict[str, str]:
 def _resolve_prefab_name(name: Optional[str], prefabs: List[str], lookup: Dict[str, str]) -> Optional[str]:
     if not name:
         return None
+    # If a character part is referenced (e.g., Doctor_01_Body), prefer the full character prefab (Doctor_01).
+    full_name = _to_full_character_name(name)
+    if full_name:
+        norm_full = _normalize_name(full_name)
+        if norm_full in lookup:
+            return lookup[norm_full]
     norm = _normalize_name(name)
     if norm in lookup:
         return lookup[norm]
@@ -46,6 +52,27 @@ def _resolve_prefab_name(name: Optional[str], prefabs: List[str], lookup: Dict[s
         # Choose closest length match
         matches.sort(key=lambda p: (abs(len(_normalize_name(p)) - len(norm)), len(p)))
         return matches[0]
+    return None
+
+
+def _to_full_character_name(name: str) -> Optional[str]:
+    if not name:
+        return None
+    # Map character parts to full character prefab: Doctor_01_Body -> Doctor_01
+    parts = [
+        "body", "face", "coat", "hat", "pants", "shoes", "sneakers", "hair",
+        "mask", "gloves", "slippers", "suit", "shirt", "beard", "glasses"
+    ]
+    prefixes = [
+        "doctor_", "nurse_", "emt_", "patient_", "surgeon_", "infectiologist_"
+    ]
+    lower = name.lower()
+    if not any(lower.startswith(p) for p in prefixes):
+        return None
+    for part in parts:
+        if lower.endswith("_" + part):
+            base = name[: -(len(part) + 1)]
+            return base
     return None
 
 
@@ -90,6 +117,16 @@ def _fix_prefab_names(commands: List[Dict], prefabs: List[str]) -> List[Dict]:
                 cmd["action"] = "CreateObjectByName"
                 cmd.pop("humanName", None)
                 cmd["objectName"] = "Capsule"
+        # If a character part slipped in as PlaceObject, convert to PlaceHuman using the full character prefab.
+        if cmd.get("action") == "PlaceObject":
+            obj_name = cmd.get("objectName")
+            full_name = _to_full_character_name(obj_name or "")
+            if full_name:
+                resolved = _resolve_prefab_name(full_name, prefabs, lookup)
+                if resolved:
+                    cmd["action"] = "PlaceHuman"
+                    cmd["humanName"] = resolved
+                    cmd.pop("objectName", None)
     return commands
 
 
@@ -321,8 +358,6 @@ def main():
 
     prefabs = _load_prefab_names(resources_dir)
     animators = _load_animator_names(resources_dir)
-    prefabs_preview = prefabs[:200]
-    animators_preview = animators[:200]
 
     system = (
         "You are a Unity environment planner. Return ONLY a JSON array of commands. "
@@ -334,8 +369,8 @@ def main():
 
     user = {
         "description": description,
-        "available_prefabs": prefabs_preview,
-        "available_animators": animators_preview,
+        "available_prefabs": prefabs,
+        "available_animators": animators,
         "rules": {
             "keep_compact": "Keep objects within x in [-3,3], z in [1,6].",
             "center_object": "Place primary equipment (e.g., Tomograph/CT scanner) near (0,0,2).",
@@ -387,8 +422,10 @@ def main():
                 last_error = e
                 commands = None
 
-    if not commands:
-        raise ValueError(f"Failed to parse valid commands after 3 attempts: {last_error}")
+        if not commands:
+            print(f"Failed to parse valid commands after 3 attempts: {last_error}")
+            time.sleep(1.0)
+            continue
 
     # Add ids/timestamps/executed if missing
     for i, cmd in enumerate(commands):
@@ -400,6 +437,8 @@ def main():
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(commands, indent=2), encoding="utf-8")
     print(f"Wrote {len(commands)} commands to {out_path}")
+
+    time.sleep(1.0)
 
 
 if __name__ == "__main__":

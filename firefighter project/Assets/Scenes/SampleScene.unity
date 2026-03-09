@@ -1335,8 +1335,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainDirectionalLight: {fileID: 0}
-  defaultHumanModel: {fileID: 919132149155446097, guid: da2ed2e1aae1da34684fe894590efa54,
-    type: 3}
+  defaultHumanModel: {fileID: 0}
   ithappyFurniturePrefab: {fileID: 0}
   ithappyPropPrefab: {fileID: 0}
   ithappyCharacterPrefab: {fileID: 0}

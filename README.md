@@ -21,15 +21,12 @@ The Unity project lives in the `firefighter project` directory and can be opened
 
 ### Prerequisites
 
-🛠 **Prerequisites**
-
 Before starting, ensure you have the following installed:
 
 - **Unity Hub & Unity 6** (Recommended: 2022.3.42 LTS).
 - **Meta Quest Link App** (for PCVR testing).
-- **Cursor IDE** (highly recommended for AI-assisted development).
 - **Android Build Support** (installed via Unity Hub).
-- **Optional – Agent tools**: If the `Agent` folder contains Python or other tooling, install the corresponding runtime and dependencies (for example, Python 3.x and a `requirements.txt`, if present).
+- **Optional - Agent tools**: If the `Agent` folder contains Python or other tooling, install the corresponding runtime and dependencies (for example, Python 3.x and a `requirements.txt`, if present).
 
 ### How to run the Unity firefighter project
 
@@ -45,7 +42,7 @@ Before starting, ensure you have the following installed:
   - Press the **Play** button in the Unity toolbar to start the simulation.
   - Use any in-game controls defined by the project (e.g. keyboard/mouse) to interact with the environment.
 4. **Build a standalone player (optional)**
-  - Go to **File → Build Settings...** in Unity.
+  - Go to **File -> Build Settings...** in Unity.
   - Add the main scene(s) to the **Scenes In Build** list.
   - Choose your target platform (e.g. Windows).
   - Click **Build** and choose an output folder (commonly `Build/` or `Builds/`).
@@ -62,6 +59,40 @@ Typical patterns include:
 - Data processing or utility tools related to simulation runs.
 
 Because the exact contents of `Agent` may change, please refer to any `README`, `requirements.txt`, or entry-point scripts inside `Agent` for detailed usage instructions. If no such documentation exists yet, you can document each tool there as you add it.
+
+### How to run the agent workflow (file-based commands)
+
+The current Unity integration uses **file-based commands**: the Python agent writes commands to `firefighter project/Assets/Scripts/unity_commands.json`, and the Unity `AgentNetworkBridge` reads and executes them in Play Mode.
+
+1. **Set up Python dependencies**
+   Create and activate a virtual environment, then install dependencies:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r Agent\requirements.txt
+pip install groq python-dotenv
+```
+
+2. **Set your Groq API key (only if using Groq-based scripts)**
+   Create a `.env` file at the repo root with:
+
+```env
+GROQ_API_KEY=your_key_here
+```
+
+3. **Run the Unity scene**
+   Open the Unity project, load the scene that contains `AI_Manager` with `AgentNetworkBridge`, and press **Play**. Ensure `AgentNetworkBridge.useFileCommands` is `true` (default).
+
+4. **Generate commands from the agent**
+   You can use either of these:
+
+```powershell
+python Agent\groq_static_test.py
+```
+
+5. **Iterate**
+   Edit `Agent/api_files/experience.txt`, re-run the script, and Unity will execute the new commands. The Unity bridge marks commands as executed inside `unity_commands.json`, so re-run the generator when you want a fresh batch.
 
 ### Git workflow
 
