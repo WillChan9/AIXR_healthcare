@@ -1,4 +1,4 @@
-# Unity 生成的大文件夹
+# Unity
 [Ll]ibrary/
 [Tt]emp/
 [Oo]bj/
@@ -17,10 +17,8 @@
 *.user
 *.unityproj
 
-# 操作系统杂项
 .DS_Store
 Thumbs.db
 
 .env
 *.env
-

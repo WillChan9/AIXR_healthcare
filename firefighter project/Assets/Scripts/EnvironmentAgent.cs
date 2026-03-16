@@ -90,7 +90,11 @@ public class EnvironmentAgent : MonoBehaviour
             var sy = scaleY > 0 ? scaleY : 1f;
             var sz = scaleZ > 0 ? scaleZ : 1f;
             spawned.transform.localScale = new Vector3(sx, sy, sz);
-            SnapToFloor(spawned);
+            // Skip floor-snapping for structural elements (walls, ceilings).
+            // A non-zero y or a tall scale means the caller set an intentional position.
+            bool isStructural = position.y > 0.05f || sy > 1.5f;
+            if (!isStructural)
+                SnapToFloor(spawned);
         }
     }
 
@@ -116,6 +120,44 @@ public class EnvironmentAgent : MonoBehaviour
         {
             Debug.LogError($"AI Agent Error: Human prefab '{humanName}' not found in Resources. Place human prefabs under Assets/Resources/...");
         }
+    }
+
+    /// <summary>Called by Agent: find a previously spawned object by name and move/rotate it.</summary>
+    public void MoveObject(string objectName, Vector3 position, float rotationY)
+    {
+        GameObject target = FindSpawnedObject(objectName);
+        if (target != null)
+        {
+            target.transform.position = position;
+            target.transform.rotation = Quaternion.Euler(0, rotationY, 0);
+            Debug.Log($"AI Agent moved: {objectName} to {position}");
+        }
+        else
+        {
+            Debug.LogWarning($"AI Agent MoveObject: '{objectName}' not found in scene.");
+        }
+    }
+
+    private static GameObject FindSpawnedObject(string objectName)
+    {
+        if (string.IsNullOrEmpty(objectName)) return null;
+
+        // Exact match
+        GameObject found = GameObject.Find(objectName);
+        if (found != null) return found;
+
+        // Unity appends "(Clone)" on Instantiate
+        found = GameObject.Find(objectName + "(Clone)");
+        if (found != null) return found;
+
+        // Prefix search across all active objects
+        string lower = objectName.ToLowerInvariant();
+        foreach (var go in Object.FindObjectsByType<GameObject>(FindObjectsSortMode.None))
+        {
+            if (go.name.ToLowerInvariant().StartsWith(lower))
+                return go;
+        }
+        return null;
     }
 
     // ========== Environment parameter control (for Agent calls) ==========
@@ -499,7 +541,8 @@ public class EnvironmentAgent : MonoBehaviour
         if (anim == null) { Debug.LogWarning("EnvironmentAgent: human model has no Animator."); return; }
         HardCleanupHumanRig(target, anim);
 
-        if (anim.runtimeAnimatorController == null)
+        // Always apply the specified controller so we're never playing states against the wrong one.
+        if (!string.IsNullOrEmpty(controllerPathInResources))
         {
             RuntimeAnimatorController ctrl = LoadAnimatorControllerByName(controllerPathInResources);
             if (ctrl == null)
@@ -508,10 +551,12 @@ public class EnvironmentAgent : MonoBehaviour
                 return;
             }
             anim.runtimeAnimatorController = ctrl;
+            // Let the controller initialise for one frame before crossing-fading into its state.
+            anim.Update(0f);
         }
 
         anim.CrossFade(stateName, crossFadeTime);
-        Debug.Log($"Agent: human playing state '{stateName}' (controller ensured: {controllerPathInResources})");
+        Debug.Log($"Agent: human playing state '{stateName}' (controller: {controllerPathInResources})");
     }
 
     [ContextMenu("Debug Human Rig (Default)")]

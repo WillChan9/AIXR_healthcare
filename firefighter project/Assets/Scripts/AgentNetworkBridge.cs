@@ -207,42 +207,42 @@ public class AgentNetworkBridge : MonoBehaviour
             return "[]";
 
         var sb = new System.Text.StringBuilder();
-        sb.Append("[");
+        sb.Append("[\n");
         for (int i = 0; i < commands.Length; i++)
         {
-            if (i > 0) sb.Append(",");
+            if (i > 0) sb.Append(",\n");
             sb.Append(SerializeCommand(commands[i]));
         }
-        sb.Append("]");
+        sb.Append("\n]");
         return sb.ToString();
     }
 
     private string SerializeCommand(AgentCommand cmd)
     {
         var sb = new System.Text.StringBuilder();
-        sb.Append("{");
+        sb.Append("  {\n");
         bool first = true;
 
         void AddString(string key, string value)
         {
             if (string.IsNullOrEmpty(value)) return;
-            if (!first) sb.Append(",");
+            if (!first) sb.Append(",\n");
             first = false;
-            sb.Append($"\"{key}\":\"{EscapeJson(value)}\"");
+            sb.Append($"    \"{key}\": \"{EscapeJson(value)}\"");
         }
 
         void AddBool(string key, bool value)
         {
-            if (!first) sb.Append(",");
+            if (!first) sb.Append(",\n");
             first = false;
-            sb.Append($"\"{key}\":{(value ? "true" : "false")}");
+            sb.Append($"    \"{key}\": {(value ? "true" : "false")}");
         }
 
         void AddFloat(string key, float value)
         {
-            if (!first) sb.Append(",");
+            if (!first) sb.Append(",\n");
             first = false;
-            sb.Append($"\"{key}\":{value.ToString(System.Globalization.CultureInfo.InvariantCulture)}");
+            sb.Append($"    \"{key}\": {value.ToString(System.Globalization.CultureInfo.InvariantCulture)}");
         }
 
         AddString("id", cmd.id);
@@ -292,6 +292,11 @@ public class AgentNetworkBridge : MonoBehaviour
                 AddFloat("x", cmd.x); AddFloat("y", cmd.y); AddFloat("z", cmd.z);
                 AddFloat("rotationY", cmd.rotationY);
                 break;
+            case "MoveObject":
+                AddString("objectName", cmd.objectName);
+                AddFloat("x", cmd.x); AddFloat("y", cmd.y); AddFloat("z", cmd.z);
+                AddFloat("rotationY", cmd.rotationY);
+                break;
             case "SetHumanAnimationController":
                 AddString("controllerPath", cmd.controllerPath ?? cmd.controllerPathInResources);
                 break;
@@ -319,7 +324,7 @@ public class AgentNetworkBridge : MonoBehaviour
                 break;
         }
 
-        sb.Append("}");
+        sb.Append("\n  }");
         return sb.ToString();
     }
 
@@ -387,6 +392,11 @@ public class AgentNetworkBridge : MonoBehaviour
                     cmd.scaleY,
                     cmd.scaleZ
                 );
+                break;
+
+            case "MoveObject":
+                var movePos = new Vector3(cmd.x, cmd.y, cmd.z);
+                environmentAgent.MoveObject(cmd.objectName, movePos, cmd.rotationY);
                 break;
 
             case "PlaceHuman":

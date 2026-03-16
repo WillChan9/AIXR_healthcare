@@ -1,12 +1,18 @@
 import os
+import sys
 import json
 import time
 import argparse
+import base64
 from pathlib import Path
 from typing import List, Dict, Optional, Tuple
 
 from dotenv import load_dotenv
 from groq import Groq
+
+# Allow importing from the agent package
+sys.path.insert(0, str(Path(__file__).parent))
+from agent.Reflection_module import ReflectionModule
 
 
 def _load_prefab_names(resources_dir: Path) -> List[str]:
@@ -97,37 +103,128 @@ def _fallback_primitive(name_hint: Optional[str]) -> str:
     return "Cube"
 
 
-def _fix_prefab_names(commands: List[Dict], prefabs: List[str]) -> List[Dict]:
-    lookup = _build_prefab_lookup(prefabs)
+def _strip_unknown_fields(commands: List[Dict]) -> List[Dict]:
+    """Remove any fields the LLM added to commands that the validator will reject.
+    E.g. x/y/z/objectName appended to PlayHumanAnimationFromResources."""
+    allowed_fields_by_action = {
+        "PlaceObject": {"action", "objectName", "x", "y", "z", "rotationY"},
+        "PlaceHuman": {"action", "humanName", "x", "y", "z", "rotationY"},
+        "CreateObjectByName": {"action", "objectName", "x", "y", "z", "rotationY", "scaleX", "scaleY", "scaleZ"},
+        "SetTimeOfDay": {"action", "hour"},
+        "SetFogEnabled": {"action", "enabled"},
+        "SetFogDensity": {"action", "density"},
+        "SetLightIntensity": {"action", "scale"},
+        "SetLightColor": {"action", "r", "g", "b"},
+        "SetAmbientColor": {"action", "r", "g", "b"},
+        "SetGravity": {"action", "gravityY"},
+        "SetTimeScale": {"action", "scale"},
+        "SetHumanAnimationController": {"action", "controllerPath"},
+        "PlayHumanAnimation": {"action", "stateName", "crossFadeTime"},
+        "PlayHumanAnimationFromResources": {"action", "controllerPath", "stateName", "crossFadeTime"},
+        "SetHumanAnimatorFloat": {"action", "paramName", "value"},
+        "SetHumanAnimatorBool": {"action", "paramName", "boolValue"},
+        "SetHumanAnimatorTrigger": {"action", "paramName"},
+        "MoveObject": {"action", "objectName", "x", "y", "z", "rotationY"},
+    }
+    meta = {"id", "timestamp", "executed", "done"}
+    result = []
     for cmd in commands:
         action = cmd.get("action")
+        allowed = allowed_fields_by_action.get(action)
+        if allowed:
+            cleaned = {k: v for k, v in cmd.items() if k in allowed | meta}
+            result.append(cleaned)
+        else:
+            result.append(cmd)
+    return result
+
+
+def _fix_light_commands(commands: List[Dict]) -> List[Dict]:
+    """Normalise LLM field-name variations for SetLightIntensity so validation passes."""
+    for cmd in commands:
+        if cmd.get("action") == "SetLightIntensity":
+            if "scale" not in cmd:
+                # Accept common alternatives the LLM produces
+                for alt in ("intensity", "value", "brightness", "light_intensity"):
+                    if alt in cmd:
+                        cmd["scale"] = cmd.pop(alt)
+                        break
+                else:
+                    cmd["scale"] = 1.0  # sensible default
+    return commands
+
+
+def _fix_prefab_names(commands: List[Dict], prefabs: List[str]) -> List[Dict]:
+    lookup = _build_prefab_lookup(prefabs)
+    _primitive_names = {"cube", "sphere", "capsule", "cylinder", "plane", "quad"}
+    result = []
+
+    for cmd in commands:
+        action = cmd.get("action")
+
         if action == "PlaceObject":
-            resolved = _resolve_prefab_name(cmd.get("objectName"), prefabs, lookup)
-            if resolved:
-                cmd["objectName"] = resolved
-            else:
-                cmd["action"] = "CreateObjectByName"
-                cmd["objectName"] = _fallback_primitive(cmd.get("objectName"))
-        elif action == "PlaceHuman":
-            name = cmd.get("humanName") or cmd.get("objectName")
-            resolved = _resolve_prefab_name(name, prefabs, lookup)
-            if resolved:
-                cmd["humanName"] = resolved
-            else:
-                cmd["action"] = "CreateObjectByName"
-                cmd.pop("humanName", None)
-                cmd["objectName"] = "Capsule"
-        # If a character part slipped in as PlaceObject, convert to PlaceHuman using the full character prefab.
-        if cmd.get("action") == "PlaceObject":
-            obj_name = cmd.get("objectName")
-            full_name = _to_full_character_name(obj_name or "")
+            name = cmd.get("objectName", "")
+            # Check if it's actually a character first
+            full_name = _to_full_character_name(name)
             if full_name:
                 resolved = _resolve_prefab_name(full_name, prefabs, lookup)
                 if resolved:
                     cmd["action"] = "PlaceHuman"
                     cmd["humanName"] = resolved
                     cmd.pop("objectName", None)
-    return commands
+                    result.append(cmd)
+                    continue
+                # Character name but no prefab found — drop it
+                print(f"[fix_prefab_names] Dropping PlaceObject (character not found): {name}")
+                continue
+            resolved = _resolve_prefab_name(name, prefabs, lookup)
+            if resolved:
+                cmd["objectName"] = resolved
+                result.append(cmd)
+            else:
+                print(f"[fix_prefab_names] Dropping PlaceObject (prefab not found): {name}")
+            continue
+
+        if action == "PlaceHuman":
+            name = cmd.get("humanName") or cmd.get("objectName", "")
+            resolved = _resolve_prefab_name(name, prefabs, lookup)
+            if resolved:
+                cmd["humanName"] = resolved
+                result.append(cmd)
+            else:
+                print(f"[fix_prefab_names] Dropping PlaceHuman (prefab not found): {name}")
+            continue
+
+        if action == "CreateObjectByName":
+            name = cmd.get("objectName", "")
+            if _normalize_name(name) in _primitive_names:
+                result.append(cmd)
+                continue
+            # Non-primitive CreateObjectByName — try to resolve as prefab
+            resolved = _resolve_prefab_name(name, prefabs, lookup)
+            if resolved:
+                cmd["action"] = "PlaceObject"
+                cmd["objectName"] = resolved
+                cmd.pop("scaleX", None)
+                cmd.pop("scaleY", None)
+                cmd.pop("scaleZ", None)
+                result.append(cmd)
+            else:
+                # Check if structural (walls/ceiling) — keep as-is since those ARE primitives
+                sx = abs(cmd.get("scaleX") or 1.0)
+                sz = abs(cmd.get("scaleZ") or 1.0)
+                if sx > 2.0 or sz > 2.0:
+                    # Structural element with unrecognized name — make it a Cube
+                    cmd["objectName"] = "Cube"
+                    result.append(cmd)
+                else:
+                    print(f"[fix_prefab_names] Dropping CreateObjectByName (not a prefab or primitive): {name}")
+            continue
+
+        # All other commands pass through unchanged
+        result.append(cmd)
+
+    return result
 
 
 def _extract_json_array(text: str) -> List[Dict]:
@@ -143,14 +240,73 @@ def _extract_json_array(text: str) -> List[Dict]:
                 content = content[4:].strip()
             text = content
 
-    # Try to locate JSON array
-    start_idx = text.find("[")
-    end_idx = text.rfind("]")
-    if start_idx == -1 or end_idx == -1 or end_idx <= start_idx:
-        raise ValueError("No JSON array found in Groq response.")
+    def _try_parse_json(s: str):
+        try:
+            return json.loads(s)
+        except Exception:
+            return None
 
-    array_text = text[start_idx:end_idx + 1]
-    return json.loads(array_text)
+    # Direct JSON parse
+    parsed = _try_parse_json(text)
+    if isinstance(parsed, list):
+        return parsed
+    if isinstance(parsed, dict):
+        for key in ("commands", "actions", "result", "output"):
+            value = parsed.get(key)
+            if isinstance(value, list):
+                return value
+
+    # Some models wrap JSON in XML-like tool tags
+    import re
+    tag_match = re.search(r"<tool_call>\s*(.*?)\s*</tool_call>", text, re.DOTALL)
+    if tag_match:
+        inner = tag_match.group(1).strip()
+        parsed = _try_parse_json(inner)
+        if isinstance(parsed, list):
+            return parsed
+        if isinstance(parsed, dict):
+            for key in ("commands", "actions", "result", "output"):
+                value = parsed.get(key)
+                if isinstance(value, list):
+                    return value
+
+    # Try to find and MERGE all JSON arrays in the text (LLM sometimes outputs multiple arrays)
+    import re as _re
+    merged: List[Dict] = []
+    depth = 0
+    arr_start = None
+    for i, ch in enumerate(text):
+        if ch == "[" and depth == 0:
+            arr_start = i
+            depth = 1
+        elif ch == "[":
+            depth += 1
+        elif ch == "]":
+            depth -= 1
+            if depth == 0 and arr_start is not None:
+                try:
+                    chunk = json.loads(text[arr_start:i + 1])
+                    if isinstance(chunk, list):
+                        merged.extend(chunk)
+                except Exception:
+                    pass
+                arr_start = None
+    if merged:
+        return merged
+
+    # Try to locate JSON object that might contain a list
+    obj_start = text.find("{")
+    obj_end = text.rfind("}")
+    if obj_start != -1 and obj_end != -1 and obj_end > obj_start:
+        obj_text = text[obj_start:obj_end + 1]
+        parsed = _try_parse_json(obj_text)
+        if isinstance(parsed, dict):
+            for key in ("commands", "actions", "result", "output"):
+                value = parsed.get(key)
+                if isinstance(value, list):
+                    return value
+
+    raise ValueError("No JSON array found in Groq response.")
 
 
 def _repair_incomplete_json(json_str: str) -> str:
@@ -226,6 +382,7 @@ def _validate_commands(commands: List[Dict]) -> None:
         "SetHumanAnimatorFloat",
         "SetHumanAnimatorBool",
         "SetHumanAnimatorTrigger",
+        "MoveObject",
     }
 
     allowed_meta = {"id", "timestamp", "executed", "done"}
@@ -247,6 +404,7 @@ def _validate_commands(commands: List[Dict]) -> None:
         "SetHumanAnimatorFloat": {"action", "paramName", "value"},
         "SetHumanAnimatorBool": {"action", "paramName", "boolValue"},
         "SetHumanAnimatorTrigger": {"action", "paramName"},
+        "MoveObject": {"action", "objectName", "x", "y", "z"},
     }
 
     allowed_fields_by_action = {
@@ -267,6 +425,7 @@ def _validate_commands(commands: List[Dict]) -> None:
         "SetHumanAnimatorFloat": {"action", "paramName", "value"},
         "SetHumanAnimatorBool": {"action", "paramName", "boolValue"},
         "SetHumanAnimatorTrigger": {"action", "paramName"},
+        "MoveObject": {"action", "objectName", "x", "y", "z", "rotationY"},
     }
 
     def _is_number(v):
@@ -327,10 +486,173 @@ def _validate_commands(commands: List[Dict]) -> None:
             raise ValueError(f"Command #{i+1} boolValue must be boolean")
 
 
+
+def _clamp_positions(commands: List[Dict]) -> List[Dict]:
+    """Clamp placed-object positions to stay inside room bounds.
+    Structural elements (walls, ceiling) have large scaleX/Z and are skipped."""
+    X_MIN, X_MAX = -2.8, 2.8
+    Z_MIN, Z_MAX = 0.1, 5.9
+    Y_MIN = 0.0
+    place_actions = {"PlaceObject", "CreateObjectByName", "PlaceHuman"}
+    for cmd in commands:
+        if cmd.get("action") in place_actions:
+            # Skip walls/ceiling: structural elements have at least one large scale dimension
+            sx = abs(cmd.get("scaleX") or 1.0)
+            sz = abs(cmd.get("scaleZ") or 1.0)
+            if sx > 2.0 or sz > 2.0:
+                continue
+            if "x" in cmd:
+                cmd["x"] = max(X_MIN, min(X_MAX, cmd["x"]))
+            if "z" in cmd:
+                cmd["z"] = max(Z_MIN, min(Z_MAX, cmd["z"]))
+            if "y" in cmd:
+                cmd["y"] = max(Y_MIN, cmd["y"])
+    return commands
+
+
+def _filter_loop_structural(commands: List[Dict]) -> List[Dict]:
+    """In loop iterations, drop any CreateObjectByName commands that look like walls/ceiling
+    (large scaleX or scaleZ). The room shell is fixed after initial generation."""
+    result = []
+    for cmd in commands:
+        if cmd.get("action") == "CreateObjectByName":
+            sx = abs(cmd.get("scaleX") or 1.0)
+            sz = abs(cmd.get("scaleZ") or 1.0)
+            if sx > 2.0 or sz > 2.0:
+                continue  # discard — structural element
+        result.append(cmd)
+    return result
+
+
+def _dedup_structural(commands: List[Dict]) -> List[Dict]:
+    """Remove duplicate structural CreateObjectByName commands (walls/ceiling) that land
+    at approximately the same position. Keeps only the first occurrence."""
+    seen: List[Dict] = []
+    result = []
+    for cmd in commands:
+        if cmd.get("action") != "CreateObjectByName":
+            result.append(cmd)
+            continue
+        sx = abs(cmd.get("scaleX") or 1.0)
+        sz = abs(cmd.get("scaleZ") or 1.0)
+        if sx <= 2.0 and sz <= 2.0:
+            result.append(cmd)
+            continue
+        # Structural element — check for near-duplicate
+        cx, cy, cz = cmd.get("x", 0), cmd.get("y", 0), cmd.get("z", 0)
+        is_dup = False
+        for prev in seen:
+            if (abs(prev["x"] - cx) < 0.5 and
+                    abs(prev["y"] - cy) < 0.5 and
+                    abs(prev["z"] - cz) < 0.5):
+                is_dup = True
+                break
+        if not is_dup:
+            seen.append({"x": cx, "y": cy, "z": cz})
+            result.append(cmd)
+    return result
+
+
+def _write_commands_safe(path: Path, commands: List[Dict], retries: int = 5, delay: float = 0.5) -> None:
+    """Write JSON to a temp file then replace the target to avoid Unity file-lock errors."""
+    import tempfile
+    data = json.dumps(commands, indent=2)
+    for attempt in range(retries):
+        try:
+            tmp = path.parent / (path.name + ".tmp")
+            tmp.write_text(data, encoding="utf-8")
+            os.replace(str(tmp), str(path))
+            return
+        except PermissionError:
+            if attempt < retries - 1:
+                time.sleep(delay)
+            else:
+                raise
+
+
+def _load_existing_commands(path: Path) -> List[Dict]:
+    if not path.exists():
+        return []
+    try:
+        content = path.read_text(encoding="utf-8").strip()
+        if not content:
+            return []
+        data = json.loads(content)
+        return data if isinstance(data, list) else []
+    except Exception:
+        return []
+
+
+def _generate_plan(description: str, client, agent_dir: Path) -> Dict:
+    """Generate a structured room layout plan and save to plan.json for the reflection module."""
+    plan_path = agent_dir / "api_files" / "plan.json"
+
+    system = (
+        "You are a hospital room layout planner. Given a room description, generate a structured "
+        "JSON plan describing the intended layout, placement goals, and verifiable conditions. "
+        "Return ONLY valid JSON with this structure: "
+        '{"room_type": "...", "description": "...", "layout_goals": {"interior_bounds": "...", '
+        '"minimum_objects": N, "focal_point": "..."}, '
+        '"steps": [{"step": N, "action": "...", "objects": [...], "target_area": "...", "condition": "..."}]}'
+    )
+
+    for attempt in range(3):
+        try:
+            completion = client.chat.completions.create(
+                model="meta-llama/llama-4-scout-17b-16e-instruct",
+                messages=[
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": f"Room description:\n{description}"},
+                ],
+                temperature=0.3,
+                max_completion_tokens=1024,
+            )
+            content = (completion.choices[0].message.content or "").strip()
+            if "```" in content:
+                start = content.find("```")
+                end = content.rfind("```")
+                inner = content[start + 3:end].strip()
+                content = inner[4:].strip() if inner.startswith("json") else inner
+            start_idx = content.find("{")
+            end_idx = content.rfind("}") + 1
+            if start_idx != -1 and end_idx > start_idx:
+                plan = json.loads(content[start_idx:end_idx])
+                plan_path.write_text(json.dumps(plan, indent=2), encoding="utf-8")
+                print(f"Plan generated and saved to {plan_path}")
+                return plan
+        except Exception as e:
+            print(f"Plan generation attempt {attempt + 1}/3 failed: {e}")
+            time.sleep(1.0)
+
+    # Fallback: write a minimal but useful plan
+    plan = {
+        "room_type": "CT Examination Room",
+        "description": description,
+        "layout_goals": {
+            "interior_bounds": "x in [-3,3], z in [1,6]",
+            "minimum_objects": 10,
+            "focal_point": "CT scanner near (0,0,2)",
+        },
+        "steps": [
+            {"step": 1, "action": "CT scanner placed as room focal point", "objects": ["Tomograph"], "target_area": "near (0,0,2)", "condition": "scanner visible near room center"},
+            {"step": 2, "action": "Exam table aligned with scanner bore axis", "objects": ["Exam Table"], "target_area": "adjacent to scanner on z-axis", "condition": "table adjacent to scanner"},
+            {"step": 3, "action": "Control station on right side", "objects": ["Monitor", "Chair", "Utility Cart"], "target_area": "x > 0, near scanner", "condition": "monitor and chair visible on right side"},
+            {"step": 4, "action": "Clinical support items placed", "objects": ["IV Drip", "Waste Bucket", "Sanitizer"], "target_area": "near table and entry", "condition": "IV drip, bucket, and sanitizer visible"},
+            {"step": 5, "action": "Room exterior with walls, ceiling, doorway generated", "objects": ["Walls", "Ceiling", "Light"], "target_area": "perimeter of room", "condition": "4 walls, ceiling, and doorway gap visible"},
+        ],
+    }
+    plan_path.write_text(json.dumps(plan, indent=2), encoding="utf-8")
+    print(f"Fallback plan saved to {plan_path}")
+    return plan
+
+
 def main():
     parser = argparse.ArgumentParser(description="Groq -> Unity command generator (one-shot)")
     parser.add_argument("--path", type=str, default="api_files/experience.txt", help="Path to experience file (default: Agent/context/experience.txt)")
     parser.add_argument("--out", type=str, default=None, help="Output path for unity_commands.json")
+    parser.add_argument("--interval", type=float, default=3.0, help="Loop interval in seconds")
+    parser.add_argument("--max-iterations", type=int, default=0, help="Max loop iterations (0 = infinite)")
+    parser.add_argument("--screenshot", type=str, default=None, help="Screenshot path (overrides UNITY_SCREENSHOT_PATH)")
     args = parser.parse_args()
 
     load_dotenv()
@@ -348,6 +670,10 @@ def main():
     if not prompt_path.is_absolute():
         prompt_path = agent_dir / args.path
     out_path = Path(args.out) if args.out else default_out
+    screenshot_env = os.getenv("UNITY_SCREENSHOT_PATH", "api_files/scene_screenshot.png")
+    screenshot_path = Path(args.screenshot or screenshot_env)
+    if not screenshot_path.is_absolute():
+        screenshot_path = project_root / screenshot_path
 
     if not prompt_path.exists():
         raise FileNotFoundError(f"Experience file not found: {prompt_path}")
@@ -359,12 +685,50 @@ def main():
     prefabs = _load_prefab_names(resources_dir)
     animators = _load_animator_names(resources_dir)
 
+    client = Groq(api_key=api_key)
+
+    # Generate plan.json once at startup so the reflection module has context
+    print("Generating room layout plan...")
+    plan = _generate_plan(description, client, agent_dir)
+
     system = (
-        "You are a Unity environment planner. Return ONLY a JSON array of commands. "
-        "Do not wrap in code fences. Each command must match the schema exactly. "
-        "Use ONLY the exact prefab names provided in available_prefabs. Do not invent names. "
-        "If no prefab matches, use "
-        "CreateObjectByName with primitives: Cube, Sphere, Capsule, Cylinder, Plane, Quad."
+        "You are a Unity environment builder for a VR medical training simulation. "
+        "Return ONLY a valid JSON array of commands. No markdown, no code fences, no explanations. "
+        "PLACEMENT RULES — strictly follow these or the objects will be invisible: "
+        "1. Use PlaceObject for ALL named medical assets. The objectName MUST be an exact name from available_prefabs. "
+        "2. Use PlaceHuman for character prefabs (Doctor, Nurse, Patient, EMT). "
+        "3. Use CreateObjectByName ONLY for the room shell (walls, floor, ceiling) with primitive names: Cube, Cylinder. "
+        "4. NEVER invent objectNames — if not in available_prefabs, omit the object. "
+        "ROOM SHELL — place these FIRST using CreateObjectByName with Cube: "
+        "Floor: (0,-0.05,3) scaleX=6.2 scaleY=0.1 scaleZ=6.2. "
+        "Back wall: (0,1.5,6.1) scaleX=6.4 scaleY=3 scaleZ=0.2. "
+        "Left wall: (-3.1,1.5,3) scaleX=0.2 scaleY=3 scaleZ=6.4. "
+        "Right wall: (3.1,1.5,3) scaleX=0.2 scaleY=3 scaleZ=6.4. "
+        "Front-left: (-1.8,1.5,-0.1) scaleX=2.4 scaleY=3 scaleZ=0.2. "
+        "Front-right: (1.8,1.5,-0.1) scaleX=2.4 scaleY=3 scaleZ=0.2. "
+        "Door header: (0,2.55,-0.1) scaleX=1.2 scaleY=0.9 scaleZ=0.2. "
+        "Ceiling: (0,3.1,3) scaleX=6.4 scaleY=0.2 scaleZ=6.4. "
+        "Ceiling light (Cylinder): (0,2.95,3) scaleX=0.5 scaleY=0.05 scaleZ=0.5. "
+        "LIGHTING — immediately after the shell add these three commands: "
+        "SetAmbientColor r=0.88 g=0.90 b=0.92 (bright cool-white hospital light). "
+        "SetLightIntensity scale=2.0. SetFogEnabled enabled=false. "
+        "CT ROOM LAYOUT — place these using PlaceObject (exact names from available_prefabs): "
+        "SCANNER ZONE (center): Tomograpf_01 at (0,0,3), Exam_Table_01 at (0,0,1.5). "
+        "Stand_01 (IV pole) at (-1,0,1.5). Stand_02 at (1,0,1.5). "
+        "CONTROL ZONE (right side x=1.5-2.8): Control_Panel_01 at (2.4,0,2.5). "
+        "Chair_01 at (2,0,1.8). Chair_02 at (2.5,0,1.2). PC_Monitor_01 at (2.4,0.7,2). "
+        "Computer_01 at (2,0,2.8). Keyboard_01 at (2.4,0.7,2.3). Screen_01 at (2.8,0,3.5). "
+        "UTILITY ZONE (back z=4-5.5): Utility_Cart_01 at (-2.2,0,5). Utility_Cart_02 at (-1,0,5.5). "
+        "Surgery_Cart_01 at (1.5,0,5.5). Table_01 at (2.2,0,5). Table_02 at (-2.5,0,3.5). "
+        "ENTRY ZONE (near door z=0-1): Sanitizer_01 at (2.5,0,0.5). Waste_Bucket_01 at (-2.5,0,0.5). "
+        "Caution_Sign_01 at (-1,0,0.8). Signal_Door_01 at (0,0,0.2). "
+        "PROPS — place on tables/walls: Tray_01, Box_01, Folder_01, Folder_02, Copybook_01, "
+        "Stethoscope_01, Aid_Kit_01, Clock_01 at (2.8,2,1) rotationY=270, "
+        "Poster_01 at (-3,1.5,3) rotationY=90, Poster_02 at (3,1.5,4) rotationY=270. "
+        "CHARACTERS: PlaceHuman Doctor_01 at (-1.5,0,2.2). PlaceHuman Patient_01 at (0,0,0.8). "
+        "ANIMATION: Use PlayHumanAnimationFromResources. "
+        "Patient walking: controllerPath='AnimatorControllers/HumanF@Walk01_Forward' stateName='HumanF@Walk01_Forward'. "
+        "Doctor talking: controllerPath='AnimatorControllers/HumanM@Talking' stateName='HumanM@Talking'."
     )
 
     user = {
@@ -372,30 +736,30 @@ def main():
         "available_prefabs": prefabs,
         "available_animators": animators,
         "rules": {
-            "keep_compact": "Keep objects within x in [-3,3], z in [1,6].",
-            "center_object": "Place primary equipment (e.g., Tomograph/CT scanner) near (0,0,2).",
-            "y": 0
+            "bounds": "Interior objects: x in [-2.8,2.8], z in [0.2,5.9], y=0 for floor objects.",
+            "no_invented_names": "Only use objectNames that appear in available_prefabs. Never invent names.",
         },
         "schema_examples": [
-            {"action": "PlaceObject", "objectName": "PrefabName", "x": 0, "y": 0, "z": 2, "rotationY": 0},
-            {"action": "CreateObjectByName", "objectName": "Cube", "x": 1, "y": 0, "z": 2, "rotationY": 0},
-            {"action": "SetHumanAnimationController", "controllerPath": "ControllerName"}
-        ]
+            {"action": "PlaceObject", "objectName": "Tomograpf_01", "x": 0, "y": 0, "z": 3, "rotationY": 0},
+            {"action": "PlaceHuman", "humanName": "Doctor_01", "x": -1.5, "y": 0, "z": 2.2, "rotationY": 0},
+            {"action": "CreateObjectByName", "objectName": "Cube", "x": 0, "y": 1.5, "z": 6.1, "rotationY": 0, "scaleX": 6.4, "scaleY": 3.0, "scaleZ": 0.2},
+            {"action": "SetAmbientColor", "r": 0.88, "g": 0.90, "b": 0.92},
+            {"action": "PlayHumanAnimationFromResources", "controllerPath": "AnimatorControllers/HumanF@Walk01_Forward", "stateName": "HumanF@Walk01_Forward", "crossFadeTime": 0.25},
+        ],
     }
 
-    client = Groq(api_key=api_key)
     commands = None
     last_error = None
 
     for attempt in range(3):
         completion = client.chat.completions.create(
-            model="meta-llama/llama-4-maverick-17b-128e-instruct",
+            model="meta-llama/llama-4-scout-17b-16e-instruct",
             messages=[
                 {"role": "system", "content": system},
                 {"role": "user", "content": json.dumps(user)}
             ],
             temperature=0.6,
-            max_completion_tokens=2048,
+            max_completion_tokens=4096,
         )
 
         content = completion.choices[0].message.content or ""
@@ -415,7 +779,11 @@ def main():
 
         if commands:
             try:
+                commands = _dedup_structural(commands)
+                commands = _strip_unknown_fields(commands)
+                commands = _fix_light_commands(commands)
                 commands = _fix_prefab_names(commands, prefabs)
+                commands = _clamp_positions(commands)
                 _validate_commands(commands)
                 break
             except Exception as e:
@@ -427,6 +795,10 @@ def main():
             time.sleep(1.0)
             continue
 
+    if not commands:
+        print(f"Could not generate valid commands after all attempts: {last_error}. Exiting.")
+        return
+
     # Add ids/timestamps/executed if missing
     for i, cmd in enumerate(commands):
         if isinstance(cmd, dict):
@@ -435,10 +807,237 @@ def main():
             cmd.setdefault("executed", False)
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(json.dumps(commands, indent=2), encoding="utf-8")
+    _write_commands_safe(out_path, commands)
     print(f"Wrote {len(commands)} commands to {out_path}")
 
+    # In-memory record of everything placed so far (used for LLM context in loop).
+    # Separate from the file so we don't lose history when executed commands are pruned.
+    _place_actions = {"PlaceObject", "CreateObjectByName", "PlaceHuman"}
+    all_placed: List[Dict] = list(commands)
+
     time.sleep(1.0)
+
+    loop_system = (
+        "You are a Unity environment builder adding objects to an existing CT examination room. "
+        "Return ONLY a valid JSON array. No markdown, no explanations. "
+        "STRICT RULES: "
+        "1. Use PlaceObject for named objects — objectName MUST be an exact name from available_prefabs. "
+        "2. Use PlaceHuman for characters (Doctor, Nurse, Patient, EMT prefabs). "
+        "3. Do NOT use CreateObjectByName at all — walls and ceiling are already placed. "
+        "4. Do NOT repeat any objectName already in objects_already_in_scene. "
+        "5. Place 6-10 new objects per iteration from this CT room equipment list: "
+        "Furniture: Utility_Cart_03, Utility_Cart_04, Utility_Cart_05, Utility_Cart_06, Utility_Cart_07, "
+        "Utility_Cart_08, Utility_Cart_09, Trolley_01, Stretchers_01, Table_03, Table_04, "
+        "Exam_Table_01_Shelf_01, Exam_Stool_01, Basin_Stand_01, Sink_01, Towel_Dispenser_01, Hand_Dryer_01. "
+        "Equipment: Radiograph_01, Radiograph_02, Ultrasound_Machine_01, Encephalograph_01, "
+        "Encephalograph_02, Control_Panel_01, Scale_01, Screen_02. "
+        "Props (place ON tables at y=0.7): Tray_01, Box_02, Box_03, Box_04, Folder_03, Folder_04, "
+        "Folder_05, Copybook_02, Copybook_03, Copybook_04, Bottle_01, Bottle_02, Bottle_03, "
+        "Mouse_01, Keyboard_01, Glasses_01, Mask_Box_01, Mask_Box_02, Medical_Models_01, "
+        "Medical_Models_03, Stethoscope_01, Syringe_01, Thermometer_01, Otoscope_01. "
+        "Wall decorations (y=1.5-2.0): Poster_03, Poster_04, Poster_05, Frame, Wall_Panel_01. "
+        "Characters (only if not yet in scene): PlaceHuman Doctor_02, Nurse_01, EMT_01. "
+        "6. Fill empty corners and wall space. Keep x in [-2.8,2.8], z in [0.2,5.9]. "
+        "7. Apply alignment_suggestions from reflection: use MoveObject to reposition existing objects. "
+        "MoveObject format: {\"action\":\"MoveObject\",\"objectName\":\"<exact name>\",\"x\":...,\"y\":...,\"z\":...,\"rotationY\":...}. "
+        "objectName must exactly match a name from objects_already_in_scene."
+    )
+
+    # Derive the 3 orthographic screenshot base path (strip .png if present)
+    screenshot_base = screenshot_path
+    if str(screenshot_path).endswith(".png"):
+        screenshot_base = screenshot_path.with_suffix("")
+    xz_path = screenshot_base.parent / (screenshot_base.name + "_xz.png")  # top-down
+    xy_path = screenshot_base.parent / (screenshot_base.name + "_xy.png")  # front
+    yz_path = screenshot_base.parent / (screenshot_base.name + "_yz.png")  # side
+
+    # Initialize reflection module
+    reflector = ReflectionModule()
+
+    last_mtime = 0.0
+    last_loop_time = 0.0
+    iterations = 0
+    alignment_hints = ""
+    plan_steps = plan.get("steps", [])
+    current_step_idx = 0
+    step_iteration_count = 0
+    MAX_STEP_ITERATIONS = 4  # force-advance after this many iterations if reflection never confirms
+    while True:
+        if args.max_iterations and iterations >= args.max_iterations:
+            break
+
+        # Trigger on screenshot update OR on a timer fallback (so the loop always runs even
+        # if Unity screenshots aren't available yet).
+        latest_mtime = max(
+            (p.stat().st_mtime if p.exists() else 0.0) for p in [xz_path, xy_path, yz_path]
+        )
+        time_since_last = time.time() - last_loop_time
+        screenshot_updated = latest_mtime > last_mtime
+        timer_due = time_since_last >= args.interval * 2
+
+        if not screenshot_updated and not timer_due:
+            time.sleep(args.interval)
+            continue
+
+        if screenshot_updated:
+            last_mtime = latest_mtime
+        last_loop_time = time.time()
+
+        # Load all available orthographic views
+        view_images: Dict[str, Optional[str]] = {"xz": None, "xy": None, "yz": None}
+        for label, path in [("xz", xz_path), ("xy", xy_path), ("yz", yz_path)]:
+            if path.exists():
+                try:
+                    with open(path, "rb") as f:
+                        view_images[label] = base64.b64encode(f.read()).decode("utf-8")
+                except Exception as e:
+                    print(f"Failed to read {label} screenshot: {e}")
+
+        has_screenshots = any(view_images.values())
+        if not has_screenshots:
+            print("[Loop] No screenshots available yet — running without visual context.")
+
+        # Build compact summary from in-memory record (includes executed commands Unity already processed).
+        existing_summary = [
+            {
+                "objectName": cmd.get("objectName") or cmd.get("humanName", "?"),
+                "x": cmd.get("x"), "z": cmd.get("z"),
+            }
+            for cmd in all_placed if cmd.get("action") in _place_actions
+        ]
+
+        try:
+            # Pick current plan step; cycle back to last step once all are done
+            if plan_steps:
+                current_plan_step = plan_steps[min(current_step_idx, len(plan_steps) - 1)]
+            else:
+                current_plan_step = {
+                    "step": "room_layout_evaluation",
+                    "action": "Evaluate overall CT room layout for realism and alignment",
+                    "condition": "Room looks like a realistic CT examination room",
+                }
+            step_label = current_plan_step.get("action", f"step {current_step_idx + 1}")
+            print(f"[Reflection] Evaluating plan step {current_step_idx + 1}/{len(plan_steps)}: {step_label}")
+
+            reflection_result = reflector.reflect_step(
+                plan_step=current_plan_step,
+                game_state={"commands": all_placed},
+            )
+            alignment_hints = reflection_result.alignment_suggestions
+            print(f"[Reflection] step_complete={reflection_result.step_complete}")
+            print(f"[Reflection] current_action_thoughts: {reflection_result.current_action_thoughts}")
+            print(f"[Reflection] alignment_suggestions: {alignment_hints}")
+
+            step_iteration_count += 1
+            # Advance when step confirmed complete OR after max iterations (unverifiable steps)
+            should_advance = (
+                reflection_result.step_complete == "yes"
+                or step_iteration_count >= MAX_STEP_ITERATIONS
+            )
+            if should_advance and plan_steps and current_step_idx < len(plan_steps) - 1:
+                reason = "complete" if reflection_result.step_complete == "yes" else f"max iterations ({MAX_STEP_ITERATIONS}) reached"
+                current_step_idx += 1
+                step_iteration_count = 0
+                print(f"[Reflection] Step {reason} — advancing to step {current_step_idx + 1}: {plan_steps[current_step_idx].get('action', '')}")
+        except Exception as e:
+            print(f"[Reflection] skipped: {e}")
+            alignment_hints = ""
+
+        loop_user = {
+            "description": description,
+            "objects_already_in_scene": existing_summary,
+            "total_objects_placed": len(existing_summary),
+            "available_prefabs": prefabs,
+            "available_animators": animators,
+            "rules": user["rules"],
+            "schema_examples": user["schema_examples"],
+            "alignment_suggestions": alignment_hints,
+            "loop_instruction": (
+                f"There are currently {len(existing_summary)} objects in the scene. "
+                "Use your clinical judgment as a hospital room designer — look at the screenshots "
+                "and decide what a real CT room would have that isn't there yet. "
+                "Add exactly 6-10 NEW objects this iteration. Do NOT add anything whose objectName "
+                "already appears in objects_already_in_scene. "
+                "Think: lead apron rack, radiation warning sign, oxygen tank, emergency cart, "
+                "medicine cabinet, supply shelf, paper towel dispenser, glove box, "
+                "sharps container, whiteboard, door panel, storage bin, vital signs monitor, "
+                "laptop on cart, specimen container, alcohol wipes dispenser — whatever fits. "
+                "Fill corners and wall space. Keep a 0.8m walkway around the scanner. "
+                "Apply alignment_suggestions to reposition misplaced objects."
+            ),
+        }
+
+        messages = [
+            {"role": "system", "content": loop_system},
+            {"role": "user", "content": json.dumps(loop_user)},
+        ]
+
+        # Attach screenshots only when available
+        if has_screenshots:
+            image_content = [{"type": "text", "text": "Use these orthographic screenshots as primary evidence (XZ=top-down, XY=front, YZ=side):"}]
+            for label, data in view_images.items():
+                if data:
+                    image_content.append({"type": "image_url", "image_url": {"url": f"data:image/png;base64,{data}"}})
+            messages.append({"role": "user", "content": image_content})
+
+        commands = None
+        last_error = None
+        for attempt in range(3):
+            completion = client.chat.completions.create(
+                model="meta-llama/llama-4-scout-17b-16e-instruct",
+                messages=messages,
+                temperature=0.4,
+                max_completion_tokens=2048,
+            )
+
+            content = completion.choices[0].message.content or ""
+            print(f"----- GROQ RAW RESPONSE (loop attempt {attempt + 1}/3) -----")
+            print(content)
+            print("-----------------------------------------------------------")
+
+            try:
+                commands = _extract_json_array(content)
+            except Exception:
+                try:
+                    repaired = _repair_incomplete_json(content)
+                    commands = _extract_json_array(repaired)
+                except Exception as e:
+                    last_error = e
+                    commands = None
+
+            if commands:
+                try:
+                    commands = _filter_loop_structural(commands)
+                    commands = _strip_unknown_fields(commands)
+                    commands = _fix_light_commands(commands)
+                    commands = _fix_prefab_names(commands, prefabs)
+                    commands = _clamp_positions(commands)
+                    _validate_commands(commands)
+                    break
+                except Exception as e:
+                    last_error = e
+                    commands = None
+
+            if not commands:
+                print(f"Failed to parse valid commands after 3 attempts: {last_error}")
+                time.sleep(1.0)
+                continue
+
+        if commands:
+            for i, cmd in enumerate(commands):
+                if isinstance(cmd, dict):
+                    cmd.setdefault("id", f"cmd_{int(time.time() * 1000)}_{i}")
+                    cmd.setdefault("timestamp", time.time())
+                    cmd.setdefault("executed", False)
+            all_placed.extend(commands)
+            # Write only unexecuted commands — keeps the file clean for Unity
+            existing = _load_existing_commands(out_path)
+            unexecuted = [c for c in existing if not c.get("executed", False)]
+            _write_commands_safe(out_path, unexecuted + commands)
+            print(f"Appended {len(commands)} commands to {out_path}")
+
+        iterations += 1
+        time.sleep(args.interval)
 
 
 if __name__ == "__main__":

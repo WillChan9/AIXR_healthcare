@@ -1,19 +1,31 @@
-CT Examination Room (compact, clean, efficient)
+CT Examination Room (compact, clean, realistic)
 
-This is a small, functional CT room (approx. 6m x 6m) with a clean, minimal layout. A patient is walking around the room.
-The CT scanner is the anchor and everything is placed close to it for a tight clinical workflow.
- Keep the layout compact (no big gaps), with a clear walking lane around the scanner and table.
+Create a believable CT examination room that reads as a real, enclosed space (not a sparse cluster of props).
+Room size approx 6m x 6m. Keep a clear walking lane around the scanner and table, but avoid big empty gaps.
+Only place objects inside the room (no walls, ceiling, or floor generation).
 
-Placement guidance:
-- Tomograph: centered as the focal point (near the middle of the room).
-- Table: aligned with the scanner bore (in/out axis of the Tomograph).
-- X-Ray Monitor (dual screen): at the head of the table, slightly to one side (right side preferred).
-- Chair: near the monitor/control station.
-- IV Drip: near the head of the table, opposite the monitor.
-- Utility Cart: near the table on the side with the monitor.
-- Waste Bucket: near the chair or by the entry corner.
-- Sanitizer: mounted near the entry wall.
-- Clock: mounted high on the wall above or near the monitor.
-- Caution Sign: placed near the scanner, slightly in front.
-- patient: Walking around the room
+Primary anchor and workflow:
+- Tomograph/CT scanner centered as the focal point (near the middle of the room).
+- Table aligned with the scanner bore (in/out axis).
+- Patient present and walking around the room.
 
+Control corner (right side preferred):
+- X-Ray Monitor (dual screen) at the head of the table, slightly to the right.
+- Chair near the monitor/control station.
+- Utility Cart near the table on the monitor side.
+
+Clinical support:
+- IV Drip near the head of the table, opposite the monitor.
+- Waste Bucket near the chair or by the entry corner.
+- Sanitizer mounted near the entry wall.
+- Clock mounted high on the wall above or near the monitor.
+- Caution Sign placed near the scanner, slightly in front.
+
+Realism requirements:
+- Include at least 10 total interior objects (scanner, table, monitors, chair, cart, IV, bucket, sanitizer, clock, sign, patient).
+
+Room exterior (required):
+- 4 walls forming a 6m x 6m enclosure (wall height 3m).
+- Front wall must have a doorway (approx 1.2m wide, centered at x=0) so the room can be entered/exited.
+- Ceiling covering the full room.
+- One ceiling light fixture mounted at the center of the ceiling, with bright hospital lighting (SetLightIntensity).

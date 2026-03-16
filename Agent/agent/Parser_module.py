@@ -129,7 +129,7 @@ class Parser:
             try:
                 # Call Groq API with streaming
                 completion = self.groq_client.chat.completions.create(
-                    model="meta-llama/llama-4-maverick-17b-128e-instruct",
+                    model="meta-llama/llama-4-scout-17b-16e-instruct",
                     messages=messages,
                     temperature=0,
                     max_completion_tokens=2048,

@@ -47,12 +47,14 @@ class ReflectionResult:
     step_complete: str
     current_action_thoughts: str
     next_action_thoughts: str
+    alignment_suggestions: str = ""
 
     def to_dict(self) -> Dict[str, Any]:
         return {
             "step_complete": self.step_complete,
             "current_action_thoughts": self.current_action_thoughts,
             "next_action_thoughts": self.next_action_thoughts,
+            "alignment_suggestions": self.alignment_suggestions,
         }
 
 class ReflectionModule:
@@ -65,6 +67,13 @@ class ReflectionModule:
         self.actions_file = "api_files/actions.json"
         self.plan_file = "api_files/plan.json"
         self.reflection_file = "api_files/reflection.json"
+
+        # Derive the 3-view screenshot base path from env var (strip .png if present)
+        raw_path = os.getenv("UNITY_SCREENSHOT_PATH", "api_files/scene_screenshot.png")
+        base = raw_path[:-4] if raw_path.endswith(".png") else raw_path
+        self.screenshot_xz = base + "_xz.png"  # top-down
+        self.screenshot_xy = base + "_xy.png"  # front
+        self.screenshot_yz = base + "_yz.png"  # side
 
     def _project_root(self) -> str:
         return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -215,43 +224,33 @@ class ReflectionModule:
             [f"Knowledge {i+1}: {k.get('text', '')}" for i, k in enumerate(knowledge)]
         )
 
-        system_prompt = """You are a verification module. You do NOT classify, interpret, or infer concepts.
-        You ONLY verify whether all constraints implied by the plan step are explicitly satisfied by visual evidence.
+        system_prompt = """You are a scene quality inspector for a Unity VR healthcare training environment.
+        You review room layouts from orthographic screenshots (XZ=top-down, XY=front, YZ=side) and the room plan.
 
-        Process you MUST follow internally:
-        1. Treat EVERY word in the plan step as potentially introducing a constraint.
-        2. Separate constraints into:
-        - Observable (can be confirmed directly from the screenshot)
-        - Non-observable (would require interpretation or assumption)
-        3. A step can ONLY be complete if:
-        - All observable constraints are satisfied AND
-        - No non-observable constraints are required to judge completion
+        Your job:
+        1. Verify if the current plan step constraints are satisfied by direct visual evidence (yes/no).
+        2. Identify specific placement or alignment issues visible in the screenshots.
+        3. Suggest concrete, actionable improvements to make the room more realistic.
 
-        Critical rule:
-        If a plan step uses descriptive or conceptual language that cannot be reduced to direct visual checks, the step is NOT complete.
+        Verification rules:
+        - Use "yes" ONLY if every observable constraint is directly and mechanically verified in the screenshots.
+        - Default to "no" if any constraint is unverified or the layout looks randomly placed.
+        - Do NOT use phrases like "suggests", "appears", or "looks like" for verification.
 
-        You are NOT allowed to:
-        - Decide whether something "counts as" a category
-        - Use phrases like "suggests", "appears", "looks like"
-        - Infer structure, intent, or design from distribution alone
-        - Treat randomness or loose organization as satisfying any constraint
+        For alignment_suggestions, you MUST:
+        - Reference specific object names (e.g. "Exam_Table_01", "Monitor_02").
+        - Suggest concrete position or rotation changes (e.g. "move IV_Drip_01 to x=-1.5, z=1.5 to be closer to the table head").
+        - Consider: realistic spacing, objects facing correct direction, workflow logic, objects at correct height (y=0 for floor items).
+        - Note any missing exterior elements (walls, ceiling, doorway) and suggest exact CreateObjectByName commands.
+        - Aim for a believable CT examination room a clinician would recognize.
 
-        Count-only satisfaction is valid ONLY when the plan step contains no other descriptive or relational language.
-
-        If the layout could plausibly be the result of random placement, you MUST return "no".
-
-        Evidence priority:
-        1) Screenshot visuals ONLY
-        2) Game state ONLY if directly visible
-
-        Output ONLY:
+        Output ONLY valid JSON:
         {
-        "step_complete": "yes" or "no",
-        "current_action_thoughts": "Explicit constraint checks and failures",
-        "next_action_thoughts": "Exact missing or violated constraints"
-        }
-
-        Default to "no". Use "yes" only if every constraint is directly and mechanically verified."""
+          "step_complete": "yes" or "no",
+          "current_action_thoughts": "explicit constraint checks and what is/isn't satisfied",
+          "next_action_thoughts": "missing or violated constraints to address next",
+          "alignment_suggestions": "specific actionable suggestions with object names and target positions"
+        }"""
 
         loop_mode_note = ""
         if is_loop_step:
@@ -281,47 +280,45 @@ class ReflectionModule:
         {reflections_str}
         """
 
-         # Get screenshots from the game/screenshots folder
-        screenshots_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "game", "screenshots")
-        minimap_path = os.path.join(screenshots_dir, "minimap_screenshot.png")
-        game_path = os.path.join(screenshots_dir, "game_screenshot.png")
-        
-        # Read and encode screenshots
+        # Load the 3 orthographic view screenshots (XZ=top-down, XY=front, YZ=side)
         import base64
-        game_data = None
-        minimap_data = None
-        try:
-            with open(minimap_path, "rb") as image_file:
-                minimap_data = base64.b64encode(image_file.read()).decode('utf-8')
-            
-            with open(game_path, "rb") as image_file:
-                game_data = base64.b64encode(image_file.read()).decode('utf-8')
-        except Exception as e:
-            logger.warning(f"Error reading screenshots: {str(e)}")
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        view_labels = [
+            ("XZ (top-down)", self.screenshot_xz),
+            ("XY (front)", self.screenshot_xy),
+            ("YZ (side)", self.screenshot_yz),
+        ]
+        view_data: list = []
+        for label, rel_path in view_labels:
+            abs_path = rel_path if os.path.isabs(rel_path) else os.path.join(project_root, rel_path)
+            if os.path.exists(abs_path):
+                try:
+                    with open(abs_path, "rb") as f:
+                        encoded = base64.b64encode(f.read()).decode("utf-8")
+                    view_data.append((label, encoded))
+                except Exception as e:
+                    logger.warning(f"Error reading {label} screenshot: {e}")
 
         max_retries = 3
         retry_delay = 2.0
-         # Prepare messages for Groq API
+
+        # Prepare messages for Groq API
         messages = [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": base_content},
         ]
-        
-        # Add images if available
-        if game_data and minimap_data:
-            messages.append({
-                "role": "user",
-                "content": [
-                    {"type": "text", "text": "Use these screenshots as the primary evidence:"},
-                    {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{game_data}"}},
-                    {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{minimap_data}"}},
-                ],
-            })
+
+        # Add all available orthographic view images
+        if view_data:
+            image_content = [{"type": "text", "text": "Use these orthographic screenshots as primary evidence (XZ=top-down, XY=front, YZ=side):"}]
+            for label, encoded in view_data:
+                image_content.append({"type": "image_url", "image_url": {"url": f"data:image/png;base64,{encoded}"}})
+            messages.append({"role": "user", "content": image_content})
 
         for attempt in range(max_retries):
             try:
                 completion = self.groq_client.chat.completions.create(
-                    model="meta-llama/llama-4-maverick-17b-128e-instruct",
+                    model="meta-llama/llama-4-scout-17b-16e-instruct",
                     messages=messages,
                     temperature=0,
                     max_completion_tokens=512,
@@ -353,6 +350,7 @@ class ReflectionModule:
                     step_complete=step_complete,
                     current_action_thoughts=str(reflection_dict.get("current_action_thoughts", "")).strip(),
                     next_action_thoughts=str(reflection_dict.get("next_action_thoughts", "")).strip(),
+                    alignment_suggestions=str(reflection_dict.get("alignment_suggestions", "")).strip(),
                 )
                 self._log_reflection(reflection, plan_step=plan_step)
                 return reflection

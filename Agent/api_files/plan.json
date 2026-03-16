@@ -1,1 +1,122 @@
-{}
+{
+  "room_type": "CT Examination Room",
+  "description": "A compact, clean, and realistic CT examination room",
+  "layout_goals": {
+    "interior_bounds": "6m x 6m",
+    "minimum_objects": 10,
+    "focal_point": "CT scanner"
+  },
+  "steps": [
+    {
+      "step": 1,
+      "action": "Place CT scanner",
+      "objects": [
+        "CT scanner"
+      ],
+      "target_area": "center of the room",
+      "condition": "CT scanner is centered in the room"
+    },
+    {
+      "step": 2,
+      "action": "Add patient",
+      "objects": [
+        "patient"
+      ],
+      "target_area": "near the CT scanner",
+      "condition": "patient is present and walking around the room"
+    },
+    {
+      "step": 3,
+      "action": "Place examination table",
+      "objects": [
+        "examination table"
+      ],
+      "target_area": "aligned with the CT scanner bore",
+      "condition": "table is aligned with the scanner in/out axis"
+    },
+    {
+      "step": 4,
+      "action": "Add X-Ray monitor",
+      "objects": [
+        "dual-screen X-Ray monitor"
+      ],
+      "target_area": "head of the table, slightly to the right",
+      "condition": "monitor is at the head of the table, near the control corner"
+    },
+    {
+      "step": 5,
+      "action": "Place chair",
+      "objects": [
+        "chair"
+      ],
+      "target_area": "near the monitor/control station",
+      "condition": "chair is near the monitor/control station on the right side"
+    },
+    {
+      "step": 6,
+      "action": "Add utility cart",
+      "objects": [
+        "utility cart"
+      ],
+      "target_area": "near the table on the monitor side",
+      "condition": "cart is near the table, on the monitor side"
+    },
+    {
+      "step": 7,
+      "action": "Place IV drip",
+      "objects": [
+        "IV drip"
+      ],
+      "target_area": "near the head of the table, opposite the monitor",
+      "condition": "IV drip is near the head of the table, opposite the monitor"
+    },
+    {
+      "step": 8,
+      "action": "Add waste bucket",
+      "objects": [
+        "waste bucket"
+      ],
+      "target_area": "near the chair or by the entry corner",
+      "condition": "waste bucket is near the chair or by the entry corner"
+    },
+    {
+      "step": 9,
+      "action": "Install sanitizer",
+      "objects": [
+        "sanitizer"
+      ],
+      "target_area": "near the entry wall",
+      "condition": "sanitizer is mounted near the entry wall"
+    },
+    {
+      "step": 10,
+      "action": "Mount clock",
+      "objects": [
+        "clock"
+      ],
+      "target_area": "high on the wall above or near the monitor",
+      "condition": "clock is mounted high on the wall above or near the monitor"
+    },
+    {
+      "step": 11,
+      "action": "Place caution sign",
+      "objects": [
+        "caution sign"
+      ],
+      "target_area": "near the scanner, slightly in front",
+      "condition": "caution sign is near the scanner, slightly in front"
+    },
+    {
+      "step": 12,
+      "action": "Create room exterior",
+      "objects": [
+        "4 walls",
+        "ceiling",
+        "doorway",
+        "ceiling light fixture"
+      ],
+      "target_area": "full room enclosure",
+      "condition": "room has a 6m x 6m enclosure with a doorway and ceiling light fixture"
+    }
+  ]
+}
