@@ -48,6 +48,9 @@ class ReflectionResult:
     current_action_thoughts: str
     next_action_thoughts: str
     alignment_suggestions: str = ""
+    layout_comments: str = ""
+    room_status: str = "good"       # "sparse" | "good" | "cluttered"
+    suggest_additions: bool = False  # True only when room_status == "sparse"
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -55,6 +58,9 @@ class ReflectionResult:
             "current_action_thoughts": self.current_action_thoughts,
             "next_action_thoughts": self.next_action_thoughts,
             "alignment_suggestions": self.alignment_suggestions,
+            "layout_comments": self.layout_comments,
+            "room_status": self.room_status,
+            "suggest_additions": self.suggest_additions,
         }
 
 class ReflectionModule:
@@ -209,47 +215,66 @@ class ReflectionModule:
 
     def reflect_step(self, plan_step: Dict, game_state: Dict, relevant_knowledge: Optional[List[Dict]] = None) -> ReflectionResult:
         """Reflect on the current step completion using plan, actions, and screenshots."""
-        plan = self._load_plan()
-        recent_actions = self._load_recent_actions(limit=12)
         knowledge = relevant_knowledge or []
         is_loop_step = isinstance(plan_step, dict) and plan_step.get("step") == "loop"
 
+        plan = self._load_plan()
         plan_str = json.dumps(plan, indent=2)
         plan_step_str = json.dumps(plan_step, indent=2)
         game_state_str = json.dumps(game_state, indent=2)
-        actions_str = json.dumps(recent_actions, indent=2)
         recent_reflections = self._load_recent_reflections(limit=5)
         reflections_str = json.dumps(recent_reflections, indent=2)
         knowledge_str = "\n".join(
             [f"Knowledge {i+1}: {k.get('text', '')}" for i, k in enumerate(knowledge)]
         )
 
-        system_prompt = """You are a scene quality inspector for a Unity VR healthcare training environment.
-        You review room layouts from orthographic screenshots (XZ=top-down, XY=front, YZ=side) and the room plan.
+        system_prompt = """You are a layout quality inspector for a Unity VR CT examination room.
+        Your PRIMARY job is to fix layout problems. Adding new objects is secondary and only happens when the room is sparse.
 
-        Your job:
-        1. Verify if the current plan step constraints are satisfied by direct visual evidence (yes/no).
-        2. Identify specific placement or alignment issues visible in the screenshots.
-        3. Suggest concrete, actionable improvements to make the room more realistic.
+        PRIORITY ORDER — work through these in order every call:
 
-        Verification rules:
-        - Use "yes" ONLY if every observable constraint is directly and mechanically verified in the screenshots.
-        - Default to "no" if any constraint is unverified or the layout looks randomly placed.
-        - Do NOT use phrases like "suggests", "appears", or "looks like" for verification.
+        PRIORITY 1 — IDENTIFY LAYOUT ISSUES (always do this first):
+        Look at the screenshots and game_state. Identify every object that is out of place OR wrongly rotated.
+        Out of place / wrong rotation means ANY of:
+        - Object is isolated in the middle of the floor with no wall or furniture nearby.
+        - Object is inside the walkway (z=1.5-4.5, |x|<1.2) and is NOT the CT scanner, exam table, or IV stand.
+        - Two or more objects are visually overlapping or stacked.
+        - A character is standing inside equipment or bunched with 2+ other characters within 0.5m.
+        - A supply item (cart, tray, sanitizer) is not against a wall.
+        - An object is facing the wrong direction: wall-mounted items should face inward, characters should face
+          the scanner/table or room center, carts against the left wall should have rotationY=90,
+          carts against the right wall rotationY=270, carts against the back wall rotationY=180.
+        List ALL of these in alignment_suggestions with specific objectNames, current positions, and where they should go.
 
-        For alignment_suggestions, you MUST:
-        - Reference specific object names (e.g. "Exam_Table_01", "Monitor_02").
-        - Suggest concrete position or rotation changes (e.g. "move IV_Drip_01 to x=-1.5, z=1.5 to be closer to the table head").
-        - Consider: realistic spacing, objects facing correct direction, workflow logic, objects at correct height (y=0 for floor items).
-        - Note any missing exterior elements (walls, ceiling, doorway) and suggest exact CreateObjectByName commands.
-        - Aim for a believable CT examination room a clinician would recognize.
+        PRIORITY 2 — ASSESS ROOM FULLNESS:
+        After identifying layout fixes, assess whether the room needs more objects.
+        Count meaningful objects (exclude walls/floor/ceiling cubes) in game_state.
+        - room_status = "sparse"    if fewer than 10 meaningful objects placed.
+        - room_status = "good"      if 10-25 meaningful objects and layout is organized.
+        - room_status = "cluttered" if more than 25 meaningful objects OR room looks overcrowded in screenshots.
+        Set suggest_additions = true ONLY when room_status is "sparse".
+        If room_status is "good" or "cluttered", set suggest_additions = false — do NOT add more objects.
+
+        PRIORITY 3 — ADVISE ADDITIONS (only if suggest_additions = true):
+        In alignment_suggestions, include specific zones and object types that are empty and need filling.
+        Be specific: "back wall x=1.5,z=5.5 needs a supply cart" not "add more equipment".
+
+        alignment_suggestions is read by the agent that executes commands — be precise:
+        - For wrong rotation: "Rotate <objectName> to rotationY=90 (faces inward from left wall)"
+        - For additions (sparse only): "Add a supply cart to back wall at x=1.5,z=5.5"
+        - For removals: "Delete <objectName> — does not belong in a CT room"
+
+        game_state also contains last_edit_commands — commands the agent applied last iteration. Do not advise reversing these.
 
         Output ONLY valid JSON:
         {
           "step_complete": "yes" or "no",
-          "current_action_thoughts": "explicit constraint checks and what is/isn't satisfied",
-          "next_action_thoughts": "missing or violated constraints to address next",
-          "alignment_suggestions": "specific actionable suggestions with object names and target positions"
+          "current_action_thoughts": "zone-by-zone description of what you see in the screenshots",
+          "next_action_thoughts": "remaining layout issues to address next",
+          "alignment_suggestions": "precise advice for the agent: moves, rotations, deletions first; additions only if sparse",
+          "layout_comments": "2-4 sentence plain-English verdict — does it look like a real CT room, what's working, what's wrong",
+          "room_status": "sparse" or "good" or "cluttered",
+          "suggest_additions": true or false
         }"""
 
         loop_mode_note = ""
@@ -259,18 +284,16 @@ class ReflectionModule:
                 "Only mark step_complete as yes if loop conditions are satisfied.\n\n"
             )
 
-        base_content = f"""{loop_mode_note}Generate your JSON reflection based on the information below.
+        base_content = f"""{loop_mode_note}IMPORTANT: Base your visual judgments primarily on the screenshots provided below, not just the object list.
+Look at each screenshot carefully before generating edit_commands. The screenshots are ground truth.
 
-        Plan (full):
+        Full Plan:
         {plan_str}
 
         Current Step:
         {plan_step_str}
 
-        Recent Actions:
-        {actions_str}
-
-        Game State:
+        Placed Objects (name, position):
         {game_state_str}
 
         Relevant Knowledge:
@@ -302,18 +325,16 @@ class ReflectionModule:
         max_retries = 3
         retry_delay = 2.0
 
-        # Prepare messages for Groq API
-        messages = [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": base_content},
-        ]
+        # Prepare messages — screenshots come first so the model sees images before text context
+        messages = [{"role": "system", "content": system_prompt}]
 
-        # Add all available orthographic view images
         if view_data:
-            image_content = [{"type": "text", "text": "Use these orthographic screenshots as primary evidence (XZ=top-down, XY=front, YZ=side):"}]
+            image_content = [{"type": "text", "text": "These are the current orthographic screenshots of the scene. Study them carefully before reading the object list.\nXZ=top-down (shows x/z layout), XY=front, YZ=side."}]
             for label, encoded in view_data:
                 image_content.append({"type": "image_url", "image_url": {"url": f"data:image/png;base64,{encoded}"}})
             messages.append({"role": "user", "content": image_content})
+
+        messages.append({"role": "user", "content": base_content})
 
         for attempt in range(max_retries):
             try:
@@ -321,7 +342,7 @@ class ReflectionModule:
                     model="meta-llama/llama-4-scout-17b-16e-instruct",
                     messages=messages,
                     temperature=0,
-                    max_completion_tokens=512,
+                    max_completion_tokens=1500,
                     top_p=1,
                     stream=True,
                     stop=None,
@@ -346,11 +367,18 @@ class ReflectionModule:
                 if step_complete not in {"yes", "no"}:
                     step_complete = "no"
 
+                raw_status = str(reflection_dict.get("room_status", "good")).strip().lower()
+                room_status = raw_status if raw_status in {"sparse", "good", "cluttered"} else "good"
+                suggest_additions = bool(reflection_dict.get("suggest_additions", False)) and room_status == "sparse"
+
                 reflection = ReflectionResult(
                     step_complete=step_complete,
                     current_action_thoughts=str(reflection_dict.get("current_action_thoughts", "")).strip(),
                     next_action_thoughts=str(reflection_dict.get("next_action_thoughts", "")).strip(),
                     alignment_suggestions=str(reflection_dict.get("alignment_suggestions", "")).strip(),
+                    layout_comments=str(reflection_dict.get("layout_comments", "")).strip(),
+                    room_status=room_status,
+                    suggest_additions=suggest_additions,
                 )
                 self._log_reflection(reflection, plan_step=plan_step)
                 return reflection

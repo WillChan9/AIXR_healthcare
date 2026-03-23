@@ -77,10 +77,8 @@ public class EnvironmentAgent : MonoBehaviour
             }
             else
             {
-                spawned = new GameObject(objectName);
-                spawned.transform.position = position;
-                spawned.transform.rotation = Quaternion.Euler(0, rotationY, 0);
-                Debug.Log($"AI Agent created empty object: {objectName} at {position}");
+                Debug.LogWarning($"AI Agent CreateObjectByName: '{objectName}' is not a known prefab or primitive — skipping.");
+                return;
             }
         }
 
@@ -119,6 +117,21 @@ public class EnvironmentAgent : MonoBehaviour
         else
         {
             Debug.LogError($"AI Agent Error: Human prefab '{humanName}' not found in Resources. Place human prefabs under Assets/Resources/...");
+        }
+    }
+
+    /// <summary>Called by Agent: find a previously spawned object by name and destroy it.</summary>
+    public void DeleteObject(string objectName)
+    {
+        GameObject target = FindSpawnedObject(objectName);
+        if (target != null)
+        {
+            Debug.Log($"AI Agent deleted: {target.name}");
+            Destroy(target);
+        }
+        else
+        {
+            Debug.LogWarning($"AI Agent DeleteObject: '{objectName}' not found in scene.");
         }
     }
 

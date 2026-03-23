@@ -1,8 +1,7 @@
 CT Examination Room (compact, clean, realistic)
 
 Create a believable CT examination room that reads as a real, enclosed space (not a sparse cluster of props).
-Room size approx 6m x 6m. Keep a clear walking lane around the scanner and table, but avoid big empty gaps.
-Only place objects inside the room (no walls, ceiling, or floor generation).
+Room size approx 6m x 6m with 4 walls, a ceiling, and a floor. Keep a clear walking lane around the scanner and table, but avoid big empty gaps.
 
 Primary anchor and workflow:
 - Tomograph/CT scanner centered as the focal point (near the middle of the room).

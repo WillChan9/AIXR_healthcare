@@ -297,6 +297,9 @@ public class AgentNetworkBridge : MonoBehaviour
                 AddFloat("x", cmd.x); AddFloat("y", cmd.y); AddFloat("z", cmd.z);
                 AddFloat("rotationY", cmd.rotationY);
                 break;
+            case "DeleteObject":
+                AddString("objectName", cmd.objectName);
+                break;
             case "SetHumanAnimationController":
                 AddString("controllerPath", cmd.controllerPath ?? cmd.controllerPathInResources);
                 break;
@@ -397,6 +400,10 @@ public class AgentNetworkBridge : MonoBehaviour
             case "MoveObject":
                 var movePos = new Vector3(cmd.x, cmd.y, cmd.z);
                 environmentAgent.MoveObject(cmd.objectName, movePos, cmd.rotationY);
+                break;
+
+            case "DeleteObject":
+                environmentAgent.DeleteObject(cmd.objectName);
                 break;
 
             case "PlaceHuman":

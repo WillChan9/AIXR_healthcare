@@ -1,5 +1,6 @@
 import os
 import sys
+import re
 import json
 import time
 import argparse
@@ -15,16 +16,36 @@ sys.path.insert(0, str(Path(__file__).parent))
 from agent.Reflection_module import ReflectionModule
 
 
+# Regex matching sub-part suffixes: _Part_01, _Body, _Coat, _Wheel_01, etc.
+_SUBPART_RE = re.compile(
+    r'_Part_\d+$'
+    r'|_Body$|_Face$|_Coat$|_Hat$|_Pants$|_Sneakers$|_Hair$|_Mask$'
+    r'|_Shoes$|_Slippers$|_Suit$|_Shirt$|_Beard$|_Glasses$|_Gloves$'
+    r'|_Back_Wheel$|_Front_Wheel$|_Wheel_\d+$|_Door_Left$|_Door_Right$|_Shelf$',
+    re.IGNORECASE,
+)
+
+
 def _load_prefab_names(resources_dir: Path) -> List[str]:
     if not resources_dir.exists():
         return []
-    return sorted({p.stem for p in resources_dir.rglob("*.prefab")})
+    stems = {p.stem for p in resources_dir.rglob("*.prefab")}
+    return sorted(s for s in stems if not _SUBPART_RE.search(s))
 
 
 def _load_animator_names(resources_dir: Path) -> List[str]:
+    """Return only the animation controllers that make sense in a clinical/hospital context."""
     if not resources_dir.exists():
         return []
-    return sorted({p.stem for p in resources_dir.rglob("*.controller")})
+    # Exclude movement animations irrelevant in a clinical room (running, sprinting, jumping, falling, turning)
+    _exclude_keywords = {"run", "sprint", "jump", "fall", "turn", "backward", "backwardleft", "backwardright"}
+    result = []
+    for p in resources_dir.rglob("*.controller"):
+        norm = p.stem.lower().replace("@", "").replace("[", "").replace("]", "").replace("_", "").replace(" ", "")
+        if any(kw in norm for kw in _exclude_keywords):
+            continue
+        result.append(p.stem)
+    return sorted(set(result))
 
 
 def _normalize_name(name: str) -> str:
@@ -52,7 +73,10 @@ def _resolve_prefab_name(name: Optional[str], prefabs: List[str], lookup: Dict[s
         return lookup[norm]
 
     # Substring match (handles suffixes like _01)
-    candidates: List[Tuple[str, str]] = [(p, _normalize_name(p)) for p in prefabs]
+    # Exclude sub-parts from substring matching — they should never be resolved to.
+    candidates: List[Tuple[str, str]] = [
+        (p, _normalize_name(p)) for p in prefabs if not _SUBPART_RE.search(p)
+    ]
     matches = [p for p, n in candidates if norm in n or n in norm]
     if matches:
         # Choose closest length match
@@ -82,26 +106,6 @@ def _to_full_character_name(name: str) -> Optional[str]:
     return None
 
 
-def _fallback_primitive(name_hint: Optional[str]) -> str:
-    norm = _normalize_name(name_hint or "")
-    if "monitor" in norm or "screen" in norm:
-        return "Quad"
-    if "clock" in norm:
-        return "Cylinder"
-    if "sign" in norm:
-        return "Plane"
-    if "drip" in norm or "iv" in norm:
-        return "Cylinder"
-    if "cart" in norm:
-        return "Cube"
-    if "bucket" in norm:
-        return "Cylinder"
-    if "sanitizer" in norm:
-        return "Cylinder"
-    if "tomograph" in norm or "scanner" in norm:
-        return "Cube"
-    return "Cube"
-
 
 def _strip_unknown_fields(commands: List[Dict]) -> List[Dict]:
     """Remove any fields the LLM added to commands that the validator will reject.
@@ -125,6 +129,7 @@ def _strip_unknown_fields(commands: List[Dict]) -> List[Dict]:
         "SetHumanAnimatorBool": {"action", "paramName", "boolValue"},
         "SetHumanAnimatorTrigger": {"action", "paramName"},
         "MoveObject": {"action", "objectName", "x", "y", "z", "rotationY"},
+        "DeleteObject": {"action", "objectName"},
     }
     meta = {"id", "timestamp", "executed", "done"}
     result = []
@@ -257,7 +262,6 @@ def _extract_json_array(text: str) -> List[Dict]:
                 return value
 
     # Some models wrap JSON in XML-like tool tags
-    import re
     tag_match = re.search(r"<tool_call>\s*(.*?)\s*</tool_call>", text, re.DOTALL)
     if tag_match:
         inner = tag_match.group(1).strip()
@@ -271,7 +275,6 @@ def _extract_json_array(text: str) -> List[Dict]:
                     return value
 
     # Try to find and MERGE all JSON arrays in the text (LLM sometimes outputs multiple arrays)
-    import re as _re
     merged: List[Dict] = []
     depth = 0
     arr_start = None
@@ -317,7 +320,6 @@ def _repair_incomplete_json(json_str: str) -> str:
     result = json_str.strip()
 
     # Remove trailing commas before closing brackets/braces
-    import re
     result = re.sub(r',\s*([}\]])', r'\1', result)
 
     # Count brackets and braces properly (accounting for strings)
@@ -383,6 +385,7 @@ def _validate_commands(commands: List[Dict]) -> None:
         "SetHumanAnimatorBool",
         "SetHumanAnimatorTrigger",
         "MoveObject",
+        "DeleteObject",
     }
 
     allowed_meta = {"id", "timestamp", "executed", "done"}
@@ -405,6 +408,7 @@ def _validate_commands(commands: List[Dict]) -> None:
         "SetHumanAnimatorBool": {"action", "paramName", "boolValue"},
         "SetHumanAnimatorTrigger": {"action", "paramName"},
         "MoveObject": {"action", "objectName", "x", "y", "z"},
+        "DeleteObject": {"action", "objectName"},
     }
 
     allowed_fields_by_action = {
@@ -426,6 +430,7 @@ def _validate_commands(commands: List[Dict]) -> None:
         "SetHumanAnimatorBool": {"action", "paramName", "boolValue"},
         "SetHumanAnimatorTrigger": {"action", "paramName"},
         "MoveObject": {"action", "objectName", "x", "y", "z", "rotationY"},
+        "DeleteObject": {"action", "objectName"},
     }
 
     def _is_number(v):
@@ -555,7 +560,6 @@ def _dedup_structural(commands: List[Dict]) -> List[Dict]:
 
 def _write_commands_safe(path: Path, commands: List[Dict], retries: int = 5, delay: float = 0.5) -> None:
     """Write JSON to a temp file then replace the target to avoid Unity file-lock errors."""
-    import tempfile
     data = json.dumps(commands, indent=2)
     for attempt in range(retries):
         try:
@@ -685,6 +689,24 @@ def main():
     prefabs = _load_prefab_names(resources_dir)
     animators = _load_animator_names(resources_dir)
 
+    # Clear all runtime files at startup
+    for jf in [out_path, agent_dir / "api_files" / "reflection.json", agent_dir / "api_files" / "actions.json"]:
+        try:
+            jf.write_text("[]", encoding="utf-8")
+            print(f"[Init] Cleared {jf.name}")
+        except Exception as e:
+            print(f"[Init] Could not clear {jf.name}: {e}")
+
+    screenshot_base = screenshot_path.with_suffix("")
+    for suffix in ["_xz.png", "_xy.png", "_yz.png"]:
+        shot = Path(str(screenshot_base) + suffix)
+        try:
+            if shot.exists():
+                shot.unlink()
+                print(f"[Init] Deleted {shot.name}")
+        except Exception as e:
+            print(f"[Init] Could not delete {shot.name}: {e}")
+
     client = Groq(api_key=api_key)
 
     # Generate plan.json once at startup so the reflection module has context
@@ -692,43 +714,16 @@ def main():
     plan = _generate_plan(description, client, agent_dir)
 
     system = (
-        "You are a Unity environment builder for a VR medical training simulation. "
+        "You are a Unity scene builder constructing a CT examination room for VR medical training. "
         "Return ONLY a valid JSON array of commands. No markdown, no code fences, no explanations. "
-        "PLACEMENT RULES — strictly follow these or the objects will be invisible: "
-        "1. Use PlaceObject for ALL named medical assets. The objectName MUST be an exact name from available_prefabs. "
-        "2. Use PlaceHuman for character prefabs (Doctor, Nurse, Patient, EMT). "
-        "3. Use CreateObjectByName ONLY for the room shell (walls, floor, ceiling) with primitive names: Cube, Cylinder. "
-        "4. NEVER invent objectNames — if not in available_prefabs, omit the object. "
-        "ROOM SHELL — place these FIRST using CreateObjectByName with Cube: "
-        "Floor: (0,-0.05,3) scaleX=6.2 scaleY=0.1 scaleZ=6.2. "
-        "Back wall: (0,1.5,6.1) scaleX=6.4 scaleY=3 scaleZ=0.2. "
-        "Left wall: (-3.1,1.5,3) scaleX=0.2 scaleY=3 scaleZ=6.4. "
-        "Right wall: (3.1,1.5,3) scaleX=0.2 scaleY=3 scaleZ=6.4. "
-        "Front-left: (-1.8,1.5,-0.1) scaleX=2.4 scaleY=3 scaleZ=0.2. "
-        "Front-right: (1.8,1.5,-0.1) scaleX=2.4 scaleY=3 scaleZ=0.2. "
-        "Door header: (0,2.55,-0.1) scaleX=1.2 scaleY=0.9 scaleZ=0.2. "
-        "Ceiling: (0,3.1,3) scaleX=6.4 scaleY=0.2 scaleZ=6.4. "
-        "Ceiling light (Cylinder): (0,2.95,3) scaleX=0.5 scaleY=0.05 scaleZ=0.5. "
-        "LIGHTING — immediately after the shell add these three commands: "
-        "SetAmbientColor r=0.88 g=0.90 b=0.92 (bright cool-white hospital light). "
-        "SetLightIntensity scale=2.0. SetFogEnabled enabled=false. "
-        "CT ROOM LAYOUT — place these using PlaceObject (exact names from available_prefabs): "
-        "SCANNER ZONE (center): Tomograpf_01 at (0,0,3), Exam_Table_01 at (0,0,1.5). "
-        "Stand_01 (IV pole) at (-1,0,1.5). Stand_02 at (1,0,1.5). "
-        "CONTROL ZONE (right side x=1.5-2.8): Control_Panel_01 at (2.4,0,2.5). "
-        "Chair_01 at (2,0,1.8). Chair_02 at (2.5,0,1.2). PC_Monitor_01 at (2.4,0.7,2). "
-        "Computer_01 at (2,0,2.8). Keyboard_01 at (2.4,0.7,2.3). Screen_01 at (2.8,0,3.5). "
-        "UTILITY ZONE (back z=4-5.5): Utility_Cart_01 at (-2.2,0,5). Utility_Cart_02 at (-1,0,5.5). "
-        "Surgery_Cart_01 at (1.5,0,5.5). Table_01 at (2.2,0,5). Table_02 at (-2.5,0,3.5). "
-        "ENTRY ZONE (near door z=0-1): Sanitizer_01 at (2.5,0,0.5). Waste_Bucket_01 at (-2.5,0,0.5). "
-        "Caution_Sign_01 at (-1,0,0.8). Signal_Door_01 at (0,0,0.2). "
-        "PROPS — place on tables/walls: Tray_01, Box_01, Folder_01, Folder_02, Copybook_01, "
-        "Stethoscope_01, Aid_Kit_01, Clock_01 at (2.8,2,1) rotationY=270, "
-        "Poster_01 at (-3,1.5,3) rotationY=90, Poster_02 at (3,1.5,4) rotationY=270. "
-        "CHARACTERS: PlaceHuman Doctor_01 at (-1.5,0,2.2). PlaceHuman Patient_01 at (0,0,0.8). "
-        "ANIMATION: Use PlayHumanAnimationFromResources. "
-        "Patient walking: controllerPath='AnimatorControllers/HumanF@Walk01_Forward' stateName='HumanF@Walk01_Forward'. "
-        "Doctor talking: controllerPath='AnimatorControllers/HumanM@Talking' stateName='HumanM@Talking'."
+        "You MUST output every command listed below in the EXACT order and with the EXACT coordinates shown. "
+        "Do NOT change positions, scales, or rotations — copy them precisely into the JSON. "
+
+        "NAMING RULES (violations make objects invisible): "
+        "1. CreateObjectByName: only 'Cube' or 'Cylinder'. "
+        "2. PlaceObject objectName: exact name from available_prefabs only. "
+        "3. PlaceHuman humanName: exact name from available_prefabs only. "
+        "4. Never invent names. If a name is not in available_prefabs, skip it. "
     )
 
     user = {
@@ -758,7 +753,7 @@ def main():
                 {"role": "system", "content": system},
                 {"role": "user", "content": json.dumps(user)}
             ],
-            temperature=0.6,
+            temperature=0.1,
             max_completion_tokens=4096,
         )
 
@@ -818,29 +813,43 @@ def main():
     time.sleep(1.0)
 
     loop_system = (
-        "You are a Unity environment builder adding objects to an existing CT examination room. "
+        "You are a clinical room designer adding detail to an existing CT examination room in Unity. "
         "Return ONLY a valid JSON array. No markdown, no explanations. "
-        "STRICT RULES: "
-        "1. Use PlaceObject for named objects — objectName MUST be an exact name from available_prefabs. "
-        "2. Use PlaceHuman for characters (Doctor, Nurse, Patient, EMT prefabs). "
-        "3. Do NOT use CreateObjectByName at all — walls and ceiling are already placed. "
-        "4. Do NOT repeat any objectName already in objects_already_in_scene. "
-        "5. Place 6-10 new objects per iteration from this CT room equipment list: "
-        "Furniture: Utility_Cart_03, Utility_Cart_04, Utility_Cart_05, Utility_Cart_06, Utility_Cart_07, "
-        "Utility_Cart_08, Utility_Cart_09, Trolley_01, Stretchers_01, Table_03, Table_04, "
-        "Exam_Table_01_Shelf_01, Exam_Stool_01, Basin_Stand_01, Sink_01, Towel_Dispenser_01, Hand_Dryer_01. "
+
+        "CORE RULES: "
+        "1. PlaceObject: objectName MUST be an exact name from available_prefabs — never invent names. "
+        "2. PlaceHuman: humanName must be exact. Add PlayHumanAnimationFromResources immediately after. "
+        "3. Do NOT use CreateObjectByName — the room shell is already placed. "
+        "4. Do NOT repeat any name already in objects_already_in_scene. "
+        "5. Place 5-8 new objects per iteration, chosen to make the room MORE realistic, not just fuller. "
+        "6. POSITION COLLISION: Before placing any object, check objects_already_in_scene coordinates. "
+        "   If another object is within 0.6m on BOTH x AND z axes, choose a different position or skip it. "
+        "   Never place two objects at the same or nearly-same (x,z) position. "
+        "7. ROOM CAPACITY: Consider how many people realistically fit in a 6x6m CT room with equipment. "
+        "   Reason about available floor space before adding characters — do not crowd the room. "
+
+        "AVAILABLE ADDITIONS (only use names from available_prefabs): "
+        "Extra furniture: Utility_Cart_03 thru _09, Trolley_01, Stretchers_01, Table_03, Table_04, "
+        "Exam_Stool_01, Basin_Stand_01, Sink_01, Towel_Dispenser_01, Hand_Dryer_01. "
         "Equipment: Radiograph_01, Radiograph_02, Ultrasound_Machine_01, Encephalograph_01, "
-        "Encephalograph_02, Control_Panel_01, Scale_01, Screen_02. "
-        "Props (place ON tables at y=0.7): Tray_01, Box_02, Box_03, Box_04, Folder_03, Folder_04, "
-        "Folder_05, Copybook_02, Copybook_03, Copybook_04, Bottle_01, Bottle_02, Bottle_03, "
-        "Mouse_01, Keyboard_01, Glasses_01, Mask_Box_01, Mask_Box_02, Medical_Models_01, "
-        "Medical_Models_03, Stethoscope_01, Syringe_01, Thermometer_01, Otoscope_01. "
-        "Wall decorations (y=1.5-2.0): Poster_03, Poster_04, Poster_05, Frame, Wall_Panel_01. "
-        "Characters (only if not yet in scene): PlaceHuman Doctor_02, Nurse_01, EMT_01. "
-        "6. Fill empty corners and wall space. Keep x in [-2.8,2.8], z in [0.2,5.9]. "
-        "7. Apply alignment_suggestions from reflection: use MoveObject to reposition existing objects. "
-        "MoveObject format: {\"action\":\"MoveObject\",\"objectName\":\"<exact name>\",\"x\":...,\"y\":...,\"z\":...,\"rotationY\":...}. "
-        "objectName must exactly match a name from objects_already_in_scene."
+        "Encephalograph_02, Scale_01, Screen_02. "
+        "Props (on surfaces only): Box_02-04, Folder_02-05, Copybook_01-04, Bottle_01-03, "
+        "Mouse_01, Glasses_01, Mask_Box_01, Mask_Box_02, Medical_Models_01, Medical_Models_03, "
+        "Syringe_01, Thermometer_01, Otoscope_01. "
+        "Wall decor: Poster_03, Poster_04, Poster_05, Frame, Wall_Panel_01. "
+        "Characters (only if role not yet in scene): Doctor_02, Nurse_01, EMT_01. "
+
+        "ANIMATION — for any new character, pick the role-appropriate controller: "
+        "Nurse_01 preparing supplies → HumanF@Walk01_Forward or HumanF@Talking. "
+        "Doctor_02 consulting → HumanM@Talking or HumanM@Idles. "
+        "EMT_01 entering → HumanM@Walk01_Forward. "
+        "Never use Run, Sprint, Jump, Fall, or Turn. "
+        "controllerPath format: 'AnimatorControllers/<name>' — stateName equals the controller name. "
+
+        "EDITS from alignment_suggestions: "
+        "MoveObject: {\"action\":\"MoveObject\",\"objectName\":\"<exact name from scene>\",\"x\":...,\"y\":...,\"z\":...,\"rotationY\":...}. "
+        "DeleteObject: {\"action\":\"DeleteObject\",\"objectName\":\"<exact name from scene>\"}. "
+        "Use these to fix misplaced objects or remove clutter identified in alignment_suggestions."
     )
 
     # Derive the 3 orthographic screenshot base path (strip .png if present)
@@ -858,6 +867,7 @@ def main():
     last_loop_time = 0.0
     iterations = 0
     alignment_hints = ""
+    suggest_additions = True  # updated by reflection each iteration
     plan_steps = plan.get("steps", [])
     current_step_idx = 0
     step_iteration_count = 0
@@ -900,8 +910,9 @@ def main():
         # Build compact summary from in-memory record (includes executed commands Unity already processed).
         existing_summary = [
             {
+                "id": cmd.get("id", ""),
                 "objectName": cmd.get("objectName") or cmd.get("humanName", "?"),
-                "x": cmd.get("x"), "z": cmd.get("z"),
+                "x": cmd.get("x"), "y": cmd.get("y"), "z": cmd.get("z"),
             }
             for cmd in all_placed if cmd.get("action") in _place_actions
         ]
@@ -919,13 +930,28 @@ def main():
             step_label = current_plan_step.get("action", f"step {current_step_idx + 1}")
             print(f"[Reflection] Evaluating plan step {current_step_idx + 1}/{len(plan_steps)}: {step_label}")
 
+            _place_actions_set = {"PlaceObject", "PlaceHuman", "CreateObjectByName"}
+            placed_summary = [
+                {
+                    "id": c.get("id", ""),
+                    "objectName": c.get("objectName") or c.get("humanName", "?"),
+                    "action": c.get("action"),
+                    "x": c.get("x"), "y": c.get("y"), "z": c.get("z"),
+                    "rotationY": c.get("rotationY", 0),
+                }
+                for c in all_placed if c.get("action") in _place_actions_set
+            ]
             reflection_result = reflector.reflect_step(
                 plan_step=current_plan_step,
-                game_state={"commands": all_placed},
+                game_state={"placed_objects": placed_summary},
             )
             alignment_hints = reflection_result.alignment_suggestions
+            suggest_additions = reflection_result.suggest_additions
             print(f"[Reflection] step_complete={reflection_result.step_complete}")
+            print(f"[Reflection] room_status={reflection_result.room_status}  suggest_additions={reflection_result.suggest_additions}")
             print(f"[Reflection] current_action_thoughts: {reflection_result.current_action_thoughts}")
+            if reflection_result.layout_comments:
+                print(f"[Reflection] layout_comments: {reflection_result.layout_comments}")
             print(f"[Reflection] alignment_suggestions: {alignment_hints}")
 
             step_iteration_count += 1
@@ -939,6 +965,9 @@ def main():
                 current_step_idx += 1
                 step_iteration_count = 0
                 print(f"[Reflection] Step {reason} — advancing to step {current_step_idx + 1}: {plan_steps[current_step_idx].get('action', '')}")
+            elif should_advance and current_step_idx >= len(plan_steps) - 1:
+                print("[Plan] All plan steps complete — agent stopping.")
+                break
         except Exception as e:
             print(f"[Reflection] skipped: {e}")
             alignment_hints = ""
@@ -954,16 +983,21 @@ def main():
             "alignment_suggestions": alignment_hints,
             "loop_instruction": (
                 f"There are currently {len(existing_summary)} objects in the scene. "
-                "Use your clinical judgment as a hospital room designer — look at the screenshots "
-                "and decide what a real CT room would have that isn't there yet. "
-                "Add exactly 6-10 NEW objects this iteration. Do NOT add anything whose objectName "
-                "already appears in objects_already_in_scene. "
-                "Think: lead apron rack, radiation warning sign, oxygen tank, emergency cart, "
-                "medicine cabinet, supply shelf, paper towel dispenser, glove box, "
-                "sharps container, whiteboard, door panel, storage bin, vital signs monitor, "
-                "laptop on cart, specimen container, alcohol wipes dispenser — whatever fits. "
-                "Fill corners and wall space. Keep a 0.8m walkway around the scanner. "
-                "Apply alignment_suggestions to reposition misplaced objects."
+                + (
+                    # CORRECTION MODE — reflection says layout has problems or room is full
+                    "MODE: CORRECTION ONLY. The reflection module has determined the room does not need more objects. "
+                    "Do NOT add any new PlaceObject or PlaceHuman commands this iteration. "
+                    "Your ONLY job is to apply the alignment_suggestions: move or delete misplaced objects. "
+                    "If alignment_suggestions is empty, output an empty JSON array []."
+                    if not suggest_additions else
+                    # FILL MODE — reflection says room is sparse
+                    "MODE: FILL. The room is sparse and needs more objects. "
+                    "STEP 1 — COUNT HUMANS: If there are already 3 or more humans (Doctor_*, Nurse_*, Patient_*), do NOT add PlaceHuman. "
+                    "STEP 2 — FILL EMPTY ZONES based on alignment_suggestions. "
+                    "STEP 3 — DO NOT place anything in the walkway: "
+                    "Add 3-5 new objects this iteration, each in its correct zone. "
+                    "Do NOT repeat any objectName already in objects_already_in_scene."
+                )
             ),
         }
 
@@ -986,7 +1020,7 @@ def main():
             completion = client.chat.completions.create(
                 model="meta-llama/llama-4-scout-17b-16e-instruct",
                 messages=messages,
-                temperature=0.4,
+                temperature=0.2,
                 max_completion_tokens=2048,
             )
 
