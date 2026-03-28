@@ -1,7 +1,6 @@
 import os
 import json
 import time
-import logging
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Any
 
@@ -11,36 +10,12 @@ from groq import Groq
 # Load environment variables
 load_dotenv()
 
-def setup_logger(name: str, log_file: str, level=logging.DEBUG) -> logging.Logger:
-    """Set up a logger with file and console handlers."""
-    logger = logging.getLogger(name)
-    logger.setLevel(level)
+try:
+    from .logger import get_logger
+except ImportError:
+    from agent.logger import get_logger
 
-    if logger.handlers:
-        logger.handlers.clear()
-
-    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    log_path = os.path.join(project_root, log_file)
-    os.makedirs(os.path.dirname(log_path), exist_ok=True)
-
-    file_handler = logging.FileHandler(log_path)
-    file_handler.setLevel(level)
-
-    console_handler = logging.StreamHandler()
-    console_handler.setLevel(level)
-
-    formatter = logging.Formatter(
-        "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-    )
-    file_handler.setFormatter(formatter)
-    console_handler.setFormatter(formatter)
-
-    logger.addHandler(file_handler)
-    logger.addHandler(console_handler)
-    return logger
-
-logger = setup_logger("ReflectionModule", "api_files/reflection_log.log")
+logger = get_logger("ReflectionModule", module_log_file="api_files/reflection_log.log")
 
 @dataclass
 class ReflectionResult:
@@ -64,6 +39,9 @@ class ReflectionResult:
         }
 
 class ReflectionModule:
+    # Maximum number of reflection iterations per plan step before forcing step_complete=yes
+    MAX_REFLECTIONS_PER_STEP = 3
+
     def __init__(self):
         groq_api_key = os.getenv("GROQ_API_KEY")
         if not groq_api_key:
@@ -74,12 +52,23 @@ class ReflectionModule:
         self.plan_file = "api_files/plan.json"
         self.reflection_file = "api_files/reflection.json"
 
+        # Track reflection counts per step to enforce iteration limit
+        self._step_reflection_counts: Dict[str, int] = {}
+
         # Derive the 3-view screenshot base path from env var (strip .png if present)
         raw_path = os.getenv("UNITY_SCREENSHOT_PATH", "api_files/scene_screenshot.png")
         base = raw_path[:-4] if raw_path.endswith(".png") else raw_path
         self.screenshot_xz = base + "_xz.png"  # top-down
         self.screenshot_xy = base + "_xy.png"  # front
         self.screenshot_yz = base + "_yz.png"  # side
+
+    def reset_step_count(self, step_key: str = None):
+        """Reset reflection iteration count for a step (or all steps if step_key is None).
+        Call this when advancing to a new plan step."""
+        if step_key is None:
+            self._step_reflection_counts.clear()
+        else:
+            self._step_reflection_counts.pop(str(step_key), None)
 
     def _project_root(self) -> str:
         return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -192,6 +181,40 @@ class ReflectionModule:
             f" for step '{step_label}'" if step_label else ""
         )
 
+    def _load_placed_objects(self) -> List[Dict]:
+        """Load already-placed Unity objects from unity_commands.json for accurate object counting."""
+        project_root = self._project_root()
+        unity_project = os.path.join(project_root, "firefighter project")
+        commands_file = os.path.join(unity_project, "Assets", "Scripts", "unity_commands.json")
+
+        if not os.path.exists(commands_file):
+            return []
+
+        try:
+            with open(commands_file, 'r', encoding='utf-8') as f:
+                content = f.read().strip()
+                if not content:
+                    return []
+                commands = json.loads(content)
+        except (json.JSONDecodeError, IOError):
+            return []
+
+        placed = []
+        for cmd in commands:
+            if not isinstance(cmd, dict):
+                continue
+            action = cmd.get("action", "")
+            if action in ("PlaceObject", "CreateObjectByName", "PlaceHuman"):
+                placed.append({
+                    "action": action,
+                    "objectName": cmd.get("objectName") or cmd.get("humanName", ""),
+                    "x": cmd.get("x", 0),
+                    "y": cmd.get("y", 0),
+                    "z": cmd.get("z", 0),
+                    "rotationY": cmd.get("rotationY", 0),
+                })
+        return placed
+
     def _load_recent_reflections(self, limit: int = 5) -> List[Dict]:
         reflection_path = os.path.join(self._project_root(), self.reflection_file)
         if not os.path.exists(reflection_path):
@@ -218,12 +241,39 @@ class ReflectionModule:
         knowledge = relevant_knowledge or []
         is_loop_step = isinstance(plan_step, dict) and plan_step.get("step") == "loop"
 
+        # --- Iteration limit: force completion after MAX_REFLECTIONS_PER_STEP ---
+        step_key = str(plan_step.get("step", "unknown")) if isinstance(plan_step, dict) else "unknown"
+        self._step_reflection_counts[step_key] = self._step_reflection_counts.get(step_key, 0) + 1
+        current_count = self._step_reflection_counts[step_key]
+
+        if current_count > self.MAX_REFLECTIONS_PER_STEP and not is_loop_step:
+            logger.info(
+                f"Step '{step_key}' reached max reflections ({self.MAX_REFLECTIONS_PER_STEP}). "
+                "Forcing step_complete=yes to avoid infinite correction loop."
+            )
+            forced = ReflectionResult(
+                step_complete="yes",
+                current_action_thoughts="Max reflection iterations reached. Accepting current layout.",
+                next_action_thoughts="Proceeding to next step.",
+                alignment_suggestions="",
+                layout_comments="Layout accepted after maximum correction iterations.",
+                room_status="good",
+                suggest_additions=False,
+            )
+            self._log_reflection(forced, plan_step=plan_step)
+            return forced
+
         plan = self._load_plan()
         plan_str = json.dumps(plan, indent=2)
         plan_step_str = json.dumps(plan_step, indent=2)
         game_state_str = json.dumps(game_state, indent=2)
         recent_reflections = self._load_recent_reflections(limit=5)
         reflections_str = json.dumps(recent_reflections, indent=2)
+
+        # Load already-placed Unity objects so the reflection knows the real object count
+        placed_objects = self._load_placed_objects()
+        placed_objects_str = json.dumps(placed_objects, indent=2)
+        placed_count = len(placed_objects)
         knowledge_str = "\n".join(
             [f"Knowledge {i+1}: {k.get('text', '')}" for i, k in enumerate(knowledge)]
         )
@@ -259,12 +309,14 @@ class ReflectionModule:
         In alignment_suggestions, include specific zones and object types that are empty and need filling.
         Be specific: "back wall x=1.5,z=5.5 needs a supply cart" not "add more equipment".
 
-        alignment_suggestions is read by the agent that executes commands — be precise:
-        - For wrong rotation: "Rotate <objectName> to rotationY=90 (faces inward from left wall)"
-        - For additions (sparse only): "Add a supply cart to back wall at x=1.5,z=5.5"
-        - For removals: "Delete <objectName> — does not belong in a CT room"
+        alignment_suggestions is read by the agent that executes commands — be precise and use these exact formats:
+        - To move/rotate: "MoveObject <objectName> x=<x> y=<y> z=<z> rotationY=<deg>"
+        - For additions (sparse only): "PlaceObject <objectName> x=<x> y=<y> z=<z> rotationY=<deg>"
+        - For removals: "DeleteObject <objectName>"
+        CRITICAL: NEVER suggest placing an object that is already in the scene. To reposition, always use MoveObject.
 
         game_state also contains last_edit_commands — commands the agent applied last iteration. Do not advise reversing these.
+        Do not keep oscillating: if a previous reflection already addressed an issue and the agent acted on it, accept the result unless it is clearly wrong.
 
         Output ONLY valid JSON:
         {
@@ -296,10 +348,15 @@ Look at each screenshot carefully before generating edit_commands. The screensho
         Placed Objects (name, position):
         {game_state_str}
 
+        Already Placed Unity Objects ({placed_count} objects — use this for room_status counting):
+        {placed_objects_str}
+        NOTE: There are {placed_count} objects already in the Unity scene. Count these (excluding Cube walls/floor/ceiling) for room_status.
+        Do NOT suggest PlaceObject for any objectName already in this list — use MoveObject to reposition instead.
+
         Relevant Knowledge:
         {knowledge_str}
 
-        Recent Reflections:
+        Recent Reflections (iteration {current_count} of max {self.MAX_REFLECTIONS_PER_STEP} for this step):
         {reflections_str}
         """
 
@@ -324,6 +381,12 @@ Look at each screenshot carefully before generating edit_commands. The screensho
 
         max_retries = 3
         retry_delay = 2.0
+
+        # Guard: if no screenshots are available, the LLM cannot visually evaluate the room.
+        # Override room_status to "good" and suggest_additions to False so we don't blindly
+        # add objects based on coordinate-only guesswork.
+        if not view_data:
+            logger.info("No screenshots available — skipping visual evaluation, using coordinate-only reflection.")
 
         # Prepare messages — screenshots come first so the model sees images before text context
         messages = [{"role": "system", "content": system_prompt}]
@@ -370,6 +433,12 @@ Look at each screenshot carefully before generating edit_commands. The screensho
                 raw_status = str(reflection_dict.get("room_status", "good")).strip().lower()
                 room_status = raw_status if raw_status in {"sparse", "good", "cluttered"} else "good"
                 suggest_additions = bool(reflection_dict.get("suggest_additions", False)) and room_status == "sparse"
+
+                # Override: without screenshots the LLM is guessing — never suggest additions blindly
+                if not view_data:
+                    if room_status == "sparse":
+                        room_status = "good"  # don't trust coordinate-only "sparse" judgment
+                    suggest_additions = False
 
                 reflection = ReflectionResult(
                     step_complete=step_complete,

@@ -7,17 +7,16 @@ import json
 from dotenv import load_dotenv
 from tqdm import tqdm
 import glob
-import logging
-
-# Set up logging
-logging.basicConfig(
-    level=logging.INFO,  # Changed from DEBUG to INFO
-    format='%(message)s'  # Simplified format to only show message
-)
-logger = logging.getLogger(__name__)
 
 # Load environment variables
 load_dotenv()
+
+try:
+    from .logger import get_logger
+except ImportError:
+    from agent.logger import get_logger
+
+logger = get_logger("ContextModule")
 
 class VectorStorage:
     def __init__(self):

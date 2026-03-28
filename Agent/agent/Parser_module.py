@@ -12,6 +12,13 @@ from .Context_module import VectorStorage
 # Load environment variables
 load_dotenv()
 
+try:
+    from .logger import get_logger
+except ImportError:
+    from agent.logger import get_logger
+
+logger = get_logger("Parser")
+
 class Parser:
     def __init__(self):
         # Initialize OpenAI (kept for backward compatibility if needed)
@@ -46,10 +53,10 @@ class Parser:
             with open(self.experience_file, 'r') as f:
                 return f.read().strip()
         except FileNotFoundError:
-            print(f"Warning: Experience description file not found at {self.experience_file}")
+            logger.warning(f"Experience description file not found at {self.experience_file}")
             return ""
         except Exception as e:
-            print(f"Error reading experience description: {str(e)}")
+            logger.error(f"Error reading experience description: {str(e)}")
             return ""
 
     def generate_plan(self) -> Dict:
@@ -192,15 +199,15 @@ class Parser:
             except (ValueError, json.JSONDecodeError) as e:
                 # If JSON parsing fails, check if this is the last attempt
                 if attempt < max_retries - 1:
-                    print(f"Invalid JSON response (attempt {attempt + 1}/{max_retries}). Retrying in {retry_delay} seconds...")
+                    logger.warning(f"Invalid JSON response (attempt {attempt + 1}/{max_retries}). Retrying in {retry_delay} seconds...")
                     time.sleep(retry_delay)
                     continue
                 else:
                     # Last attempt failed, raise error
-                    print(f"Failed to parse JSON after {max_retries} attempts. Error: {str(e)}")
+                    logger.error(f"Failed to parse JSON after {max_retries} attempts. Error: {str(e)}")
                     raise ValueError(f"Invalid JSON response from Groq API after {max_retries} attempts: {str(e)}")
             except Exception as e:
-                print(f"Error generating plan: {str(e)}")
+                logger.error(f"Error generating plan: {str(e)}")
                 raise
 
     
@@ -238,7 +245,7 @@ class Parser:
             return result
             
         except json.JSONDecodeError as e:
-            print(f"Error parsing completion as JSON: {str(e)}")
+            logger.error(f"Error parsing completion as JSON: {str(e)}")
             return {
                 "steps": [],
                 "total_steps": 0
@@ -249,21 +256,18 @@ if __name__ == "__main__":
     """Test the parser module by generating a plan from experience_description.txt."""
     parser = Parser()
     
-    print("Generating plan from experience_description.txt...")
-    print("-" * 50)
-    
+    logger.info("Generating plan from experience_description.txt...")
+
     # Generate plan based on experience description
     plan = parser.generate_plan()
-    
-    print("\nGenerated Plan:")
-    print(json.dumps(plan, indent=2))
-    print("-" * 50)
-    
+
+    logger.info(f"Generated Plan:\n{json.dumps(plan, indent=2)}")
+
     # Save plan to api_files/plan.json
     plan_file = os.path.join(parser.project_root, "api_files", "plan.json")
     try:
         with open(plan_file, 'w') as f:
             json.dump(plan, f, indent=2)
-        print(f"\nPlan saved successfully to {plan_file}")
+        logger.info(f"Plan saved successfully to {plan_file}")
     except Exception as e:
-        print(f"\nError saving plan to file: {str(e)}")
+        logger.error(f"Error saving plan to file: {str(e)}")

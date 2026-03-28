@@ -8,6 +8,13 @@ import os
 from pathlib import Path
 import time
 
+try:
+    from .logger import get_logger
+except ImportError:
+    from agent.logger import get_logger
+
+logger = get_logger("SensingModule")
+
 @dataclass
 class Position:
     x: float
@@ -69,7 +76,7 @@ class UserState:
             self.game_over: bool = False
             self.game_won: bool = False
         except (FileNotFoundError, json.JSONDecodeError, KeyError) as e:
-            print(f"Error loading game config: {str(e)}. Using default values.")
+            logger.error(f"Error loading game config: {str(e)}. Using default values.")
             self.health: int = 5
             self.position: Position = Position(0, 0)
             self.game_over: bool = False
@@ -115,7 +122,7 @@ class GameSensor:
         try:
             # Check if file exists, if not return warning
             if not self.state_file.exists():
-                print(f"Warning: Game state file not found at {self.state_file}")
+                logger.warning(f"Game state file not found at {self.state_file}")
                 return False
             
             # Read game state from file
@@ -123,7 +130,7 @@ class GameSensor:
                 content = f.read().strip()
                 
             if not content:  # File is empty
-                print(f"Warning: Game state file is empty at {self.state_file}")
+                logger.warning(f"Game state file is empty at {self.state_file}")
                 return False
                 
             game_data = json.loads(content)
@@ -195,10 +202,10 @@ class GameSensor:
             return True
             
         except json.JSONDecodeError as e:
-            print(f"Error parsing game state file: {str(e)}")
+            logger.error(f"Error parsing game state file: {str(e)}")
             return False
         except Exception as e:
-            print(f"Error updating game state: {str(e)}")
+            logger.error(f"Error updating game state: {str(e)}")
             return False
 
     def update_user_state(self, **kwargs):

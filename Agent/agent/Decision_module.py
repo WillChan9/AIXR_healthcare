@@ -15,6 +15,7 @@ try:
     from .Parser_module import Parser
     from .Sensing_module import GameSensor, Position, ObjectType, GameObject
     from .Context_module import VectorStorage
+    from .logger import get_logger
 except ImportError:
     # Handle direct execution
     import sys
@@ -24,47 +25,13 @@ except ImportError:
     from agent.Parser_module import Parser
     from agent.Sensing_module import GameSensor, Position, ObjectType, GameObject
     from agent.Context_module import VectorStorage
+    from agent.logger import get_logger
 
 # Load environment variables
 load_dotenv()
 
-# Set up logger
-def setup_logger(name: str, log_file: str, level=logging.DEBUG):
-    """Set up a logger with file and console handlers."""
-    logger = logging.getLogger(name)
-    logger.setLevel(level)
-    
-    # Remove existing handlers to avoid duplicates
-    if logger.handlers:
-        logger.handlers.clear()
-    
-    # File handler for decision log
-    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    log_path = os.path.join(project_root, log_file)
-    os.makedirs(os.path.dirname(log_path), exist_ok=True)
-    
-    file_handler = logging.FileHandler(log_path)
-    file_handler.setLevel(level)
-    
-    # Console handler
-    console_handler = logging.StreamHandler()
-    console_handler.setLevel(level)
-    
-    # Formatter
-    formatter = logging.Formatter(
-        '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S'
-    )
-    file_handler.setFormatter(formatter)
-    console_handler.setFormatter(formatter)
-    
-    logger.addHandler(file_handler)
-    logger.addHandler(console_handler)
-    
-    return logger
-
-# Initialize logger
-logger = setup_logger('DecisionMaker', 'api_files/decision_log.log')
+# Initialize logger — writes to combined agent.log + per-module decision_log.log + console
+logger = get_logger('DecisionMaker', module_log_file='api_files/decision_log.log')
 
 class ActionType(Enum):
     MOVE = "move"
@@ -281,6 +248,43 @@ class DecisionMaker:
         if isinstance(data, dict):
             return data
         return {}
+
+    def _load_placed_objects(self) -> List[Dict]:
+        """Load the list of already-placed Unity objects from unity_commands.json.
+        Returns a list of dicts with objectName, position, rotationY for each placed object.
+        This prevents the LLM from re-placing objects that already exist in the scene."""
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        unity_project = os.path.join(project_root, "firefighter project")
+        commands_file = os.path.join(unity_project, "Assets", "Scripts", "unity_commands.json")
+
+        if not os.path.exists(commands_file):
+            return []
+
+        try:
+            with open(commands_file, 'r', encoding='utf-8') as f:
+                content = f.read().strip()
+                if not content:
+                    return []
+                commands = json.loads(content)
+        except (json.JSONDecodeError, IOError):
+            return []
+
+        placed = []
+        for cmd in commands:
+            if not isinstance(cmd, dict):
+                continue
+            action = cmd.get("action", "")
+            if action in ("PlaceObject", "CreateObjectByName", "PlaceHuman"):
+                placed.append({
+                    "action": action,
+                    "objectName": cmd.get("objectName") or cmd.get("humanName", ""),
+                    "x": cmd.get("x", 0),
+                    "y": cmd.get("y", 0),
+                    "z": cmd.get("z", 0),
+                    "rotationY": cmd.get("rotationY", 0),
+                    "executed": cmd.get("executed", False),
+                })
+        return placed
     
     def _repair_incomplete_json(self, json_str: str) -> str:
         """Try to repair incomplete JSON by adding missing closing brackets and braces."""
@@ -804,8 +808,8 @@ class DecisionMaker:
                      "angle": int (for wall generation only),
                      
                      // For Unity actions (action_type="unity"):
-                     "unity_action": "Unity action name: PlaceObject, PlaceHuman, SetTimeOfDay, SetFogEnabled, SetFogDensity, SetLightIntensity, SetLightColor, SetAmbientColor, SetGravity, SetTimeScale, SetHumanAnimationController, PlayHumanAnimationFromResources",
-                     "objectName": "prefab name in Resources/Prefabs/ (for PlaceObject)",
+                     "unity_action": "Unity action name: PlaceObject, PlaceHuman, MoveObject, DeleteObject, SetTimeOfDay, SetFogEnabled, SetFogDensity, SetLightIntensity, SetLightColor, SetAmbientColor, SetGravity, SetTimeScale, SetHumanAnimationController, PlayHumanAnimationFromResources",
+                     "objectName": "prefab name in Resources/Prefabs/ (for PlaceObject/PlaceHuman/MoveObject/DeleteObject)",
                      "humanName": "prefab name in Resources/Prefabs/ (for PlaceHuman)",
                      "x": float (Unity world X coordinate),
                      "y": float (Unity world Y coordinate),
@@ -862,18 +866,28 @@ class DecisionMaker:
              9. Consider the game state, especially player health and position
              10. Use visual context from both screenshots to make informed decisions
              11. Return only the JSON array, no explanation
+             12. CRITICAL — DO NOT DUPLICATE OBJECTS: Check the "Already Placed Objects" list below. If an object with the same objectName already exists, do NOT use PlaceObject again. Instead:
+                 - To reposition it: use MoveObject with the same objectName, new x/y/z, and rotationY
+                 - To remove it: use DeleteObject with the objectName
+                 - Only use PlaceObject for objects NOT already in the placed list
+             13. For MoveObject: require objectName, x, y, z (rotationY optional, default 0)
+             14. For DeleteObject: require objectName only
+             15. When the reflection says to move or rotate an object, use MoveObject — NEVER place a duplicate
 
         Current Game State:
         {game_state_str}
-        
+
         Current Step:
         {plan_step_str}
         {loop_instructions}
 
         Latest Reflection:
         {reflection_str}
-        
-        Generate actions for the current plan step(s):"""
+
+        Already Placed Objects (DO NOT re-place these — use MoveObject to reposition or DeleteObject to remove):
+        {json.dumps(self._load_placed_objects(), indent=2)}
+
+        Generate actions for the current plan step(s). Remember: never PlaceObject for an objectName that is already placed — use MoveObject instead:"""
         
         # Prepare messages for Groq API
         messages = [

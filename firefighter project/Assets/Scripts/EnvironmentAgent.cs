@@ -111,8 +111,22 @@ public class EnvironmentAgent : MonoBehaviour
             if (mainAnim != null)
             {
                 HardCleanupHumanRig(spawned, mainAnim);
+                // Force idle pose: load the Idle controller so the character stands still
+                // instead of playing whatever animation the prefab ships with.
+                RuntimeAnimatorController idleCtrl = LoadAnimatorControllerByName("AnimatorControllers/HumanM@Idles");
+                if (idleCtrl != null)
+                {
+                    mainAnim.runtimeAnimatorController = idleCtrl;
+                    mainAnim.Update(0f);
+                    mainAnim.CrossFade("HumanM@Idles", 0f);
+                }
+                else
+                {
+                    // No idle controller available — disable the animator to prevent random animations
+                    mainAnim.runtimeAnimatorController = null;
+                }
             }
-            Debug.Log($"AI Agent placed human: {humanName} at {position} (set as default human)");
+            Debug.Log($"AI Agent placed human: {humanName} at {position} (set as default human, idle pose)");
         }
         else
         {

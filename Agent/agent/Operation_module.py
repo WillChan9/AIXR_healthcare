@@ -10,6 +10,9 @@ from pathlib import Path
 from openai import OpenAI
 
 from .Decision_module import GameDecision, ActionType
+from .logger import get_logger
+
+logger = get_logger("OperationModule", module_log_file="api_files/operation_log.log")
 from .Sensing_module import GameSensor, Position, ObjectType, GameObject
 from game.game_state import GameState
 
@@ -271,6 +274,26 @@ class GameOperator:
                 except (json.JSONDecodeError, IOError):
                     commands = []
             
+            # Deduplication: if this is a PlaceObject/PlaceHuman/CreateObjectByName and the same
+            # objectName was already placed, skip it to avoid duplicates in the scene.
+            if action_name in ("PlaceObject", "PlaceHuman", "CreateObjectByName"):
+                obj_name = cmd.get("objectName") or cmd.get("humanName", "")
+                new_x, new_y, new_z = cmd.get("x", 0), cmd.get("y", 0), cmd.get("z", 0)
+                for existing in commands:
+                    if not isinstance(existing, dict):
+                        continue
+                    if existing.get("action") not in ("PlaceObject", "PlaceHuman", "CreateObjectByName"):
+                        continue
+                    existing_name = existing.get("objectName") or existing.get("humanName", "")
+                    if existing_name == obj_name:
+                        ex, ey, ez = existing.get("x", 0), existing.get("y", 0), existing.get("z", 0)
+                        dist_sq = (new_x - ex)**2 + (new_y - ey)**2 + (new_z - ez)**2
+                        if dist_sq < 0.5:  # Within 0.7m — treat as duplicate
+                            return OperationResult(
+                                True,
+                                f"Skipped duplicate: '{obj_name}' already placed nearby at ({ex},{ey},{ez})"
+                            )
+
             # Add a new command (with timestamp and execution status).
             new_command = {
                 "id": f"cmd_{int(time.time() * 1000)}_{len(commands)}",  # Unique ID.
@@ -318,7 +341,7 @@ class GameOperator:
                 
                 return all_actions
         except Exception as e:
-            print(f"Error loading actions from file: {str(e)}")
+            logger.error(f"Error loading actions from file: {str(e)}")
             return []
     
     def execute_unexecuted_actions(self) -> List[OperationResult]:
@@ -328,7 +351,7 @@ class GameOperator:
         
         # Check individual action's "complete" field, not entry's "executed" field
         unexecuted_count = sum(1 for a in actions if not a.get("complete", False))
-        print(f"Found {unexecuted_count} unexecuted actions out of {len(actions)} total actions")
+        logger.info(f"Found {unexecuted_count} unexecuted actions out of {len(actions)} total actions")
         
         for i, action in enumerate(actions):
             # Skip if already executed (check individual action's complete field)
@@ -338,18 +361,18 @@ class GameOperator:
             try:
                 # Unity environment command: enqueue directly without converting to GameDecision.
                 if action.get("action_type") == "unity":
-                    print(f"Executing action {i+1}: unity -> {action.get('action') or action.get('unity_action')}")
+                    logger.info(f"Executing action {i+1}: unity -> {action.get('action') or action.get('unity_action')}")
                     result = self.execute_unity_action(action)
                 else:
-                    print(f"Executing action {i+1}: {action.get('action_type')} - {action.get('object_type') or action.get('object_id')}")
+                    logger.info(f"Executing action {i+1}: {action.get('action_type')} - {action.get('object_type') or action.get('object_id')}")
                     decision = self._action_dict_to_decision(action)
                     result = self.execute_decision(decision)
                 
                 results.append(result)
                 if result.success:
-                    print(f"  ✓ Success: {result.message}")
+                    logger.info(f"  Success: {result.message}")
                 else:
-                    print(f"  ✗ Failed: {result.message}")
+                    logger.warning(f"  Failed: {result.message}")
                 
                 # Mark as executed in actions.json
                 self._mark_action_executed(action, result.success)
@@ -358,7 +381,7 @@ class GameOperator:
                 time.sleep(0.1)
             except Exception as e:
                 error_msg = f"Error processing action: {str(e)}"
-                print(f"  ✗ Exception: {error_msg}")
+                logger.error(f"  Exception: {error_msg}")
                 results.append(OperationResult(False, error_msg))
                 import traceback
                 traceback.print_exc()
@@ -438,7 +461,7 @@ class GameOperator:
             with open(self.actions_file, 'w') as f:
                 json.dump(data, f, indent=2)
         except Exception as e:
-            print(f"Error marking action as executed: {str(e)}")
+            logger.error(f"Error marking action as executed: {str(e)}")
     
     def _actions_match(self, action1: Dict, action2: Dict) -> bool:
         """Check if two actions match (same action_type, object_id, etc.)."""
