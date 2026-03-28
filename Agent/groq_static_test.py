@@ -1050,6 +1050,7 @@ def phase1_generate_environment(
                 _write_commands_safe(out_path, existing_file + direct_commands)  # FIX 2: keep ALL
                 logger.info(f"[Phase 1] Applied {len(direct_commands)} direct corrections (MoveObject/DeleteObject)")
             last_applied_hints = alignment_hints
+            stale_count = 0
         elif alignment_hints == last_applied_hints and alignment_hints:
             stale_count += 1
             logger.info(f"[Phase 1] Same suggestions as last iteration — skipping (stale x{stale_count}).")

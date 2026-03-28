@@ -88,7 +88,11 @@ GROQ_API_KEY=your_key_here
    You can use either of these:
 
 ```powershell
+# Full pipeline (environment generation + interaction loop):
 python Agent\groq_static_test.py
+
+# Phase 1 only (generate environment, skip interaction loop):
+python Agent\groq_static_test.py --phase1-only
 ```
 
 5. **Iterate**
