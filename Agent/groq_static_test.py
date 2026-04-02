@@ -770,25 +770,47 @@ def phase1_generate_environment(
         return count
 
     def _parse_alignment_commands(hints: str) -> List[Dict]:
-        """Parse structured MoveObject/DeleteObject from reflection alignment_suggestions."""
+        """Parse structured MoveObject/DeleteObject from reflection alignment_suggestions.
+        Handles LLM formatting variations: commas, 'to', quotes, em-dashes, bullet prefixes."""
         cmds = []
         if not hints:
             return cmds
+
+        # Flexible number pattern — handles optional comma/space separators between coords
+        _num = r"[-\d.]+"
         move_pattern = re.compile(
-            r"MoveObject\s+(\S+)\s+x=([-\d.]+)\s+y=([-\d.]+)\s+z=([-\d.]+)(?:\s+rotationY=([-\d.]+))?",
+            r"MoveObject\s+[\"']?([A-Za-z0-9_]+)[\"']?"   # object name (optional quotes)
+            r"(?:\s+to)?"                                   # optional "to"
+            r"\s+x\s*=\s*(" + _num + r"),?"               # x=
+            r"\s+y\s*=\s*(" + _num + r"),?"               # y=
+            r"\s+z\s*=\s*(" + _num + r"),?"               # z=
+            r"(?:\s+rotationY\s*=\s*(" + _num + r"))?",   # rotationY= (optional)
             re.IGNORECASE,
         )
-        delete_pattern = re.compile(r"DeleteObject\s+(\S+)", re.IGNORECASE)
+        delete_pattern = re.compile(
+            r"DeleteObject\s+[\"']?([A-Za-z0-9_]+)[\"']?",
+            re.IGNORECASE,
+        )
         for m in move_pattern.finditer(hints):
-            cmds.append({
-                "action": "MoveObject", "objectName": m.group(1),
+            name = m.group(1).strip("\"'")
+            cmd = {
+                "action": "MoveObject", "objectName": name,
                 "x": float(m.group(2)), "y": float(m.group(3)), "z": float(m.group(4)),
                 "rotationY": float(m.group(5)) if m.group(5) else 0.0,
-            })
+            }
+            # Clamp to room bounds before sending to Unity
+            cmd["x"] = max(-2.8, min(2.8, cmd["x"]))
+            cmd["z"] = max(0.1, min(5.9, cmd["z"]))
+            cmd["y"] = max(0.0, cmd["y"])
+            cmds.append(cmd)
+            logger.info(f"  [parse_alignment] MoveObject {name} → x={cmd['x']} y={cmd['y']} z={cmd['z']} rot={cmd['rotationY']}")
         for m in delete_pattern.finditer(hints):
-            name = m.group(1)
-            if not any(c["objectName"] == name for c in cmds):
+            name = m.group(1).strip("\"'")
+            if not any(c.get("objectName") == name and c.get("action") == "MoveObject" for c in cmds):
                 cmds.append({"action": "DeleteObject", "objectName": name})
+                logger.info(f"  [parse_alignment] DeleteObject {name}")
+        if not cmds and hints:
+            logger.warning(f"  [parse_alignment] No commands parsed from hints: {hints[:200]}")
         return cmds
 
     def _dedup_humans(new_cmds: List[Dict], existing: List[Dict]) -> List[Dict]:
@@ -916,10 +938,12 @@ def phase1_generate_environment(
         "Props (on surfaces only): Box_02-04, Folder_02-05, Syringe_01, Thermometer_01. "
         "Wall decor: Poster_03, Poster_04, Poster_05. "
 
-        "EDITS from alignment_suggestions: "
-        "MoveObject: {\"action\":\"MoveObject\",\"objectName\":\"<exact name from scene>\",\"x\":...,\"y\":...,\"z\":...,\"rotationY\":...}. "
-        "DeleteObject: {\"action\":\"DeleteObject\",\"objectName\":\"<exact name from scene>\"}. "
-        "Use these to fix misplaced objects or remove clutter identified in alignment_suggestions."
+        f"HARD OBJECT CAP: The room must not exceed {MAX_MEANINGFUL_OBJECTS} meaningful objects (excludes structural Cubes). "
+        "If alignment_suggestions contains MoveObject or DeleteObject instructions, you MUST output those commands EXACTLY as written — "
+        "copy the objectName, x, y, z, rotationY values directly. Do not reinterpret or skip them. "
+        "MoveObject: {\"action\":\"MoveObject\",\"objectName\":\"<exact name>\",\"x\":...,\"y\":...,\"z\":...,\"rotationY\":...}. "
+        "DeleteObject: {\"action\":\"DeleteObject\",\"objectName\":\"<exact name>\"}. "
+        "For small objects (syringes, folders, boxes, thermometers): place them ON surfaces (y>0.7) near walls, not on the floor mid-room."
     )
 
     plan_steps = plan.get("steps", [])
@@ -1026,15 +1050,17 @@ def phase1_generate_environment(
                 reflection_result.step_complete == "yes"
                 or step_iteration_count >= MAX_STEP_ITERATIONS
             )
-            if should_advance and plan_steps and current_step_idx < len(plan_steps) - 1:
+            if should_advance:
                 reason = "complete" if reflection_result.step_complete == "yes" else f"max iters ({MAX_STEP_ITERATIONS})"
-                current_step_idx += 1
-                step_iteration_count = 0
-                reflector.reset_step_count()
-                logger.info(f"  Step {reason} — advancing to step {current_step_idx + 1}: {plan_steps[current_step_idx].get('action', '')}")
-            elif should_advance and current_step_idx >= len(plan_steps) - 1:
-                logger.info("[Phase 1] All plan steps complete — environment generation finished.")
-                break
+                if plan_steps and current_step_idx < len(plan_steps) - 1:
+                    new_idx = current_step_idx + 1  # always forward — never go back
+                    logger.info(f"  Step {reason} — advancing {current_step_idx + 1} → {new_idx + 1}: {plan_steps[new_idx].get('action', '')}")
+                    current_step_idx = new_idx
+                    step_iteration_count = 0
+                    reflector.reset_step_count()
+                else:
+                    logger.info(f"  Step {reason} — all {len(plan_steps)} plan steps complete. Stopping environment generation.")
+                    break
         except Exception as e:
             logger.warning(f"[Phase 1 Reflection] skipped: {e}")
             alignment_hints = ""
@@ -1262,6 +1288,13 @@ def main():
             logger.info(f"[Init] Cleared {jf.name}")
         except Exception as e:
             logger.warning(f"[Init] Could not clear {jf.name}: {e}")
+
+    for lf in [agent_dir / "api_files" / "agent.log", agent_dir / "api_files" / "reflection_log.log"]:
+        try:
+            lf.write_text("", encoding="utf-8")
+            logger.info(f"[Init] Cleared log {lf.name}")
+        except Exception as e:
+            logger.warning(f"[Init] Could not clear log {lf.name}: {e}")
 
     # NOTE: Do NOT delete screenshots at init — Unity ScreenshotLoopSender will
     # overwrite them automatically, and deleting causes a long wait for re-creation.

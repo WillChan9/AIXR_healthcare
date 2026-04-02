@@ -1,8 +1,9 @@
 import os
 import json
 import time
+from concurrent.futures import ThreadPoolExecutor, Future
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Optional, Any, Tuple
 
 from dotenv import load_dotenv
 from groq import Groq
@@ -54,6 +55,10 @@ class ReflectionModule:
 
         # Track reflection counts per step to enforce iteration limit
         self._step_reflection_counts: Dict[str, int] = {}
+
+        # Shared state set by reflect_step before threads launch — threads read these directly
+        self._view_data: list = []          # [(label, base64_encoded), ...]
+        self._exact_scene_names: List[str] = []  # authoritative prefab names from unity_commands.json
 
         # Derive the 3-view screenshot base path from env var (strip .png if present)
         raw_path = os.getenv("UNITY_SCREENSHOT_PATH", "api_files/scene_screenshot.png")
@@ -199,21 +204,33 @@ class ReflectionModule:
         except (json.JSONDecodeError, IOError):
             return []
 
-        placed = []
+        placed_map: Dict[str, Dict] = {}
         for cmd in commands:
             if not isinstance(cmd, dict):
                 continue
             action = cmd.get("action", "")
+            name = cmd.get("objectName") or cmd.get("humanName", "")
+            if not name:
+                continue
             if action in ("PlaceObject", "CreateObjectByName", "PlaceHuman"):
-                placed.append({
+                placed_map[name] = {
                     "action": action,
-                    "objectName": cmd.get("objectName") or cmd.get("humanName", ""),
+                    "objectName": name,
                     "x": cmd.get("x", 0),
                     "y": cmd.get("y", 0),
                     "z": cmd.get("z", 0),
                     "rotationY": cmd.get("rotationY", 0),
-                })
-        return placed
+                }
+            elif action == "MoveObject" and name in placed_map:
+                # Apply position override — keep the most recent MoveObject for each object
+                if cmd.get("x") is not None: placed_map[name]["x"] = cmd["x"]
+                if cmd.get("y") is not None: placed_map[name]["y"] = cmd["y"]
+                if cmd.get("z") is not None: placed_map[name]["z"] = cmd["z"]
+                if cmd.get("rotationY") is not None: placed_map[name]["rotationY"] = cmd["rotationY"]
+            elif action == "DeleteObject" and name in placed_map:
+                del placed_map[name]
+
+        return list(placed_map.values())
 
     def _load_recent_reflections(self, limit: int = 5) -> List[Dict]:
         reflection_path = os.path.join(self._project_root(), self.reflection_file)
@@ -235,6 +252,350 @@ class ReflectionModule:
         if isinstance(data, dict):
             return [data]
         return []
+
+    def _sanitize_correction_lines(self, lines: List[str], valid_names: List[str]) -> List[str]:
+        """Repair or drop correction lines whose object name is not a valid scene prefab.
+
+        - Exact match  → keep as-is.
+        - Fuzzy match (difflib score ≥ 0.6) → substitute name, log warning.
+        - No match     → drop line, log warning.
+        """
+        import difflib
+        if not valid_names:
+            return lines
+        valid_set = set(valid_names)
+        cleaned: List[str] = []
+        for line in lines:
+            parts = line.split()
+            if len(parts) < 2 or parts[0] not in ("MoveObject", "DeleteObject"):
+                cleaned.append(line)
+                continue
+            name = parts[1]
+            if name in valid_set:
+                cleaned.append(line)
+                continue
+            matches = difflib.get_close_matches(name, valid_names, n=1, cutoff=0.6)
+            if matches:
+                fixed_name = matches[0]
+                fixed_line = line.replace(name, fixed_name, 1)
+                logger.warning(f"[NameFix] '{name}' not in scene → fuzzy-matched to '{fixed_name}'; line corrected.")
+                cleaned.append(fixed_line)
+            else:
+                logger.warning(f"[NameFix] '{name}' has no valid match in scene — line dropped: {line}")
+        return cleaned
+
+    def _focused_llm(
+        self,
+        thread_name: str,
+        system_prompt: str,
+        object_context: str,
+        max_tokens: int = 600,
+    ) -> List[str]:
+        """Shared helper: focused single-purpose LLM call used by every thread.
+
+        Always uses self._view_data (screenshots) and self._exact_scene_names (prefab list).
+        The strict name rule is always injected into the system prompt.
+        All returned names are sanitized — invalid names fuzzy-matched or dropped."""
+        import re
+
+        # Always inject strict name rule using the authoritative prefab list
+        names_block = "\n".join(f"  - {n}" for n in self._exact_scene_names) if self._exact_scene_names else "  (none yet)"
+        name_rule = (
+            "══ STRICT NAME RULE — NO EXCEPTIONS ══\n"
+            "The scene contains EXACTLY these object names. You MUST copy them character-for-character:\n"
+            f"{names_block}\n"
+            "DO NOT invent, abbreviate, paraphrase, or guess any name.\n"
+            "If you are unsure which exact name to use, omit the line entirely.\n"
+            "Any name not in this list will be rejected.\n"
+            "══════════════════════════════════════\n\n"
+        )
+        full_system = name_rule + system_prompt
+
+        messages: list = [{"role": "system", "content": full_system}]
+
+        # Always send screenshots — they are the primary source of truth
+        if self._view_data:
+            img_content: list = [{"type": "text", "text": (
+                f"[{thread_name}] Use these screenshots as your PRIMARY source. "
+                "Coordinates are supplementary only. XZ=top-down, XY=front, YZ=side.\n"
+                "Base every correction on what you can SEE in the images."
+            )}]
+            for label, encoded in self._view_data:
+                img_content.append({"type": "image_url", "image_url": {"url": f"data:image/png;base64,{encoded}"}})
+            messages.append({"role": "user", "content": img_content})
+
+        # Object context also repeats the name list so it's immediately visible when the model generates
+        name_reminder = (
+            f"\nREMINDER — valid names only: {', '.join(self._exact_scene_names)}\n"
+            if self._exact_scene_names else ""
+        )
+        messages.append({"role": "user", "content": object_context + name_reminder})
+
+        try:
+            completion = self.groq_client.chat.completions.create(
+                model="meta-llama/llama-4-scout-17b-16e-instruct",
+                messages=messages,
+                temperature=0,
+                max_completion_tokens=max_tokens,
+                top_p=1,
+                stream=False,
+            )
+            raw = (completion.choices[0].message.content or "").strip()
+            lines = [
+                ln.strip() for ln in raw.splitlines()
+                if re.match(r"^(MoveObject|DeleteObject)\s+\S+", ln.strip())
+            ]
+            lines = self._sanitize_correction_lines(lines, self._exact_scene_names)
+            logger.info(f"[{thread_name}] focused LLM returned {len(lines)} line(s).")
+            return lines
+        except Exception as e:
+            logger.warning(f"[{thread_name}] focused LLM call failed: {e}")
+            return []
+
+    # ──────────────────────────────────────────────────────────────────────────
+    # Threading helpers — run in parallel with the LLM surface thread
+    # ──────────────────────────────────────────────────────────────────────────
+
+    def _dispatcher_thread(self, placed_objects: List[Dict]) -> List[str]:
+        """Thread 0 (Python + LLM visual): triage — detect floating and randomly placed objects,
+        categorise each by issue type, and emit a tagged MoveObject correction line.
+
+        Issue tags embedded in the reason string so the merge step and logs show routing:
+          [dispatcher→bounds]   object is also out of bounds (bounds thread will re-clamp)
+          [dispatcher→collision] object is overlapping something (collision thread handles nudge)
+          [dispatcher→surface]  object needs a logical surface beneath it
+          [dispatcher→zone]     supply/decor object randomly placed mid-room
+        """
+        SURFACE_KEYWORDS  = ["Cart", "Trolley", "Table", "Desk", "Counter", "Shelf", "Bed", "Stand"]
+        SUPPLY_KEYWORDS   = ["Cart", "Trolley", "Basin", "Sink", "Dispenser", "Drip", "Stand"]
+        DECOR_KEYWORDS    = ["Poster", "Clock", "Sign", "Panel"]
+        CHARACTER_PREFIXES = ["Doctor", "Nurse", "Patient", "Surgeon", "EMT"]
+        FLOAT_Y_THRESHOLD = 0.6   # objects above this with no surface below are floating
+        SURFACE_RADIUS    = 0.5   # x/z radius to search for a supporting surface
+        MID_ROOM_X        = 2.1   # supply/decor within |x| < this AND z in [0.7,5.1] = mid-room
+
+        objs = [o for o in placed_objects if o.get("objectName") and "Cube" not in o["objectName"]]
+        corrections: List[str] = []
+        flagged: List[str] = []
+
+        for obj in objs:
+            name = obj["objectName"]
+            x    = float(obj.get("x",   0))
+            y    = float(obj.get("y",   0))
+            z    = float(obj.get("z",   0))
+            rot  = float(obj.get("rotationY", 0))
+
+            is_character = any(name.startswith(p) for p in CHARACTER_PREFIXES)
+            is_decor     = any(t in name for t in DECOR_KEYWORDS)
+            is_supply    = any(t in name for t in SUPPLY_KEYWORDS)
+
+            # ── Check 1: Floating ──────────────────────────────────────────────
+            # Wall-mounted decor near a wall at height is intentional — skip.
+            wall_mounted = is_decor and (abs(x) > 2.0 or z < 0.5 or z > 5.5) and y > 1.0
+            if not is_character and not wall_mounted and y > FLOAT_Y_THRESHOLD:
+                # Search for a surface object within radius that is below this object
+                nearest_surface = None
+                min_dist = float("inf")
+                for other in objs:
+                    oname = other["objectName"]
+                    if oname == name:
+                        continue
+                    if not any(t in oname for t in SURFACE_KEYWORDS):
+                        continue
+                    ox = float(other.get("x", 0))
+                    oz = float(other.get("z", 0))
+                    oy = float(other.get("y", 0))
+                    if oy >= y:
+                        continue  # surface must be below the object
+                    dist = ((x - ox) ** 2 + (z - oz) ** 2) ** 0.5
+                    if dist < SURFACE_RADIUS and dist < min_dist:
+                        min_dist = dist
+                        nearest_surface = other
+
+                if nearest_surface is None:
+                    # No supporting surface found — floating with nowhere logical to go
+                    # Sub-categorise: is it also out of bounds?
+                    out_of_bounds = not (-2.8 <= x <= 2.8 and 0.1 <= z <= 5.9)
+                    tag = "[dispatcher→bounds]" if out_of_bounds else "[dispatcher→surface]"
+                    # Find nearest surface in the whole room to suggest a destination
+                    best = None; best_dist = float("inf")
+                    for other in objs:
+                        if other["objectName"] == name: continue
+                        if not any(t in other["objectName"] for t in SURFACE_KEYWORDS): continue
+                        d = ((x - float(other.get("x",0)))**2 + (z - float(other.get("z",0)))**2)**0.5
+                        if d < best_dist: best_dist = d; best = other
+                    if best and best_dist < 4.0:
+                        nx = float(best.get("x", x))
+                        ny = float(best.get("y", 0)) + 0.1
+                        nz = float(best.get("z", z))
+                        corrections.append(
+                            f"MoveObject {name} x={nx:.2f} y={ny:.2f} z={nz:.2f} rotationY={rot:.0f}"
+                            f"  — reason: {tag} floating at y={y:.2f}, no surface below; nearest surface is {best['objectName']}"
+                        )
+                    else:
+                        corrections.append(
+                            f"MoveObject {name} x={x:.2f} y=0.00 z={z:.2f} rotationY={rot:.0f}"
+                            f"  — reason: {tag} floating at y={y:.2f} with no surface object in scene; dropped to floor"
+                        )
+                    flagged.append(f"{name} → floating ({tag})")
+
+            # ── Check 2: Supply / decor randomly placed mid-room ──────────────
+            if (is_supply or is_decor) and not is_character:
+                mid_room = abs(x) <= MID_ROOM_X and 0.7 <= z <= 5.1
+                if mid_room:
+                    # Route to nearest wall
+                    dists = {
+                        "left":  (abs(x - (-2.8)), -2.3, z,   90),
+                        "right": (abs(x -   2.8),   2.3, z,  270),
+                        "front": (abs(z -   0.1),   x,   0.4,  0),
+                        "back":  (abs(z -   5.9),   x,   5.5, 180),
+                    }
+                    wall = min(dists, key=lambda k: dists[k][0])
+                    _, nx, nz, nrot = dists[wall]
+                    kind = "supply" if is_supply else "decor"
+                    corrections.append(
+                        f"MoveObject {name} x={nx:.2f} y={y:.2f} z={nz:.2f} rotationY={nrot:.0f}"
+                        f"  — reason: [dispatcher→zone] {kind} object mid-room (x={x:.2f}, z={z:.2f}); moved to {wall} wall"
+                    )
+                    flagged.append(f"{name} → mid-room {kind} [dispatcher→zone]")
+
+        if flagged:
+            logger.info(f"[DispatcherThread] {len(flagged)} object(s) flagged: {flagged}")
+        else:
+            logger.info("[DispatcherThread] no floating or randomly placed objects detected.")
+
+        # Visual LLM check — primary source for catching floating/random placement
+        names_corrected = {ln.split()[1] for ln in corrections if ln.startswith("MoveObject") and len(ln.split()) > 1}
+        obj_list = "\n".join(f"  {o['objectName']}: x={o.get('x',0):.2f} y={o.get('y',0):.2f} z={o.get('z',0):.2f}" for o in placed_objects if o.get("objectName") and "Cube" not in o["objectName"])
+        sys_prompt = (
+            "You are checking ONLY for floating objects (no surface beneath them) and objects randomly "
+            "placed in the middle of the room that should be near a wall. "
+            "Room bounds: x in [-2.8,2.8], z in [0.1,5.9]. "
+            "Use the screenshots as your primary reference. "
+            "Output ONLY MoveObject lines, one per issue, format:\n"
+            "MoveObject <exactName> x=<X> y=<Y> z=<Z> rotationY=<R>  — reason: [dispatcher→<type>] <issue>\n"
+            "Do NOT flag anything else. If nothing is wrong, output nothing."
+        )
+        llm_lines = self._focused_llm("DispatcherThread", sys_prompt, f"Objects:\n{obj_list}")
+        new_lines = [ln for ln in llm_lines if not any(n in ln for n in names_corrected)]
+        corrections.extend(new_lines)
+        if new_lines:
+            logger.info(f"[DispatcherThread] LLM visual check added {len(new_lines)} extra correction(s).")
+
+        return corrections
+
+    def _bounds_thread(self, placed_objects: List[Dict]) -> List[str]:
+        """Thread 1 (pure Python): clamp every object to room bounds.
+        Returns a list of ready-to-use MoveObject correction lines."""
+        X_MIN, X_MAX = -2.8, 2.8
+        Z_MIN, Z_MAX = 0.1, 5.9
+        Y_MIN = 0.0
+        corrections: List[str] = []
+        for obj in placed_objects:
+            name = obj.get("objectName", "")
+            if not name or "Cube" in name:
+                continue
+            x   = float(obj.get("x",   0))
+            y   = float(obj.get("y",   0))
+            z   = float(obj.get("z",   0))
+            rot = float(obj.get("rotationY", 0))
+            nx, ny, nz = x, y, z
+            issues: List[str] = []
+            if x < X_MIN:   nx = X_MIN; issues.append(f"x={x:.2f} < {X_MIN}")
+            elif x > X_MAX: nx = X_MAX; issues.append(f"x={x:.2f} > {X_MAX}")
+            if z < Z_MIN:   nz = Z_MIN; issues.append(f"z={z:.2f} < {Z_MIN}")
+            elif z > Z_MAX: nz = Z_MAX; issues.append(f"z={z:.2f} > {Z_MAX}")
+            if y < Y_MIN:   ny = Y_MIN; issues.append(f"y={y:.2f} < {Y_MIN}")
+            if issues:
+                line = (
+                    f"MoveObject {name} x={nx:.2f} y={ny:.2f} z={nz:.2f} rotationY={rot:.0f}"
+                    f"  — reason: out of bounds ({', '.join(issues)})"
+                )
+                corrections.append(line)
+                logger.info(f"[BoundsThread] queued: {line}")
+        logger.info(f"[BoundsThread] {len(corrections)} bound corrections generated.")
+
+        # Visual LLM check — catches objects clipping through walls that coordinate math missed
+        names_corrected = {ln.split()[1] for ln in corrections if ln.startswith("MoveObject") and len(ln.split()) > 1}
+        obj_list = "\n".join(f"  {o['objectName']}: x={o.get('x',0):.2f} y={o.get('y',0):.2f} z={o.get('z',0):.2f}" for o in placed_objects if o.get("objectName") and "Cube" not in o["objectName"])
+        sys_prompt = (
+            "You are checking ONLY for objects visually outside or clipping through the room walls. "
+            "Room bounds: x in [-2.8,2.8], z in [0.1,5.9], y >= 0. Walls at x=±3, z=0, z=6. "
+            "Use the screenshots as your primary reference. "
+            "Output ONLY MoveObject lines, one per out-of-bounds object, format:\n"
+            "MoveObject <exactName> x=<X> y=<Y> z=<Z> rotationY=<R>  — reason: visually out of bounds\n"
+            "Do NOT flag anything else. If nothing is out of bounds, output nothing."
+        )
+        llm_lines = self._focused_llm("BoundsThread", sys_prompt, f"Objects:\n{obj_list}")
+        new_lines = [ln for ln in llm_lines if not any(n in ln for n in names_corrected)]
+        corrections.extend(new_lines)
+        if new_lines:
+            logger.info(f"[BoundsThread] LLM visual check added {len(new_lines)} extra correction(s).")
+
+        return corrections
+
+    def _collision_thread(self, placed_objects: List[Dict]) -> List[str]:
+        """Thread 2 (Python + LLM visual): detect pairs of objects that overlap and nudge
+        the less-important one aside. Returns a list of MoveObject correction lines."""
+        THRESHOLD = 0.4   # metres — objects closer than this on BOTH x AND z are colliding
+        NUDGE     = 0.45  # how far to push the offending object
+
+        # Exclude structural cubes (walls, floor, ceiling) — they have no meaningful collision
+        objs = [o for o in placed_objects if o.get("objectName") and "Cube" not in o["objectName"]]
+        corrections: List[str] = []
+        resolved: set = set()  # names already nudged this pass — don't double-move
+
+        for i in range(len(objs)):
+            for j in range(i + 1, len(objs)):
+                a, b = objs[i], objs[j]
+                na, nb = a["objectName"], b["objectName"]
+                if nb in resolved:
+                    continue
+                ax = float(a.get("x", 0)); az = float(a.get("z", 0))
+                bx = float(b.get("x", 0)); bz = float(b.get("z", 0)); by = float(b.get("y", 0))
+                rot_b = float(b.get("rotationY", 0))
+                dx = abs(ax - bx); dz = abs(az - bz)
+                if dx < THRESHOLD and dz < THRESHOLD:
+                    # Nudge b away from a along the dominant axis
+                    if dx >= dz:
+                        new_bx = max(-2.8, min(2.8, bx + (NUDGE if bx >= ax else -NUDGE)))
+                        new_bz = bz
+                    else:
+                        new_bx = bx
+                        new_bz = max(0.1, min(5.9, bz + (NUDGE if bz >= az else -NUDGE)))
+                    line = (
+                        f"MoveObject {nb} x={new_bx:.2f} y={by:.2f} z={new_bz:.2f} rotationY={rot_b:.0f}"
+                        f"  — reason: overlaps {na} (Δx={dx:.2f}m Δz={dz:.2f}m < {THRESHOLD}m threshold)"
+                    )
+                    corrections.append(line)
+                    resolved.add(nb)
+                    logger.info(f"[CollisionThread] queued: {line}")
+
+        logger.info(f"[CollisionThread] {len(corrections)} collision corrections generated.")
+
+        # Visual LLM check — catches visually overlapping large objects whose centers are
+        # more than THRESHOLD apart (e.g. CT scanner + table that look merged in the screenshot)
+        names_corrected = resolved.copy()
+        obj_list = "\n".join(
+            f"  {o['objectName']}: x={o.get('x',0):.2f} y={o.get('y',0):.2f} z={o.get('z',0):.2f}"
+            for o in placed_objects if o.get("objectName") and "Cube" not in o["objectName"]
+        )
+        sys_prompt = (
+            "You are checking ONLY for objects that visually overlap or intersect each other in the scene. "
+            "Room bounds: x in [-2.8,2.8], z in [0.1,5.9]. "
+            "Use the screenshots as your primary reference. "
+            "For each visually overlapping pair, move the less important object away. "
+            "Output ONLY MoveObject lines, one per colliding object, format:\n"
+            "MoveObject <exactName> x=<X> y=<Y> z=<Z> rotationY=<R>  — reason: visually overlaps <otherName>\n"
+            "Do NOT flag anything else. If no overlaps, output nothing."
+        )
+        llm_lines = self._focused_llm("CollisionThread", sys_prompt, f"Objects:\n{obj_list}")
+        new_lines = [ln for ln in llm_lines if not any(n in ln for n in names_corrected)]
+        corrections.extend(new_lines)
+        if new_lines:
+            logger.info(f"[CollisionThread] LLM visual check added {len(new_lines)} extra correction(s).")
+
+        return corrections
 
     def reflect_step(self, plan_step: Dict, game_state: Dict, relevant_knowledge: Optional[List[Dict]] = None) -> ReflectionResult:
         """Reflect on the current step completion using plan, actions, and screenshots."""
@@ -278,56 +639,110 @@ class ReflectionModule:
             [f"Knowledge {i+1}: {k.get('text', '')}" for i, k in enumerate(knowledge)]
         )
 
-        system_prompt = """You are a layout quality inspector for a Unity VR CT examination room.
-        Your PRIMARY job is to fix layout problems. Adding new objects is secondary and only happens when the room is sparse.
+        # Build a dynamic object inventory from game_state for context injection
+        placed_objects_list = game_state.get("placed_objects", [])
+        object_names_in_scene = [o.get("objectName", "") for o in placed_objects_list if o.get("objectName")]
+        scene_inventory = ", ".join(object_names_in_scene) if object_names_in_scene else "none"
 
-        PRIORITY ORDER — work through these in order every call:
+        # Authoritative prefab names from unity_commands.json — set as instance state for all threads
+        exact_scene_names = sorted({o["objectName"] for o in placed_objects if o.get("objectName")})
+        self._exact_scene_names = exact_scene_names
+        supply_types = ["Cart", "Trolley", "Basin", "Sink", "Dispenser", "Drip", "Stand"]
+        supply_objects = [n for n in object_names_in_scene if any(t in n for t in supply_types)]
+        character_objects = [n for n in object_names_in_scene if any(n.startswith(p) for p in ["Doctor", "Nurse", "Patient", "Surgeon", "EMT"])]
+        small_prop_objects = [n for n in object_names_in_scene if any(t in n for t in ["Folder", "Box", "Syringe", "Thermometer", "Tray"])]
+        decor_objects = [n for n in object_names_in_scene if any(t in n for t in ["Poster", "Clock", "Sign", "Panel"])]
 
-        PRIORITY 1 — IDENTIFY LAYOUT ISSUES (always do this first):
-        Look at the screenshots and game_state. Identify every object that is out of place OR wrongly rotated.
-        Out of place / wrong rotation means ANY of:
-        - Object is isolated in the middle of the floor with no wall or furniture nearby.
-        - Object is inside the walkway (z=1.5-4.5, |x|<1.2) and is NOT the CT scanner, exam table, or IV stand.
-        - Two or more objects are visually overlapping or stacked.
-        - A character is standing inside equipment or bunched with 2+ other characters within 0.5m.
-        - A supply item (cart, tray, sanitizer) is not against a wall.
-        - An object is facing the wrong direction: wall-mounted items should face inward, characters should face
-          the scanner/table or room center, carts against the left wall should have rotationY=90,
-          carts against the right wall rotationY=270, carts against the back wall rotationY=180.
-        List ALL of these in alignment_suggestions with specific objectNames, current positions, and where they should go.
+        exact_names_str = "\n".join(f"  - {n}" for n in exact_scene_names) if exact_scene_names else "  (none yet)"
 
-        PRIORITY 2 — ASSESS ROOM FULLNESS:
-        After identifying layout fixes, assess whether the room needs more objects.
-        Count meaningful objects (exclude walls/floor/ceiling cubes) in game_state.
-        - room_status = "sparse"    if fewer than 10 meaningful objects placed.
-        - room_status = "good"      if 10-25 meaningful objects and layout is organized.
-        - room_status = "cluttered" if more than 25 meaningful objects OR room looks overcrowded in screenshots.
-        Set suggest_additions = true ONLY when room_status is "sparse".
-        If room_status is "good" or "cluttered", set suggest_additions = false — do NOT add more objects.
+        system_prompt = f"""You are a layout quality inspector for a VR medical training room in Unity.
+        Room bounds: x in [-2.8, 2.8], z in [0.1, 5.9], y >= 0. Walls at x=±3, z=0, z=6.
 
-        PRIORITY 3 — ADVISE ADDITIONS (only if suggest_additions = true):
-        In alignment_suggestions, include specific zones and object types that are empty and need filling.
-        Be specific: "back wall x=1.5,z=5.5 needs a supply cart" not "add more equipment".
+        ══════════════════════════════════════════════════
+        STRICT NAME RULE — VIOLATION = INVALID RESPONSE
+        ══════════════════════════════════════════════════
+        The ONLY valid object names you may reference in any field are:
+{exact_names_str}
+        ANY name you invent, abbreviate, or guess that is NOT in this list is WRONG.
+        Do NOT paraphrase (e.g. "CT_Scanner" when scene has "Tomograpf_01" → wrong).
+        Do NOT use plural or category words ("chairs", "objects near wall").
+        If you cannot identify an object by its exact name above, skip it entirely.
+        ══════════════════════════════════════════════════
 
-        alignment_suggestions is read by the agent that executes commands — be precise and use these exact formats:
-        - To move/rotate: "MoveObject <objectName> x=<x> y=<y> z=<z> rotationY=<deg>"
-        - For additions (sparse only): "PlaceObject <objectName> x=<x> y=<y> z=<z> rotationY=<deg>"
-        - For removals: "DeleteObject <objectName>"
-        CRITICAL: NEVER suggest placing an object that is already in the scene. To reposition, always use MoveObject.
+        ══════════════════════════════════════════════════
+        THREAD DIVISION — YOUR SCOPE ONLY
+        ══════════════════════════════════════════════════
+        Two other threads run in parallel and handle:
+          • BOUNDS violations (x/z/y out of range) — already corrected, do NOT re-check.
+          • OBJECT OVERLAPS / collisions (pairs within 0.4m) — already corrected, do NOT re-check.
+        YOUR JOB: zone correctness, surface logic, rotation, room status. That is all.
+        ══════════════════════════════════════════════════
 
-        game_state also contains last_edit_commands — commands the agent applied last iteration. Do not advise reversing these.
-        Do not keep oscillating: if a previous reflection already addressed an issue and the agent acted on it, accept the result unless it is clearly wrong.
+        Objects currently in scene: {scene_inventory}
+        Supply objects: {supply_objects}
+        Characters: {character_objects}
+        Small props: {small_prop_objects}
+        Decor: {decor_objects}
+
+        YOUR PRIMARY JOB IS TO FIX LAYOUT ISSUES. Adding objects is secondary (only if sparse).
+
+        PRIORITY 1 — PER-OBJECT ZONE + SURFACE + ROTATION AUDIT:
+
+        CHECK A — WRONG ZONE for object type:
+          Supply objects {supply_objects}: must be near a wall (|x| > 2.1 OR z < 0.7 OR z > 5.1).
+            If mid-room (|x| <= 2.1 AND z in [0.7,5.1]), flag by exact name and move to nearest valid wall zone.
+          Small props {small_prop_objects}: must be on a surface (y >= 0.6). If y < 0.6, flag by exact name.
+            LOGICAL SURFACE RULE — think step-by-step for each prop:
+              Step 1: Identify the prop type (Syringe/Thermometer/Tray → medical instrument; Folder/Clipboard/Chart → document; Box → supply).
+              Step 2: Find the nearest surface object from the strict name list by x/z proximity.
+              Step 3: Is that surface type appropriate?
+                - Medical instruments: ONLY on Cart, Trolley, or exam Table.
+                - Document props: ONLY on desk, counter, or Cart.
+                - Supply boxes: ONLY on Cart, Trolley, or shelf — NOT floor mid-room.
+              Step 4: If surface is illogical (e.g. Syringe beside a CT bore), find the nearest appropriate surface and move there.
+            ALSO verify the prop is within 0.5m x/z of a valid logical surface object from the strict name list.
+          Decor objects {decor_objects}: must be near a wall (|x| > 2.0 OR z < 0.5 OR z > 5.5) at y > 1.0.
+            If floating mid-room or too low, flag by exact name.
+          Characters {character_objects}: must NOT be inside non-human objects.
+            If 2+ characters are within 0.5m of each other, name each and recommend moving one.
+
+        CHECK B — WALKWAY BLOCK: central corridor z in [1.5,4.5], |x| < 1.2 must stay clear for primary equipment.
+          Any non-primary object in this zone: flag by exact name and move to nearest wall.
+
+        CHECK C — ROTATION:
+          Objects near left wall (x < -2.0): rotationY=90 (face right).
+          Objects near right wall (x > 2.0): rotationY=270 (face left).
+          Objects near back wall (z > 5.0): rotationY=180 (face forward).
+          Objects near entry (z < 0.5): rotationY=0 (face inward).
+          Characters: face the room's primary equipment (toward room center).
+
+        REQUIRED FORMAT — one line per problem, exact objectName from strict name list only:
+          MoveObject <exactObjectName> x=<X> y=<Y> z=<Z> rotationY=<R>  — reason: <specific issue>
+          DeleteObject <exactObjectName>  — reason: <specific issue>
+        BANNED: invented names, paraphrased names, category words ("chair", "scanner", "monitor").
+        BANNED: "objects look", "characters seem", "scattered", "randomly", "some items", "a few", "various".
+        Every objectName MUST appear verbatim in the strict name list. Objects passing all checks: do NOT mention.
+
+        PRIORITY 2 — ROOM FULLNESS:
+        Count non-Cube objects in game_state. room_status = "sparse" if < 10 | "good" if 10-25 | "cluttered" if > 25.
+        HARD CAP = 25. If count >= 25: room_status = "cluttered", suggest_additions = false — no exceptions.
+        suggest_additions = true ONLY if room_status = "sparse".
+
+        PRIORITY 3 — ADDITIONS (only if suggest_additions = true):
+        Suggest specific prefab names with exact coordinates. Only suggest objects NOT in: {scene_inventory}.
+
+        Do not reverse corrections already in game_state last_edit_commands.
 
         Output ONLY valid JSON:
-        {
+        {{
           "step_complete": "yes" or "no",
-          "current_action_thoughts": "zone-by-zone description of what you see in the screenshots",
-          "next_action_thoughts": "remaining layout issues to address next",
-          "alignment_suggestions": "precise advice for the agent: moves, rotations, deletions first; additions only if sparse",
-          "layout_comments": "2-4 sentence plain-English verdict — does it look like a real CT room, what's working, what's wrong",
+          "current_action_thoughts": "zone-by-zone description naming specific objects and coordinates from game_state",
+          "next_action_thoughts": "remaining issues listing specific objectNames",
+          "alignment_suggestions": "one MoveObject/DeleteObject/PlaceObject line per issue — exact names and coords, no vague phrases",
+          "layout_comments": "2-4 sentences naming specific objects by name: what is correct, what is wrong, in the context of this room type",
           "room_status": "sparse" or "good" or "cluttered",
           "suggest_additions": true or false
-        }"""
+        }}"""
 
         loop_mode_note = ""
         if is_loop_step:
@@ -350,7 +765,8 @@ Look at each screenshot carefully before generating edit_commands. The screensho
 
         Already Placed Unity Objects ({placed_count} objects — use this for room_status counting):
         {placed_objects_str}
-        NOTE: There are {placed_count} objects already in the Unity scene. Count these (excluding Cube walls/floor/ceiling) for room_status.
+        NOTE: There are {placed_count} objects in the scene. HARD CAP = 25 meaningful objects (excluding Cube walls/floor/ceiling).
+        If count >= 25: room_status MUST be "cluttered", suggest_additions MUST be false. Do not suggest adding anything.
         Do NOT suggest PlaceObject for any objectName already in this list — use MoveObject to reposition instead.
 
         Relevant Knowledge:
@@ -379,85 +795,133 @@ Look at each screenshot carefully before generating edit_commands. The screensho
                 except Exception as e:
                     logger.warning(f"Error reading {label} screenshot: {e}")
 
-        max_retries = 3
-        retry_delay = 2.0
+        # Store as instance state — all threads read from self._view_data directly
+        self._view_data = view_data
 
-        # Guard: if no screenshots are available, the LLM cannot visually evaluate the room.
-        # Override room_status to "good" and suggest_additions to False so we don't blindly
-        # add objects based on coordinate-only guesswork.
         if not view_data:
-            logger.info("No screenshots available — skipping visual evaluation, using coordinate-only reflection.")
+            logger.info("No screenshots available — threads will use coordinate-only reasoning.")
 
-        # Prepare messages — screenshots come first so the model sees images before text context
+        # ── Build LLM messages (Thread 3 input) ───────────────────────────────
         messages = [{"role": "system", "content": system_prompt}]
-
         if view_data:
             image_content = [{"type": "text", "text": "These are the current orthographic screenshots of the scene. Study them carefully before reading the object list.\nXZ=top-down (shows x/z layout), XY=front, YZ=side."}]
             for label, encoded in view_data:
                 image_content.append({"type": "image_url", "image_url": {"url": f"data:image/png;base64,{encoded}"}})
             messages.append({"role": "user", "content": image_content})
-
         messages.append({"role": "user", "content": base_content})
 
-        for attempt in range(max_retries):
-            try:
-                completion = self.groq_client.chat.completions.create(
-                    model="meta-llama/llama-4-scout-17b-16e-instruct",
-                    messages=messages,
-                    temperature=0,
-                    max_completion_tokens=1500,
-                    top_p=1,
-                    stream=True,
-                    stop=None,
-                )
-
-                content = ""
-                for chunk in completion:
-                    if chunk.choices and len(chunk.choices) > 0:
-                        delta = chunk.choices[0].delta
-                        if hasattr(delta, "content") and delta.content:
-                            content += delta.content
-
-                time.sleep(0.1)
-                content = content.strip()
-                if not content:
-                    raise ValueError("Empty response from Groq API")
-
-                json_str = self._extract_json_object(content)
-                reflection_dict = json.loads(json_str)
-
-                step_complete = reflection_dict.get("step_complete", "no").strip().lower()
-                if step_complete not in {"yes", "no"}:
-                    step_complete = "no"
-
-                raw_status = str(reflection_dict.get("room_status", "good")).strip().lower()
-                room_status = raw_status if raw_status in {"sparse", "good", "cluttered"} else "good"
-                suggest_additions = bool(reflection_dict.get("suggest_additions", False)) and room_status == "sparse"
-
-                # Override: without screenshots the LLM is guessing — never suggest additions blindly
-                if not view_data:
-                    if room_status == "sparse":
-                        room_status = "good"  # don't trust coordinate-only "sparse" judgment
-                    suggest_additions = False
-
-                reflection = ReflectionResult(
-                    step_complete=step_complete,
-                    current_action_thoughts=str(reflection_dict.get("current_action_thoughts", "")).strip(),
-                    next_action_thoughts=str(reflection_dict.get("next_action_thoughts", "")).strip(),
-                    alignment_suggestions=str(reflection_dict.get("alignment_suggestions", "")).strip(),
-                    layout_comments=str(reflection_dict.get("layout_comments", "")).strip(),
-                    room_status=room_status,
-                    suggest_additions=suggest_additions,
-                )
-                self._log_reflection(reflection, plan_step=plan_step)
-                return reflection
-
-            except (ValueError, json.JSONDecodeError) as e:
-                if attempt < max_retries - 1:
-                    logger.warning(
-                        f"Invalid reflection response (attempt {attempt + 1}/{max_retries}). Retrying: {str(e)}"
+        def _run_surface_llm() -> dict:
+            """Thread 3 (LLM): zone, surface logic, rotation, room status."""
+            max_retries, retry_delay = 3, 2.0
+            for attempt in range(max_retries):
+                try:
+                    completion = self.groq_client.chat.completions.create(
+                        model="meta-llama/llama-4-scout-17b-16e-instruct",
+                        messages=messages,
+                        temperature=0,
+                        max_completion_tokens=1500,
+                        top_p=1,
+                        stream=True,
+                        stop=None,
                     )
-                    time.sleep(retry_delay)
-                    continue
-                logger.error(f"Failed to parse reflection after {max_retries} attempts: {str(e)}")
-                raise
+                    raw = ""
+                    for chunk in completion:
+                        if chunk.choices and len(chunk.choices) > 0:
+                            delta = chunk.choices[0].delta
+                            if hasattr(delta, "content") and delta.content:
+                                raw += delta.content
+                    time.sleep(0.1)
+                    raw = raw.strip()
+                    if not raw:
+                        raise ValueError("Empty response from Groq API")
+                    return json.loads(self._extract_json_object(raw))
+                except (ValueError, json.JSONDecodeError) as e:
+                    if attempt < max_retries - 1:
+                        logger.warning(f"[SurfaceThread] attempt {attempt+1}/{max_retries} failed: {e}")
+                        time.sleep(retry_delay)
+                        continue
+                    logger.error(f"[SurfaceThread] failed after {max_retries} attempts: {e}")
+                    raise
+
+        # ── Launch all 4 threads in parallel ──────────────────────────────────
+        logger.info("Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]")
+        with ThreadPoolExecutor(max_workers=4) as executor:
+            future_dispatch:  Future = executor.submit(self._dispatcher_thread, placed_objects)
+            future_bounds:    Future = executor.submit(self._bounds_thread,     placed_objects)
+            future_collision: Future = executor.submit(self._collision_thread,  placed_objects)
+            future_surface:   Future = executor.submit(_run_surface_llm)
+
+            dispatch_corrections  = future_dispatch.result()
+            bounds_corrections    = future_bounds.result()
+            collision_corrections = future_collision.result()
+            try:
+                reflection_dict = future_surface.result()
+            except Exception as e:
+                logger.error(f"[SurfaceThread] unrecoverable error — falling back to empty result: {e}")
+                reflection_dict = {}
+
+        # ── Merge alignment_suggestions ────────────────────────────────────────
+        # Priority: bounds > collision > dispatcher > LLM surface.
+        # If a higher-priority thread already corrected an object, lower-priority
+        # threads skip it to prevent conflicting moves on the same object.
+        def _corrected_names(lines: List[str]) -> set:
+            return {ln.split()[1] for ln in lines if ln.startswith("MoveObject") and len(ln.split()) > 1}
+
+        bounds_names    = _corrected_names(bounds_corrections)
+        collision_names = _corrected_names(collision_corrections)
+        already_handled = bounds_names | collision_names
+
+        # Dispatcher: skip objects already corrected by bounds/collision
+        filtered_dispatch = [ln for ln in dispatch_corrections if not any(n in ln for n in already_handled)]
+        dispatch_names = _corrected_names(filtered_dispatch)
+        already_handled |= dispatch_names
+
+        # LLM surface: sanitize names first, then skip anything corrected by Python threads
+        llm_suggestions_raw = str(reflection_dict.get("alignment_suggestions", "")).strip()
+        llm_lines_raw = [ln.strip() for ln in llm_suggestions_raw.splitlines() if ln.strip()]
+        llm_lines = self._sanitize_correction_lines(llm_lines_raw, exact_scene_names)
+        filtered_llm = [ln for ln in llm_lines if not any(n in ln for n in already_handled)]
+
+        merged_suggestions = "\n".join(
+            bounds_corrections + collision_corrections + filtered_dispatch + filtered_llm
+        )
+
+        def _log_corrections(tag: str, lines: List[str], skipped: int = 0) -> None:
+            skip_note = f" (skipped {skipped} already handled)" if skipped else ""
+            if lines:
+                logger.info(f"[{tag}] {len(lines)} correction(s) applied{skip_note}:")
+                for ln in lines:
+                    logger.info(f"  [{tag}] {ln}")
+            else:
+                logger.info(f"[{tag}] 0 corrections applied{skip_note}.")
+
+        _log_corrections("BoundsThread",     bounds_corrections)
+        _log_corrections("CollisionThread",  collision_corrections)
+        _log_corrections("DispatcherThread", filtered_dispatch, skipped=len(dispatch_corrections) - len(filtered_dispatch))
+        _log_corrections("SurfaceThread",    filtered_llm,      skipped=len(llm_lines) - len(filtered_llm))
+
+        # ── Assemble final ReflectionResult ───────────────────────────────────
+        step_complete = str(reflection_dict.get("step_complete", "no")).strip().lower()
+        if step_complete not in {"yes", "no"}:
+            step_complete = "no"
+
+        raw_status = str(reflection_dict.get("room_status", "good")).strip().lower()
+        room_status = raw_status if raw_status in {"sparse", "good", "cluttered"} else "good"
+        suggest_additions = bool(reflection_dict.get("suggest_additions", False)) and room_status == "sparse"
+
+        if not view_data:
+            if room_status == "sparse":
+                room_status = "good"
+            suggest_additions = False
+
+        reflection = ReflectionResult(
+            step_complete=step_complete,
+            current_action_thoughts=str(reflection_dict.get("current_action_thoughts", "")).strip(),
+            next_action_thoughts=str(reflection_dict.get("next_action_thoughts", "")).strip(),
+            alignment_suggestions=merged_suggestions,
+            layout_comments=str(reflection_dict.get("layout_comments", "")).strip(),
+            room_status=room_status,
+            suggest_additions=suggest_additions,
+        )
+        self._log_reflection(reflection, plan_step=plan_step)
+        return reflection

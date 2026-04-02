@@ -19,7 +19,7 @@
       "action": "Add doorway to front wall",
       "objects": [],
       "target_area": "front wall",
-      "condition": "1 doorway, 1.2m wide, centered at x=0"
+      "condition": "1.2m wide doorway centered at x=0"
     },
     {
       "step": 3,
@@ -37,73 +37,65 @@
         "CT scanner"
       ],
       "target_area": "center of room",
-      "condition": "CT scanner is centered"
+      "condition": "aligned with table"
     },
     {
       "step": 5,
-      "action": "Add examination table",
+      "action": "Place patient table",
       "objects": [
-        "examination table"
+        "patient table"
       ],
-      "target_area": "aligned with CT scanner bore",
-      "condition": "table is aligned with scanner"
+      "target_area": "aligned with scanner bore",
+      "condition": "clear walking lane around table"
     },
     {
       "step": 6,
-      "action": "Place patient",
+      "action": "Add X-Ray monitor and chair",
       "objects": [
-        "patient"
+        "dual-screen X-Ray monitor",
+        "chair"
       ],
-      "target_area": "near the table",
-      "condition": "patient is present and walking around the room"
+      "target_area": "right side of room, near head of table",
+      "condition": "monitor at head of table, chair near monitor"
     },
     {
       "step": 7,
-      "action": "Install X-Ray monitor",
+      "action": "Add utility cart and IV drip",
       "objects": [
-        "dual-screen X-Ray monitor"
+        "utility cart",
+        "IV drip"
       ],
-      "target_area": "head of table, slightly to the right",
-      "condition": "monitor is at the head of the table"
+      "target_area": "near table, on monitor side",
+      "condition": "cart near table, IV drip near head of table"
     },
     {
       "step": 8,
-      "action": "Add chair and utility cart",
+      "action": "Add waste bucket and sanitizer",
       "objects": [
-        "chair",
-        "utility cart"
+        "waste bucket",
+        "sanitizer"
       ],
-      "target_area": "near monitor/control station",
-      "condition": "chair and cart are near the monitor"
+      "target_area": "near chair or entry corner",
+      "condition": "waste bucket and sanitizer in clinical support areas"
     },
     {
       "step": 9,
-      "action": "Add IV drip and waste bucket",
+      "action": "Add clock and caution sign",
       "objects": [
-        "IV drip",
-        "waste bucket"
+        "clock",
+        "caution sign"
       ],
-      "target_area": "near head of table",
-      "condition": "IV drip is near the head of the table, opposite the monitor"
+      "target_area": "high on wall above monitor, near scanner",
+      "condition": "clock and sign in visible locations"
     },
     {
       "step": 10,
-      "action": "Install sanitizer and clock",
+      "action": "Add patient",
       "objects": [
-        "sanitizer",
-        "clock"
+        "patient"
       ],
-      "target_area": "near entry wall and above monitor",
-      "condition": "sanitizer is near the entry wall and clock is above the monitor"
-    },
-    {
-      "step": 11,
-      "action": "Place caution sign",
-      "objects": [
-        "caution sign"
-      ],
-      "target_area": "near scanner, slightly in front",
-      "condition": "caution sign is near the scanner"
+      "target_area": "walking around the room",
+      "condition": "patient present and moving around the room"
     }
   ]
 }
