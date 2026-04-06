@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using UnityEngine;
 
 /// <summary>
@@ -7,6 +10,9 @@ using UnityEngine;
 /// </summary>
 public class EnvironmentAgent : MonoBehaviour
 {
+    // ── Scene-state tracking ──────────────────────────────────────────────────
+    // Maps prefab name → spawned GameObject so WriteSceneState() can query live transforms/bounds.
+    private readonly Dictionary<string, GameObject> _trackedObjects = new Dictionary<string, GameObject>();
     [Header("Optional: assign for Time-of-Day control")]
     [SerializeField] Light mainDirectionalLight;
 
@@ -44,6 +50,8 @@ public class EnvironmentAgent : MonoBehaviour
         {
             GameObject spawned = Instantiate(prefab, position, Quaternion.Euler(0, rotationY, 0));
             SnapToFloor(spawned);
+            _trackedObjects[objectName] = spawned;
+            WriteSceneState();
             Debug.Log($"AI Agent placed: {objectName} at {position}");
         }
         else
@@ -93,6 +101,8 @@ public class EnvironmentAgent : MonoBehaviour
             bool isStructural = position.y > 0.05f || sy > 1.5f;
             if (!isStructural)
                 SnapToFloor(spawned);
+            _trackedObjects[objectName] = spawned;
+            WriteSceneState();
         }
     }
 
@@ -126,6 +136,8 @@ public class EnvironmentAgent : MonoBehaviour
                     mainAnim.runtimeAnimatorController = null;
                 }
             }
+            _trackedObjects[humanName] = spawned;
+            WriteSceneState();
             Debug.Log($"AI Agent placed human: {humanName} at {position} (set as default human, idle pose)");
         }
         else
@@ -141,7 +153,9 @@ public class EnvironmentAgent : MonoBehaviour
         if (target != null)
         {
             Debug.Log($"AI Agent deleted: {target.name}");
+            _trackedObjects.Remove(objectName);
             Destroy(target);
+            WriteSceneState();
         }
         else
         {
@@ -155,14 +169,117 @@ public class EnvironmentAgent : MonoBehaviour
         GameObject target = FindSpawnedObject(objectName);
         if (target != null)
         {
-            target.transform.position = position;
-            target.transform.rotation = Quaternion.Euler(0, rotationY, 0);
-            Debug.Log($"AI Agent moved: {objectName} to {position}");
+            // Check if object has a Rigidbody for physics-based movement
+            Rigidbody rb = target.GetComponent<Rigidbody>();
+            Quaternion newRotation = Quaternion.Euler(0, rotationY, 0);
+            
+            if (rb != null && !rb.isKinematic)
+            {
+                // Use physics-based movement for dynamic rigidbodies
+                rb.MovePosition(position);
+                rb.MoveRotation(newRotation);
+                Debug.Log($"AI Agent moved (physics): {objectName} to {position}");
+            }
+            else
+            {
+                // Use transform directly for kinematic/static objects
+                target.transform.position = position;
+                target.transform.rotation = newRotation;
+                Debug.Log($"AI Agent moved (transform): {objectName} to {position}");
+            }
+            WriteSceneState();
         }
         else
         {
             Debug.LogWarning($"AI Agent MoveObject: '{objectName}' not found in scene.");
         }
+    }
+
+    // ── Scene state export ────────────────────────────────────────────────────
+    /// <summary>
+    /// Writes scene_state.json next to unity_commands.json.
+    /// Each entry has: objectName, x/y/z (world position), rotationY, and renderer bounds.
+    /// The Python agent reads this file instead of reconstructing state from the command log.
+    /// </summary>
+    private void WriteSceneState()
+    {
+        // Write to Agent/api_files/ so the Python agent can read it directly
+        string repoRoot = Path.GetFullPath(Path.Combine(Application.dataPath, "..", ".."));
+        string dir = Path.Combine(repoRoot, "Agent", "api_files");
+        string path = Path.Combine(dir, "scene_state.json");
+
+        var sb = new StringBuilder();
+        sb.AppendLine("[");
+        bool first = true;
+
+        foreach (var kv in _trackedObjects)
+        {
+            string prefabName = kv.Key;
+            GameObject go = kv.Value;
+            if (go == null) continue;  // destroyed but not yet removed
+
+            Vector3 pos = go.transform.position;
+            float rotY = go.transform.eulerAngles.y;
+
+            // Compute world-space bounds by encapsulating all renderers
+            Bounds bounds = new Bounds(pos, Vector3.zero);
+            bool hasBounds = false;
+            foreach (var r in go.GetComponentsInChildren<Renderer>(true))
+            {
+                if (!hasBounds) { bounds = r.bounds; hasBounds = true; }
+                else bounds.Encapsulate(r.bounds);
+            }
+
+            if (!first) sb.AppendLine(",");
+            first = false;
+
+            sb.AppendLine("  {");
+            sb.AppendLine($"    \"objectName\": \"{EscapeJson(prefabName)}\",");
+            sb.AppendLine($"    \"x\": {pos.x.ToString("F3", System.Globalization.CultureInfo.InvariantCulture)},");
+            sb.AppendLine($"    \"y\": {pos.y.ToString("F3", System.Globalization.CultureInfo.InvariantCulture)},");
+            sb.AppendLine($"    \"z\": {pos.z.ToString("F3", System.Globalization.CultureInfo.InvariantCulture)},");
+            sb.AppendLine($"    \"rotationY\": {rotY.ToString("F1", System.Globalization.CultureInfo.InvariantCulture)},");
+            if (hasBounds)
+            {
+                sb.AppendLine($"    \"boundsMinX\": {bounds.min.x.ToString("F3", System.Globalization.CultureInfo.InvariantCulture)},");
+                sb.AppendLine($"    \"boundsMinY\": {bounds.min.y.ToString("F3", System.Globalization.CultureInfo.InvariantCulture)},");
+                sb.AppendLine($"    \"boundsMinZ\": {bounds.min.z.ToString("F3", System.Globalization.CultureInfo.InvariantCulture)},");
+                sb.AppendLine($"    \"boundsMaxX\": {bounds.max.x.ToString("F3", System.Globalization.CultureInfo.InvariantCulture)},");
+                sb.AppendLine($"    \"boundsMaxY\": {bounds.max.y.ToString("F3", System.Globalization.CultureInfo.InvariantCulture)},");
+                sb.AppendLine($"    \"boundsMaxZ\": {bounds.max.z.ToString("F3", System.Globalization.CultureInfo.InvariantCulture)},");
+                sb.AppendLine($"    \"boundsSizeX\": {bounds.size.x.ToString("F3", System.Globalization.CultureInfo.InvariantCulture)},");
+                sb.AppendLine($"    \"boundsSizeY\": {bounds.size.y.ToString("F3", System.Globalization.CultureInfo.InvariantCulture)},");
+                sb.Append    ($"    \"boundsSizeZ\": {bounds.size.z.ToString("F3", System.Globalization.CultureInfo.InvariantCulture)}");
+            }
+            else
+            {
+                // No renderers — emit zero bounds so Python can still read the record
+                sb.Append    ("    \"boundsMinX\": 0, \"boundsMinY\": 0, \"boundsMinZ\": 0,\n" +
+                              "    \"boundsMaxX\": 0, \"boundsMaxY\": 0, \"boundsMaxZ\": 0,\n" +
+                              "    \"boundsSizeX\": 0, \"boundsSizeY\": 0, \"boundsSizeZ\": 0");
+            }
+            sb.AppendLine();
+            sb.Append("  }");
+        }
+
+        sb.AppendLine();
+        sb.Append("]");
+
+        try
+        {
+            Directory.CreateDirectory(dir);
+            File.WriteAllText(path, sb.ToString(), Encoding.UTF8);
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogWarning($"[EnvironmentAgent] WriteSceneState failed: {ex.Message}");
+        }
+    }
+
+    private static string EscapeJson(string s)
+    {
+        if (string.IsNullOrEmpty(s)) return "";
+        return s.Replace("\\", "\\\\").Replace("\"", "\\\"");
     }
 
     private static GameObject FindSpawnedObject(string objectName)

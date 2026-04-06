@@ -21,17 +21,17 @@ public class ScreenshotLoopSender : MonoBehaviour
     public string overrideBasePath = "";
 
     [Tooltip("Orthographic half-size in Unity units (how much of the scene is visible).")]
-    public float orthoSize = 5f;
+    public float orthoSize = 3.5f;
 
     [Tooltip("Render resolution for each view.")]
     public int renderWidth = 1024;
     public int renderHeight = 1024;
 
     // Cameras are placed just inside the room walls so walls/ceiling don't occlude the view.
-    // Room: x[-3,3], z[0,6], y[0,3]. Walls at ±3.1, ceiling at 3.1.
-    private static readonly Vector3 TopDownPos  = new Vector3(0f,   2.85f,  3f);   // just below ceiling
-    private static readonly Vector3 FrontPos    = new Vector3(0f,   1.5f,   5.8f); // just inside back wall, looking toward door
-    private static readonly Vector3 SidePos     = new Vector3(-2.9f, 1.5f,  3f);   // just inside left wall, looking right
+    // Room: x[-2.5,2.5], z[0,5], y[0,3.2]. Walls at x=±2.5, z=0/5, ceiling at y=3.2.
+    private static readonly Vector3 TopDownPos  = new Vector3(0f,    3.05f, 2.5f);  // just below ceiling, centered over room
+    private static readonly Vector3 FrontPos    = new Vector3(0f,    1.6f,  4.9f);  // just inside back wall, looking toward door
+    private static readonly Vector3 SidePos     = new Vector3(-2.4f, 1.6f,  2.5f); // just inside left wall, looking right
 
     private void Start()
     {

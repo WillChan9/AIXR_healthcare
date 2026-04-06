@@ -19,6 +19,30 @@ from agent.logger import get_logger
 logger = get_logger("Pipeline")
 
 
+def _parse_experience_config(txt: str) -> dict:
+    """Parse key=value pairs from the [room_config] section of experience.txt."""
+    cfg: dict = {}
+    in_section = False
+    for line in txt.splitlines():
+        line = line.strip()
+        if line == "[room_config]":
+            in_section = True
+            continue
+        if in_section:
+            if line.startswith("["):
+                break
+            if "=" in line and not line.startswith("#"):
+                key, _, val = line.partition("=")
+                cfg[key.strip()] = val.strip()
+    return cfg
+
+
+def _clean_description(txt: str) -> str:
+    """Strip the [room_config] section so only the human-readable description goes to the LLM."""
+    idx = txt.find("[room_config]")
+    return txt[:idx].strip() if idx != -1 else txt.strip()
+
+
 # Regex matching sub-part suffixes: _Part_01, _Body, _Coat, _Wheel_01, etc.
 _SUBPART_RE = re.compile(
     r'_Part_\d+$'
@@ -37,10 +61,9 @@ def _load_prefab_names(resources_dir: Path) -> List[str]:
 
 
 def _load_animator_names(resources_dir: Path) -> List[str]:
-    """Return only the animation controllers that make sense in a clinical/hospital context."""
+    """Return animation controllers, excluding large-movement animations (run, sprint, jump, etc.)."""
     if not resources_dir.exists():
         return []
-    # Exclude movement animations irrelevant in a clinical room (running, sprinting, jumping, falling, turning)
     _exclude_keywords = {"run", "sprint", "jump", "fall", "turn", "backward", "backwardleft", "backwardright"}
     result = []
     for p in resources_dir.rglob("*.controller"):
@@ -495,11 +518,12 @@ def _validate_commands(commands: List[Dict]) -> None:
 
 
 
-def _clamp_positions(commands: List[Dict]) -> List[Dict]:
+def _clamp_positions(commands: List[Dict], cfg: dict = None) -> List[Dict]:
     """Clamp placed-object positions to stay inside room bounds.
     Structural elements (walls, ceiling) have large scaleX/Z and are skipped."""
-    X_MIN, X_MAX = -2.8, 2.8
-    Z_MIN, Z_MAX = 0.1, 5.9
+    cfg = cfg or {}
+    X_MIN = float(cfg.get("x_min", -2.8)); X_MAX = float(cfg.get("x_max", 2.8))
+    Z_MIN = float(cfg.get("z_min",  0.1)); Z_MAX = float(cfg.get("z_max", 5.9))
     Y_MIN = 0.0
     place_actions = {"PlaceObject", "CreateObjectByName", "PlaceHuman"}
     for cmd in commands:
@@ -590,12 +614,13 @@ def _load_existing_commands(path: Path) -> List[Dict]:
         return []
 
 
-def _generate_plan(description: str, client, agent_dir: Path) -> Dict:
+def _generate_plan(description: str, client, agent_dir: Path, cfg: dict = None) -> Dict:
     """Generate a structured room layout plan and save to plan.json for the reflection module."""
+    cfg = cfg or {}
     plan_path = agent_dir / "api_files" / "plan.json"
 
     system = (
-        "You are a hospital room layout planner. Given a room description, generate a structured "
+        "You are a room layout planner. Given a room description, generate a structured "
         "JSON plan describing the intended layout, placement goals, and verifiable conditions. "
         "Return ONLY valid JSON with this structure: "
         '{"room_type": "...", "description": "...", "layout_goals": {"interior_bounds": "...", '
@@ -631,21 +656,24 @@ def _generate_plan(description: str, client, agent_dir: Path) -> Dict:
             logger.warning(f"Plan generation attempt {attempt + 1}/3 failed: {e}")
             time.sleep(1.0)
 
-    # Fallback: write a minimal but useful plan
+    # Fallback: write a minimal plan derived from the description and config
+    scene_type = cfg.get("scene_type", "room")
+    min_obj    = int(cfg.get("min_objects", 10))
+    x_min = cfg.get("x_min", "-2.8"); x_max = cfg.get("x_max", "2.8")
+    z_min = cfg.get("z_min", "0.1");  z_max = cfg.get("z_max", "5.9")
     plan = {
-        "room_type": "CT Examination Room",
+        "room_type": scene_type,
         "description": description,
         "layout_goals": {
-            "interior_bounds": "x in [-3,3], z in [1,6]",
-            "minimum_objects": 10,
-            "focal_point": "CT scanner near (0,0,2)",
+            "interior_bounds": f"x in [{x_min},{x_max}], z in [{z_min},{z_max}]",
+            "minimum_objects": min_obj,
+            "focal_point": "primary anchor object near room center",
         },
         "steps": [
-            {"step": 1, "action": "CT scanner placed as room focal point", "objects": ["Tomograph"], "target_area": "near (0,0,2)", "condition": "scanner visible near room center"},
-            {"step": 2, "action": "Exam table aligned with scanner bore axis", "objects": ["Exam Table"], "target_area": "adjacent to scanner on z-axis", "condition": "table adjacent to scanner"},
-            {"step": 3, "action": "Control station on right side", "objects": ["Monitor", "Chair", "Utility Cart"], "target_area": "x > 0, near scanner", "condition": "monitor and chair visible on right side"},
-            {"step": 4, "action": "Clinical support items placed", "objects": ["IV Drip", "Waste Bucket", "Sanitizer"], "target_area": "near table and entry", "condition": "IV drip, bucket, and sanitizer visible"},
-            {"step": 5, "action": "Room exterior with walls, ceiling, doorway generated", "objects": ["Walls", "Ceiling", "Light"], "target_area": "perimeter of room", "condition": "4 walls, ceiling, and doorway gap visible"},
+            {"step": 1, "action": "Place primary anchor object", "objects": [], "target_area": "room center", "condition": "anchor visible near room center"},
+            {"step": 2, "action": "Place supporting furniture and equipment", "objects": [], "target_area": "near anchor", "condition": "supporting objects adjacent to anchor"},
+            {"step": 3, "action": "Add utility and supply objects", "objects": [], "target_area": "walls and corners", "condition": "supply objects near walls"},
+            {"step": 4, "action": "Add props and decor", "objects": [], "target_area": "surfaces and walls", "condition": "props on surfaces, decor on walls"},
         ],
     }
     plan_path.write_text(json.dumps(plan, indent=2), encoding="utf-8")
@@ -681,7 +709,7 @@ def _build_placed_summary(all_placed: List[Dict]) -> List[Dict]:
     ]
 
 
-def _call_groq_and_parse(client, messages, prefabs, is_loop: bool = False) -> Optional[List[Dict]]:
+def _call_groq_and_parse(client, messages, prefabs, is_loop: bool = False, cfg: dict = None) -> Optional[List[Dict]]:
     """Call Groq API with retry, parse/validate the resulting command array."""
     commands = None
     last_error = None
@@ -718,7 +746,7 @@ def _call_groq_and_parse(client, messages, prefabs, is_loop: bool = False) -> Op
                 commands = _strip_unknown_fields(commands)
                 commands = _fix_light_commands(commands)
                 commands = _fix_prefab_names(commands, prefabs)
-                commands = _clamp_positions(commands)
+                commands = _clamp_positions(commands, cfg=cfg)
                 _validate_commands(commands)
                 return commands
             except Exception as e:
@@ -747,14 +775,56 @@ def _stamp_commands(commands: List[Dict]) -> None:
 
 def phase1_generate_environment(
     client, description, prefabs, animators, plan, out_path, reflector,
-    xz_path, xy_path, yz_path, interval,
+    xz_path, xy_path, yz_path, interval, cfg: dict = None,
 ):
     """Generate the static scene and run reflection corrections until all plan
     steps are confirmed complete. Returns the list of all placed commands."""
 
-    # --- Helper functions (defined early so they can be used throughout) ---
+    cfg = cfg or {}
 
-    MAX_MEANINGFUL_OBJECTS = 25  # excludes structural Cubes (walls/ceiling/floor)
+    # --- Load scene params from config (all fall back to sensible defaults) ---
+    scene_type     = cfg.get("scene_type", "room")
+    room_w         = float(cfg.get("room_width",  4))
+    room_d         = float(cfg.get("room_depth",  4))
+    room_h         = float(cfg.get("room_height", 2.5))
+    light_intensity= float(cfg.get("lighting_intensity", 1.5))
+    amb_r          = float(cfg.get("ambient_r", 0.88))
+    amb_g          = float(cfg.get("ambient_g", 0.90))
+    amb_b          = float(cfg.get("ambient_b", 0.92))
+    door_w         = float(cfg.get("doorway_width", 1.2))
+    x_min          = float(cfg.get("x_min", -(room_w / 2) + 0.2))
+    x_max          = float(cfg.get("x_max",  (room_w / 2) - 0.2))
+    z_min          = float(cfg.get("z_min", 0.1))
+    z_max          = float(cfg.get("z_max", room_d - 0.1))
+
+    MAX_MEANINGFUL_OBJECTS = int(cfg.get("max_objects", 25))
+
+    # Derived geometry
+    half_w   = room_w / 2
+    half_d   = room_d / 2
+    half_h   = room_h / 2
+    door_half = door_w / 2
+    side_w   = (half_w - door_half)   # each front-wall half width
+    side_cx  = -(door_half + side_w / 2)  # left panel center x
+
+    # Addition lists from config
+    add_furniture = cfg.get("additions_furniture", "").split(",") if cfg.get("additions_furniture") else []
+    add_equipment = cfg.get("additions_equipment", "").split(",") if cfg.get("additions_equipment") else []
+    add_props     = cfg.get("additions_props", "").split(",")     if cfg.get("additions_props")     else []
+    add_decor     = cfg.get("additions_decor", "").split(",")     if cfg.get("additions_decor")     else []
+    add_furniture = [s.strip() for s in add_furniture if s.strip()]
+    add_equipment = [s.strip() for s in add_equipment if s.strip()]
+    add_props     = [s.strip() for s in add_props     if s.strip()]
+    add_decor     = [s.strip() for s in add_decor     if s.strip()]
+
+    additions_lines = []
+    if add_furniture: additions_lines.append(f"Extra furniture: {', '.join(add_furniture)}.")
+    if add_equipment: additions_lines.append(f"Equipment: {', '.join(add_equipment)}.")
+    if add_props:     additions_lines.append(f"Props (on surfaces only): {', '.join(add_props)}.")
+    if add_decor:     additions_lines.append(f"Wall decor: {', '.join(add_decor)}.")
+    additions_str = " ".join(additions_lines) if additions_lines else "See available_prefabs."
+
+    # --- Helper functions (defined early so they can be used throughout) ---
 
     def _count_meaningful(placed: List[Dict]) -> int:
         count = 0
@@ -799,8 +869,8 @@ def phase1_generate_environment(
                 "rotationY": float(m.group(5)) if m.group(5) else 0.0,
             }
             # Clamp to room bounds before sending to Unity
-            cmd["x"] = max(-2.8, min(2.8, cmd["x"]))
-            cmd["z"] = max(0.1, min(5.9, cmd["z"]))
+            cmd["x"] = max(x_min, min(x_max, cmd["x"]))
+            cmd["z"] = max(z_min, min(z_max, cmd["z"]))
             cmd["y"] = max(0.0, cmd["y"])
             cmds.append(cmd)
             logger.info(f"  [parse_alignment] MoveObject {name} → x={cmd['x']} y={cmd['y']} z={cmd['z']} rot={cmd['rotationY']}")
@@ -835,27 +905,26 @@ def phase1_generate_environment(
     logger.info("  PHASE 1: Static Environment Generation")
     logger.info("=" * 60)
 
-    # ----- Hardcoded room shell (walls, floor, ceiling) -----
-    # These MUST be exact — LLM cannot be trusted with structural geometry.
-    # Room: 6m x 6m, x in [-3, 3], z in [0, 6], y in [0, 3].
+    # ----- Room shell (walls, floor, ceiling) built from config geometry -----
+    # These are always exact — LLM is never trusted with structural geometry.
     room_shell: List[Dict] = [
-        # Floor
-        {"action": "CreateObjectByName", "objectName": "Cube", "x": 0, "y": 0,   "z": 3, "rotationY": 0, "scaleX": 6, "scaleY": 0.2, "scaleZ": 6},
+        # Floor — thin slab, top surface at y=0, only 2cm thick so no visible edge
+        {"action": "CreateObjectByName", "objectName": "Cube", "x": 0,       "y": -0.01,  "z": half_d, "rotationY": 0, "scaleX": room_w, "scaleY": 0.02,   "scaleZ": room_d},
         # Ceiling
-        {"action": "CreateObjectByName", "objectName": "Cube", "x": 0, "y": 3,   "z": 3, "rotationY": 0, "scaleX": 6, "scaleY": 0.2, "scaleZ": 6},
-        # Left wall (x = -3)
-        {"action": "CreateObjectByName", "objectName": "Cube", "x": -3, "y": 1.5, "z": 3, "rotationY": 0, "scaleX": 0.2, "scaleY": 3, "scaleZ": 6},
-        # Right wall (x = 3)
-        {"action": "CreateObjectByName", "objectName": "Cube", "x": 3,  "y": 1.5, "z": 3, "rotationY": 0, "scaleX": 0.2, "scaleY": 3, "scaleZ": 6},
-        # Back wall (z = 6)
-        {"action": "CreateObjectByName", "objectName": "Cube", "x": 0,  "y": 1.5, "z": 6, "rotationY": 0, "scaleX": 6, "scaleY": 3, "scaleZ": 0.2},
-        # Front wall LEFT half (doorway gap at center, x = -0.6 to +0.6)
-        {"action": "CreateObjectByName", "objectName": "Cube", "x": -1.8, "y": 1.5, "z": 0, "rotationY": 0, "scaleX": 2.4, "scaleY": 3, "scaleZ": 0.2},
+        {"action": "CreateObjectByName", "objectName": "Cube", "x": 0,       "y": room_h, "z": half_d, "rotationY": 0, "scaleX": room_w, "scaleY": 0.2,    "scaleZ": room_d},
+        # Left wall
+        {"action": "CreateObjectByName", "objectName": "Cube", "x": -half_w, "y": half_h, "z": half_d, "rotationY": 0, "scaleX": 0.2,    "scaleY": room_h, "scaleZ": room_d},
+        # Right wall
+        {"action": "CreateObjectByName", "objectName": "Cube", "x":  half_w, "y": half_h, "z": half_d, "rotationY": 0, "scaleX": 0.2,    "scaleY": room_h, "scaleZ": room_d},
+        # Back wall
+        {"action": "CreateObjectByName", "objectName": "Cube", "x": 0,       "y": half_h, "z": room_d, "rotationY": 0, "scaleX": room_w, "scaleY": room_h, "scaleZ": 0.2},
+        # Front wall LEFT half (doorway gap centered at door_x)
+        {"action": "CreateObjectByName", "objectName": "Cube", "x": round(side_cx, 3),  "y": half_h, "z": 0, "rotationY": 0, "scaleX": round(side_w, 3), "scaleY": room_h, "scaleZ": 0.2},
         # Front wall RIGHT half
-        {"action": "CreateObjectByName", "objectName": "Cube", "x": 1.8,  "y": 1.5, "z": 0, "rotationY": 0, "scaleX": 2.4, "scaleY": 3, "scaleZ": 0.2},
-        # Bright hospital lighting
-        {"action": "SetLightIntensity", "scale": 1.5},
-        {"action": "SetAmbientColor", "r": 0.88, "g": 0.90, "b": 0.92},
+        {"action": "CreateObjectByName", "objectName": "Cube", "x": round(-side_cx, 3), "y": half_h, "z": 0, "rotationY": 0, "scaleX": round(side_w, 3), "scaleY": room_h, "scaleZ": 0.2},
+        # Lighting from config
+        {"action": "SetLightIntensity", "scale": light_intensity},
+        {"action": "SetAmbientColor", "r": amb_r, "g": amb_g, "b": amb_b},
     ]
     _stamp_commands(room_shell)
     out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -864,17 +933,17 @@ def phase1_generate_environment(
 
     # ----- LLM generates interior objects only (no walls/ceiling/floor) -----
     system = (
-        "You are a Unity scene builder placing interior objects inside a pre-built CT examination room. "
+        f"You are a Unity scene builder placing interior objects inside a pre-built {scene_type}. "
         "The room shell (walls, floor, ceiling, doorway, lighting) is ALREADY placed — do NOT generate them. "
         "Return ONLY a valid JSON array of commands. No markdown, no code fences, no explanations. "
-        "Room bounds: interior x in [-2.8, 2.8], z in [0.2, 5.9], y=0 for floor-standing objects. "
+        f"Room bounds: interior x in [{x_min}, {x_max}], z in [{z_min}, {z_max}], y=0 for floor-standing objects. "
 
         "IMPORTANT: "
         "1. Do NOT output any CreateObjectByName commands — the room structure is already done. "
         "2. PlaceObject objectName: exact name from available_prefabs only. "
         "3. PlaceHuman humanName: exact name from available_prefabs only. "
         "4. Never invent names. If a name is not in available_prefabs, skip it. "
-        "5. Place at most 1-2 humans (e.g. Patient + Doctor or Nurse). "
+        "5. Place at most 1-2 humans. "
         "6. Do NOT output any PlayHumanAnimationFromResources or animation commands. "
         "   Characters should remain in their default idle pose. "
     )
@@ -883,14 +952,13 @@ def phase1_generate_environment(
         "description": description,
         "available_prefabs": prefabs,
         "rules": {
-            "bounds": "Interior objects: x in [-2.8,2.8], z in [0.2,5.9], y=0 for floor objects.",
+            "bounds": f"Interior objects: x in [{x_min},{x_max}], z in [{z_min},{z_max}], y=0 for floor objects.",
             "no_invented_names": "Only use objectNames that appear in available_prefabs. Never invent names.",
             "no_structural": "Do NOT generate CreateObjectByName — walls/floor/ceiling already exist.",
             "no_animations": "Do NOT generate PlayHumanAnimationFromResources — characters use default idle.",
         },
         "schema_examples": [
-            {"action": "PlaceObject", "objectName": "Tomograpf_01", "x": 0, "y": 0, "z": 3, "rotationY": 0},
-            {"action": "PlaceHuman", "humanName": "Doctor_01", "x": -1.5, "y": 0, "z": 2.2, "rotationY": 0},
+            {"action": "PlaceObject", "objectName": "<exact prefab name>", "x": 0, "y": 0, "z": round(half_d, 2), "rotationY": 0},
         ],
     }
 
@@ -898,7 +966,7 @@ def phase1_generate_environment(
         {"role": "system", "content": system},
         {"role": "user", "content": json.dumps(user)},
     ]
-    commands = _call_groq_and_parse(client, messages, prefabs, is_loop=False)
+    commands = _call_groq_and_parse(client, messages, prefabs, is_loop=False, cfg=cfg)
     if not commands:
         logger.error("[Phase 1] Interior generation failed. Exiting.")
         return room_shell
@@ -918,7 +986,7 @@ def phase1_generate_environment(
 
     # ----- Reflection + correction loop -----
     loop_system = (
-        "You are a clinical room designer adding detail to an existing CT examination room in Unity. "
+        f"You are a scene designer adding detail to an existing {scene_type} in Unity. "
         "Return ONLY a valid JSON array. No markdown, no explanations. "
 
         "CORE RULES: "
@@ -932,18 +1000,14 @@ def phase1_generate_environment(
         "   If another object is within 0.6m on BOTH x AND z axes, choose a different position or skip it. "
         "8. Do NOT add humans if there are already 2+ humans in the scene. "
 
-        "AVAILABLE ADDITIONS (only use names from available_prefabs): "
-        "Extra furniture: Trolley_01, Basin_Stand_01, Sink_01, Towel_Dispenser_01, Hand_Dryer_01. "
-        "Equipment: Screen_02. "
-        "Props (on surfaces only): Box_02-04, Folder_02-05, Syringe_01, Thermometer_01. "
-        "Wall decor: Poster_03, Poster_04, Poster_05. "
+        f"AVAILABLE ADDITIONS (only use names from available_prefabs): {additions_str} "
 
         f"HARD OBJECT CAP: The room must not exceed {MAX_MEANINGFUL_OBJECTS} meaningful objects (excludes structural Cubes). "
         "If alignment_suggestions contains MoveObject or DeleteObject instructions, you MUST output those commands EXACTLY as written — "
         "copy the objectName, x, y, z, rotationY values directly. Do not reinterpret or skip them. "
         "MoveObject: {\"action\":\"MoveObject\",\"objectName\":\"<exact name>\",\"x\":...,\"y\":...,\"z\":...,\"rotationY\":...}. "
         "DeleteObject: {\"action\":\"DeleteObject\",\"objectName\":\"<exact name>\"}. "
-        "For small objects (syringes, folders, boxes, thermometers): place them ON surfaces (y>0.7) near walls, not on the floor mid-room."
+        "For small objects: place them ON surfaces (y>0.7) near walls, not on the floor mid-room."
     )
 
     plan_steps = plan.get("steps", [])
@@ -1017,8 +1081,8 @@ def phase1_generate_environment(
             else:
                 current_plan_step = {
                     "step": "room_layout_evaluation",
-                    "action": "Evaluate overall CT room layout for realism and alignment",
-                    "condition": "Room looks like a realistic CT examination room",
+                    "action": f"Evaluate overall {scene_type} layout for realism and alignment",
+                    "condition": f"Room looks like a realistic {scene_type}",
                 }
             step_label = current_plan_step.get("action", f"step {current_step_idx + 1}")
             logger.info(f"[Phase 1 Reflection] Step {current_step_idx + 1}/{len(plan_steps)}: {step_label}")
@@ -1121,7 +1185,7 @@ def phase1_generate_environment(
                         image_content.append({"type": "image_url", "image_url": {"url": f"data:image/png;base64,{data}"}})
                 loop_messages.append({"role": "user", "content": image_content})
 
-            new_commands = _call_groq_and_parse(client, loop_messages, prefabs, is_loop=True)
+            new_commands = _call_groq_and_parse(client, loop_messages, prefabs, is_loop=True, cfg=cfg)
             if new_commands:
                 new_commands = _dedup_humans(new_commands, all_placed)  # FIX 5
                 if new_commands:
@@ -1144,7 +1208,7 @@ def phase1_generate_environment(
 
 def phase2_interaction_loop(
     client, description, prefabs, animators, all_placed, out_path,
-    reflector, xz_path, xy_path, yz_path, interval, max_iterations,
+    reflector, xz_path, xy_path, yz_path, interval, max_iterations, cfg: dict = None,
 ):
     """After the static environment is stable, enter an interaction loop that
     responds to user actions (screenshot changes) and maintains the scene."""
@@ -1155,7 +1219,7 @@ def phase2_interaction_loop(
     logger.info("=" * 60)
 
     interaction_system = (
-        "You are a VR CT examination room assistant. The room environment has been fully set up. "
+        f"You are a VR {description[:60]} assistant. The room environment has been fully set up. "
         "Return ONLY a valid JSON array. No markdown, no explanations. "
         "You observe the scene through screenshots and respond to the user's current situation. "
 
@@ -1223,7 +1287,7 @@ def phase2_interaction_loop(
                 image_content.append({"type": "image_url", "image_url": {"url": f"data:image/png;base64,{data}"}})
         messages.append({"role": "user", "content": image_content})
 
-        new_commands = _call_groq_and_parse(client, messages, prefabs, is_loop=True)
+        new_commands = _call_groq_and_parse(client, messages, prefabs, is_loop=True, cfg=cfg)
         if new_commands:
             _stamp_commands(new_commands)
             all_placed.extend(new_commands)
@@ -1274,9 +1338,13 @@ def main():
     if not prompt_path.exists():
         raise FileNotFoundError(f"Experience file not found: {prompt_path}")
 
-    description = prompt_path.read_text(encoding="utf-8").strip()
-    if not description:
+    raw_experience = prompt_path.read_text(encoding="utf-8").strip()
+    if not raw_experience:
         raise ValueError("Experience file is empty.")
+
+    # Parse [room_config] section — all scene params come from here
+    cfg = _parse_experience_config(raw_experience)
+    description = _clean_description(raw_experience)
 
     prefabs = _load_prefab_names(resources_dir)
     animators = _load_animator_names(resources_dir)
@@ -1302,9 +1370,9 @@ def main():
 
     client = Groq(api_key=api_key)
 
-    # Generate plan.json
+    # Generate plan.json (passes cfg so fallback plan is also scene-agnostic)
     logger.info("Generating room layout plan...")
-    plan = _generate_plan(description, client, agent_dir)
+    plan = _generate_plan(description, client, agent_dir, cfg=cfg)
 
     # Screenshot paths
     xz_path = screenshot_base.parent / (screenshot_base.name + "_xz.png")
@@ -1316,7 +1384,7 @@ def main():
     # ===== PHASE 1: Static Environment Generation =====
     all_placed = phase1_generate_environment(
         client, description, prefabs, animators, plan, out_path, reflector,
-        xz_path, xy_path, yz_path, args.interval,
+        xz_path, xy_path, yz_path, args.interval, cfg=cfg,
     )
 
     if not all_placed:
@@ -1331,7 +1399,7 @@ def main():
     # ===== PHASE 2: User Interaction =====
     phase2_interaction_loop(
         client, description, prefabs, animators, all_placed, out_path,
-        reflector, xz_path, xy_path, yz_path, args.interval, args.max_iterations,
+        reflector, xz_path, xy_path, yz_path, args.interval, args.max_iterations, cfg=cfg,
     )
 
 

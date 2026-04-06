@@ -63,6 +63,9 @@ public class AgentNetworkBridge : MonoBehaviour
         public float value;
         public bool boolValue;
 
+        // DebugLog
+        public string message;
+
         // Status flags (optional)
         public bool done;
     }
@@ -185,6 +188,7 @@ public class AgentNetworkBridge : MonoBehaviour
                 continue;
             if (cmd.executed)
                 continue;
+            Debug.Log($"[AgentBridge] Dispatching: {cmd.action} | object={cmd.objectName ?? cmd.humanName ?? "-"} | pos=({cmd.x:F2},{cmd.y:F2},{cmd.z:F2}) | rotY={cmd.rotationY:F0} | id={cmd.id ?? "?"}");
             HandleCommand(cmd);
             cmd.executed = true;
             cmd.done = true;
@@ -323,6 +327,9 @@ public class AgentNetworkBridge : MonoBehaviour
             case "SetHumanAnimatorTrigger":
                 AddString("paramName", cmd.paramName);
                 break;
+            case "DebugLog":
+                AddString("message", cmd.message);
+                break;
             default:
                 break;
         }
@@ -435,6 +442,10 @@ public class AgentNetworkBridge : MonoBehaviour
 
             case "SetHumanAnimatorTrigger":
                 environmentAgent.SetHumanAnimatorTrigger(null, cmd.paramName ?? "");
+                break;
+
+            case "DebugLog":
+                Debug.Log("[CollisionThread] " + (cmd.message ?? ""));
                 break;
 
             default:

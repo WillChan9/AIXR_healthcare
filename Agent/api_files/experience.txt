@@ -1,30 +1,78 @@
-CT Examination Room (compact, clean, realistic)
+Physical Therapy Gym (open, warm, recovery-focused, realistic)
 
-Create a believable CT examination room that reads as a real, enclosed space (not a sparse cluster of props).
-Room size approx 6m x 6m with 4 walls, a ceiling, and a floor. Keep a clear walking lane around the scanner and table, but avoid big empty gaps.
+Create a believable hospital physical therapy gym that reads as a real, active rehabilitation space — not a sparse cluster of props. The room should feel encouraging and purposeful, with multiple therapy stations in use and a warm, recovery-oriented atmosphere. Less clinical sterility, more motivated movement.
+
+Room size approx 5m x 5m with 4 walls, a ceiling, and a floor. The open floor plan accommodates multiple simultaneous therapy stations. Equipment is distributed across the room with clear lanes between stations. Natural warmth in the lighting and layout — this is a space designed to feel less like a hospital and more like a place of progress.
 
 Primary anchor and workflow:
-- Tomograph/CT scanner centered as the focal point (near the middle of the room).
-- Table aligned with the scanner bore (in/out axis).
-- Patient present and walking around the room.
+- Parallel Bars / Walking Rails centered in the room as the main focal point — a patient actively walking between them with a Physical Therapist spotting alongside.
+- Second Patient present at a mat table / plinth on the left side, being assisted by a second Physical Therapist.
+- Third staff member (PT Aide or OT) visible at the far end managing equipment.
 
-Control corner (right side preferred):
-- X-Ray Monitor (dual screen) at the head of the table, slightly to the right.
-- Chair near the monitor/control station.
-- Utility Cart near the table on the monitor side.
+Rehabilitation stations (distributed across floor):
+- Mat Table / Treatment Plinth (padded, adjustable height) left side of room.
+- Exercise Bike / Pedal Exerciser near the right wall.
+- Treadmill (medical grade, low-speed) along the right wall behind the bike.
+- Steps / Stair Training Unit in the back-right corner (3-step practice stairs with rails).
+- Balance Board / Wobble Board on the floor near the parallel bars.
 
-Clinical support:
-- IV Drip near the head of the table, opposite the monitor.
-- Waste Bucket near the chair or by the entry corner.
-- Sanitizer mounted near the entry wall.
-- Clock mounted high on the wall above or near the monitor.
-- Caution Sign placed near the scanner, slightly in front.
+Equipment and supply wall (left wall):
+- Shelving Unit with resistance bands, foam rollers, therapy balls stacked neatly.
+- Weights Rack (small dumbbells, 1–5kg range) mounted low on the left wall.
+- Utility Cart / Therapy Supply Trolley with drawers (hot packs, cold packs, tape, gloves).
+- Hot Pack Unit / Hydrocollator mounted or standing near the left wall.
+
+Staff and admin zone (back wall):
+- Desk / Workstation in the back-left corner (patient notes, scheduling).
+- Monitor / Computer Screen on the desk.
+- Filing Cabinet or Shelf with patient folders beside the desk.
+- Wall-Mounted Mirror running along the back wall (patients monitor their own form).
+
+Entry and safety zone (front wall):
+- Sanitizer Dispenser mounted near the entry.
+- Waste Bin near the entry corner.
+- Wheelchair parked near the entry wall (patient transport between sessions).
+- Caution / Wet Floor Sign near the entry (realism — therapy floors get wet).
+
+Ambient warm detail:
+- Clock on the back wall above the mirror.
+- Motivational / Anatomy Posters on the side walls.
+- Ceiling light fixtures (warm white, even and soft — SetLightIntensity moderate).
+- Window suggestion on the right wall (bright wall panel implying natural light).
 
 Realism requirements:
-- Include at least 10 total interior objects (scanner, table, monitors, chair, cart, IV, bucket, sanitizer, clock, sign, patient).
+- Include at least 16 total interior objects (parallel bars, mat table, exercise bike, treadmill, stair unit, balance board, shelving, weights rack, therapy cart, hydrocollator, desk, monitor, mirror, sanitizer, waste bin, wheelchair, clock, posters, 3 staff, 2 patients).
+- Room should feel mid-session: two therapy interactions happening simultaneously, equipment in active use, staff engaged with patients.
 
 Room exterior (required):
-- 4 walls forming a 6m x 6m enclosure (wall height 3m).
-- Front wall must have a doorway (approx 1.2m wide, centered at x=0) so the room can be entered/exited.
+- 4 walls forming a 5m x 5m enclosure (wall height 3.2m — gym-height ceiling for overhead clearance).
+- Front wall must have a wide doorway (approx 1.4m wide, centered at x=0) — wide enough for wheelchair and walker entry.
 - Ceiling covering the full room.
-- One ceiling light fixture mounted at the center of the ceiling, with bright hospital lighting (SetLightIntensity).
+- Multiple evenly spaced ceiling light fixtures for full gym coverage (SetLightIntensity warm).
+
+[room_config]
+scene_type = Physical Therapy Gym
+room_width = 5
+room_depth = 5
+room_height = 3.2
+lighting_intensity = 1.4
+ambient_r = 0.95
+ambient_g = 0.91
+ambient_b = 0.85
+doorway_width = 1.4
+doorway_x = 0
+x_min = -2.3
+x_max = 2.3
+z_min = 0.1
+z_max = 4.9
+max_objects = 35
+min_objects = 16
+surface_keywords = Table,Desk,Rack,Cart,Trolley,Counter,Plinth,Stand,Cabinet
+supply_keywords = Cart,Trolley,Rack,Dispenser,Stand,Hydrocollator,Basin
+character_prefixes = Therapist,Doctor,Nurse,Patient,Assistant,Aide,Technician
+small_prop_keywords = Folder,Tray,Band,Ball,Roller,Binder,Weights
+decor_keywords = Poster,Clock,Sign,Mirror,Panel,Board
+additions_furniture = Trolley_01,Desk_01,Cabinet_01,Basin_Stand_01,Towel_Dispenser_01
+additions_equipment = Screen_02,Bike_01,Treadmill_01,Hydrocollator_01,ParallelBars_01
+additions_props = Folder_02,Folder_03,Ball_01,Band_01,Roller_01
+additions_decor = Poster_03,Poster_04,Clock_01,Mirror_Wall_01,Sign_01

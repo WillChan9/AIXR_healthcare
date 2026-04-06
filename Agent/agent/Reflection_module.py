@@ -39,6 +39,24 @@ class ReflectionResult:
             "suggest_additions": self.suggest_additions,
         }
 
+def _parse_experience_config(txt: str) -> dict:
+    """Parse key=value pairs from the [room_config] section of experience.txt."""
+    cfg: dict = {}
+    in_section = False
+    for line in txt.splitlines():
+        line = line.strip()
+        if line == "[room_config]":
+            in_section = True
+            continue
+        if in_section:
+            if line.startswith("["):
+                break
+            if "=" in line and not line.startswith("#"):
+                key, _, val = line.partition("=")
+                cfg[key.strip()] = val.strip()
+    return cfg
+
+
 class ReflectionModule:
     # Maximum number of reflection iterations per plan step before forcing step_complete=yes
     MAX_REFLECTIONS_PER_STEP = 3
@@ -57,8 +75,10 @@ class ReflectionModule:
         self._step_reflection_counts: Dict[str, int] = {}
 
         # Shared state set by reflect_step before threads launch — threads read these directly
-        self._view_data: list = []          # [(label, base64_encoded), ...]
-        self._exact_scene_names: List[str] = []  # authoritative prefab names from unity_commands.json
+        self._view_data: list = []              # [(label, base64_encoded), ...]
+        self._scene_state: List[Dict] = []      # live scene objects from scene_state.json (or fallback)
+        self._exact_scene_names: List[str] = [] # derived from _scene_state; used by _sanitize_correction_lines
+        self._denied_corrections: List[str] = [] # names dropped this round due to invalid names
 
         # Derive the 3-view screenshot base path from env var (strip .png if present)
         raw_path = os.getenv("UNITY_SCREENSHOT_PATH", "api_files/scene_screenshot.png")
@@ -66,6 +86,21 @@ class ReflectionModule:
         self.screenshot_xz = base + "_xz.png"  # top-down
         self.screenshot_xy = base + "_xy.png"  # front
         self.screenshot_yz = base + "_yz.png"  # side
+
+        # Load scene config from experience.txt
+        self._cfg = self._load_experience_config()
+
+    def _load_experience_config(self) -> dict:
+        """Load [room_config] from experience.txt. Returns empty dict if not found."""
+        experience_path = os.path.join(self._project_root(), "api_files", "experience.txt")
+        if not os.path.exists(experience_path):
+            return {}
+        try:
+            with open(experience_path, "r", encoding="utf-8") as f:
+                return _parse_experience_config(f.read())
+        except Exception as e:
+            logger.warning(f"Could not load experience.txt config: {e}")
+            return {}
 
     def reset_step_count(self, step_key: str = None):
         """Reset reflection iteration count for a step (or all steps if step_key is None).
@@ -76,7 +111,32 @@ class ReflectionModule:
             self._step_reflection_counts.pop(str(step_key), None)
 
     def _project_root(self) -> str:
+        """Returns the Agent/ directory (where api_files/ lives)."""
         return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+    def _repo_root(self) -> str:
+        """Returns the repo root (one level above Agent/, where 'firefighter project/' lives)."""
+        return os.path.dirname(self._project_root())
+
+    def _enqueue_debug_log(self, message: str) -> None:
+        """Append a DebugLog command to unity_commands.json so Unity prints it in the Console."""
+        commands_file = os.path.join(
+            self._repo_root(), "firefighter project", "Assets", "Scripts", "unity_commands.json"
+        )
+        import uuid
+        new_cmd = {"id": str(uuid.uuid4()), "executed": False, "done": False, "action": "DebugLog", "message": message}
+        try:
+            existing: list = []
+            if os.path.exists(commands_file):
+                with open(commands_file, "r", encoding="utf-8") as f:
+                    content = f.read().strip()
+                    if content:
+                        existing = json.loads(content)
+            existing.append(new_cmd)
+            with open(commands_file, "w", encoding="utf-8") as f:
+                json.dump(existing, f, indent=2)
+        except Exception as e:
+            logger.warning(f"[CollisionThread] _enqueue_debug_log failed: {e}")
 
     def _load_plan(self) -> Dict:
         plan_path = os.path.join(self._project_root(), self.plan_file)
@@ -159,11 +219,12 @@ class ReflectionModule:
 
         raise ValueError("Incomplete JSON response")
 
-    def _log_reflection(self, reflection: ReflectionResult, plan_step: Optional[Dict] = None):
+    def _log_reflection(self, reflection: ReflectionResult, plan_step: Optional[Dict] = None, denied_corrections: Optional[List[str]] = None):
         entry = {
             "timestamp": time.time(),
             "plan_step": plan_step,
             "reflection": reflection.to_dict(),
+            "denied_corrections": denied_corrections or [],
         }
 
         reflection_path = os.path.join(self._project_root(), self.reflection_file)
@@ -186,11 +247,45 @@ class ReflectionModule:
             f" for step '{step_label}'" if step_label else ""
         )
 
-    def _load_placed_objects(self) -> List[Dict]:
-        """Load already-placed Unity objects from unity_commands.json for accurate object counting."""
+    def _load_scene_state(self) -> List[Dict]:
+        """Load live scene state from scene_state.json written by EnvironmentAgent.WriteSceneState().
+
+        Each record has: objectName, x, y, z, rotationY, and real renderer bounds
+        (boundsMinX/Y/Z, boundsMaxX/Y/Z, boundsSizeX/Y/Z).
+
+        Falls back to _load_placed_objects() if scene_state.json doesn't exist yet
+        (i.e. Unity hasn't run or the file hasn't been written on this session).
+        """
         project_root = self._project_root()
-        unity_project = os.path.join(project_root, "firefighter project")
-        commands_file = os.path.join(unity_project, "Assets", "Scripts", "unity_commands.json")
+        state_file = os.path.join(project_root, "api_files", "scene_state.json")
+
+        if not os.path.exists(state_file):
+            logger.debug("[SceneState] scene_state.json not found — falling back to command-log reconstruction.")
+            return self._load_placed_objects()
+
+        try:
+            with open(state_file, 'r', encoding='utf-8-sig') as f:
+                content = f.read().strip()
+                if not content:
+                    return self._load_placed_objects()
+                data = json.loads(content)
+        except (json.JSONDecodeError, IOError) as e:
+            logger.warning(f"[SceneState] Failed to read scene_state.json: {e} — falling back.")
+            return self._load_placed_objects()
+
+        if not isinstance(data, list):
+            logger.warning("[SceneState] scene_state.json is not a list — falling back.")
+            return self._load_placed_objects()
+
+        logger.info(f"[SceneState] Loaded {len(data)} live objects from scene_state.json.")
+        return data
+
+    def _load_placed_objects(self) -> List[Dict]:
+        """Reconstruct placed objects from unity_commands.json command log.
+        Used as fallback when scene_state.json is not available."""
+        commands_file = os.path.join(
+            self._repo_root(), "firefighter project", "Assets", "Scripts", "unity_commands.json"
+        )
 
         if not os.path.exists(commands_file):
             return []
@@ -222,7 +317,6 @@ class ReflectionModule:
                     "rotationY": cmd.get("rotationY", 0),
                 }
             elif action == "MoveObject" and name in placed_map:
-                # Apply position override — keep the most recent MoveObject for each object
                 if cmd.get("x") is not None: placed_map[name]["x"] = cmd["x"]
                 if cmd.get("y") is not None: placed_map[name]["y"] = cmd["y"]
                 if cmd.get("z") is not None: placed_map[name]["z"] = cmd["z"]
@@ -254,15 +348,21 @@ class ReflectionModule:
         return []
 
     def _sanitize_correction_lines(self, lines: List[str], valid_names: List[str]) -> List[str]:
-        """Repair or drop correction lines whose object name is not a valid scene prefab.
+        """Drop correction lines whose object name is not an exact match in the scene.
 
         - Exact match  → keep as-is.
-        - Fuzzy match (difflib score ≥ 0.6) → substitute name, log warning.
         - No match     → drop line, log warning.
+        Fuzzy matching is intentionally omitted: substituting a visually-similar but wrong
+        name would move the wrong object. If the LLM cannot produce the exact name, the
+        correction is unsafe and must be discarded.
         """
-        import difflib
         if not valid_names:
-            return lines
+            logger.warning("[NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.")
+            for line in lines:
+                parts = line.split()
+                if len(parts) >= 2 and parts[0] in ("MoveObject", "DeleteObject"):
+                    self._denied_corrections.append(f"{parts[1]} (no valid names loaded)")
+            return []
         valid_set = set(valid_names)
         cleaned: List[str] = []
         for line in lines:
@@ -273,15 +373,9 @@ class ReflectionModule:
             name = parts[1]
             if name in valid_set:
                 cleaned.append(line)
-                continue
-            matches = difflib.get_close_matches(name, valid_names, n=1, cutoff=0.6)
-            if matches:
-                fixed_name = matches[0]
-                fixed_line = line.replace(name, fixed_name, 1)
-                logger.warning(f"[NameFix] '{name}' not in scene → fuzzy-matched to '{fixed_name}'; line corrected.")
-                cleaned.append(fixed_line)
             else:
-                logger.warning(f"[NameFix] '{name}' has no valid match in scene — line dropped: {line}")
+                logger.warning(f"[NameFix] '{name}' not in scene — line dropped (hallucinated name): {line}")
+                self._denied_corrections.append(name)
         return cleaned
 
     def _focused_llm(
@@ -293,23 +387,26 @@ class ReflectionModule:
     ) -> List[str]:
         """Shared helper: focused single-purpose LLM call used by every thread.
 
-        Always uses self._view_data (screenshots) and self._exact_scene_names (prefab list).
-        The strict name rule is always injected into the system prompt.
-        All returned names are sanitized — invalid names fuzzy-matched or dropped."""
+        Uses self._scene_state (full scene JSON with positions + bounds) and self._view_data
+        (screenshots). The strict name rule and scene JSON are always injected into the prompt.
+        All returned names are sanitized — unrecognised names are dropped."""
         import re
 
-        # Always inject strict name rule using the authoritative prefab list
-        names_block = "\n".join(f"  - {n}" for n in self._exact_scene_names) if self._exact_scene_names else "  (none yet)"
-        name_rule = (
-            "══ STRICT NAME RULE — NO EXCEPTIONS ══\n"
-            "The scene contains EXACTLY these object names. You MUST copy them character-for-character:\n"
-            f"{names_block}\n"
-            "DO NOT invent, abbreviate, paraphrase, or guess any name.\n"
-            "If you are unsure which exact name to use, omit the line entirely.\n"
-            "Any name not in this list will be rejected.\n"
-            "══════════════════════════════════════\n\n"
-        )
-        full_system = name_rule + system_prompt
+        # Build name rule from live scene state if available
+        if self._scene_state:
+            names_block = "\n".join(f"  - {o['objectName']}" for o in self._scene_state if o.get("objectName"))
+            name_rule = (
+                "══ STRICT NAME RULE — NO EXCEPTIONS ══\n"
+                "The scene contains EXACTLY these object names. You MUST copy them character-for-character:\n"
+                f"{names_block}\n"
+                "DO NOT invent, abbreviate, paraphrase, or guess any name.\n"
+                "If you are unsure which exact name to use, omit the line entirely.\n"
+                "Any name not in this list will be rejected.\n"
+                "══════════════════════════════════════\n\n"
+            )
+            full_system = name_rule + system_prompt
+        else:
+            full_system = system_prompt
 
         messages: list = [{"role": "system", "content": full_system}]
 
@@ -324,12 +421,20 @@ class ReflectionModule:
                 img_content.append({"type": "image_url", "image_url": {"url": f"data:image/png;base64,{encoded}"}})
             messages.append({"role": "user", "content": img_content})
 
-        # Object context also repeats the name list so it's immediately visible when the model generates
-        name_reminder = (
-            f"\nREMINDER — valid names only: {', '.join(self._exact_scene_names)}\n"
-            if self._exact_scene_names else ""
-        )
-        messages.append({"role": "user", "content": object_context + name_reminder})
+        # Pass scene state JSON directly if available; otherwise fall back to screenshots only
+        if self._scene_state:
+            scene_json = json.dumps(
+                [{"objectName": o["objectName"], "x": o.get("x", 0), "y": o.get("y", 0), "z": o.get("z", 0),
+                  "rotationY": o.get("rotationY", 0),
+                  "boundsSize": {"x": o.get("boundsSizeX", 0), "y": o.get("boundsSizeY", 0), "z": o.get("boundsSizeZ", 0)}}
+                 for o in self._scene_state if o.get("objectName") and "Cube" not in o["objectName"]],
+                indent=2
+            )
+            user_text = f"SCENE STATE (from scene_state.json — use objectName values verbatim):\n{scene_json}\n\n{object_context}"
+        else:
+            logger.info(f"[{thread_name}] scene state empty — using screenshots only.")
+            user_text = object_context
+        messages.append({"role": "user", "content": user_text})
 
         try:
             completion = self.groq_client.chat.completions.create(
@@ -357,22 +462,25 @@ class ReflectionModule:
     # ──────────────────────────────────────────────────────────────────────────
 
     def _dispatcher_thread(self, placed_objects: List[Dict]) -> List[str]:
-        """Thread 0 (Python + LLM visual): triage — detect floating and randomly placed objects,
-        categorise each by issue type, and emit a tagged MoveObject correction line.
+        """Thread 0 (Python + LLM visual): detect floating objects and fix them.
 
-        Issue tags embedded in the reason string so the merge step and logs show routing:
+        Only intervenes when an object is physically unsupported (floating in mid-air with
+        no surface beneath it). Does NOT push mid-room objects to walls — room layout
+        decisions belong to the LLM planner, not the reflection pass.
+
+        Issue tags embedded in the reason string:
           [dispatcher→bounds]   object is also out of bounds (bounds thread will re-clamp)
-          [dispatcher→collision] object is overlapping something (collision thread handles nudge)
           [dispatcher→surface]  object needs a logical surface beneath it
-          [dispatcher→zone]     supply/decor object randomly placed mid-room
         """
-        SURFACE_KEYWORDS  = ["Cart", "Trolley", "Table", "Desk", "Counter", "Shelf", "Bed", "Stand"]
-        SUPPLY_KEYWORDS   = ["Cart", "Trolley", "Basin", "Sink", "Dispenser", "Drip", "Stand"]
-        DECOR_KEYWORDS    = ["Poster", "Clock", "Sign", "Panel"]
-        CHARACTER_PREFIXES = ["Doctor", "Nurse", "Patient", "Surgeon", "EMT"]
+        cfg = self._cfg
+        def _kw(key, default): return [s.strip() for s in cfg.get(key, default).split(",") if s.strip()]
+        SURFACE_KEYWORDS   = _kw("surface_keywords", "Cart,Trolley,Table,Desk,Counter,Shelf,Bed,Stand")
+        DECOR_KEYWORDS     = _kw("decor_keywords",   "Poster,Clock,Sign,Panel")
+        CHARACTER_PREFIXES = _kw("character_prefixes", "Doctor,Nurse,Patient,Surgeon,EMT")
         FLOAT_Y_THRESHOLD = 0.6   # objects above this with no surface below are floating
         SURFACE_RADIUS    = 0.5   # x/z radius to search for a supporting surface
-        MID_ROOM_X        = 2.1   # supply/decor within |x| < this AND z in [0.7,5.1] = mid-room
+        x_min = float(cfg.get("x_min", -2.8)); x_max = float(cfg.get("x_max", 2.8))
+        z_min = float(cfg.get("z_min",  0.1)); z_max = float(cfg.get("z_max", 5.9))
 
         objs = [o for o in placed_objects if o.get("objectName") and "Cube" not in o["objectName"]]
         corrections: List[str] = []
@@ -387,93 +495,76 @@ class ReflectionModule:
 
             is_character = any(name.startswith(p) for p in CHARACTER_PREFIXES)
             is_decor     = any(t in name for t in DECOR_KEYWORDS)
-            is_supply    = any(t in name for t in SUPPLY_KEYWORDS)
 
-            # ── Check 1: Floating ──────────────────────────────────────────────
+            # ── Floating check ────────────────────────────────────────────────
             # Wall-mounted decor near a wall at height is intentional — skip.
             wall_mounted = is_decor and (abs(x) > 2.0 or z < 0.5 or z > 5.5) and y > 1.0
-            if not is_character and not wall_mounted and y > FLOAT_Y_THRESHOLD:
-                # Search for a surface object within radius that is below this object
-                nearest_surface = None
-                min_dist = float("inf")
+            if is_character or wall_mounted or y <= FLOAT_Y_THRESHOLD:
+                continue
+
+            # Search for a surface object within radius that is below this object
+            nearest_surface = None
+            min_dist = float("inf")
+            for other in objs:
+                oname = other["objectName"]
+                if oname == name:
+                    continue
+                if not any(t in oname for t in SURFACE_KEYWORDS):
+                    continue
+                ox = float(other.get("x", 0))
+                oz = float(other.get("z", 0))
+                oy = float(other.get("y", 0))
+                if oy >= y:
+                    continue  # surface must be below the object
+                dist = ((x - ox) ** 2 + (z - oz) ** 2) ** 0.5
+                if dist < SURFACE_RADIUS and dist < min_dist:
+                    min_dist = dist
+                    nearest_surface = other
+
+            if nearest_surface is None:
+                out_of_bounds = not (x_min <= x <= x_max and z_min <= z <= z_max)
+                tag = "[dispatcher→bounds]" if out_of_bounds else "[dispatcher→surface]"
+                # Find nearest surface anywhere in the room to suggest a destination
+                best = None; best_dist = float("inf")
                 for other in objs:
-                    oname = other["objectName"]
-                    if oname == name:
-                        continue
-                    if not any(t in oname for t in SURFACE_KEYWORDS):
-                        continue
-                    ox = float(other.get("x", 0))
-                    oz = float(other.get("z", 0))
-                    oy = float(other.get("y", 0))
-                    if oy >= y:
-                        continue  # surface must be below the object
-                    dist = ((x - ox) ** 2 + (z - oz) ** 2) ** 0.5
-                    if dist < SURFACE_RADIUS and dist < min_dist:
-                        min_dist = dist
-                        nearest_surface = other
-
-                if nearest_surface is None:
-                    # No supporting surface found — floating with nowhere logical to go
-                    # Sub-categorise: is it also out of bounds?
-                    out_of_bounds = not (-2.8 <= x <= 2.8 and 0.1 <= z <= 5.9)
-                    tag = "[dispatcher→bounds]" if out_of_bounds else "[dispatcher→surface]"
-                    # Find nearest surface in the whole room to suggest a destination
-                    best = None; best_dist = float("inf")
-                    for other in objs:
-                        if other["objectName"] == name: continue
-                        if not any(t in other["objectName"] for t in SURFACE_KEYWORDS): continue
-                        d = ((x - float(other.get("x",0)))**2 + (z - float(other.get("z",0)))**2)**0.5
-                        if d < best_dist: best_dist = d; best = other
-                    if best and best_dist < 4.0:
-                        nx = float(best.get("x", x))
-                        ny = float(best.get("y", 0)) + 0.1
-                        nz = float(best.get("z", z))
-                        corrections.append(
-                            f"MoveObject {name} x={nx:.2f} y={ny:.2f} z={nz:.2f} rotationY={rot:.0f}"
-                            f"  — reason: {tag} floating at y={y:.2f}, no surface below; nearest surface is {best['objectName']}"
-                        )
-                    else:
-                        corrections.append(
-                            f"MoveObject {name} x={x:.2f} y=0.00 z={z:.2f} rotationY={rot:.0f}"
-                            f"  — reason: {tag} floating at y={y:.2f} with no surface object in scene; dropped to floor"
-                        )
-                    flagged.append(f"{name} → floating ({tag})")
-
-            # ── Check 2: Supply / decor randomly placed mid-room ──────────────
-            if (is_supply or is_decor) and not is_character:
-                mid_room = abs(x) <= MID_ROOM_X and 0.7 <= z <= 5.1
-                if mid_room:
-                    # Route to nearest wall
-                    dists = {
-                        "left":  (abs(x - (-2.8)), -2.3, z,   90),
-                        "right": (abs(x -   2.8),   2.3, z,  270),
-                        "front": (abs(z -   0.1),   x,   0.4,  0),
-                        "back":  (abs(z -   5.9),   x,   5.5, 180),
-                    }
-                    wall = min(dists, key=lambda k: dists[k][0])
-                    _, nx, nz, nrot = dists[wall]
-                    kind = "supply" if is_supply else "decor"
+                    if other["objectName"] == name: continue
+                    if not any(t in other["objectName"] for t in SURFACE_KEYWORDS): continue
+                    d = ((x - float(other.get("x",0)))**2 + (z - float(other.get("z",0)))**2)**0.5
+                    if d < best_dist: best_dist = d; best = other
+                if best and best_dist < 4.0:
+                    nx = float(best.get("x", x))
+                    ny = float(best.get("y", 0)) + 0.1
+                    nz = float(best.get("z", z))
                     corrections.append(
-                        f"MoveObject {name} x={nx:.2f} y={y:.2f} z={nz:.2f} rotationY={nrot:.0f}"
-                        f"  — reason: [dispatcher→zone] {kind} object mid-room (x={x:.2f}, z={z:.2f}); moved to {wall} wall"
+                        f"MoveObject {name} x={nx:.2f} y={ny:.2f} z={nz:.2f} rotationY={rot:.0f}"
+                        f"  — reason: {tag} floating at y={y:.2f}, no surface below; nearest surface is {best['objectName']}"
                     )
-                    flagged.append(f"{name} → mid-room {kind} [dispatcher→zone]")
+                else:
+                    corrections.append(
+                        f"MoveObject {name} x={x:.2f} y=0.00 z={z:.2f} rotationY={rot:.0f}"
+                        f"  — reason: {tag} floating at y={y:.2f} with no surface object in scene; dropped to floor"
+                    )
+                flagged.append(f"{name} → floating ({tag})")
 
         if flagged:
             logger.info(f"[DispatcherThread] {len(flagged)} object(s) flagged: {flagged}")
         else:
-            logger.info("[DispatcherThread] no floating or randomly placed objects detected.")
+            logger.info("[DispatcherThread] no floating objects detected.")
 
-        # Visual LLM check — primary source for catching floating/random placement
+        # Visual LLM check — catches floating cases the coordinate check missed
+        _d_cfg = self._cfg
+        _dx_min = float(_d_cfg.get("x_min", -2.8)); _dx_max = float(_d_cfg.get("x_max", 2.8))
+        _dz_min = float(_d_cfg.get("z_min",  0.1)); _dz_max = float(_d_cfg.get("z_max", 5.9))
         names_corrected = {ln.split()[1] for ln in corrections if ln.startswith("MoveObject") and len(ln.split()) > 1}
         obj_list = "\n".join(f"  {o['objectName']}: x={o.get('x',0):.2f} y={o.get('y',0):.2f} z={o.get('z',0):.2f}" for o in placed_objects if o.get("objectName") and "Cube" not in o["objectName"])
         sys_prompt = (
-            "You are checking ONLY for floating objects (no surface beneath them) and objects randomly "
-            "placed in the middle of the room that should be near a wall. "
-            "Room bounds: x in [-2.8,2.8], z in [0.1,5.9]. "
+            "You are checking ONLY for objects that are floating in mid-air with no surface beneath them. "
+            "Do NOT flag objects based on their position in the room — mid-room placement is intentional. "
+            "Wall-mounted decor (posters, clocks, signs) elevated near a wall are intentional, do not flag them. "
+            f"Room bounds: x in [{_dx_min},{_dx_max}], z in [{_dz_min},{_dz_max}]. "
             "Use the screenshots as your primary reference. "
-            "Output ONLY MoveObject lines, one per issue, format:\n"
-            "MoveObject <exactName> x=<X> y=<Y> z=<Z> rotationY=<R>  — reason: [dispatcher→<type>] <issue>\n"
+            "Output ONLY MoveObject lines, one per floating object, format:\n"
+            "MoveObject <exactName> x=<X> y=<Y> z=<Z> rotationY=<R>  — reason: [dispatcher→surface] <issue>\n"
             "Do NOT flag anything else. If nothing is wrong, output nothing."
         )
         llm_lines = self._focused_llm("DispatcherThread", sys_prompt, f"Objects:\n{obj_list}")
@@ -485,48 +576,125 @@ class ReflectionModule:
         return corrections
 
     def _bounds_thread(self, placed_objects: List[Dict]) -> List[str]:
-        """Thread 1 (pure Python): clamp every object to room bounds.
-        Returns a list of ready-to-use MoveObject correction lines."""
-        X_MIN, X_MAX = -2.8, 2.8
-        Z_MIN, Z_MAX = 0.1, 5.9
+        """Thread 1 (pure Python + LLM visual): enforce room bounds and doorway clearance.
+
+        Catches three categories:
+          1. Center position outside hard limits (x/z/y).
+          2. Bounding box edges partially clipping through a wall (partial out-of-bounds).
+          3. Objects blocking or partially covering the doorway at the front wall.
+        Returns a list of ready-to-use MoveObject correction lines.
+        """
+        cfg = self._cfg
+        X_MIN = float(cfg.get("x_min", -2.8)); X_MAX = float(cfg.get("x_max", 2.8))
+        Z_MIN = float(cfg.get("z_min",  0.1)); Z_MAX = float(cfg.get("z_max", 5.9))
         Y_MIN = 0.0
+
+        # Doorway geometry — objects within this z-depth of the front wall that overlap
+        # the doorway x-range are considered blocking the entrance.
+        DOOR_WIDTH   = float(cfg.get("doorway_width", 1.4))
+        DOOR_CX      = float(cfg.get("doorway_x",    0.0))
+        DOOR_X_MIN   = DOOR_CX - DOOR_WIDTH / 2
+        DOOR_X_MAX   = DOOR_CX + DOOR_WIDTH / 2
+        DOOR_Z_DEPTH = 1.2   # metres inward from z=0; anything within this zone + overlapping x blocks the door
+
         corrections: List[str] = []
+        handled: set = set()
+
         for obj in placed_objects:
             name = obj.get("objectName", "")
             if not name or "Cube" in name:
                 continue
+
             x   = float(obj.get("x",   0))
             y   = float(obj.get("y",   0))
             z   = float(obj.get("z",   0))
             rot = float(obj.get("rotationY", 0))
+
+            # Bounding box edges (fall back to center if not present)
+            bx_min = float(obj.get("boundsMinX", x))
+            bx_max = float(obj.get("boundsMaxX", x))
+            bz_min = float(obj.get("boundsMinZ", z))
+            bz_max = float(obj.get("boundsMaxZ", z))
+
             nx, ny, nz = x, y, z
             issues: List[str] = []
-            if x < X_MIN:   nx = X_MIN; issues.append(f"x={x:.2f} < {X_MIN}")
-            elif x > X_MAX: nx = X_MAX; issues.append(f"x={x:.2f} > {X_MAX}")
-            if z < Z_MIN:   nz = Z_MIN; issues.append(f"z={z:.2f} < {Z_MIN}")
-            elif z > Z_MAX: nz = Z_MAX; issues.append(f"z={z:.2f} > {Z_MAX}")
+
+            # Half-extents from the real renderer bounds (fall back to 0 if missing)
+            half_x = (bx_max - bx_min) / 2
+            half_z = (bz_max - bz_min) / 2
+
+            # Valid center range for this object: wall + half_size + margin.
+            # This means the object's *edge* always clears the wall, regardless of size.
+            MARGIN = 0.05
+            cx_min = X_MIN + half_x + MARGIN
+            cx_max = X_MAX - half_x - MARGIN
+            cz_min = Z_MIN + half_z + MARGIN
+            cz_max = Z_MAX - half_z - MARGIN
+
+            if x < cx_min: nx = cx_min; issues.append(f"left edge clips wall (x={x:.2f}, half={half_x:.2f})")
+            elif x > cx_max: nx = cx_max; issues.append(f"right edge clips wall (x={x:.2f}, half={half_x:.2f})")
+            if z < cz_min: nz = cz_min; issues.append(f"front edge clips wall (z={z:.2f}, half={half_z:.2f})")
+            elif z > cz_max: nz = cz_max; issues.append(f"back edge clips wall (z={z:.2f}, half={half_z:.2f})")
             if y < Y_MIN:   ny = Y_MIN; issues.append(f"y={y:.2f} < {Y_MIN}")
+
             if issues:
                 line = (
                     f"MoveObject {name} x={nx:.2f} y={ny:.2f} z={nz:.2f} rotationY={rot:.0f}"
-                    f"  — reason: out of bounds ({', '.join(issues)})"
+                    f"  — reason: [bounds] {'; '.join(issues)}"
                 )
                 corrections.append(line)
+                handled.add(name)
                 logger.info(f"[BoundsThread] queued: {line}")
-        logger.info(f"[BoundsThread] {len(corrections)} bound corrections generated.")
 
-        # Visual LLM check — catches objects clipping through walls that coordinate math missed
+            # ── 3. Doorway blockage ──────────────────────────────────────────
+            if name not in handled:
+                near_front = bz_min < DOOR_Z_DEPTH          # object is close to front wall
+                x_overlaps = bx_min < DOOR_X_MAX and bx_max > DOOR_X_MIN  # overlaps doorway x-range
+                if near_front and x_overlaps:
+                    # Move object sideways to clear the doorway — push to whichever side is closer
+                    dist_left  = abs(x - DOOR_X_MIN)
+                    dist_right = abs(x - DOOR_X_MAX)
+                    if dist_left <= dist_right:
+                        nx = max(X_MIN, DOOR_X_MIN - (bx_max - bx_min) / 2 - 0.15)
+                    else:
+                        nx = min(X_MAX, DOOR_X_MAX + (bx_max - bx_min) / 2 + 0.15)
+                    line = (
+                        f"MoveObject {name} x={nx:.2f} y={y:.2f} z={z:.2f} rotationY={rot:.0f}"
+                        f"  — reason: [bounds] blocking/partially covering doorway "
+                        f"(door x=[{DOOR_X_MIN:.2f},{DOOR_X_MAX:.2f}], object bx=[{bx_min:.2f},{bx_max:.2f}], bz_min={bz_min:.2f})"
+                    )
+                    corrections.append(line)
+                    handled.add(name)
+                    logger.info(f"[BoundsThread] queued: {line}")
+
+        logger.info(f"[BoundsThread] {len(corrections)} bound/doorway corrections generated.")
+
+        # Visual LLM check — catches partial clips and doorway blockage that coordinate math missed
         names_corrected = {ln.split()[1] for ln in corrections if ln.startswith("MoveObject") and len(ln.split()) > 1}
-        obj_list = "\n".join(f"  {o['objectName']}: x={o.get('x',0):.2f} y={o.get('y',0):.2f} z={o.get('z',0):.2f}" for o in placed_objects if o.get("objectName") and "Cube" not in o["objectName"])
-        sys_prompt = (
-            "You are checking ONLY for objects visually outside or clipping through the room walls. "
-            "Room bounds: x in [-2.8,2.8], z in [0.1,5.9], y >= 0. Walls at x=±3, z=0, z=6. "
-            "Use the screenshots as your primary reference. "
-            "Output ONLY MoveObject lines, one per out-of-bounds object, format:\n"
-            "MoveObject <exactName> x=<X> y=<Y> z=<Z> rotationY=<R>  — reason: visually out of bounds\n"
-            "Do NOT flag anything else. If nothing is out of bounds, output nothing."
+        obj_list = "\n".join(
+            f"  {o['objectName']}: x={o.get('x',0):.2f} y={o.get('y',0):.2f} z={o.get('z',0):.2f} "
+            f"bx=[{o.get('boundsMinX',o.get('x',0)):.2f},{o.get('boundsMaxX',o.get('x',0)):.2f}] "
+            f"bz=[{o.get('boundsMinZ',o.get('z',0)):.2f},{o.get('boundsMaxZ',o.get('z',0)):.2f}]"
+            for o in placed_objects if o.get("objectName") and "Cube" not in o["objectName"]
         )
-        llm_lines = self._focused_llm("BoundsThread", sys_prompt, f"Objects:\n{obj_list}")
+        _b_cfg = self._cfg
+        _bx_min = float(_b_cfg.get("x_min", -2.8)); _bx_max = float(_b_cfg.get("x_max", 2.8))
+        _bz_min = float(_b_cfg.get("z_min",  0.1)); _bz_max = float(_b_cfg.get("z_max", 5.9))
+        _bw = float(_b_cfg.get("room_width", 6)); _bd = float(_b_cfg.get("room_depth", 6))
+        sys_prompt = (
+            "You are checking ONLY for two issues: (1) objects visually outside OR partially clipping "
+            "through the room walls — even if just one edge is through; "
+            "(2) objects blocking or partially covering the doorway at the front wall. "
+            f"Room bounds: x in [{_bx_min},{_bx_max}], z in [{_bz_min},{_bz_max}], y >= 0. "
+            f"Walls at x=±{_bw/2}, z=0, z={_bd}. "
+            f"Doorway: centered at x={DOOR_CX}, width={DOOR_WIDTH}m (x=[{DOOR_X_MIN:.2f},{DOOR_X_MAX:.2f}]), at the front wall (z≈0). "
+            f"Any object within {DOOR_Z_DEPTH}m of z=0 whose x-extent overlaps the doorway range is blocking it and must be moved sideways. "
+            "Use the screenshots as your primary reference. "
+            "Output ONLY MoveObject lines, one per issue, format:\n"
+            "MoveObject <exactName> x=<X> y=<Y> z=<Z> rotationY=<R>  — reason: <visually clipping wall / blocking doorway>\n"
+            "Do NOT flag anything else. If nothing is wrong, output nothing."
+        )
+        llm_lines = self._focused_llm("BoundsThread", sys_prompt, f"Objects (with bounds):\n{obj_list}")
         new_lines = [ln for ln in llm_lines if not any(n in ln for n in names_corrected)]
         corrections.extend(new_lines)
         if new_lines:
@@ -535,65 +703,125 @@ class ReflectionModule:
         return corrections
 
     def _collision_thread(self, placed_objects: List[Dict]) -> List[str]:
-        """Thread 2 (Python + LLM visual): detect pairs of objects that overlap and nudge
-        the less-important one aside. Returns a list of MoveObject correction lines."""
-        THRESHOLD = 0.4   # metres — objects closer than this on BOTH x AND z are colliding
-        NUDGE     = 0.45  # how far to push the offending object
+        """Thread 2 (math + LLM visual): detect pairs of objects that genuinely overlap
+        and nudge the less-important one aside.
 
-        # Exclude structural cubes (walls, floor, ceiling) — they have no meaningful collision
+        Two independent detection paths — a collision is acted on if EITHER fires:
+          1. Math:  real bounding-box overlap (pen_x > 0 AND pen_z > 0) using Unity bounds.
+                    Falls back to a default assumed size only when bounds data is absent.
+          2. Image: LLM vision check on the three screenshots for pairs that look merged.
+        """
+        CLEARANCE = 0.25          # gap to leave between edges after separating
+        DEFAULT_HALF_SIZE = 0.35  # assumed half-size only when bounds fields are missing
+
+        cfg = self._cfg
+        X_MIN = float(cfg.get("x_min", -2.8)); X_MAX = float(cfg.get("x_max", 2.8))
+        Z_MIN = float(cfg.get("z_min",  0.1)); Z_MAX = float(cfg.get("z_max", 5.9))
+
+        # Exclude structural cubes (walls, floor, ceiling)
         objs = [o for o in placed_objects if o.get("objectName") and "Cube" not in o["objectName"]]
         corrections: List[str] = []
         resolved: set = set()  # names already nudged this pass — don't double-move
 
+        # ── PATH 1: Math — bounding-box overlap ────────────────────────────────
         for i in range(len(objs)):
             for j in range(i + 1, len(objs)):
                 a, b = objs[i], objs[j]
                 na, nb = a["objectName"], b["objectName"]
                 if nb in resolved:
                     continue
+
                 ax = float(a.get("x", 0)); az = float(a.get("z", 0))
                 bx = float(b.get("x", 0)); bz = float(b.get("z", 0)); by = float(b.get("y", 0))
                 rot_b = float(b.get("rotationY", 0))
-                dx = abs(ax - bx); dz = abs(az - bz)
-                if dx < THRESHOLD and dz < THRESHOLD:
-                    # Nudge b away from a along the dominant axis
-                    if dx >= dz:
-                        new_bx = max(-2.8, min(2.8, bx + (NUDGE if bx >= ax else -NUDGE)))
-                        new_bz = bz
-                    else:
-                        new_bx = bx
-                        new_bz = max(0.1, min(5.9, bz + (NUDGE if bz >= az else -NUDGE)))
-                    line = (
-                        f"MoveObject {nb} x={new_bx:.2f} y={by:.2f} z={new_bz:.2f} rotationY={rot_b:.0f}"
-                        f"  — reason: overlaps {na} (Δx={dx:.2f}m Δz={dz:.2f}m < {THRESHOLD}m threshold)"
-                    )
-                    corrections.append(line)
-                    resolved.add(nb)
-                    logger.info(f"[CollisionThread] queued: {line}")
 
-        logger.info(f"[CollisionThread] {len(corrections)} collision corrections generated.")
+                has_bounds_a = "boundsMinX" in a and "boundsMaxX" in a
+                has_bounds_b = "boundsMinX" in b and "boundsMaxX" in b
 
-        # Visual LLM check — catches visually overlapping large objects whose centers are
-        # more than THRESHOLD apart (e.g. CT scanner + table that look merged in the screenshot)
-        names_corrected = resolved.copy()
+                a_xmin = float(a["boundsMinX"]) if has_bounds_a else ax - DEFAULT_HALF_SIZE
+                a_xmax = float(a["boundsMaxX"]) if has_bounds_a else ax + DEFAULT_HALF_SIZE
+                a_zmin = float(a["boundsMinZ"]) if has_bounds_a else az - DEFAULT_HALF_SIZE
+                a_zmax = float(a["boundsMaxZ"]) if has_bounds_a else az + DEFAULT_HALF_SIZE
+
+                b_xmin = float(b["boundsMinX"]) if has_bounds_b else bx - DEFAULT_HALF_SIZE
+                b_xmax = float(b["boundsMaxX"]) if has_bounds_b else bx + DEFAULT_HALF_SIZE
+                b_zmin = float(b["boundsMinZ"]) if has_bounds_b else bz - DEFAULT_HALF_SIZE
+                b_zmax = float(b["boundsMaxZ"]) if has_bounds_b else bz + DEFAULT_HALF_SIZE
+
+                # If bounds collapsed to a degenerate point, expand to assumed size
+                if a_xmax - a_xmin < 0.01: a_xmin = ax - DEFAULT_HALF_SIZE; a_xmax = ax + DEFAULT_HALF_SIZE
+                if a_zmax - a_zmin < 0.01: a_zmin = az - DEFAULT_HALF_SIZE; a_zmax = az + DEFAULT_HALF_SIZE
+                if b_xmax - b_xmin < 0.01: b_xmin = bx - DEFAULT_HALF_SIZE; b_xmax = bx + DEFAULT_HALF_SIZE
+                if b_zmax - b_zmin < 0.01: b_zmin = bz - DEFAULT_HALF_SIZE; b_zmax = bz + DEFAULT_HALF_SIZE
+
+                # Actual penetration — must be positive on BOTH axes to be a real overlap
+                pen_x = min(a_xmax, b_xmax) - max(a_xmin, b_xmin)
+                pen_z = min(a_zmax, b_zmax) - max(a_zmin, b_zmin)
+                if pen_x <= 0 or pen_z <= 0:
+                    continue  # boxes are separated — no collision
+
+                # Resolve: push b out along the axis of least penetration
+                half_b_x = (b_xmax - b_xmin) / 2
+                half_b_z = (b_zmax - b_zmin) / 2
+                if pen_x <= pen_z:
+                    new_bx = (a_xmax + half_b_x + CLEARANCE) if bx >= ax else (a_xmin - half_b_x - CLEARANCE)
+                    new_bx = max(X_MIN + half_b_x, min(X_MAX - half_b_x, new_bx))
+                    new_bz = bz
+                else:
+                    new_bz = (a_zmax + half_b_z + CLEARANCE) if bz >= az else (a_zmin - half_b_z - CLEARANCE)
+                    new_bz = max(Z_MIN + half_b_z, min(Z_MAX - half_b_z, new_bz))
+                    new_bx = bx
+
+                bounds_tag = "exact bounds" if (has_bounds_a and has_bounds_b) else "estimated bounds"
+                line = (
+                    f"MoveObject {nb} x={new_bx:.2f} y={by:.2f} z={new_bz:.2f} rotationY={rot_b:.0f}"
+                    f"  — reason: overlaps {na} (pen_x={pen_x:.2f}m pen_z={pen_z:.2f}m; {bounds_tag})"
+                )
+                corrections.append(line)
+                resolved.add(nb)
+                logger.info(f"[CollisionThread][math] {line}")
+                self._enqueue_debug_log(
+                    f"COLLISION (math) {na} <-> {nb}  pen_x={pen_x:.2f}m pen_z={pen_z:.2f}m  moving {nb} to ({new_bx:.2f}, {by:.2f}, {new_bz:.2f})"
+                )
+
+        logger.info(f"[CollisionThread] math path: {len(corrections)} collision(s) found.")
+
+        # ── PATH 2: Image — LLM vision check ──────────────────────────────────
+        # Runs independently; only adds objects not already corrected by math.
+        _cx_min = float(cfg.get("x_min", -2.8)); _cx_max = float(cfg.get("x_max", 2.8))
+        _cz_min = float(cfg.get("z_min",  0.1)); _cz_max = float(cfg.get("z_max", 5.9))
+        def _fmt_bounds(o: Dict) -> str:
+            bx0 = f"{o['boundsMinX']:.2f}" if "boundsMinX" in o else "?"
+            bx1 = f"{o['boundsMaxX']:.2f}" if "boundsMaxX" in o else "?"
+            bz0 = f"{o['boundsMinZ']:.2f}" if "boundsMinZ" in o else "?"
+            bz1 = f"{o['boundsMaxZ']:.2f}" if "boundsMaxZ" in o else "?"
+            return f"bounds_x=[{bx0},{bx1}] bounds_z=[{bz0},{bz1}]"
+
         obj_list = "\n".join(
-            f"  {o['objectName']}: x={o.get('x',0):.2f} y={o.get('y',0):.2f} z={o.get('z',0):.2f}"
+            f"  {o['objectName']}: x={o.get('x',0):.2f} y={o.get('y',0):.2f} z={o.get('z',0):.2f}  {_fmt_bounds(o)}"
             for o in placed_objects if o.get("objectName") and "Cube" not in o["objectName"]
         )
         sys_prompt = (
-            "You are checking ONLY for objects that visually overlap or intersect each other in the scene. "
-            "Room bounds: x in [-2.8,2.8], z in [0.1,5.9]. "
-            "Use the screenshots as your primary reference. "
-            "For each visually overlapping pair, move the less important object away. "
-            "Output ONLY MoveObject lines, one per colliding object, format:\n"
+            "You are checking ONLY for objects whose 3D meshes visually intersect or merge in the screenshots. "
+            f"Room bounds: x in [{_cx_min},{_cx_max}], z in [{_cz_min},{_cz_max}]. "
+            "The scene state already shows each object's bounding box — use it alongside the screenshots. "
+            "Flag a pair ONLY if the meshes clearly overlap (not just nearby). "
+            "For each overlapping object, move the less important one clear of the other. "
+            "Output ONLY MoveObject lines, one per colliding object:\n"
             "MoveObject <exactName> x=<X> y=<Y> z=<Z> rotationY=<R>  — reason: visually overlaps <otherName>\n"
-            "Do NOT flag anything else. If no overlaps, output nothing."
+            "If no meshes overlap, output nothing."
         )
-        llm_lines = self._focused_llm("CollisionThread", sys_prompt, f"Objects:\n{obj_list}")
-        new_lines = [ln for ln in llm_lines if not any(n in ln for n in names_corrected)]
+        llm_lines = self._focused_llm("CollisionThread", sys_prompt, f"Objects (with bounds):\n{obj_list}")
+        new_lines = [ln for ln in llm_lines if not any(n in ln for n in resolved)]
+        for ln in new_lines:
+            logger.info(f"[CollisionThread][image] {ln}")
+            # extract object name from "MoveObject <name> ..."
+            parts = ln.split()
+            if len(parts) >= 2:
+                self._enqueue_debug_log(f"COLLISION (image) {parts[1]}: {ln}")
         corrections.extend(new_lines)
         if new_lines:
-            logger.info(f"[CollisionThread] LLM visual check added {len(new_lines)} extra correction(s).")
+            logger.info(f"[CollisionThread] image path added {len(new_lines)} extra correction(s).")
 
         return corrections
 
@@ -621,8 +849,11 @@ class ReflectionModule:
                 room_status="good",
                 suggest_additions=False,
             )
-            self._log_reflection(forced, plan_step=plan_step)
+            self._log_reflection(forced, plan_step=plan_step, denied_corrections=[])
             return forced
+
+        # Reset denied corrections accumulator for this round
+        self._denied_corrections = []
 
         plan = self._load_plan()
         plan_str = json.dumps(plan, indent=2)
@@ -631,8 +862,14 @@ class ReflectionModule:
         recent_reflections = self._load_recent_reflections(limit=5)
         reflections_str = json.dumps(recent_reflections, indent=2)
 
-        # Load already-placed Unity objects so the reflection knows the real object count
-        placed_objects = self._load_placed_objects()
+        # Collect denied corrections from previous rounds to warn the LLM
+        prev_denied: List[str] = []
+        for entry in recent_reflections:
+            prev_denied.extend(entry.get("denied_corrections", []))
+        prev_denied = list(dict.fromkeys(prev_denied))  # deduplicate, preserve order
+
+        # Load live scene state (real positions + bounds from Unity) so reflection uses ground-truth data
+        placed_objects = self._load_scene_state()
         placed_objects_str = json.dumps(placed_objects, indent=2)
         placed_count = len(placed_objects)
         knowledge_str = "\n".join(
@@ -644,19 +881,41 @@ class ReflectionModule:
         object_names_in_scene = [o.get("objectName", "") for o in placed_objects_list if o.get("objectName")]
         scene_inventory = ", ".join(object_names_in_scene) if object_names_in_scene else "none"
 
-        # Authoritative prefab names from unity_commands.json — set as instance state for all threads
+        # Store live scene state and derive name list — both are set before threads launch
+        self._scene_state = placed_objects
         exact_scene_names = sorted({o["objectName"] for o in placed_objects if o.get("objectName")})
         self._exact_scene_names = exact_scene_names
-        supply_types = ["Cart", "Trolley", "Basin", "Sink", "Dispenser", "Drip", "Stand"]
-        supply_objects = [n for n in object_names_in_scene if any(t in n for t in supply_types)]
-        character_objects = [n for n in object_names_in_scene if any(n.startswith(p) for p in ["Doctor", "Nurse", "Patient", "Surgeon", "EMT"])]
-        small_prop_objects = [n for n in object_names_in_scene if any(t in n for t in ["Folder", "Box", "Syringe", "Thermometer", "Tray"])]
-        decor_objects = [n for n in object_names_in_scene if any(t in n for t in ["Poster", "Clock", "Sign", "Panel"])]
+
+        # Load scene params from config (always re-read so any change to experience.txt is picked up)
+        self._cfg = self._load_experience_config()
+        cfg = self._cfg
+        def _kw(key, default): return [s.strip() for s in cfg.get(key, default).split(",") if s.strip()]
+        supply_types    = _kw("supply_keywords",    "Cart,Trolley,Basin,Sink,Dispenser,Drip,Stand")
+        char_prefixes   = _kw("character_prefixes", "Doctor,Nurse,Patient,Surgeon,EMT")
+        small_prop_kws  = _kw("small_prop_keywords","Folder,Box,Syringe,Thermometer,Tray")
+        decor_kws       = _kw("decor_keywords",     "Poster,Clock,Sign,Panel")
+        surface_kws     = _kw("surface_keywords",   "Cart,Trolley,Table,Desk,Counter,Shelf,Bed,Stand")
+        scene_type      = cfg.get("scene_type", "room")
+        x_min = float(cfg.get("x_min", -2.8)); x_max = float(cfg.get("x_max", 2.8))
+        z_min = float(cfg.get("z_min",  0.1)); z_max = float(cfg.get("z_max", 5.9))
+        max_objects = int(cfg.get("max_objects", 25))
+        min_objects = int(cfg.get("min_objects", 10))
+        room_w = float(cfg.get("room_width",  6))
+        room_d = float(cfg.get("room_depth",  6))
+
+        supply_objects    = [n for n in object_names_in_scene if any(t in n for t in supply_types)]
+        character_objects = [n for n in object_names_in_scene if any(n.startswith(p) for p in char_prefixes)]
+        small_prop_objects= [n for n in object_names_in_scene if any(t in n for t in small_prop_kws)]
+        decor_objects     = [n for n in object_names_in_scene if any(t in n for t in decor_kws)]
 
         exact_names_str = "\n".join(f"  - {n}" for n in exact_scene_names) if exact_scene_names else "  (none yet)"
 
-        system_prompt = f"""You are a layout quality inspector for a VR medical training room in Unity.
-        Room bounds: x in [-2.8, 2.8], z in [0.1, 5.9], y >= 0. Walls at x=±3, z=0, z=6.
+        wall_x = room_w / 2; wall_z_far = room_d
+        wall_near_x = x_max - 0.8; wall_near_z_back = z_max - 0.9; wall_near_z_front = z_min + 0.4
+        mid_x = x_max - 0.7
+
+        system_prompt = f"""You are a layout quality inspector for a VR {scene_type} in Unity.
+        Room bounds: x in [{x_min}, {x_max}], z in [{z_min}, {z_max}], y >= 0. Walls at x=±{wall_x}, z=0, z={wall_z_far}.
 
         ══════════════════════════════════════════════════
         STRICT NAME RULE — VIOLATION = INVALID RESPONSE
@@ -664,7 +923,7 @@ class ReflectionModule:
         The ONLY valid object names you may reference in any field are:
 {exact_names_str}
         ANY name you invent, abbreviate, or guess that is NOT in this list is WRONG.
-        Do NOT paraphrase (e.g. "CT_Scanner" when scene has "Tomograpf_01" → wrong).
+        Do NOT paraphrase or abbreviate any name (e.g. write the name exactly as it appears in the list above).
         Do NOT use plural or category words ("chairs", "objects near wall").
         If you cannot identify an object by its exact name above, skip it entirely.
         ══════════════════════════════════════════════════
@@ -673,7 +932,7 @@ class ReflectionModule:
         THREAD DIVISION — YOUR SCOPE ONLY
         ══════════════════════════════════════════════════
         Two other threads run in parallel and handle:
-          • BOUNDS violations (x/z/y out of range) — already corrected, do NOT re-check.
+          • BOUNDS violations (x/z/y out of range), partial wall clips, and doorway blockage — already corrected, do NOT re-check.
           • OBJECT OVERLAPS / collisions (pairs within 0.4m) — already corrected, do NOT re-check.
         YOUR JOB: zone correctness, surface logic, rotation, room status. That is all.
         ══════════════════════════════════════════════════
@@ -689,31 +948,28 @@ class ReflectionModule:
         PRIORITY 1 — PER-OBJECT ZONE + SURFACE + ROTATION AUDIT:
 
         CHECK A — WRONG ZONE for object type:
-          Supply objects {supply_objects}: must be near a wall (|x| > 2.1 OR z < 0.7 OR z > 5.1).
-            If mid-room (|x| <= 2.1 AND z in [0.7,5.1]), flag by exact name and move to nearest valid wall zone.
+          Supply objects {supply_objects}: must be near a wall (|x| > {mid_x:.1f} OR z < {wall_near_z_front:.1f} OR z > {wall_near_z_back:.1f}).
+            If mid-room, flag by exact name and move to nearest valid wall zone.
           Small props {small_prop_objects}: must be on a surface (y >= 0.6). If y < 0.6, flag by exact name.
             LOGICAL SURFACE RULE — think step-by-step for each prop:
-              Step 1: Identify the prop type (Syringe/Thermometer/Tray → medical instrument; Folder/Clipboard/Chart → document; Box → supply).
-              Step 2: Find the nearest surface object from the strict name list by x/z proximity.
-              Step 3: Is that surface type appropriate?
-                - Medical instruments: ONLY on Cart, Trolley, or exam Table.
-                - Document props: ONLY on desk, counter, or Cart.
-                - Supply boxes: ONLY on Cart, Trolley, or shelf — NOT floor mid-room.
-              Step 4: If surface is illogical (e.g. Syringe beside a CT bore), find the nearest appropriate surface and move there.
+              Step 1: Identify the prop type and its logical surface category.
+              Step 2: Find the nearest surface object ({', '.join(surface_kws)}) from the strict name list.
+              Step 3: Is that surface type appropriate for this prop?
+              Step 4: If the surface is illogical, find the nearest appropriate surface and move there.
             ALSO verify the prop is within 0.5m x/z of a valid logical surface object from the strict name list.
-          Decor objects {decor_objects}: must be near a wall (|x| > 2.0 OR z < 0.5 OR z > 5.5) at y > 1.0.
+          Decor objects {decor_objects}: must be near a wall (|x| > {wall_near_x:.1f} OR z < {wall_near_z_front:.1f} OR z > {wall_near_z_back:.1f}) at y > 1.0.
             If floating mid-room or too low, flag by exact name.
           Characters {character_objects}: must NOT be inside non-human objects.
             If 2+ characters are within 0.5m of each other, name each and recommend moving one.
 
-        CHECK B — WALKWAY BLOCK: central corridor z in [1.5,4.5], |x| < 1.2 must stay clear for primary equipment.
+        CHECK B — WALKWAY BLOCK: central corridor, |x| < {x_max * 0.43:.1f} must stay clear for primary equipment.
           Any non-primary object in this zone: flag by exact name and move to nearest wall.
 
         CHECK C — ROTATION:
-          Objects near left wall (x < -2.0): rotationY=90 (face right).
-          Objects near right wall (x > 2.0): rotationY=270 (face left).
-          Objects near back wall (z > 5.0): rotationY=180 (face forward).
-          Objects near entry (z < 0.5): rotationY=0 (face inward).
+          Objects near left wall (x < {-wall_near_x:.1f}): rotationY=90 (face right).
+          Objects near right wall (x > {wall_near_x:.1f}): rotationY=270 (face left).
+          Objects near back wall (z > {wall_near_z_back:.1f}): rotationY=180 (face forward).
+          Objects near entry (z < {wall_near_z_front:.1f}): rotationY=0 (face inward).
           Characters: face the room's primary equipment (toward room center).
 
         REQUIRED FORMAT — one line per problem, exact objectName from strict name list only:
@@ -724,8 +980,8 @@ class ReflectionModule:
         Every objectName MUST appear verbatim in the strict name list. Objects passing all checks: do NOT mention.
 
         PRIORITY 2 — ROOM FULLNESS:
-        Count non-Cube objects in game_state. room_status = "sparse" if < 10 | "good" if 10-25 | "cluttered" if > 25.
-        HARD CAP = 25. If count >= 25: room_status = "cluttered", suggest_additions = false — no exceptions.
+        Count non-Cube objects in game_state. room_status = "sparse" if < {min_objects} | "good" if {min_objects}-{max_objects} | "cluttered" if > {max_objects}.
+        HARD CAP = {max_objects}. If count >= {max_objects}: room_status = "cluttered", suggest_additions = false — no exceptions.
         suggest_additions = true ONLY if room_status = "sparse".
 
         PRIORITY 3 — ADDITIONS (only if suggest_additions = true):
@@ -751,7 +1007,16 @@ class ReflectionModule:
                 "Only mark step_complete as yes if loop conditions are satisfied.\n\n"
             )
 
-        base_content = f"""{loop_mode_note}IMPORTANT: Base your visual judgments primarily on the screenshots provided below, not just the object list.
+        denied_notice = ""
+        if prev_denied:
+            denied_list = ", ".join(prev_denied)
+            denied_notice = (
+                f"⚠ PREVIOUS ROUND DENIALS: The following object names you used were NOT found in the scene "
+                f"and were rejected — do NOT use them again: {denied_list}. "
+                f"You MUST use only the exact names from the STRICT NAME RULE list above.\n\n"
+            )
+
+        base_content = f"""{loop_mode_note}{denied_notice}IMPORTANT: Base your visual judgments primarily on the screenshots provided below, not just the object list.
 Look at each screenshot carefully before generating edit_commands. The screenshots are ground truth.
 
         Full Plan:
@@ -765,8 +1030,8 @@ Look at each screenshot carefully before generating edit_commands. The screensho
 
         Already Placed Unity Objects ({placed_count} objects — use this for room_status counting):
         {placed_objects_str}
-        NOTE: There are {placed_count} objects in the scene. HARD CAP = 25 meaningful objects (excluding Cube walls/floor/ceiling).
-        If count >= 25: room_status MUST be "cluttered", suggest_additions MUST be false. Do not suggest adding anything.
+        NOTE: There are {placed_count} objects in the scene. HARD CAP = {max_objects} meaningful objects (excluding Cube walls/floor/ceiling).
+        If count >= {max_objects}: room_status MUST be "cluttered", suggest_additions MUST be false. Do not suggest adding anything.
         Do NOT suggest PlaceObject for any objectName already in this list — use MoveObject to reposition instead.
 
         Relevant Knowledge:
@@ -923,5 +1188,5 @@ Look at each screenshot carefully before generating edit_commands. The screensho
             room_status=room_status,
             suggest_additions=suggest_additions,
         )
-        self._log_reflection(reflection, plan_step=plan_step)
+        self._log_reflection(reflection, plan_step=plan_step, denied_corrections=list(self._denied_corrections))
         return reflection

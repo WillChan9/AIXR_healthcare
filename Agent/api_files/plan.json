@@ -1,101 +1,157 @@
 {
-  "room_type": "CT Examination Room",
-  "description": "A compact, clean, and realistic CT examination room",
+  "room_type": "Physical Therapy Gym",
+  "description": "A warm, recovery-focused physical therapy gym with multiple therapy stations in use.",
   "layout_goals": {
-    "interior_bounds": "6m x 6m",
-    "minimum_objects": 10,
-    "focal_point": "CT scanner"
+    "interior_bounds": "5m x 5m",
+    "minimum_objects": 16,
+    "focal_point": "Parallel Bars / Walking Rails"
   },
   "steps": [
     {
       "step": 1,
-      "action": "Place walls, ceiling, and floor",
-      "objects": [],
-      "target_area": "entire room",
-      "condition": "4 walls, 1 ceiling, and 1 floor form a 6m x 6m enclosure"
+      "action": "Place parallel bars",
+      "objects": [
+        "parallel bars"
+      ],
+      "target_area": "center of the room",
+      "condition": "Ensure clear lanes around bars"
     },
     {
       "step": 2,
-      "action": "Add doorway to front wall",
-      "objects": [],
-      "target_area": "front wall",
-      "condition": "1.2m wide doorway centered at x=0"
+      "action": "Position mat table",
+      "objects": [
+        "mat table"
+      ],
+      "target_area": "left side of room",
+      "condition": "Ensure accessibility for patient and therapist"
     },
     {
       "step": 3,
-      "action": "Install ceiling light fixture",
+      "action": "Install exercise bike",
       "objects": [
-        "ceiling light fixture"
+        "exercise bike"
       ],
-      "target_area": "center of ceiling",
-      "condition": "bright hospital lighting"
+      "target_area": "near right wall",
+      "condition": "Ensure clearance for patient movement"
     },
     {
       "step": 4,
-      "action": "Place CT scanner",
+      "action": "Place treadmill",
       "objects": [
-        "CT scanner"
+        "treadmill"
       ],
-      "target_area": "center of room",
-      "condition": "aligned with table"
+      "target_area": "along right wall",
+      "condition": "Ensure safe patient access"
     },
     {
       "step": 5,
-      "action": "Place patient table",
+      "action": "Position stair training unit",
       "objects": [
-        "patient table"
+        "stair unit"
       ],
-      "target_area": "aligned with scanner bore",
-      "condition": "clear walking lane around table"
+      "target_area": "back-right corner",
+      "condition": "Ensure stability and safety"
     },
     {
       "step": 6,
-      "action": "Add X-Ray monitor and chair",
+      "action": "Place balance board",
       "objects": [
-        "dual-screen X-Ray monitor",
-        "chair"
+        "balance board"
       ],
-      "target_area": "right side of room, near head of table",
-      "condition": "monitor at head of table, chair near monitor"
+      "target_area": "near parallel bars",
+      "condition": "Ensure safe patient use"
     },
     {
       "step": 7,
-      "action": "Add utility cart and IV drip",
+      "action": "Install shelving unit",
       "objects": [
-        "utility cart",
-        "IV drip"
+        "shelving unit"
       ],
-      "target_area": "near table, on monitor side",
-      "condition": "cart near table, IV drip near head of table"
+      "target_area": "left wall",
+      "condition": "Ensure organized storage"
     },
     {
       "step": 8,
-      "action": "Add waste bucket and sanitizer",
+      "action": "Mount weights rack",
       "objects": [
-        "waste bucket",
-        "sanitizer"
+        "weights rack"
       ],
-      "target_area": "near chair or entry corner",
-      "condition": "waste bucket and sanitizer in clinical support areas"
+      "target_area": "left wall",
+      "condition": "Ensure safe and accessible"
     },
     {
       "step": 9,
-      "action": "Add clock and caution sign",
+      "action": "Position therapy cart",
       "objects": [
-        "clock",
-        "caution sign"
+        "therapy cart"
       ],
-      "target_area": "high on wall above monitor, near scanner",
-      "condition": "clock and sign in visible locations"
+      "target_area": "left wall",
+      "condition": "Ensure mobility and accessibility"
     },
     {
       "step": 10,
-      "action": "Add patient",
+      "action": "Install hydrocollator",
       "objects": [
-        "patient"
+        "hydrocollator"
       ],
-      "target_area": "walking around the room",
-      "condition": "patient present and moving around the room"
+      "target_area": "near left wall",
+      "condition": "Ensure safe operation"
+    },
+    {
+      "step": 11,
+      "action": "Place desk and monitor",
+      "objects": [
+        "desk",
+        "monitor"
+      ],
+      "target_area": "back-left corner",
+      "condition": "Ensure staff accessibility"
+    },
+    {
+      "step": 12,
+      "action": "Install mirror",
+      "objects": [
+        "mirror"
+      ],
+      "target_area": "back wall",
+      "condition": "Ensure visibility for patients"
+    },
+    {
+      "step": 13,
+      "action": "Add ambient details",
+      "objects": [
+        "clock",
+        "posters"
+      ],
+      "target_area": "various walls",
+      "condition": "Enhance room atmosphere"
+    },
+    {
+      "step": 14,
+      "action": "Place sanitizer dispenser",
+      "objects": [
+        "sanitizer dispenser"
+      ],
+      "target_area": "near entry",
+      "condition": "Ensure accessibility"
+    },
+    {
+      "step": 15,
+      "action": "Position waste bin",
+      "objects": [
+        "waste bin"
+      ],
+      "target_area": "near entry",
+      "condition": "Ensure visibility and accessibility"
+    },
+    {
+      "step": 16,
+      "action": "Park wheelchair",
+      "objects": [
+        "wheelchair"
+      ],
+      "target_area": "near entry",
+      "condition": "Ensure safe and accessible"
     }
   ]
 }

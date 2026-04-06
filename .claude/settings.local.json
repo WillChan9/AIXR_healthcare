@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(find 'c:\\\\Users\\\\Allison\\\\Programming\\\\GitHub\\\\AIXR_healthcare\\\\firefighter project\\\\Assets\\\\Resources\\\\AnimatorControllers' -name *.controller)",
-      "Bash(python -c \":*)"
+      "Bash(python -c \":*)",
+      "Bash(python -c \"import matplotlib; print\\(matplotlib.__version__\\)\")"
     ]
   }
 }
