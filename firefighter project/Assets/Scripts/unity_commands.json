@@ -1,6 +1,6 @@
 [
   {
-    "id": "cmd_1775506152133_0",
+    "id": "cmd_1775679692192_0",
     "executed": true,
     "done": true,
     "action": "CreateObjectByName",
@@ -14,7 +14,7 @@
     "scaleZ": 5
   },
   {
-    "id": "cmd_1775506152133_1",
+    "id": "cmd_1775679692192_1",
     "executed": true,
     "done": true,
     "action": "CreateObjectByName",
@@ -28,7 +28,7 @@
     "scaleZ": 5
   },
   {
-    "id": "cmd_1775506152133_2",
+    "id": "cmd_1775679692192_2",
     "executed": true,
     "done": true,
     "action": "CreateObjectByName",
@@ -42,7 +42,7 @@
     "scaleZ": 5
   },
   {
-    "id": "cmd_1775506152133_3",
+    "id": "cmd_1775679692192_3",
     "executed": true,
     "done": true,
     "action": "CreateObjectByName",
@@ -56,7 +56,7 @@
     "scaleZ": 5
   },
   {
-    "id": "cmd_1775506152133_4",
+    "id": "cmd_1775679692192_4",
     "executed": true,
     "done": true,
     "action": "CreateObjectByName",
@@ -70,7 +70,7 @@
     "scaleZ": 0.2
   },
   {
-    "id": "cmd_1775506152133_5",
+    "id": "cmd_1775679692192_5",
     "executed": true,
     "done": true,
     "action": "CreateObjectByName",
@@ -84,7 +84,7 @@
     "scaleZ": 0.2
   },
   {
-    "id": "cmd_1775506152133_6",
+    "id": "cmd_1775679692192_6",
     "executed": true,
     "done": true,
     "action": "CreateObjectByName",
@@ -98,14 +98,14 @@
     "scaleZ": 0.2
   },
   {
-    "id": "cmd_1775506152133_7",
+    "id": "cmd_1775679692192_7",
     "executed": true,
     "done": true,
     "action": "SetLightIntensity",
     "scale": 1.4
   },
   {
-    "id": "cmd_1775506152133_8",
+    "id": "cmd_1775679692192_8",
     "executed": true,
     "done": true,
     "action": "SetAmbientColor",
@@ -114,7 +114,7 @@
     "b": 0.85
   },
   {
-    "id": "cmd_1775506155427_0",
+    "id": "cmd_1775679695556_0",
     "executed": true,
     "done": true,
     "action": "PlaceObject",
@@ -125,7 +125,7 @@
     "rotationY": 0
   },
   {
-    "id": "cmd_1775506155427_1",
+    "id": "cmd_1775679695556_1",
     "executed": true,
     "done": true,
     "action": "PlaceObject",
@@ -136,117 +136,106 @@
     "rotationY": 0
   },
   {
-    "id": "cmd_1775506155427_2",
+    "id": "cmd_1775679695556_2",
     "executed": true,
     "done": true,
     "action": "PlaceObject",
     "objectName": "Utility_Cart_01",
-    "x": -2,
+    "x": -1.2,
     "y": 0,
-    "z": 3,
+    "z": 1.5,
     "rotationY": 0
   },
   {
-    "id": "cmd_1775506155427_3",
+    "id": "cmd_1775679695556_3",
     "executed": true,
     "done": true,
     "action": "PlaceObject",
     "objectName": "Reception_Desk_01",
-    "x": -2,
+    "x": -2.2,
     "y": 0,
-    "z": 4.5,
+    "z": 0.5,
     "rotationY": 0
   },
   {
-    "id": "cmd_1775506155427_4",
+    "id": "cmd_1775679695556_4",
     "executed": true,
     "done": true,
     "action": "PlaceObject",
     "objectName": "Monitor_01",
-    "x": -2,
-    "y": 0,
-    "z": 4,
+    "x": -2.2,
+    "y": 0.8,
+    "z": 0.5,
     "rotationY": 0
   },
   {
-    "id": "cmd_1775506155427_5",
-    "executed": true,
-    "done": true,
-    "action": "PlaceObject",
-    "objectName": "Dental_Mirror_01",
-    "x": 0,
-    "y": 0,
-    "z": 0.1,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506155427_6",
+    "id": "cmd_1775679695556_5",
     "executed": true,
     "done": true,
     "action": "PlaceObject",
     "objectName": "Sanitizer_01",
     "x": 0,
     "y": 0,
-    "z": 4.8,
+    "z": 4.5,
     "rotationY": 0
   },
   {
-    "id": "cmd_1775506155427_7",
+    "id": "cmd_1775679695556_6",
     "executed": true,
     "done": true,
     "action": "PlaceObject",
     "objectName": "Waste_Bucket_01",
-    "x": -2.2,
+    "x": -2.1,
     "y": 0,
     "z": 4.8,
     "rotationY": 0
   },
   {
-    "id": "cmd_1775506155427_8",
+    "id": "cmd_1775679695556_7",
     "executed": true,
     "done": true,
     "action": "PlaceObject",
     "objectName": "WheelChair_01",
     "x": -2.2,
     "y": 0,
-    "z": 4.5,
+    "z": 4.7,
     "rotationY": 0
   },
   {
-    "id": "cmd_1775506155427_9",
+    "id": "cmd_1775679695556_8",
     "executed": true,
     "done": true,
     "action": "PlaceObject",
     "objectName": "Caution_Sign_01",
-    "x": -2.2,
+    "x": -2,
     "y": 0,
     "z": 4.9,
     "rotationY": 0
   },
   {
-    "id": "cmd_1775506155427_10",
+    "id": "cmd_1775679695556_9",
     "executed": true,
     "done": true,
     "action": "PlaceObject",
     "objectName": "Clock_01",
     "x": 0,
-    "y": 0,
-    "z": 0.2,
+    "y": 3,
+    "z": 0.5,
     "rotationY": 0
   },
   {
-    "id": "cmd_1775506155427_11",
+    "id": "cmd_1775679695556_10",
     "executed": true,
     "done": true,
     "action": "PlaceObject",
     "objectName": "Poster_01",
-    "x": -2,
+    "x": 1.5,
     "y": 0,
     "z": 2.5,
     "rotationY": 0
   },
   {
-    "id": "cmd_1775506155427_12",
+    "id": "cmd_1775679695556_11",
     "executed": true,
     "done": true,
     "action": "PlaceHuman",
@@ -257,72 +246,78 @@
     "rotationY": 0
   },
   {
-    "id": "33e0cfe5-48ac-4c38-aa5f-d75810be509d",
+    "id": "1becc520-d45c-499f-8af2-d1475a48cb5a",
     "executed": true,
     "done": true,
     "action": "DebugLog",
-    "message": "COLLISION (math) Reception_Desk_01 <-> Waste_Bucket_01  pen_x=0.01m pen_z=0.43m  moving Waste_Bucket_01 to (-2.07, 0.01, 4.80)"
+    "message": "COLLISION (math) Table_01 <-> Utility_Cart_01  pen_x=0.67m pen_z=0.51m  moving Utility_Cart_01 to (-1.20, 0.76, 2.29)"
   },
   {
-    "id": "cb3a66fc-6c5e-418d-95d5-e7cae3d0ab88",
+    "id": "3bb0bd61-cc5f-4102-a593-f355c87501f6",
     "executed": true,
     "done": true,
     "action": "DebugLog",
-    "message": "COLLISION (math) Reception_Desk_01 <-> WheelChair_01  pen_x=0.17m pen_z=0.75m  moving WheelChair_01 to (-1.93, 0.01, 4.50)"
+    "message": "COLLISION (math) Table_01 <-> Reception_Desk_01  pen_x=0.77m pen_z=0.08m  moving Reception_Desk_01 to (-2.20, 0.01, 0.57)"
   },
   {
-    "id": "4302b82d-598b-46c1-8201-a43734f05850",
+    "id": "7d854dca-f524-4708-aed5-69b265f08fe7",
     "executed": true,
     "done": true,
     "action": "DebugLog",
-    "message": "COLLISION (math) Waste_Bucket_01 <-> Caution_Sign_01  pen_x=0.30m pen_z=0.19m  moving Caution_Sign_01 to (-2.20, 0.01, 4.81)"
+    "message": "COLLISION (math) Reception_Desk_01 <-> Monitor_01  pen_x=0.20m pen_z=0.16m  moving Monitor_01 to (-2.20, 1.01, 1.71)"
   },
   {
-    "id": "cmd_1775506167529_0",
+    "id": "7cadc933-28b4-44db-9872-ba00cbe8a1cb",
     "executed": true,
     "done": true,
-    "action": "MoveObject",
-    "objectName": "Utility_Cart_01",
-    "x": -1.92,
-    "y": 0.01,
-    "z": 3,
-    "rotationY": 0
+    "action": "DebugLog",
+    "message": "COLLISION (math) Waste_Bucket_01 <-> WheelChair_01  pen_x=0.45m pen_z=0.43m  moving WheelChair_01 to (-2.20, 0.44, 3.82)"
   },
   {
-    "id": "cmd_1775506167529_1",
+    "id": "b8474c4c-469a-431c-b4a3-b85ba88fdf34",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Waste_Bucket_01 <-> Caution_Sign_01  pen_x=0.26m pen_z=0.19m  moving Caution_Sign_01 to (-2.00, 0.44, 4.81)"
+  },
+  {
+    "id": "64b4b4e9-cb32-4600-a903-82c8320806f4",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (image) Poster_01: MoveObject Poster_01 x=1.5 y=0.01 z=2.6 rotationY=0.0  — reason: visually overlaps Patient_01"
+  },
+  {
+    "id": "210ba24c-f6e0-421c-a9ab-8a15a87b5f34",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (image) Poster_01: MoveObject Poster_01 x=1.5 y=0.01 z=2.6 rotationY=0.0"
+  },
+  {
+    "id": "cmd_1775679705277_0",
     "executed": true,
     "done": true,
     "action": "MoveObject",
     "objectName": "Reception_Desk_01",
     "x": -1.85,
     "y": 0.01,
-    "z": 4.45,
+    "z": 0.55,
     "rotationY": 0
   },
   {
-    "id": "cmd_1775506167529_2",
+    "id": "cmd_1775679705277_1",
     "executed": true,
     "done": true,
     "action": "MoveObject",
-    "objectName": "Dental_Mirror_01",
-    "x": 0,
-    "y": 0.01,
-    "z": 0.26,
+    "objectName": "Monitor_01",
+    "x": -2.05,
+    "y": 1.01,
+    "z": 0.5,
     "rotationY": 0
   },
   {
-    "id": "cmd_1775506167529_3",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Sanitizer_01",
-    "x": 0,
-    "y": 0.01,
-    "z": 4.78,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506167529_4",
+    "id": "cmd_1775679705277_2",
     "executed": true,
     "done": true,
     "action": "MoveObject",
@@ -333,3394 +328,489 @@
     "rotationY": 0
   },
   {
-    "id": "cmd_1775506167529_5",
+    "id": "cmd_1775679705277_3",
     "executed": true,
     "done": true,
     "action": "MoveObject",
     "objectName": "WheelChair_01",
     "x": -1.88,
-    "y": 0.01,
+    "y": 0.44,
     "z": 4.33,
     "rotationY": 0
   },
   {
-    "id": "cmd_1775506167529_6",
+    "id": "cmd_1775679705277_4",
     "executed": true,
     "done": true,
     "action": "MoveObject",
     "objectName": "Caution_Sign_01",
-    "x": -2.1,
-    "y": 0.01,
+    "x": -2,
+    "y": 0.44,
     "z": 4.76,
     "rotationY": 0
   },
   {
-    "id": "cmd_1775506167529_7",
+    "id": "cmd_1775679705277_5",
     "executed": true,
     "done": true,
     "action": "MoveObject",
     "objectName": "Clock_01",
     "x": -1.03,
-    "y": 0.01,
-    "z": 0.2,
+    "y": 3.3,
+    "z": 0.5,
     "rotationY": 0
   },
   {
-    "id": "cmd_1775506167529_8",
+    "id": "cmd_1775679705277_6",
     "executed": true,
     "done": true,
     "action": "MoveObject",
-    "objectName": "Waste_Bucket_01",
-    "x": -2.07,
-    "y": 0.01,
-    "z": 4.8,
+    "objectName": "Utility_Cart_01",
+    "x": -1.2,
+    "y": 0.76,
+    "z": 2.29,
     "rotationY": 0
   },
   {
-    "id": "cmd_1775506167529_9",
+    "id": "cmd_1775679705277_7",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Reception_Desk_01",
+    "x": -2.2,
+    "y": 0.01,
+    "z": 0.57,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1775679705277_8",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Monitor_01",
+    "x": -2.2,
+    "y": 1.01,
+    "z": 1.71,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1775679705277_9",
     "executed": true,
     "done": true,
     "action": "MoveObject",
     "objectName": "WheelChair_01",
-    "x": -1.93,
-    "y": 0.01,
-    "z": 4.5,
+    "x": -2.2,
+    "y": 0.44,
+    "z": 3.82,
     "rotationY": 0
   },
   {
-    "id": "cmd_1775506167529_10",
+    "id": "cmd_1775679705277_10",
     "executed": true,
     "done": true,
     "action": "MoveObject",
     "objectName": "Caution_Sign_01",
-    "x": -2.2,
-    "y": 0.01,
+    "x": -2,
+    "y": 0.44,
     "z": 4.81,
     "rotationY": 0
   },
   {
-    "id": "cmd_1775506169422_0",
+    "id": "cmd_1775679705277_11",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Poster_01",
+    "x": 1.5,
+    "y": 0.01,
+    "z": 2.6,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1775679705277_12",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Poster_01",
+    "x": 1.5,
+    "y": 0.01,
+    "z": 2.6,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1775679707060_0",
     "executed": true,
     "done": true,
     "action": "PlaceObject",
     "objectName": "Towel_Dispenser_01",
-    "x": -2.2,
+    "x": -2.3,
     "y": 0.8,
-    "z": 4.7,
+    "z": 0.6,
     "rotationY": 0
   },
   {
-    "id": "cmd_1775506169423_1",
-    "executed": true,
-    "done": true,
-    "action": "PlaceObject",
-    "objectName": "Poster_04",
-    "x": 2.3,
-    "y": 1.6,
-    "z": 2.5,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506169423_2",
+    "id": "cmd_1775679707060_1",
     "executed": true,
     "done": true,
     "action": "PlaceObject",
     "objectName": "Folder_02",
-    "x": 1.8,
-    "y": 0.8,
-    "z": 3.2,
+    "x": -2.3,
+    "y": 0.9,
+    "z": 0.6,
     "rotationY": 0
   },
   {
-    "id": "f2a1762f-da32-4548-898a-0383201f8ce8",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Treadmill_01 <-> Folder_02  pen_x=0.06m pen_z=0.25m  moving Folder_02 to (2.27, 0.01, 3.20)"
-  },
-  {
-    "id": "616cc2db-e241-4733-84d7-06244553c49d",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Reception_Desk_01 <-> WheelChair_01  pen_x=0.29m pen_z=0.80m  moving WheelChair_01 to (-1.93, 0.01, 4.50)"
-  },
-  {
-    "id": "86abb105-9762-462c-922f-81637edf39c4",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Waste_Bucket_01 <-> Caution_Sign_01  pen_x=0.26m pen_z=0.19m  moving Caution_Sign_01 to (-2.20, 0.01, 4.81)"
-  },
-  {
-    "id": "9453bbf5-66b9-48ef-8f05-a20454a93846",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Waste_Bucket_01 <-> Towel_Dispenser_01  pen_x=0.25m pen_z=0.18m  moving Towel_Dispenser_01 to (-2.20, 0.01, 4.25)"
-  },
-  {
-    "id": "bb34581d-10ca-4706-8d35-84f8735c37e8",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (image) Utility_Cart_01: MoveObject Utility_Cart_01 x=-1.80 y=0.01 z=3.0 rotationY=0.0  \u2014 reason: visually overlaps Treadmill_01"
-  },
-  {
-    "id": "9fd136a4-42b4-4ace-bb9f-6f9bc81e4efc",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (image) Utility_Cart_01: MoveObject Utility_Cart_01 x=-1.80 y=0.01 z=3.0 rotationY=0.0  \u2014 reason: visually overlaps Treadmill_01"
-  },
-  {
-    "id": "cmd_1775506176158_0",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Utility_Cart_01",
-    "x": -1.92,
-    "y": 0.01,
-    "z": 3,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506176158_1",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Reception_Desk_01",
-    "x": -1.85,
-    "y": 0.01,
-    "z": 4.45,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506176158_2",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Dental_Mirror_01",
-    "x": -0.86,
-    "y": 0.01,
-    "z": 0.26,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506176158_3",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Waste_Bucket_01",
-    "x": -2.02,
-    "y": 0.01,
-    "z": 4.64,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506176158_4",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "WheelChair_01",
-    "x": -1.88,
-    "y": 0.01,
-    "z": 4.33,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506176158_5",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Caution_Sign_01",
-    "x": -2.1,
-    "y": 0.01,
-    "z": 4.76,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506176158_6",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Towel_Dispenser_01",
-    "x": -2.1,
-    "y": 0.01,
-    "z": 4.7,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506176158_7",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Poster_04",
-    "x": 2.04,
-    "y": 0.01,
-    "z": 2.5,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506176158_8",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Folder_02",
-    "x": 2.27,
-    "y": 0.01,
-    "z": 3.2,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506176158_9",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "WheelChair_01",
-    "x": -1.93,
-    "y": 0.01,
-    "z": 4.5,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506176158_10",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Caution_Sign_01",
-    "x": -2.2,
-    "y": 0.01,
-    "z": 4.81,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506176158_11",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Towel_Dispenser_01",
-    "x": -2.2,
-    "y": 0.01,
-    "z": 4.25,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506176158_12",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Utility_Cart_01",
-    "x": -1.8,
-    "y": 0.01,
-    "z": 3,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506176158_13",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Utility_Cart_01",
-    "x": -1.8,
-    "y": 0.01,
-    "z": 3,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506178402_0",
+    "id": "cmd_1775679707060_2",
     "executed": true,
     "done": true,
     "action": "PlaceObject",
-    "objectName": "Trolley_01",
-    "x": 2.1,
+    "objectName": "Poster_04",
+    "x": 2,
     "y": 0,
-    "z": 2.2,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506178402_1",
-    "executed": true,
-    "done": true,
-    "action": "PlaceObject",
-    "objectName": "Screen_02",
-    "x": 1.8,
-    "y": 0,
-    "z": 4.2,
-    "rotationY": 0
-  },
-  {
-    "id": "c8fa3091-a3b7-44d2-a37a-fc5059072934",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Treadmill_01 <-> Trolley_01  pen_x=0.32m pen_z=0.60m  moving Trolley_01 to (1.92, 0.01, 2.20)"
-  },
-  {
-    "id": "b22f5729-a3f0-4fc9-aab1-c60c2ee34508",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Treadmill_01 <-> Screen_02  pen_x=0.73m pen_z=0.41m  moving Screen_02 to (1.80, 0.01, 4.70)"
-  },
-  {
-    "id": "747c8db9-4ceb-42c6-b83b-cce642112ccb",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Reception_Desk_01 <-> Waste_Bucket_01  pen_x=0.05m pen_z=0.41m  moving Waste_Bucket_01 to (-2.07, 0.01, 4.64)"
-  },
-  {
-    "id": "0c0af432-26ba-45a0-aa84-5157f78ab73c",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Reception_Desk_01 <-> WheelChair_01  pen_x=0.29m pen_z=0.80m  moving WheelChair_01 to (-1.93, 0.01, 4.50)"
-  },
-  {
-    "id": "95d66d5a-e1ec-4b7e-931c-f3a78a12b727",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Dental_Mirror_01 <-> Clock_01  pen_x=0.03m pen_z=0.05m  moving Clock_01 to (-1.31, 0.01, 0.20)"
-  },
-  {
-    "id": "231567e8-4075-44e4-9153-a09149c65a4f",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Waste_Bucket_01 <-> Caution_Sign_01  pen_x=0.21m pen_z=0.14m  moving Caution_Sign_01 to (-2.20, 0.01, 4.81)"
-  },
-  {
-    "id": "93c02ee0-8b62-4905-99f5-393aaa1c07b8",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Waste_Bucket_01 <-> Towel_Dispenser_01  pen_x=0.20m pen_z=0.00m  moving Towel_Dispenser_01 to (-2.20, 0.01, 4.08)"
-  },
-  {
-    "id": "0ca13afb-9e7a-4b4e-942a-07130e3b686f",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (image) Utility_Cart_01: MoveObject Utility_Cart_01 x=-2.1 y=0.01 z=3.0 rotationY=0.0  \u2014 reason: visually overlaps Table_01"
-  },
-  {
-    "id": "cmd_1775506187128_0",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Reception_Desk_01",
-    "x": -1.85,
-    "y": 0.01,
-    "z": 4.45,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506187128_1",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Waste_Bucket_01",
-    "x": -2.02,
-    "y": 0.01,
-    "z": 4.64,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506187128_2",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "WheelChair_01",
-    "x": -1.88,
-    "y": 0.01,
-    "z": 4.33,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506187128_3",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Caution_Sign_01",
-    "x": -2.1,
-    "y": 0.01,
-    "z": 4.76,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506187128_4",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Towel_Dispenser_01",
-    "x": -2.1,
-    "y": 0.01,
-    "z": 4.25,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506187128_5",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Poster_04",
-    "x": 2.04,
-    "y": 0.01,
-    "z": 2.5,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506187128_6",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Folder_02",
-    "x": 2.22,
-    "y": 0.01,
-    "z": 3.2,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506187128_7",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Trolley_01",
-    "x": 1.87,
-    "y": 0.01,
-    "z": 2.2,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506187128_8",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Screen_02",
-    "x": 1.77,
-    "y": 0.01,
-    "z": 4.2,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506187130_9",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Trolley_01",
-    "x": 1.92,
-    "y": 0.01,
-    "z": 2.2,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506187130_10",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Screen_02",
-    "x": 1.8,
-    "y": 0.01,
-    "z": 4.7,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506187130_11",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Waste_Bucket_01",
-    "x": -2.07,
-    "y": 0.01,
-    "z": 4.64,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506187130_12",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "WheelChair_01",
-    "x": -1.93,
-    "y": 0.01,
-    "z": 4.5,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506187130_13",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Clock_01",
-    "x": -1.31,
-    "y": 0.01,
-    "z": 0.2,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506187130_14",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Caution_Sign_01",
-    "x": -2.2,
-    "y": 0.01,
-    "z": 4.81,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506187130_15",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Towel_Dispenser_01",
-    "x": -2.2,
-    "y": 0.01,
-    "z": 4.08,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506187130_16",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Utility_Cart_01",
-    "x": -2.1,
-    "y": 0.01,
-    "z": 3,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506189908_0",
-    "executed": true,
-    "done": true,
-    "action": "PlaceObject",
-    "objectName": "Reception_Desk_01",
-    "x": 2.1,
-    "y": 0,
-    "z": 4.5,
-    "rotationY": 0
-  },
-  {
-    "id": "27f171ac-7469-4607-a2c9-6bbe214df59e",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Treadmill_01 <-> Trolley_01  pen_x=0.50m pen_z=0.60m  moving Trolley_01 to (1.92, 0.01, 2.20)"
-  },
-  {
-    "id": "3c00c5fa-533e-437e-bc97-477290df170c",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Reception_Desk_01 <-> Screen_02  pen_x=0.18m pen_z=0.40m  moving Screen_02 to (1.37, 0.01, 4.70)"
-  },
-  {
-    "id": "ed6d6a4c-a7ed-43c6-b2b6-fe9be75c3d82",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Monitor_01 <-> Towel_Dispenser_01  pen_x=0.15m pen_z=0.08m  moving Towel_Dispenser_01 to (-2.20, 0.01, 4.50)"
-  },
-  {
-    "id": "cced7cfd-7dd2-472e-b701-7fd912ddc88f",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Waste_Bucket_01 <-> WheelChair_01  pen_x=0.45m pen_z=0.43m  moving WheelChair_01 to (-1.93, 0.01, 3.66)"
-  },
-  {
-    "id": "c1bd9f49-5cce-480c-af1c-084fe349fd18",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Waste_Bucket_01 <-> Caution_Sign_01  pen_x=0.26m pen_z=0.14m  moving Caution_Sign_01 to (-2.20, 0.01, 4.81)"
-  },
-  {
-    "id": "cmd_1775506201932_0",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Utility_Cart_01",
-    "x": -1.92,
-    "y": 0.01,
-    "z": 3,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506201932_1",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Reception_Desk_01",
-    "x": 1.85,
-    "y": 0.01,
-    "z": 4.45,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506201932_2",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Waste_Bucket_01",
-    "x": -2.02,
-    "y": 0.01,
-    "z": 4.64,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506201932_3",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "WheelChair_01",
-    "x": -1.88,
-    "y": 0.01,
-    "z": 4.33,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506201932_4",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Caution_Sign_01",
-    "x": -2.1,
-    "y": 0.01,
-    "z": 4.76,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506201932_5",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Towel_Dispenser_01",
-    "x": -2.1,
-    "y": 0.01,
-    "z": 4.08,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506201932_6",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Poster_04",
-    "x": 2.04,
-    "y": 0.01,
-    "z": 2.5,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506201932_7",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Folder_02",
-    "x": 2.22,
-    "y": 0.01,
-    "z": 3.2,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506201932_8",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Trolley_01",
-    "x": 1.87,
-    "y": 0.01,
-    "z": 2.2,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506201932_9",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Screen_02",
-    "x": 1.77,
-    "y": 0.01,
-    "z": 4.65,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506201932_10",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Trolley_01",
-    "x": 1.92,
-    "y": 0.01,
-    "z": 2.2,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506201932_11",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Screen_02",
-    "x": 1.37,
-    "y": 0.01,
-    "z": 4.7,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506201932_12",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Towel_Dispenser_01",
-    "x": -2.2,
-    "y": 0.01,
-    "z": 4.5,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506201932_13",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "WheelChair_01",
-    "x": -1.93,
-    "y": 0.01,
-    "z": 3.66,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506201932_14",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Caution_Sign_01",
-    "x": -2.2,
-    "y": 0.01,
-    "z": 4.81,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506201932_15",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Treadmill_01",
-    "x": 1.5,
-    "y": 0.81,
-    "z": 3.5,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506201932_16",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Patient_01",
-    "x": 0,
-    "y": 0.82,
-    "z": 2.2,
-    "rotationY": 0
-  },
-  {
-    "id": "6e7c527c-d2b0-449b-a1ae-248fde40d83d",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Treadmill_01 <-> Trolley_01  pen_x=0.50m pen_z=0.60m  moving Trolley_01 to (1.92, 0.01, 2.20)"
-  },
-  {
-    "id": "db880d16-7cae-48de-a865-9456a915bf28",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Monitor_01 <-> WheelChair_01  pen_x=0.40m pen_z=0.32m  moving WheelChair_01 to (-1.93, 0.01, 3.07)"
-  },
-  {
-    "id": "9cfbf727-22d6-4189-890d-730cc5a81e4e",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Waste_Bucket_01 <-> Caution_Sign_01  pen_x=0.21m pen_z=0.14m  moving Caution_Sign_01 to (-2.20, 0.01, 4.81)"
-  },
-  {
-    "id": "35a92ac2-ad64-4390-bdb1-db298f6e1f37",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Waste_Bucket_01 <-> Towel_Dispenser_01  pen_x=0.20m pen_z=0.18m  moving Towel_Dispenser_01 to (-2.20, 0.01, 4.08)"
-  },
-  {
-    "id": "cmd_1775506210681_0",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Utility_Cart_01",
-    "x": -1.92,
-    "y": 0.01,
-    "z": 3,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506210681_1",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Reception_Desk_01",
-    "x": 1.85,
-    "y": 0.01,
-    "z": 4.45,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506210681_2",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Waste_Bucket_01",
-    "x": -2.02,
-    "y": 0.01,
-    "z": 4.64,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506210681_3",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "WheelChair_01",
-    "x": -1.88,
-    "y": 0.01,
-    "z": 3.66,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506210681_4",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Caution_Sign_01",
-    "x": -2.1,
-    "y": 0.01,
-    "z": 4.76,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506210681_5",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Towel_Dispenser_01",
-    "x": -2.1,
-    "y": 0.01,
-    "z": 4.5,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506210681_6",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Poster_04",
-    "x": 2.04,
-    "y": 0.01,
-    "z": 2.5,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506210681_7",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Folder_02",
-    "x": 2.22,
-    "y": 0.01,
-    "z": 3.2,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506210681_8",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Trolley_01",
-    "x": 1.87,
-    "y": 0.01,
-    "z": 2.2,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506210681_9",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Screen_02",
-    "x": 1.37,
-    "y": 0.01,
-    "z": 4.65,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506210681_10",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Trolley_01",
-    "x": 1.92,
-    "y": 0.01,
-    "z": 2.2,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506210681_11",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "WheelChair_01",
-    "x": -1.93,
-    "y": 0.01,
-    "z": 3.07,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506210681_12",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Caution_Sign_01",
-    "x": -2.2,
-    "y": 0.01,
-    "z": 4.81,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506210681_13",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Towel_Dispenser_01",
-    "x": -2.2,
-    "y": 0.01,
-    "z": 4.08,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506210681_14",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Patient_01",
-    "x": 0,
-    "y": 0.82,
-    "z": 2.5,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506210681_15",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Patient_01",
-    "x": 0,
-    "y": 0.82,
-    "z": 2.5,
-    "rotationY": 0
-  },
-  {
-    "id": "f54ede53-9c0f-4e52-8773-89626f3a67bc",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Treadmill_01 <-> Trolley_01  pen_x=0.50m pen_z=0.60m  moving Trolley_01 to (1.92, 0.01, 2.20)"
-  },
-  {
-    "id": "638f0bfc-e49c-4330-9bfc-23af893bf029",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Utility_Cart_01 <-> WheelChair_01  pen_x=0.67m pen_z=0.47m  moving WheelChair_01 to (-1.93, 0.01, 4.02)"
-  },
-  {
-    "id": "2e2dbbf2-2f6c-422b-b2a0-9f979f9098ce",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Monitor_01 <-> Towel_Dispenser_01  pen_x=0.15m pen_z=0.08m  moving Towel_Dispenser_01 to (-2.20, 0.01, 4.50)"
-  },
-  {
-    "id": "a9abe1aa-4ca2-421f-b7fc-5fc07a71afab",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Waste_Bucket_01 <-> Caution_Sign_01  pen_x=0.21m pen_z=0.14m  moving Caution_Sign_01 to (-2.20, 0.01, 4.81)"
-  },
-  {
-    "id": "cmd_1775506218657_0",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Utility_Cart_01",
-    "x": -1.92,
-    "y": 0.01,
-    "z": 3,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506218657_1",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Reception_Desk_01",
-    "x": 1.85,
-    "y": 0.01,
-    "z": 4.45,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506218657_2",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Waste_Bucket_01",
-    "x": -2.02,
-    "y": 0.01,
-    "z": 4.64,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506218657_3",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "WheelChair_01",
-    "x": -1.88,
-    "y": 0.01,
-    "z": 3.07,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506218657_4",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Caution_Sign_01",
-    "x": -2.1,
-    "y": 0.01,
-    "z": 4.76,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506218657_5",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Towel_Dispenser_01",
-    "x": -2.1,
-    "y": 0.01,
-    "z": 4.08,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506218657_6",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Poster_04",
-    "x": 2.04,
-    "y": 0.01,
-    "z": 2.5,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506218657_7",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Folder_02",
-    "x": 2.22,
-    "y": 0.01,
-    "z": 3.2,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506218657_8",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Trolley_01",
-    "x": 1.87,
-    "y": 0.01,
-    "z": 2.2,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506218657_9",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Screen_02",
-    "x": 1.37,
-    "y": 0.01,
-    "z": 4.65,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506218657_10",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Trolley_01",
-    "x": 1.92,
-    "y": 0.01,
-    "z": 2.2,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506218657_11",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "WheelChair_01",
-    "x": -1.93,
-    "y": 0.01,
-    "z": 4.02,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506218657_12",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Towel_Dispenser_01",
-    "x": -2.2,
-    "y": 0.01,
-    "z": 4.5,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506218657_13",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Caution_Sign_01",
-    "x": -2.2,
-    "y": 0.01,
-    "z": 4.81,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506218657_14",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Patient_01",
-    "x": 0,
-    "y": 0,
-    "z": 2.5,
-    "rotationY": 0
-  },
-  {
-    "id": "813df83a-3a9d-4186-b8b1-bb2a45632899",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Treadmill_01 <-> Trolley_01  pen_x=0.50m pen_z=0.60m  moving Trolley_01 to (1.92, 0.01, 2.20)"
-  },
-  {
-    "id": "aef8b48a-281f-48b2-9eb2-c1272de59a0e",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Monitor_01 <-> WheelChair_01  pen_x=0.40m pen_z=0.32m  moving WheelChair_01 to (-1.93, 0.01, 4.38)"
-  },
-  {
-    "id": "b895ec92-65c7-44f7-8965-f45762792573",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Waste_Bucket_01 <-> Caution_Sign_01  pen_x=0.21m pen_z=0.14m  moving Caution_Sign_01 to (-2.20, 0.01, 4.81)"
-  },
-  {
-    "id": "6165d213-bcd3-49ae-ad59-3476f6d52ba6",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Waste_Bucket_01 <-> Towel_Dispenser_01  pen_x=0.20m pen_z=0.18m  moving Towel_Dispenser_01 to (-2.20, 0.01, 4.08)"
-  },
-  {
-    "id": "cmd_1775506226421_0",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Utility_Cart_01",
-    "x": -1.92,
-    "y": 0.01,
-    "z": 3,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506226421_1",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Reception_Desk_01",
-    "x": 1.85,
-    "y": 0.01,
-    "z": 4.45,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506226421_2",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Waste_Bucket_01",
-    "x": -2.02,
-    "y": 0.01,
-    "z": 4.64,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506226421_3",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "WheelChair_01",
-    "x": -1.88,
-    "y": 0.01,
-    "z": 4.02,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506226421_4",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Caution_Sign_01",
-    "x": -2.1,
-    "y": 0.01,
-    "z": 4.76,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506226421_5",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Towel_Dispenser_01",
-    "x": -2.1,
-    "y": 0.01,
-    "z": 4.5,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506226421_6",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Poster_04",
-    "x": 2.04,
-    "y": 0.01,
-    "z": 2.5,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506226421_7",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Folder_02",
-    "x": 2.22,
-    "y": 0.01,
-    "z": 3.2,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506226421_8",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Trolley_01",
-    "x": 1.87,
-    "y": 0.01,
-    "z": 2.2,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506226421_9",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Screen_02",
-    "x": 1.37,
-    "y": 0.01,
-    "z": 4.65,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506226421_10",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Treadmill_01",
-    "x": 1.5,
-    "y": 0.81,
-    "z": 3.5,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506226421_11",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Treadmill_01",
-    "x": 1.5,
-    "y": 0.81,
-    "z": 3.5,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506226421_12",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Trolley_01",
-    "x": 1.92,
-    "y": 0.01,
-    "z": 2.2,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506226421_13",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "WheelChair_01",
-    "x": -1.93,
-    "y": 0.01,
-    "z": 4.38,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506226421_14",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Caution_Sign_01",
-    "x": -2.2,
-    "y": 0.01,
-    "z": 4.81,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506226421_15",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Towel_Dispenser_01",
-    "x": -2.2,
-    "y": 0.01,
-    "z": 4.08,
-    "rotationY": 0
-  },
-  {
-    "id": "2d5388d6-75bc-4219-8493-969ce754597f",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Treadmill_01 <-> Trolley_01  pen_x=0.50m pen_z=0.60m  moving Trolley_01 to (1.92, 0.01, 2.20)"
-  },
-  {
-    "id": "3aac4740-286a-443a-b3dd-0f4fe1ef952c",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Monitor_01 <-> WheelChair_01  pen_x=0.40m pen_z=0.07m  moving WheelChair_01 to (-1.93, 0.01, 4.38)"
-  },
-  {
-    "id": "15c02e83-7978-4b45-be05-6af277d76aa1",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Monitor_01 <-> Towel_Dispenser_01  pen_x=0.15m pen_z=0.08m  moving Towel_Dispenser_01 to (-2.20, 0.01, 4.50)"
-  },
-  {
-    "id": "017298ef-bef7-4d73-bf73-11bbe48fddd0",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Waste_Bucket_01 <-> Caution_Sign_01  pen_x=0.21m pen_z=0.14m  moving Caution_Sign_01 to (-2.20, 0.01, 4.81)"
-  },
-  {
-    "id": "6d5f73d7-9e42-475b-94ea-b38b5688562a",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (image) Treadmill_01: MoveObject Treadmill_01 x=1.5 y=0.81 z=3.8 rotationY=0.0 \u2014 reason: visually overlaps Reception_Desk_01"
-  },
-  {
-    "id": "1fa486f5-996e-4ed9-8a2f-ac88a77312fd",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (image) Patient_01: MoveObject Patient_01 x=0.2 y=0.0 z=2.5 rotationY=0.0 \u2014 reason: visually overlaps Poster_01"
-  },
-  {
-    "id": "cmd_1775506240317_0",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Utility_Cart_01",
-    "x": -1.92,
-    "y": 0.01,
-    "z": 3,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506240317_1",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Reception_Desk_01",
-    "x": 1.85,
-    "y": 0.01,
-    "z": 4.45,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506240317_2",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Waste_Bucket_01",
-    "x": -2.02,
-    "y": 0.01,
-    "z": 4.64,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506240317_3",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "WheelChair_01",
-    "x": -1.88,
-    "y": 0.01,
-    "z": 4.33,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506240317_4",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Caution_Sign_01",
-    "x": -2.1,
-    "y": 0.01,
-    "z": 4.76,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506240317_5",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Towel_Dispenser_01",
-    "x": -2.1,
-    "y": 0.01,
-    "z": 4.08,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506240317_6",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Poster_04",
-    "x": 2.04,
-    "y": 0.01,
-    "z": 2.5,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506240317_7",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Folder_02",
-    "x": 2.22,
-    "y": 0.01,
-    "z": 3.2,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506240317_8",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Trolley_01",
-    "x": 1.87,
-    "y": 0.01,
-    "z": 2.2,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506240317_9",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Screen_02",
-    "x": 1.37,
-    "y": 0.01,
-    "z": 4.65,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506240317_10",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Trolley_01",
-    "x": 1.92,
-    "y": 0.01,
-    "z": 2.2,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506240317_11",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "WheelChair_01",
-    "x": -1.93,
-    "y": 0.01,
-    "z": 4.38,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506240317_12",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Towel_Dispenser_01",
-    "x": -2.2,
-    "y": 0.01,
-    "z": 4.5,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506240317_13",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Caution_Sign_01",
-    "x": -2.2,
-    "y": 0.01,
-    "z": 4.81,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506240317_14",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Treadmill_01",
-    "x": 1.5,
-    "y": 0.81,
-    "z": 3.8,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506240317_15",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Patient_01",
-    "x": 0.2,
-    "y": 0,
-    "z": 2.5,
-    "rotationY": 0
-  },
-  {
-    "id": "0161733c-84f5-4170-b37f-7252474cbce9",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Treadmill_01 <-> Trolley_01  pen_x=0.50m pen_z=0.31m  moving Trolley_01 to (1.92, 0.01, 1.65)"
-  },
-  {
-    "id": "3613f4ac-fa28-4585-b5de-6ee806e06c12",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Treadmill_01 <-> Screen_02  pen_x=0.90m pen_z=0.26m  moving Screen_02 to (1.37, 0.01, 4.70)"
-  },
-  {
-    "id": "e1b2c967-b65c-4d4d-ab02-1349ece53a2f",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Monitor_01 <-> WheelChair_01  pen_x=0.40m pen_z=0.07m  moving WheelChair_01 to (-1.93, 0.01, 4.38)"
-  },
-  {
-    "id": "efd8ad88-a424-49c1-95a4-a49afa08c138",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Waste_Bucket_01 <-> Caution_Sign_01  pen_x=0.21m pen_z=0.14m  moving Caution_Sign_01 to (-2.20, 0.01, 4.81)"
-  },
-  {
-    "id": "cf492a8d-80ef-4565-8917-aba9f483e02c",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Waste_Bucket_01 <-> Towel_Dispenser_01  pen_x=0.20m pen_z=0.18m  moving Towel_Dispenser_01 to (-2.20, 0.01, 4.08)"
-  },
-  {
-    "id": "cmd_1775506260193_0",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Utility_Cart_01",
-    "x": -1.92,
-    "y": 0.01,
-    "z": 3,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506260193_1",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Reception_Desk_01",
-    "x": 1.85,
-    "y": 0.01,
-    "z": 4.45,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506260193_2",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Waste_Bucket_01",
-    "x": -2.02,
-    "y": 0.01,
-    "z": 4.64,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506260193_3",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "WheelChair_01",
-    "x": -1.88,
-    "y": 0.01,
-    "z": 4.33,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506260193_4",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Caution_Sign_01",
-    "x": -2.1,
-    "y": 0.01,
-    "z": 4.76,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506260193_5",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Towel_Dispenser_01",
-    "x": -2.1,
-    "y": 0.01,
-    "z": 4.5,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506260193_6",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Poster_04",
-    "x": 2.04,
-    "y": 0.01,
-    "z": 2.5,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506260193_7",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Folder_02",
-    "x": 2.22,
-    "y": 0.01,
-    "z": 3.2,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506260193_8",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Trolley_01",
-    "x": 1.87,
-    "y": 0.01,
-    "z": 2.2,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506260193_9",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Screen_02",
-    "x": 1.37,
-    "y": 0.01,
-    "z": 4.65,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506260193_10",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Trolley_01",
-    "x": 1.92,
-    "y": 0.01,
-    "z": 1.65,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506260193_11",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Screen_02",
-    "x": 1.37,
-    "y": 0.01,
-    "z": 4.7,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506260193_12",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "WheelChair_01",
-    "x": -1.93,
-    "y": 0.01,
-    "z": 4.38,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506260193_13",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Caution_Sign_01",
-    "x": -2.2,
-    "y": 0.01,
-    "z": 4.81,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506260193_14",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Towel_Dispenser_01",
-    "x": -2.2,
-    "y": 0.01,
-    "z": 4.08,
-    "rotationY": 0
-  },
-  {
-    "id": "b994d113-01f8-43ce-a0a9-9692be8b3193",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Treadmill_01 <-> Screen_02  pen_x=0.90m pen_z=0.21m  moving Screen_02 to (1.37, 0.01, 4.70)"
-  },
-  {
-    "id": "86dc6c3f-b989-4550-90ca-ef57cf51cd2f",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Monitor_01 <-> WheelChair_01  pen_x=0.40m pen_z=0.07m  moving WheelChair_01 to (-1.93, 0.01, 4.38)"
-  },
-  {
-    "id": "76bfa87b-92e6-456e-9b82-a61f2cbda224",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Monitor_01 <-> Towel_Dispenser_01  pen_x=0.15m pen_z=0.08m  moving Towel_Dispenser_01 to (-2.20, 0.01, 4.50)"
-  },
-  {
-    "id": "046dcd80-624c-4e69-83ef-d8b24ba3180b",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Waste_Bucket_01 <-> Caution_Sign_01  pen_x=0.21m pen_z=0.14m  moving Caution_Sign_01 to (-2.20, 0.01, 4.81)"
-  },
-  {
-    "id": "1859f761-4521-4975-84c0-5d3b5a4a9c5c",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Poster_04 <-> Trolley_01  pen_x=0.43m pen_z=0.02m  moving Trolley_01 to (1.92, 0.01, 1.25)"
-  },
-  {
-    "id": "cmd_1775506272644_0",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Utility_Cart_01",
-    "x": -1.92,
-    "y": 0.01,
-    "z": 3,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506272644_1",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Reception_Desk_01",
-    "x": 1.85,
-    "y": 0.01,
-    "z": 4.45,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506272644_2",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Waste_Bucket_01",
-    "x": -2.02,
-    "y": 0.01,
-    "z": 4.64,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506272644_3",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "WheelChair_01",
-    "x": -1.88,
-    "y": 0.01,
-    "z": 4.33,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506272644_4",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Caution_Sign_01",
-    "x": -2.1,
-    "y": 0.01,
-    "z": 4.76,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506272644_5",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Towel_Dispenser_01",
-    "x": -2.1,
-    "y": 0.01,
-    "z": 4.08,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506272644_6",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Poster_04",
-    "x": 2.04,
-    "y": 0.01,
-    "z": 2.5,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506272644_7",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Folder_02",
-    "x": 2.22,
-    "y": 0.01,
-    "z": 3.2,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506272644_8",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Trolley_01",
-    "x": 1.87,
-    "y": 0.01,
-    "z": 1.65,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506272644_9",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Screen_02",
-    "x": 1.37,
-    "y": 0.01,
-    "z": 4.65,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506272644_10",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Screen_02",
-    "x": 1.37,
-    "y": 0.01,
-    "z": 4.7,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506272644_11",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "WheelChair_01",
-    "x": -1.93,
-    "y": 0.01,
-    "z": 4.38,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506272644_12",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Towel_Dispenser_01",
-    "x": -2.2,
-    "y": 0.01,
-    "z": 4.5,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506272644_13",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Caution_Sign_01",
-    "x": -2.2,
-    "y": 0.01,
-    "z": 4.81,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506272644_14",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Trolley_01",
-    "x": 1.92,
-    "y": 0.01,
-    "z": 1.25,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506272644_15",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Utility_Cart_01",
-    "x": -1.8,
-    "y": 0.01,
-    "z": 3,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506272644_16",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Patient_01",
-    "x": 0.13,
-    "y": 0,
-    "z": 2.8,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506284785_0",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Reception_Desk_01",
-    "x": 1.85,
-    "y": 0.01,
-    "z": 4.45,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506284785_1",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Waste_Bucket_01",
-    "x": -2.02,
-    "y": 0.01,
-    "z": 4.64,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506284785_2",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "WheelChair_01",
-    "x": -1.88,
-    "y": 0.01,
-    "z": 4.33,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506284785_3",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Caution_Sign_01",
-    "x": -2.1,
-    "y": 0.01,
-    "z": 4.76,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506284785_4",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Towel_Dispenser_01",
-    "x": -2.1,
-    "y": 0.01,
-    "z": 4.5,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506284785_5",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Poster_04",
-    "x": 2.04,
-    "y": 0.01,
-    "z": 2.5,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506284785_6",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Folder_02",
-    "x": 2.22,
-    "y": 0.01,
-    "z": 3.2,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506284785_7",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Trolley_01",
-    "x": 1.87,
-    "y": 0.01,
-    "z": 1.25,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506284785_8",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Screen_02",
-    "x": 1.37,
-    "y": 0.01,
-    "z": 4.65,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506284785_9",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Screen_02",
-    "x": 1.37,
-    "y": 0.01,
-    "z": 4.7,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506284785_10",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "WheelChair_01",
-    "x": -1.93,
-    "y": 0.01,
-    "z": 4.38,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506284785_11",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Caution_Sign_01",
-    "x": -2.2,
-    "y": 0.01,
-    "z": 4.81,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506284785_12",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Towel_Dispenser_01",
-    "x": -2.2,
-    "y": 0.01,
-    "z": 4.08,
-    "rotationY": 0
-  },
-  {
-    "id": "5c5f2b70-5d2b-4b5b-befd-9a1800f1ad18",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Treadmill_01 <-> Screen_02  pen_x=0.90m pen_z=0.21m  moving Screen_02 to (1.37, 0.01, 4.70)"
-  },
-  {
-    "id": "e5643850-2fcd-4c20-a6f3-9cc23f34b231",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Monitor_01 <-> WheelChair_01  pen_x=0.40m pen_z=0.07m  moving WheelChair_01 to (-1.93, 0.01, 4.38)"
-  },
-  {
-    "id": "60450455-40fd-437a-a9d4-bc747b16785b",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Monitor_01 <-> Towel_Dispenser_01  pen_x=0.15m pen_z=0.08m  moving Towel_Dispenser_01 to (-2.20, 0.01, 4.50)"
-  },
-  {
-    "id": "0b9fad31-c604-4778-ad50-86ccb3f5a364",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Waste_Bucket_01 <-> Caution_Sign_01  pen_x=0.21m pen_z=0.14m  moving Caution_Sign_01 to (-2.20, 0.01, 4.81)"
-  },
-  {
-    "id": "cmd_1775506294478_0",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Reception_Desk_01",
-    "x": 1.85,
-    "y": 0.01,
-    "z": 4.45,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506294478_1",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Waste_Bucket_01",
-    "x": -2.02,
-    "y": 0.01,
-    "z": 4.64,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506294478_2",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "WheelChair_01",
-    "x": -1.88,
-    "y": 0.01,
-    "z": 4.33,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506294478_3",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Caution_Sign_01",
-    "x": -2.1,
-    "y": 0.01,
-    "z": 4.76,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506294478_4",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Towel_Dispenser_01",
-    "x": -2.1,
-    "y": 0.01,
-    "z": 4.08,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506294478_5",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Poster_04",
-    "x": 2.04,
-    "y": 0.01,
-    "z": 2.5,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506294478_6",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Folder_02",
-    "x": 2.22,
-    "y": 0.01,
-    "z": 3.2,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506294478_7",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Screen_02",
-    "x": 1.37,
-    "y": 0.01,
-    "z": 4.65,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506294478_8",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Screen_02",
-    "x": 1.37,
-    "y": 0.01,
-    "z": 4.7,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506294478_9",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "WheelChair_01",
-    "x": -1.93,
-    "y": 0.01,
-    "z": 4.38,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506294478_10",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Towel_Dispenser_01",
-    "x": -2.2,
-    "y": 0.01,
-    "z": 4.5,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506294478_11",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Caution_Sign_01",
-    "x": -2.2,
-    "y": 0.01,
-    "z": 4.81,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506294478_12",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Patient_01",
-    "x": 0.13,
-    "y": 0.01,
-    "z": 2.8,
-    "rotationY": 0
-  },
-  {
-    "id": "1b76f864-85a7-4fd3-aedb-63ba5c8f5ffd",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Treadmill_01 <-> Screen_02  pen_x=0.90m pen_z=0.21m  moving Screen_02 to (1.37, 0.01, 4.70)"
-  },
-  {
-    "id": "34c8d240-faea-4804-99d4-13028381f9e1",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Monitor_01 <-> WheelChair_01  pen_x=0.40m pen_z=0.07m  moving WheelChair_01 to (-1.93, 0.01, 4.38)"
-  },
-  {
-    "id": "c302c263-cc47-404e-bda2-793a5d154e0c",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Waste_Bucket_01 <-> Caution_Sign_01  pen_x=0.21m pen_z=0.14m  moving Caution_Sign_01 to (-2.20, 0.01, 4.81)"
-  },
-  {
-    "id": "ea33339f-5342-4dea-8c54-effd22c83e8b",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Waste_Bucket_01 <-> Towel_Dispenser_01  pen_x=0.20m pen_z=0.18m  moving Towel_Dispenser_01 to (-2.20, 0.01, 4.08)"
-  },
-  {
-    "id": "cmd_1775506310182_0",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Reception_Desk_01",
-    "x": 1.85,
-    "y": 0.01,
-    "z": 4.45,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506310182_1",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Waste_Bucket_01",
-    "x": -2.02,
-    "y": 0.01,
-    "z": 4.64,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506310182_2",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "WheelChair_01",
-    "x": -1.88,
-    "y": 0.01,
-    "z": 4.33,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506310182_3",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Caution_Sign_01",
-    "x": -2.1,
-    "y": 0.01,
-    "z": 4.76,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506310182_4",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Towel_Dispenser_01",
-    "x": -2.1,
-    "y": 0.01,
-    "z": 4.5,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506310182_5",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Poster_04",
-    "x": 2.04,
-    "y": 0.01,
-    "z": 2.5,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506310182_6",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Folder_02",
-    "x": 2.22,
-    "y": 0.01,
-    "z": 3.2,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506310182_7",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Screen_02",
-    "x": 1.37,
-    "y": 0.01,
-    "z": 4.65,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506310182_8",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Screen_02",
-    "x": 1.37,
-    "y": 0.01,
-    "z": 4.7,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506310182_9",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "WheelChair_01",
-    "x": -1.93,
-    "y": 0.01,
-    "z": 4.38,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506310182_10",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Caution_Sign_01",
-    "x": -2.2,
-    "y": 0.01,
-    "z": 4.81,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506310182_11",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Towel_Dispenser_01",
-    "x": -2.2,
-    "y": 0.01,
-    "z": 4.08,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506310182_12",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Trolley_01",
-    "x": 1.5,
-    "y": 0.01,
-    "z": 1.8,
-    "rotationY": 0
-  },
-  {
-    "id": "92b60574-38c9-49a3-90c2-9f9bc81cb82f",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Treadmill_01 <-> Screen_02  pen_x=0.90m pen_z=0.21m  moving Screen_02 to (1.37, 0.01, 4.70)"
-  },
-  {
-    "id": "d2f78750-fae2-4c0f-9505-0d0dcccd86f6",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Monitor_01 <-> WheelChair_01  pen_x=0.40m pen_z=0.07m  moving WheelChair_01 to (-1.93, 0.01, 4.38)"
-  },
-  {
-    "id": "54a1b70a-7ee1-4a5f-a0f2-c5f7f32a4420",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Monitor_01 <-> Towel_Dispenser_01  pen_x=0.15m pen_z=0.08m  moving Towel_Dispenser_01 to (-2.20, 0.01, 4.50)"
-  },
-  {
-    "id": "1c2d8bcf-7ee7-4bd7-bbb1-aed159f4d538",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Waste_Bucket_01 <-> Caution_Sign_01  pen_x=0.21m pen_z=0.14m  moving Caution_Sign_01 to (-2.20, 0.01, 4.81)"
-  },
-  {
-    "id": "3b69c518-a8d5-4c02-bbd4-27c7fe595f3d",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Poster_04 <-> Trolley_01  pen_x=0.05m pen_z=0.02m  moving Trolley_01 to (1.50, 0.01, 1.25)"
-  },
-  {
-    "id": "cmd_1775506321177_0",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Reception_Desk_01",
-    "x": 1.85,
-    "y": 0.01,
-    "z": 4.45,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506321177_1",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Waste_Bucket_01",
-    "x": -2.02,
-    "y": 0.01,
-    "z": 4.64,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506321177_2",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "WheelChair_01",
-    "x": -1.88,
-    "y": 0.01,
-    "z": 4.33,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506321177_3",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Caution_Sign_01",
-    "x": -2.1,
-    "y": 0.01,
-    "z": 4.76,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506321177_4",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Towel_Dispenser_01",
-    "x": -2.1,
-    "y": 0.01,
-    "z": 4.08,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506321177_5",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Poster_04",
-    "x": 2.04,
-    "y": 0.01,
-    "z": 2.5,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506321177_6",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Folder_02",
-    "x": 2.22,
-    "y": 0.01,
-    "z": 3.2,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506321177_7",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Screen_02",
-    "x": 1.37,
-    "y": 0.01,
-    "z": 4.65,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506321177_8",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Screen_02",
-    "x": 1.37,
-    "y": 0.01,
-    "z": 4.7,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506321177_9",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "WheelChair_01",
-    "x": -1.93,
-    "y": 0.01,
-    "z": 4.38,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506321177_10",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Towel_Dispenser_01",
-    "x": -2.2,
-    "y": 0.01,
-    "z": 4.5,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506321177_11",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Caution_Sign_01",
-    "x": -2.2,
-    "y": 0.01,
-    "z": 4.81,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506321177_12",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Trolley_01",
-    "x": 1.5,
-    "y": 0.01,
-    "z": 1.25,
-    "rotationY": 0
-  },
-  {
-    "id": "df233e65-48e0-4ef5-9225-c7b771684f52",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Treadmill_01 <-> Screen_02  pen_x=0.90m pen_z=0.21m  moving Screen_02 to (1.37, 0.01, 4.70)"
-  },
-  {
-    "id": "c4556971-70c3-41aa-8101-71a37daca643",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Monitor_01 <-> WheelChair_01  pen_x=0.40m pen_z=0.07m  moving WheelChair_01 to (-1.93, 0.01, 4.38)"
-  },
-  {
-    "id": "2879560b-efd2-4929-9657-31923202315a",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Waste_Bucket_01 <-> Caution_Sign_01  pen_x=0.21m pen_z=0.14m  moving Caution_Sign_01 to (-2.20, 0.01, 4.81)"
-  },
-  {
-    "id": "c6ab04fc-e2a9-45d1-bda4-c35f86a613b8",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Waste_Bucket_01 <-> Towel_Dispenser_01  pen_x=0.20m pen_z=0.18m  moving Towel_Dispenser_01 to (-2.20, 0.01, 4.08)"
-  },
-  {
-    "id": "11701674-64a9-4652-a1e4-85cce387d1db",
-    "executed": true,
-    "done": true,
-    "action": "DebugLog",
-    "message": "COLLISION (image) Trolley_01: MoveObject Trolley_01 x=1.7 y=0.01 z=1.5 rotationY=0.0  \u2014 reason: visually overlaps Treadmill_01"
-  },
-  {
-    "id": "cmd_1775506336705_0",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Reception_Desk_01",
-    "x": 1.85,
-    "y": 0.01,
-    "z": 4.45,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506336705_1",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Waste_Bucket_01",
-    "x": -2.02,
-    "y": 0.01,
-    "z": 4.64,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506336705_2",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "WheelChair_01",
-    "x": -1.88,
-    "y": 0.01,
-    "z": 4.33,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506336705_3",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Caution_Sign_01",
-    "x": -2.1,
-    "y": 0.01,
-    "z": 4.76,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506336705_4",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Towel_Dispenser_01",
-    "x": -2.1,
-    "y": 0.01,
-    "z": 4.5,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506336705_5",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Poster_04",
-    "x": 2.04,
-    "y": 0.01,
-    "z": 2.5,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506336705_6",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Folder_02",
-    "x": 2.22,
-    "y": 0.01,
-    "z": 3.2,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506336705_7",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Screen_02",
-    "x": 1.37,
-    "y": 0.01,
-    "z": 4.65,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506336705_8",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Screen_02",
-    "x": 1.37,
-    "y": 0.01,
-    "z": 4.7,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506336705_9",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "WheelChair_01",
-    "x": -1.93,
-    "y": 0.01,
-    "z": 4.38,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506336705_10",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Caution_Sign_01",
-    "x": -2.2,
-    "y": 0.01,
-    "z": 4.81,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506336705_11",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Towel_Dispenser_01",
-    "x": -2.2,
-    "y": 0.01,
-    "z": 4.08,
-    "rotationY": 0
-  },
-  {
-    "id": "cmd_1775506336705_12",
-    "executed": true,
-    "done": true,
-    "action": "MoveObject",
-    "objectName": "Trolley_01",
-    "x": 1.7,
-    "y": 0.01,
     "z": 1.5,
     "rotationY": 0
   },
   {
-    "id": "e3123608-6a7f-4cfb-8353-ad46c5c0ee62",
-    "executed": false,
-    "done": false,
+    "id": "1cc5c8d3-b35b-4deb-b4df-d4d94cb4669c",
+    "executed": true,
+    "done": true,
     "action": "DebugLog",
-    "message": "COLLISION (math) Treadmill_01 <-> Screen_02  pen_x=0.90m pen_z=0.21m  moving Screen_02 to (1.37, 0.01, 4.70)"
+    "message": "COLLISION (math) Table_01 <-> Reception_Desk_01  pen_x=0.77m pen_z=0.15m  moving Reception_Desk_01 to (-2.20, 0.01, 0.57)"
   },
   {
-    "id": "43733224-c504-48b5-bad0-6f8edb341692",
-    "executed": false,
-    "done": false,
+    "id": "9470f207-0002-461b-a000-9562d06e5929",
+    "executed": true,
+    "done": true,
     "action": "DebugLog",
-    "message": "COLLISION (math) Monitor_01 <-> WheelChair_01  pen_x=0.40m pen_z=0.07m  moving WheelChair_01 to (-1.93, 0.01, 4.38)"
+    "message": "COLLISION (math) Table_01 <-> Monitor_01  pen_x=0.17m pen_z=0.24m  moving Monitor_01 to (-2.10, 1.01, 1.71)"
   },
   {
-    "id": "3d289972-185d-4908-b939-721aa1e8a076",
-    "executed": false,
-    "done": false,
+    "id": "c7791217-0a2e-4511-b0cd-ecba4cacaab0",
+    "executed": true,
+    "done": true,
     "action": "DebugLog",
-    "message": "COLLISION (math) Monitor_01 <-> Towel_Dispenser_01  pen_x=0.15m pen_z=0.08m  moving Towel_Dispenser_01 to (-2.20, 0.01, 4.50)"
+    "message": "COLLISION (math) Treadmill_01 <-> Poster_01  pen_x=0.43m pen_z=0.02m  moving Poster_01 to (1.50, 0.01, 2.34)"
   },
   {
-    "id": "5ce18d97-8500-4890-bca2-fe370f0fa06a",
-    "executed": false,
-    "done": false,
+    "id": "b2e78b5c-6a10-4b23-b0f0-20d0642bf66e",
+    "executed": true,
+    "done": true,
     "action": "DebugLog",
-    "message": "COLLISION (math) Waste_Bucket_01 <-> Caution_Sign_01  pen_x=0.21m pen_z=0.14m  moving Caution_Sign_01 to (-2.20, 0.01, 4.81)"
+    "message": "COLLISION (math) Reception_Desk_01 <-> Towel_Dispenser_01  pen_x=0.05m pen_z=0.18m  moving Towel_Dispenser_01 to (-2.15, 0.01, 0.60)"
   },
   {
-    "id": "c7f0a651-e2a5-471c-86b9-3b3c3674de11",
-    "executed": false,
-    "done": false,
+    "id": "76323ad8-7c2c-4d54-836f-7672af525c16",
+    "executed": true,
+    "done": true,
     "action": "DebugLog",
-    "message": "COLLISION (image) Utility_Cart_01: MoveObject Utility_Cart_01 x=-1.7 y=0.01 z=3.0 rotationY=0.0  \u2014 reason: visually overlaps Table_01"
+    "message": "COLLISION (math) Waste_Bucket_01 <-> WheelChair_01  pen_x=0.43m pen_z=0.14m  moving WheelChair_01 to (-2.20, 0.44, 3.66)"
   },
   {
+    "id": "ae9cb1ae-5648-4b4f-b420-57b1ebb8358b",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Waste_Bucket_01 <-> Caution_Sign_01  pen_x=0.30m pen_z=0.14m  moving Caution_Sign_01 to (-2.00, 0.44, 4.81)"
+  },
+  {
+    "id": "a4f4843a-d9de-40a2-9617-6ea13d386bdd",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Towel_Dispenser_01 <-> Folder_02  pen_x=0.06m pen_z=0.13m  moving Folder_02 to (-1.88, 0.36, 0.60)"
+  },
+  {
+    "id": "ac594a5e-f4fb-46cf-9940-7a8378cb1e7f",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (image) Utility_Cart_01: MoveObject Utility_Cart_01 x=-1.20 y=0.76 z=2.00 rotationY=0.0  — reason: visually overlaps Table_01"
+  },
+  {
+    "id": "cmd_1775679714215_0",
+    "executed": true,
+    "done": true,
     "action": "MoveObject",
     "objectName": "Reception_Desk_01",
-    "x": 1.85,
+    "x": -1.85,
     "y": 0.01,
-    "z": 4.45,
-    "rotationY": 0.0,
-    "id": "cmd_1775506345365_0",
-    "timestamp": 1775506345.3654633,
-    "executed": false
+    "z": 0.57,
+    "rotationY": 0
   },
   {
+    "id": "cmd_1775679714215_1",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Monitor_01",
+    "x": -2.05,
+    "y": 1.01,
+    "z": 1.71,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1775679714215_2",
+    "executed": true,
+    "done": true,
     "action": "MoveObject",
     "objectName": "Waste_Bucket_01",
     "x": -2.02,
     "y": 0.01,
     "z": 4.64,
-    "rotationY": 0.0,
-    "id": "cmd_1775506345365_1",
-    "timestamp": 1775506345.365467,
-    "executed": false
+    "rotationY": 0
   },
   {
+    "id": "cmd_1775679714215_3",
+    "executed": true,
+    "done": true,
     "action": "MoveObject",
     "objectName": "WheelChair_01",
     "x": -1.88,
-    "y": 0.01,
-    "z": 4.33,
-    "rotationY": 0.0,
-    "id": "cmd_1775506345365_2",
-    "timestamp": 1775506345.3654697,
-    "executed": false
+    "y": 0.44,
+    "z": 3.82,
+    "rotationY": 0
   },
   {
+    "id": "cmd_1775679714215_4",
+    "executed": true,
+    "done": true,
     "action": "MoveObject",
     "objectName": "Caution_Sign_01",
-    "x": -2.1,
-    "y": 0.01,
+    "x": -2,
+    "y": 0.44,
     "z": 4.76,
-    "rotationY": 0.0,
-    "id": "cmd_1775506345365_3",
-    "timestamp": 1775506345.365472,
-    "executed": false
+    "rotationY": 0
   },
   {
+    "id": "cmd_1775679714215_5",
+    "executed": true,
+    "done": true,
     "action": "MoveObject",
     "objectName": "Towel_Dispenser_01",
     "x": -2.1,
     "y": 0.01,
-    "z": 4.08,
-    "rotationY": 0.0,
-    "id": "cmd_1775506345365_4",
-    "timestamp": 1775506345.3654745,
-    "executed": false
+    "z": 0.6,
+    "rotationY": 0
   },
   {
-    "action": "MoveObject",
-    "objectName": "Poster_04",
-    "x": 2.04,
-    "y": 0.01,
-    "z": 2.5,
-    "rotationY": 0.0,
-    "id": "cmd_1775506345365_5",
-    "timestamp": 1775506345.3654766,
-    "executed": false
-  },
-  {
+    "id": "cmd_1775679714215_6",
+    "executed": true,
+    "done": true,
     "action": "MoveObject",
     "objectName": "Folder_02",
-    "x": 2.22,
-    "y": 0.01,
-    "z": 3.2,
-    "rotationY": 0.0,
-    "id": "cmd_1775506345365_6",
-    "timestamp": 1775506345.3654795,
-    "executed": false
+    "x": -2.22,
+    "y": 0.36,
+    "z": 0.6,
+    "rotationY": 0
   },
   {
+    "id": "cmd_1775679714215_7",
+    "executed": true,
+    "done": true,
     "action": "MoveObject",
-    "objectName": "Screen_02",
-    "x": 1.37,
+    "objectName": "Reception_Desk_01",
+    "x": -2.2,
     "y": 0.01,
-    "z": 4.65,
-    "rotationY": 0.0,
-    "id": "cmd_1775506345365_7",
-    "timestamp": 1775506345.365482,
-    "executed": false
+    "z": 0.57,
+    "rotationY": 0
   },
   {
+    "id": "cmd_1775679714215_8",
+    "executed": true,
+    "done": true,
     "action": "MoveObject",
-    "objectName": "Screen_02",
-    "x": 1.37,
-    "y": 0.01,
-    "z": 4.7,
-    "rotationY": 0.0,
-    "id": "cmd_1775506345365_8",
-    "timestamp": 1775506345.3654842,
-    "executed": false
+    "objectName": "Monitor_01",
+    "x": -2.1,
+    "y": 1.01,
+    "z": 1.71,
+    "rotationY": 0
   },
   {
+    "id": "cmd_1775679714215_9",
+    "executed": true,
+    "done": true,
     "action": "MoveObject",
-    "objectName": "WheelChair_01",
-    "x": -1.93,
+    "objectName": "Poster_01",
+    "x": 1.5,
     "y": 0.01,
-    "z": 4.38,
-    "rotationY": 0.0,
-    "id": "cmd_1775506345365_9",
-    "timestamp": 1775506345.3654869,
-    "executed": false
+    "z": 2.34,
+    "rotationY": 0
   },
   {
+    "id": "cmd_1775679714215_10",
+    "executed": true,
+    "done": true,
     "action": "MoveObject",
     "objectName": "Towel_Dispenser_01",
-    "x": -2.2,
+    "x": -2.15,
     "y": 0.01,
-    "z": 4.5,
-    "rotationY": 0.0,
-    "id": "cmd_1775506345365_10",
-    "timestamp": 1775506345.36549,
-    "executed": false
+    "z": 0.6,
+    "rotationY": 0
   },
   {
+    "id": "cmd_1775679714215_11",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "WheelChair_01",
+    "x": -2.2,
+    "y": 0.44,
+    "z": 3.66,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1775679714215_12",
+    "executed": true,
+    "done": true,
     "action": "MoveObject",
     "objectName": "Caution_Sign_01",
-    "x": -2.2,
-    "y": 0.01,
+    "x": -2,
+    "y": 0.44,
     "z": 4.81,
-    "rotationY": 0.0,
-    "id": "cmd_1775506345365_11",
-    "timestamp": 1775506345.365492,
-    "executed": false
+    "rotationY": 0
   },
   {
+    "id": "cmd_1775679714215_13",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Folder_02",
+    "x": -1.88,
+    "y": 0.36,
+    "z": 0.6,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1775679714215_14",
+    "executed": true,
+    "done": true,
     "action": "MoveObject",
     "objectName": "Utility_Cart_01",
-    "x": -1.7,
-    "y": 0.01,
-    "z": 3.0,
-    "rotationY": 0.0,
-    "id": "cmd_1775506345365_12",
-    "timestamp": 1775506345.3654943,
-    "executed": false
+    "x": -1.2,
+    "y": 0.76,
+    "z": 2,
+    "rotationY": 0
   },
   {
-    "id": "71958c86-802d-4a28-8391-ea1329ab92c9",
-    "executed": false,
-    "done": false,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Treadmill_01 <-> Screen_02  pen_x=0.90m pen_z=0.21m  moving Screen_02 to (1.37, 0.01, 4.70)"
-  },
-  {
-    "id": "4aeb5b62-2b60-472a-a736-97a4ef589b8c",
-    "executed": false,
-    "done": false,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Monitor_01 <-> WheelChair_01  pen_x=0.40m pen_z=0.07m  moving WheelChair_01 to (-1.93, 0.01, 4.38)"
-  },
-  {
-    "id": "2d2d2e74-d10d-4e23-8292-6bc5b8cf45be",
-    "executed": false,
-    "done": false,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Monitor_01 <-> Towel_Dispenser_01  pen_x=0.15m pen_z=0.08m  moving Towel_Dispenser_01 to (-2.20, 0.01, 4.50)"
-  },
-  {
-    "id": "eaa85630-14a7-4cbf-a4cb-2b850df5f200",
-    "executed": false,
-    "done": false,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Waste_Bucket_01 <-> Caution_Sign_01  pen_x=0.21m pen_z=0.14m  moving Caution_Sign_01 to (-2.20, 0.01, 4.81)"
-  },
-  {
-    "id": "a26a8252-7ad4-47dd-b339-cd9fbe30c51e",
-    "executed": false,
-    "done": false,
-    "action": "DebugLog",
-    "message": "COLLISION (image) Treadmill_01: MoveObject Treadmill_01 x=1.6 y=0.81 z=3.9 rotationY=0.0"
-  },
-  {
+    "id": "cmd_1775679714215_15",
+    "executed": true,
+    "done": true,
     "action": "MoveObject",
-    "objectName": "Reception_Desk_01",
-    "x": 1.85,
-    "y": 0.01,
-    "z": 4.45,
-    "rotationY": 0.0,
-    "id": "cmd_1775506355886_0",
-    "timestamp": 1775506355.8861363,
-    "executed": false
+    "objectName": "Clock_01",
+    "x": -1.5,
+    "y": 0.11,
+    "z": 1.5,
+    "rotationY": 0
   },
   {
-    "action": "MoveObject",
-    "objectName": "Waste_Bucket_01",
-    "x": -2.02,
-    "y": 0.01,
-    "z": 4.64,
-    "rotationY": 0.0,
-    "id": "cmd_1775506355886_1",
-    "timestamp": 1775506355.8861403,
-    "executed": false
+    "id": "cmd_1775679719792_0",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Trolley_01",
+    "x": 2.2,
+    "y": 0,
+    "z": 2.8,
+    "rotationY": 0
   },
   {
-    "action": "MoveObject",
-    "objectName": "WheelChair_01",
-    "x": -1.88,
-    "y": 0.01,
-    "z": 4.33,
-    "rotationY": 0.0,
-    "id": "cmd_1775506355886_2",
-    "timestamp": 1775506355.8861427,
-    "executed": false
-  },
-  {
-    "action": "MoveObject",
-    "objectName": "Caution_Sign_01",
-    "x": -2.1,
-    "y": 0.01,
-    "z": 4.76,
-    "rotationY": 0.0,
-    "id": "cmd_1775506355886_3",
-    "timestamp": 1775506355.886145,
-    "executed": false
-  },
-  {
-    "action": "MoveObject",
-    "objectName": "Towel_Dispenser_01",
-    "x": -2.1,
-    "y": 0.01,
-    "z": 4.08,
-    "rotationY": 0.0,
-    "id": "cmd_1775506355886_4",
-    "timestamp": 1775506355.886147,
-    "executed": false
-  },
-  {
-    "action": "MoveObject",
-    "objectName": "Poster_04",
-    "x": 2.04,
-    "y": 0.01,
+    "id": "cmd_1775679719792_1",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Poster_03",
+    "x": -2.3,
+    "y": 2.5,
     "z": 2.5,
-    "rotationY": 0.0,
-    "id": "cmd_1775506355886_5",
-    "timestamp": 1775506355.8861494,
-    "executed": false
+    "rotationY": 0
   },
   {
-    "action": "MoveObject",
-    "objectName": "Folder_02",
-    "x": 2.22,
-    "y": 0.01,
-    "z": 3.2,
-    "rotationY": 0.0,
-    "id": "cmd_1775506355886_6",
-    "timestamp": 1775506355.8861513,
-    "executed": false
+    "id": "6d2fbe64-0237-4c03-aaeb-e753ffe29dce",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Utility_Cart_01  pen_x=0.67m pen_z=0.04m  moving Utility_Cart_01 to (-1.20, 0.76, 2.29)"
   },
   {
-    "action": "MoveObject",
-    "objectName": "Screen_02",
-    "x": 1.37,
-    "y": 0.01,
-    "z": 4.65,
-    "rotationY": 0.0,
-    "id": "cmd_1775506355886_7",
-    "timestamp": 1775506355.8861537,
-    "executed": false
+    "id": "645f4466-5d5c-4dc2-915a-2bf8faddc09d",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Reception_Desk_01  pen_x=0.77m pen_z=0.15m  moving Reception_Desk_01 to (-2.20, 0.01, 0.57)"
   },
   {
-    "action": "MoveObject",
-    "objectName": "Screen_02",
-    "x": 1.37,
-    "y": 0.01,
-    "z": 4.7,
-    "rotationY": 0.0,
-    "id": "cmd_1775506355886_8",
-    "timestamp": 1775506355.8861558,
-    "executed": false
+    "id": "471bef3b-935f-4961-9bd5-cec8399a30a6",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Monitor_01  pen_x=0.27m pen_z=0.24m  moving Monitor_01 to (-2.10, 1.01, 2.20)"
   },
   {
-    "action": "MoveObject",
-    "objectName": "WheelChair_01",
-    "x": -1.93,
-    "y": 0.01,
-    "z": 4.38,
-    "rotationY": 0.0,
-    "id": "cmd_1775506355886_9",
-    "timestamp": 1775506355.8861575,
-    "executed": false
+    "id": "0d35446b-3f76-4c9e-b200-64f0f6df553f",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Clock_01  pen_x=0.37m pen_z=0.05m  moving Clock_01 to (-1.50, 0.11, 2.06)"
   },
   {
-    "action": "MoveObject",
-    "objectName": "Towel_Dispenser_01",
-    "x": -2.2,
-    "y": 0.01,
-    "z": 4.5,
-    "rotationY": 0.0,
-    "id": "cmd_1775506355886_10",
-    "timestamp": 1775506355.8861597,
-    "executed": false
+    "id": "e9785481-d7b5-48b9-9fab-25197f108b0e",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Treadmill_01 <-> Trolley_01  pen_x=0.22m pen_z=1.20m  moving Trolley_01 to (1.92, 0.01, 2.80)"
   },
   {
-    "action": "MoveObject",
-    "objectName": "Caution_Sign_01",
-    "x": -2.2,
-    "y": 0.01,
-    "z": 4.81,
-    "rotationY": 0.0,
-    "id": "cmd_1775506355886_11",
-    "timestamp": 1775506355.8861616,
-    "executed": false
+    "id": "1f29c2e7-98ba-49a9-acce-aeab3aca5583",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Reception_Desk_01 <-> Towel_Dispenser_01  pen_x=0.20m pen_z=0.18m  moving Towel_Dispenser_01 to (-2.15, 0.01, 1.71)"
   },
   {
-    "action": "MoveObject",
+    "id": "00d8e17f-d9af-420c-af1b-5b0d779d8673",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Reception_Desk_01 <-> Folder_02  pen_x=0.06m pen_z=0.16m  moving Folder_02 to (-1.12, 0.36, 0.60)"
+  },
+  {
+    "id": "224b7179-47f7-4e94-8ee2-d60e3dfd51cd",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Waste_Bucket_01 <-> Caution_Sign_01  pen_x=0.30m pen_z=0.14m  moving Caution_Sign_01 to (-2.00, 0.44, 4.81)"
+  },
+  {
+    "id": "cmd_1775679738527_0",
+    "executed": true,
+    "done": true,
+    "action": "HighlightObject",
     "objectName": "Treadmill_01",
-    "x": 1.6,
-    "y": 0.81,
-    "z": 3.9,
-    "rotationY": 0.0,
-    "id": "cmd_1775506355886_12",
-    "timestamp": 1775506355.8861635,
-    "executed": false
+    "r": 1,
+    "g": 1,
+    "b": 0,
+    "duration": 3
   },
   {
-    "id": "953a888e-c8f6-4db6-90cc-0de525b2870b",
-    "executed": false,
-    "done": false,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Treadmill_01 <-> Screen_02  pen_x=0.90m pen_z=0.21m  moving Screen_02 to (1.37, 0.01, 4.70)"
+    "id": "cmd_1775679749327_0",
+    "executed": true,
+    "done": true,
+    "action": "HighlightObject",
+    "objectName": "Treadmill_01",
+    "r": 1,
+    "g": 1,
+    "b": 0,
+    "duration": 3
   },
   {
-    "id": "cd70f7b0-b3f3-4165-8301-30b0884621c8",
-    "executed": false,
-    "done": false,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Monitor_01 <-> WheelChair_01  pen_x=0.40m pen_z=0.07m  moving WheelChair_01 to (-1.93, 0.01, 4.38)"
-  },
-  {
-    "id": "cf345649-67b2-434c-85e9-7831b187899b",
-    "executed": false,
-    "done": false,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Monitor_01 <-> Towel_Dispenser_01  pen_x=0.15m pen_z=0.08m  moving Towel_Dispenser_01 to (-2.20, 0.01, 4.50)"
-  },
-  {
-    "id": "b249df5f-340f-4db4-b9e7-c6acddf3c3c5",
-    "executed": false,
-    "done": false,
-    "action": "DebugLog",
-    "message": "COLLISION (math) Waste_Bucket_01 <-> Caution_Sign_01  pen_x=0.21m pen_z=0.14m  moving Caution_Sign_01 to (-2.20, 0.01, 4.81)"
-  },
-  {
-    "action": "MoveObject",
-    "objectName": "Reception_Desk_01",
-    "x": 1.85,
-    "y": 0.01,
-    "z": 4.45,
-    "rotationY": 0.0,
-    "id": "cmd_1775506366225_0",
-    "timestamp": 1775506366.2259123,
-    "executed": false
-  },
-  {
-    "action": "MoveObject",
-    "objectName": "Waste_Bucket_01",
-    "x": -2.02,
-    "y": 0.01,
-    "z": 4.64,
-    "rotationY": 0.0,
-    "id": "cmd_1775506366225_1",
-    "timestamp": 1775506366.225916,
-    "executed": false
-  },
-  {
-    "action": "MoveObject",
+    "id": "cmd_1775679797511_0",
+    "executed": true,
+    "done": true,
+    "action": "HighlightObject",
     "objectName": "WheelChair_01",
-    "x": -1.88,
-    "y": 0.01,
-    "z": 4.33,
-    "rotationY": 0.0,
-    "id": "cmd_1775506366225_2",
-    "timestamp": 1775506366.2259183,
-    "executed": false
-  },
-  {
-    "action": "MoveObject",
-    "objectName": "Caution_Sign_01",
-    "x": -2.1,
-    "y": 0.01,
-    "z": 4.76,
-    "rotationY": 0.0,
-    "id": "cmd_1775506366225_3",
-    "timestamp": 1775506366.2259207,
-    "executed": false
-  },
-  {
-    "action": "MoveObject",
-    "objectName": "Towel_Dispenser_01",
-    "x": -2.1,
-    "y": 0.01,
-    "z": 4.08,
-    "rotationY": 0.0,
-    "id": "cmd_1775506366225_4",
-    "timestamp": 1775506366.2259223,
-    "executed": false
-  },
-  {
-    "action": "MoveObject",
-    "objectName": "Poster_04",
-    "x": 2.04,
-    "y": 0.01,
-    "z": 2.5,
-    "rotationY": 0.0,
-    "id": "cmd_1775506366225_5",
-    "timestamp": 1775506366.2259238,
-    "executed": false
-  },
-  {
-    "action": "MoveObject",
-    "objectName": "Folder_02",
-    "x": 2.22,
-    "y": 0.01,
-    "z": 3.2,
-    "rotationY": 0.0,
-    "id": "cmd_1775506366225_6",
-    "timestamp": 1775506366.225926,
-    "executed": false
-  },
-  {
-    "action": "MoveObject",
-    "objectName": "Screen_02",
-    "x": 1.37,
-    "y": 0.01,
-    "z": 4.65,
-    "rotationY": 0.0,
-    "id": "cmd_1775506366225_7",
-    "timestamp": 1775506366.2259283,
-    "executed": false
-  },
-  {
-    "action": "MoveObject",
-    "objectName": "Screen_02",
-    "x": 1.37,
-    "y": 0.01,
-    "z": 4.7,
-    "rotationY": 0.0,
-    "id": "cmd_1775506366225_8",
-    "timestamp": 1775506366.22593,
-    "executed": false
-  },
-  {
-    "action": "MoveObject",
-    "objectName": "WheelChair_01",
-    "x": -1.93,
-    "y": 0.01,
-    "z": 4.38,
-    "rotationY": 0.0,
-    "id": "cmd_1775506366225_9",
-    "timestamp": 1775506366.225932,
-    "executed": false
-  },
-  {
-    "action": "MoveObject",
-    "objectName": "Towel_Dispenser_01",
-    "x": -2.2,
-    "y": 0.01,
-    "z": 4.5,
-    "rotationY": 0.0,
-    "id": "cmd_1775506366225_10",
-    "timestamp": 1775506366.2259338,
-    "executed": false
-  },
-  {
-    "action": "MoveObject",
-    "objectName": "Caution_Sign_01",
-    "x": -2.2,
-    "y": 0.01,
-    "z": 4.81,
-    "rotationY": 0.0,
-    "id": "cmd_1775506366225_11",
-    "timestamp": 1775506366.2259357,
-    "executed": false
+    "r": 1,
+    "g": 1,
+    "b": 0,
+    "duration": 3
   }
 ]

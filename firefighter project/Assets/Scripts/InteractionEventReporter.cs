@@ -86,17 +86,23 @@ public class InteractionEventReporter : MonoBehaviour
     private void SubscribeToNewInteractables()
     {
         var interactables = FindObjectsByType<XRBaseInteractable>(FindObjectsSortMode.None);
+        int newlySubscribed = 0;
         foreach (var ia in interactables)
         {
             int iid = ia.GetInstanceID();
             if (_subscribedIds.Contains(iid)) continue;
             _subscribedIds.Add(iid);
+            newlySubscribed++;
 
             ia.hoverEntered.AddListener(args => RecordEvent("hover_enter", ia.gameObject));
             ia.hoverExited.AddListener(args  => RecordEvent("hover_exit",  ia.gameObject));
             ia.selectEntered.AddListener(args => RecordEvent("grab",        ia.gameObject));
             ia.selectExited.AddListener(args  => RecordEvent("release",     ia.gameObject));
             ia.activated.AddListener(args     => RecordEvent("activate",    ia.gameObject));
+        }
+        if (newlySubscribed > 0)
+        {
+            Debug.Log($"[InteractionEventReporter] Subscribed to {newlySubscribed} new interactables (total tracked: {_subscribedIds.Count})");
         }
     }
 

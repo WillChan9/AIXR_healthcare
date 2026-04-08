@@ -93,6 +93,15 @@ python Agent\groq_static_test.py
 
 # Phase 1 only (generate environment, skip interaction loop):
 python Agent\groq_static_test.py --phase1-only
+
+# Fast Phase 1 for quick Phase 2 testing
+# (caps to first 3 plan steps x 1 reflection iter per step):
+python Agent\groq_static_test.py --fast-phase1
+
+# Custom Phase 1 limits (use either or both flags):
+#   --phase1-max-steps N  -> only run the first N plan steps (default: all)
+#   --phase1-max-iters N  -> max reflection iterations per step (default: 4)
+python Agent\groq_static_test.py --phase1-max-steps 5 --phase1-max-iters 2
 ```
 
 5. **Iterate**

@@ -412,6 +412,8 @@ def _validate_commands(commands: List[Dict]) -> None:
         "SetHumanAnimatorTrigger",
         "MoveObject",
         "DeleteObject",
+        "HighlightObject",
+        "ClearHighlight",
     }
 
     allowed_meta = {"id", "timestamp", "executed", "done"}
@@ -435,6 +437,8 @@ def _validate_commands(commands: List[Dict]) -> None:
         "SetHumanAnimatorTrigger": {"action", "paramName"},
         "MoveObject": {"action", "objectName", "x", "y", "z"},
         "DeleteObject": {"action", "objectName"},
+        "HighlightObject": {"action", "objectName", "r", "g", "b"},
+        "ClearHighlight": {"action", "objectName"},
     }
 
     allowed_fields_by_action = {
@@ -457,6 +461,8 @@ def _validate_commands(commands: List[Dict]) -> None:
         "SetHumanAnimatorTrigger": {"action", "paramName"},
         "MoveObject": {"action", "objectName", "x", "y", "z", "rotationY"},
         "DeleteObject": {"action", "objectName"},
+        "HighlightObject": {"action", "objectName", "r", "g", "b", "duration"},
+        "ClearHighlight": {"action", "objectName"},
     }
 
     def _is_number(v):
@@ -1016,9 +1022,16 @@ def phase1_generate_environment(
     )
 
     plan_steps = plan.get("steps", [])
+
+    # Speed-up overrides for fast Phase 2 testing
+    phase1_max_steps = int(cfg.get("phase1_max_steps", 0) or 0)
+    if phase1_max_steps > 0 and len(plan_steps) > phase1_max_steps:
+        logger.info(f"[Phase 1] FAST MODE: capping plan steps {len(plan_steps)} → {phase1_max_steps}")
+        plan_steps = plan_steps[:phase1_max_steps]
+
     current_step_idx = 0
     step_iteration_count = 0
-    MAX_STEP_ITERATIONS = 4
+    MAX_STEP_ITERATIONS = int(cfg.get("phase1_max_iters", 0) or 4)
     last_mtime = 0.0
     last_loop_time = 0.0
     last_applied_hints = ""  # track previous alignment_suggestions to avoid repeating identical MoveObjects
@@ -1401,6 +1414,12 @@ def main():
     parser.add_argument("--max-iterations", type=int, default=0, help="Max Phase 2 iterations (0 = infinite)")
     parser.add_argument("--screenshot", type=str, default=None, help="Screenshot path (overrides UNITY_SCREENSHOT_PATH)")
     parser.add_argument("--phase1-only", action="store_true", help="Exit after Phase 1 (environment generation only)")
+    parser.add_argument("--fast-phase1", action="store_true",
+                        help="Speed up Phase 1 for testing Phase 2: cap to first 3 plan steps × 1 iter each")
+    parser.add_argument("--phase1-max-steps", type=int, default=0,
+                        help="Override max number of plan steps to run in Phase 1 (0 = no cap)")
+    parser.add_argument("--phase1-max-iters", type=int, default=0,
+                        help="Override max reflection iterations per plan step (0 = default 4)")
     args = parser.parse_args()
 
     load_dotenv()
@@ -1433,6 +1452,16 @@ def main():
     # Parse [room_config] section — all scene params come from here
     cfg = _parse_experience_config(raw_experience)
     description = _clean_description(raw_experience)
+
+    # Phase 1 speed overrides (CLI flags take precedence over config)
+    if args.fast_phase1:
+        cfg["phase1_max_steps"] = args.phase1_max_steps or 3
+        cfg["phase1_max_iters"] = args.phase1_max_iters or 1
+    else:
+        if args.phase1_max_steps:
+            cfg["phase1_max_steps"] = args.phase1_max_steps
+        if args.phase1_max_iters:
+            cfg["phase1_max_iters"] = args.phase1_max_iters
 
     prefabs = _load_prefab_names(resources_dir)
     animators = _load_animator_names(resources_dir)

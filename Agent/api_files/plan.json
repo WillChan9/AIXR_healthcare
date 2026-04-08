@@ -14,7 +14,7 @@
         "parallel bars"
       ],
       "target_area": "center of the room",
-      "condition": "Ensure clear lanes around bars"
+      "condition": "Ensure clear lanes around the bars"
     },
     {
       "step": 2,
@@ -22,136 +22,85 @@
       "objects": [
         "mat table"
       ],
-      "target_area": "left side of room",
+      "target_area": "left side of the room",
       "condition": "Ensure accessibility for patient and therapist"
     },
     {
       "step": 3,
-      "action": "Install exercise bike",
+      "action": "Install exercise equipment",
       "objects": [
-        "exercise bike"
+        "exercise bike",
+        "treadmill",
+        "stair training unit"
       ],
-      "target_area": "near right wall",
-      "condition": "Ensure clearance for patient movement"
+      "target_area": "distributed across the room",
+      "condition": "Ensure clear paths between equipment"
     },
     {
       "step": 4,
-      "action": "Place treadmill",
-      "objects": [
-        "treadmill"
-      ],
-      "target_area": "along right wall",
-      "condition": "Ensure safe patient access"
-    },
-    {
-      "step": 5,
-      "action": "Position stair training unit",
-      "objects": [
-        "stair unit"
-      ],
-      "target_area": "back-right corner",
-      "condition": "Ensure stability and safety"
-    },
-    {
-      "step": 6,
-      "action": "Place balance board",
+      "action": "Add balance board",
       "objects": [
         "balance board"
       ],
       "target_area": "near parallel bars",
-      "condition": "Ensure safe patient use"
+      "condition": "Ensure safe access for patients"
+    },
+    {
+      "step": 5,
+      "action": "Set up equipment and supply wall",
+      "objects": [
+        "shelving unit",
+        "weights rack",
+        "utility cart",
+        "hot pack unit"
+      ],
+      "target_area": "left wall",
+      "condition": "Ensure organized and accessible storage"
+    },
+    {
+      "step": 6,
+      "action": "Create staff and admin zone",
+      "objects": [
+        "desk",
+        "monitor",
+        "filing cabinet",
+        "wall-mounted mirror"
+      ],
+      "target_area": "back wall",
+      "condition": "Ensure sufficient workspace for staff"
     },
     {
       "step": 7,
-      "action": "Install shelving unit",
+      "action": "Add entry and safety features",
       "objects": [
-        "shelving unit"
+        "sanitizer dispenser",
+        "waste bin",
+        "wheelchair",
+        "caution sign"
       ],
-      "target_area": "left wall",
-      "condition": "Ensure organized storage"
+      "target_area": "front wall",
+      "condition": "Ensure safe entry and exit"
     },
     {
       "step": 8,
-      "action": "Mount weights rack",
-      "objects": [
-        "weights rack"
-      ],
-      "target_area": "left wall",
-      "condition": "Ensure safe and accessible"
-    },
-    {
-      "step": 9,
-      "action": "Position therapy cart",
-      "objects": [
-        "therapy cart"
-      ],
-      "target_area": "left wall",
-      "condition": "Ensure mobility and accessibility"
-    },
-    {
-      "step": 10,
-      "action": "Install hydrocollator",
-      "objects": [
-        "hydrocollator"
-      ],
-      "target_area": "near left wall",
-      "condition": "Ensure safe operation"
-    },
-    {
-      "step": 11,
-      "action": "Place desk and monitor",
-      "objects": [
-        "desk",
-        "monitor"
-      ],
-      "target_area": "back-left corner",
-      "condition": "Ensure staff accessibility"
-    },
-    {
-      "step": 12,
-      "action": "Install mirror",
-      "objects": [
-        "mirror"
-      ],
-      "target_area": "back wall",
-      "condition": "Ensure visibility for patients"
-    },
-    {
-      "step": 13,
       "action": "Add ambient details",
       "objects": [
         "clock",
-        "posters"
+        "motivational posters",
+        "ceiling light fixtures"
       ],
-      "target_area": "various walls",
-      "condition": "Enhance room atmosphere"
+      "target_area": "throughout the room",
+      "condition": "Ensure a warm and welcoming atmosphere"
     },
     {
-      "step": 14,
-      "action": "Place sanitizer dispenser",
+      "step": 9,
+      "action": "Populate with staff and patients",
       "objects": [
-        "sanitizer dispenser"
+        "physical therapists",
+        "patients"
       ],
-      "target_area": "near entry",
-      "condition": "Ensure accessibility"
-    },
-    {
-      "step": 15,
-      "action": "Position waste bin",
-      "objects": [
-        "waste bin"
-      ],
-      "target_area": "near entry",
-      "condition": "Ensure visibility and accessibility"
-    },
-    {
-      "step": 16,
-      "action": "Park wheelchair",
-      "objects": [
-        "wheelchair"
-      ],
-      "target_area": "near entry",
-      "condition": "Ensure safe and accessible"
+      "target_area": "throughout the room",
+      "condition": "Ensure active therapy sessions"
     }
   ]
 }
