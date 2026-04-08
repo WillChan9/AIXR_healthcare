@@ -16,6 +16,9 @@ public class EnvironmentAgent : MonoBehaviour
     [Header("Optional: assign for Time-of-Day control")]
     [SerializeField] Light mainDirectionalLight;
 
+    [Header("Optional: auto-add XR interaction components to spawned objects")]
+    [SerializeField] InteractionSetup interactionSetup;
+
     [Header("Optional: default human model for animation (if not passed in methods)")]
     [Tooltip("Leave empty to auto-find the first object with an Animator in the scene at Start (prefer names containing 'Human').")]
     [SerializeField] GameObject defaultHumanModel;
@@ -37,6 +40,11 @@ public class EnvironmentAgent : MonoBehaviour
         if (mainDirectionalLight == null)
             mainDirectionalLight = FindFirstObjectByType<Light>();
 
+        if (interactionSetup == null)
+            interactionSetup = GetComponent<InteractionSetup>();
+        if (interactionSetup == null)
+            interactionSetup = FindFirstObjectByType<InteractionSetup>();
+
         AutoBindDefaultHumanIfNeeded();
     }
 
@@ -52,6 +60,7 @@ public class EnvironmentAgent : MonoBehaviour
             SnapToFloor(spawned);
             _trackedObjects[objectName] = spawned;
             WriteSceneState();
+            if (interactionSetup != null) interactionSetup.MakeInteractable(spawned);
             Debug.Log($"AI Agent placed: {objectName} at {position}");
         }
         else
@@ -103,6 +112,7 @@ public class EnvironmentAgent : MonoBehaviour
                 SnapToFloor(spawned);
             _trackedObjects[objectName] = spawned;
             WriteSceneState();
+            if (interactionSetup != null) interactionSetup.MakeInteractable(spawned);
         }
     }
 
@@ -342,6 +352,54 @@ public class EnvironmentAgent : MonoBehaviour
     public void SetFogDensity(float density)
     {
         RenderSettings.fogDensity = Mathf.Clamp(density, 0f, 0.2f);
+    }
+
+    // ========== Interaction feedback commands (Phase 2) ==========
+
+    /// <summary>Temporarily highlight an object with an outline / emission color.
+    /// duration &lt;= 0 means highlight until explicitly cleared.</summary>
+    public void HighlightObject(string objectName, float r, float g, float b, float duration)
+    {
+        GameObject target = FindSpawnedObject(objectName);
+        if (target == null) { Debug.LogWarning($"HighlightObject: '{objectName}' not found."); return; }
+        StartCoroutine(HighlightCoroutine(target, new Color(r, g, b), duration));
+    }
+
+    private System.Collections.IEnumerator HighlightCoroutine(GameObject target, Color color, float duration)
+    {
+        var renderers = target.GetComponentsInChildren<Renderer>();
+        // Store originals
+        var origColors = new Color[renderers.Length];
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            origColors[i] = renderers[i].material.color;
+            renderers[i].material.EnableKeyword("_EMISSION");
+            renderers[i].material.SetColor("_EmissionColor", color * 0.5f);
+        }
+
+        if (duration > 0f)
+        {
+            yield return new WaitForSeconds(duration);
+            // Restore
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                if (renderers[i] != null)
+                {
+                    renderers[i].material.SetColor("_EmissionColor", Color.black);
+                    renderers[i].material.color = origColors[i];
+                }
+            }
+        }
+    }
+
+    /// <summary>Clear highlight from an object.</summary>
+    public void ClearHighlight(string objectName)
+    {
+        GameObject target = FindSpawnedObject(objectName);
+        if (target == null) return;
+        var renderers = target.GetComponentsInChildren<Renderer>();
+        foreach (var r in renderers)
+            r.material.SetColor("_EmissionColor", Color.black);
     }
 
     /// <summary>Set fog color (R,G,B 0~1).</summary>

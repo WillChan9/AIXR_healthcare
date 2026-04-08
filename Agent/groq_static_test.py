@@ -737,6 +737,11 @@ def _call_groq_and_parse(client, messages, prefabs, is_loop: bool = False, cfg: 
                 last_error = e
                 commands = None
 
+        # Empty list is a VALID response — LLM is saying "no action needed".
+        # Don't retry; return immediately.
+        if commands == []:
+            return []
+
         if commands:
             try:
                 if is_loop:
@@ -1206,12 +1211,45 @@ def phase1_generate_environment(
 # Phase 2: User interaction loop
 # ---------------------------------------------------------------------------
 
+def _load_interaction_events(events_path: Path) -> List[Dict]:
+    """Read unprocessed interaction events from the JSON file written by Unity."""
+    if not events_path.exists():
+        return []
+    try:
+        raw = events_path.read_text(encoding="utf-8").strip()
+        if not raw or raw == "[]":
+            return []
+        events = json.loads(raw)
+        return [e for e in events if not e.get("processed", False)]
+    except Exception as exc:
+        logger.warning(f"[Phase 2] Failed to read interaction events: {exc}")
+        return []
+
+
+def _mark_events_processed(events_path: Path, event_ids: List[str]):
+    """Mark specific events as processed so Unity/agent don't re-process them."""
+    if not events_path.exists() or not event_ids:
+        return
+    try:
+        raw = events_path.read_text(encoding="utf-8").strip()
+        if not raw or raw == "[]":
+            return
+        events = json.loads(raw)
+        id_set = set(event_ids)
+        for e in events:
+            if e.get("id") in id_set:
+                e["processed"] = True
+        events_path.write_text(json.dumps(events, indent=2, ensure_ascii=False), encoding="utf-8")
+    except Exception as exc:
+        logger.warning(f"[Phase 2] Failed to mark events processed: {exc}")
+
+
 def phase2_interaction_loop(
     client, description, prefabs, animators, all_placed, out_path,
     reflector, xz_path, xy_path, yz_path, interval, max_iterations, cfg: dict = None,
 ):
     """After the static environment is stable, enter an interaction loop that
-    responds to user actions (screenshot changes) and maintains the scene."""
+    responds to user actions (interaction events + screenshot changes)."""
 
     logger.info("=" * 60)
     logger.info("  PHASE 2: User Interaction")
@@ -1221,59 +1259,103 @@ def phase2_interaction_loop(
     interaction_system = (
         f"You are a VR {description[:60]} assistant. The room environment has been fully set up. "
         "Return ONLY a valid JSON array. No markdown, no explanations. "
-        "You observe the scene through screenshots and respond to the user's current situation. "
+        "You observe the scene through screenshots AND receive real-time interaction events "
+        "from the user's VR headset (grab, release, hover, activate). "
 
         "CORE RULES: "
         "1. Do NOT re-create the room or add furniture — the room is complete. "
-        "2. Respond to what you see: if the user is near equipment, ensure it is interactive. "
+        "2. When the user interacts with an object (grab/activate), respond helpfully: "
+        "   - Highlight related objects to guide the workflow. "
+        "   - Trigger NPC animations if the user is near the patient or staff. "
+        "   - Adjust environment (lights, fog) if contextually appropriate. "
         "3. You may use MoveObject/DeleteObject to tidy up if something looks wrong. "
-        "4. You may adjust lighting or environment (SetTimeOfDay, SetLightIntensity, etc.). "
-        "5. You may trigger character animations if appropriate. "
-        "6. If nothing needs changing, return an empty array []. "
+        "4. If no interaction events are pending and the scene looks fine, return []. "
+        "5. Prefer small, focused responses — 1-3 commands max per turn. "
 
         "AVAILABLE ACTIONS: "
         "MoveObject: {\"action\":\"MoveObject\",\"objectName\":\"...\",\"x\":...,\"y\":...,\"z\":...,\"rotationY\":...} "
         "DeleteObject: {\"action\":\"DeleteObject\",\"objectName\":\"...\"} "
+        "HighlightObject: {\"action\":\"HighlightObject\",\"objectName\":\"...\",\"r\":1,\"g\":1,\"b\":0,\"duration\":3.0} "
+        "ClearHighlight: {\"action\":\"ClearHighlight\",\"objectName\":\"...\"} "
         "SetTimeOfDay, SetLightIntensity, SetLightColor, SetAmbientColor, SetFogEnabled, SetFogDensity "
         "PlayHumanAnimationFromResources: trigger character animations "
     )
 
+    # Derive interaction_events.json path (next to unity_commands.json)
+    events_path = out_path.parent / "interaction_events.json"
+
     last_mtime = 0.0
+    last_idle_llm_call = 0.0
+    IDLE_LLM_INTERVAL = 60.0  # Only call LLM on screenshot-only changes every 60s
     iterations = 0
+
+    logger.info(f"[Phase 2] Watching for events at: {events_path}")
+    if not events_path.exists():
+        logger.warning(f"[Phase 2] interaction_events.json does not exist yet. "
+                       "Make sure InteractionEventReporter is attached to AI_Manager in Unity.")
 
     while True:
         if max_iterations and iterations >= max_iterations:
             logger.info("[Phase 2] Max iterations reached. Stopping.")
             break
 
-        # Wait for screenshot update (user activity triggers Unity to save new screenshots)
+        # --- Check for new data: interaction events drive the loop. ---
+        # Screenshots alone trigger LLM only at IDLE_LLM_INTERVAL cadence
+        # to avoid wasting tokens on a constantly-refreshing screenshot stream.
+        pending_events = _load_interaction_events(events_path)
         latest_mtime = max(
             (p.stat().st_mtime if p.exists() else 0.0) for p in [xz_path, xy_path, yz_path]
         )
-        if latest_mtime <= last_mtime:
+        has_new_screenshots = latest_mtime > last_mtime
+        has_events = len(pending_events) > 0
+        now = time.time()
+        idle_check_due = (now - last_idle_llm_call) >= IDLE_LLM_INTERVAL
+
+        # Skip if: no events AND (no screenshots OR idle cooldown not elapsed)
+        if not has_events and (not has_new_screenshots or not idle_check_due):
             time.sleep(interval)
             continue
 
-        last_mtime = latest_mtime
+        if has_new_screenshots:
+            last_mtime = latest_mtime
+        if not has_events:
+            last_idle_llm_call = now
 
         view_images = _load_screenshots(xz_path, xy_path, yz_path)
-        if not any(view_images.values()):
-            time.sleep(interval)
-            continue
-
         placed_summary = _build_placed_summary(all_placed)
 
-        interaction_user = {
+        # --- Build user message with events + scene state ---
+        interaction_user: Dict = {
             "objects_in_scene": [
                 {"objectName": c["objectName"], "x": c.get("x"), "y": c.get("y"), "z": c.get("z")}
                 for c in placed_summary
             ],
             "total_objects": len(placed_summary),
-            "instruction": (
-                "Observe the screenshots. If the user needs assistance or something looks wrong, "
-                "generate commands. Otherwise return []."
-            ),
         }
+
+        if pending_events:
+            interaction_user["interaction_events"] = [
+                {
+                    "type": e.get("type"),
+                    "objectName": e.get("objectName"),
+                    "playerPosition": e.get("playerPosition"),
+                    "playerLookDir": e.get("playerLookDir"),
+                }
+                for e in pending_events
+            ]
+            interaction_user["instruction"] = (
+                f"The user just performed {len(pending_events)} interaction(s) in VR. "
+                "Analyze the events and screenshots, then respond with appropriate commands. "
+                "For example: if the user grabbed the IV drip, highlight the patient table to guide placement. "
+                "If the user is near the CT scanner and activated it, trigger a scan animation."
+            )
+            logger.info(f"[Phase 2] Processing {len(pending_events)} interaction event(s): "
+                        + ", ".join(f"{e.get('type')}→{e.get('objectName')}" for e in pending_events))
+        else:
+            interaction_user["instruction"] = (
+                "No new user interactions. Observe the screenshots. "
+                "If something looks wrong, generate commands. Otherwise return []."
+            )
 
         messages = [
             {"role": "system", "content": interaction_system},
@@ -1281,21 +1363,27 @@ def phase2_interaction_loop(
         ]
 
         # Attach screenshots
-        image_content = [{"type": "text", "text": "Current scene (XZ=top-down, XY=front, YZ=side):"}]
-        for lbl, data in view_images.items():
-            if data:
-                image_content.append({"type": "image_url", "image_url": {"url": f"data:image/png;base64,{data}"}})
-        messages.append({"role": "user", "content": image_content})
+        if any(view_images.values()):
+            image_content = [{"type": "text", "text": "Current scene (XZ=top-down, XY=front, YZ=side):"}]
+            for _lbl, data in view_images.items():
+                if data:
+                    image_content.append({"type": "image_url", "image_url": {"url": f"data:image/png;base64,{data}"}})
+            messages.append({"role": "user", "content": image_content})
 
         new_commands = _call_groq_and_parse(client, messages, prefabs, is_loop=True, cfg=cfg)
         if new_commands:
             _stamp_commands(new_commands)
             all_placed.extend(new_commands)
             existing = _load_existing_commands(out_path)
-            _write_commands_safe(out_path, existing + new_commands)  # keep ALL (including executed)
+            _write_commands_safe(out_path, existing + new_commands)
             logger.info(f"[Phase 2] Generated {len(new_commands)} interaction commands")
         else:
             logger.debug("[Phase 2] No action needed.")
+
+        # Mark events as processed so we don't re-handle them
+        if pending_events:
+            processed_ids = [e.get("id") for e in pending_events if e.get("id")]
+            _mark_events_processed(events_path, processed_ids)
 
         iterations += 1
         time.sleep(interval)

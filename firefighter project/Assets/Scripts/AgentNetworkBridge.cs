@@ -66,6 +66,9 @@ public class AgentNetworkBridge : MonoBehaviour
         // DebugLog
         public string message;
 
+        // Highlight params
+        public float duration;
+
         // Status flags (optional)
         public bool done;
     }
@@ -330,6 +333,14 @@ public class AgentNetworkBridge : MonoBehaviour
             case "DebugLog":
                 AddString("message", cmd.message);
                 break;
+            case "HighlightObject":
+                AddString("objectName", cmd.objectName);
+                AddFloat("r", cmd.r); AddFloat("g", cmd.g); AddFloat("b", cmd.b);
+                AddFloat("duration", cmd.duration);
+                break;
+            case "ClearHighlight":
+                AddString("objectName", cmd.objectName);
+                break;
             default:
                 break;
         }
@@ -446,6 +457,14 @@ public class AgentNetworkBridge : MonoBehaviour
 
             case "DebugLog":
                 Debug.Log("[CollisionThread] " + (cmd.message ?? ""));
+                break;
+
+            case "HighlightObject":
+                environmentAgent.HighlightObject(cmd.objectName, cmd.r, cmd.g, cmd.b, cmd.duration);
+                break;
+
+            case "ClearHighlight":
+                environmentAgent.ClearHighlight(cmd.objectName);
                 break;
 
             default:
