@@ -4,9 +4,11 @@ Unity command file writer.
 Writes Unity commands to JSON so Unity AgentNetworkBridge can read and execute them.
 
 Usage:
-    from main import place_object, place_human, set_time_of_day
+    from main import place_object, place_human, set_time_of_day, move_character, animate_character
     place_object("Chair1", x=0.0, y=0.0, z=2.0, rotation_y=45.0)
-    place_human("HumanM_Idle01", x=1.0, y=0.0, z=3.0)
+    place_human("Doctor_01", x=1.0, y=0.0, z=3.0)
+    animate_character("Doctor_01", "AnimatorControllers/HumanM@Talking", "HumanM@Talking")
+    move_character("Doctor_01", x=2.0, y=0.0, z=4.0)
     set_time_of_day(18.0)
 """
 
@@ -194,14 +196,61 @@ def set_human_animation_controller(controller_path: str) -> Dict[str, Any]:
 def play_human_animation(
     controller_path: str,
     state_name: str,
-    cross_fade_time: float = 0.25
+    cross_fade_time: float = 0.25,
+    target_model: str = None,
 ) -> Dict[str, Any]:
-    """Play a human animation state (controller ensured from Resources/)."""
+    """Play a human animation state (controller ensured from Resources/).
+
+    target_model: "player" to animate the player avatar; omit/None to animate
+                  the default NPC character (defaultHumanModel).
+    """
+    kwargs: Dict[str, Any] = dict(
+        action="PlayHumanAnimationFromResources",
+        controllerPathInResources=controller_path,
+        stateName=state_name,
+        crossFadeTime=cross_fade_time,
+    )
+    if target_model:
+        kwargs["targetModel"] = target_model
+    return _add_command(**kwargs)
+
+
+def move_character(
+    character_name: str,
+    x: float = 0.0,
+    y: float = 0.0,
+    z: float = 0.0,
+    rotation_y: float = 0.0,
+) -> Dict[str, Any]:
+    """Move a named character (previously placed with place_human) to a new position."""
+    return _add_command(
+        action="MoveCharacter",
+        objectName=character_name,
+        x=x,
+        y=y,
+        z=z,
+        rotationY=rotation_y,
+    )
+
+
+def animate_character(
+    character_name: str,
+    controller_path: str,
+    state_name: str,
+    cross_fade_time: float = 0.25,
+) -> Dict[str, Any]:
+    """Play an animation on a specific named character placed with place_human.
+
+    character_name: the humanName used when the character was placed (e.g. "Doctor_01")
+    controller_path: Resources path, e.g. "AnimatorControllers/HumanM@Walk01_Forward"
+    state_name: Animator state to cross-fade into
+    """
     return _add_command(
         action="PlayHumanAnimationFromResources",
         controllerPathInResources=controller_path,
         stateName=state_name,
-        crossFadeTime=cross_fade_time
+        crossFadeTime=cross_fade_time,
+        targetModel=character_name,
     )
 
 

@@ -246,7 +246,7 @@ class GameOperator:
             allowed = {
                 "action", "hour", "enabled", "density", "r", "g", "b",
                 "gravityY", "scale", "objectName", "humanName",
-                "x", "y", "z", "rotationY",
+                "x", "y", "z", "rotationY", "duration",
                 "scaleX", "scaleY", "scaleZ",
                 "controllerPathInResources", "stateName", "crossFadeTime",
             }

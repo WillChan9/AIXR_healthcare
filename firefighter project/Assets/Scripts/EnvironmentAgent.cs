@@ -8,11 +8,15 @@ using UnityEngine;
 /// External AI or game logic controls the environment by calling this script's public methods.
 /// Humanoid animation control reference: Kevin Iglesias Human Animations (AnimatorController + SpineProxy upper/lower body blend).
 /// </summary>
+[RequireComponent(typeof(InteractionSetup))]
+[RequireComponent(typeof(InteractionAnimationController))]
 public class EnvironmentAgent : MonoBehaviour
 {
     // ── Scene-state tracking ──────────────────────────────────────────────────
     // Maps prefab name → spawned GameObject so WriteSceneState() can query live transforms/bounds.
     private readonly Dictionary<string, GameObject> _trackedObjects = new Dictionary<string, GameObject>();
+    // Maps character name → spawned character GameObject for multi-character support.
+    private readonly Dictionary<string, GameObject> _namedCharacters = new Dictionary<string, GameObject>();
     [Header("Optional: assign for Time-of-Day control")]
     [SerializeField] Light mainDirectionalLight;
 
@@ -147,6 +151,7 @@ public class EnvironmentAgent : MonoBehaviour
                 }
             }
             _trackedObjects[humanName] = spawned;
+            _namedCharacters[humanName] = spawned;
             WriteSceneState();
             Debug.Log($"AI Agent placed human: {humanName} at {position} (set as default human, idle pose)");
         }
@@ -354,6 +359,55 @@ public class EnvironmentAgent : MonoBehaviour
         RenderSettings.fogDensity = Mathf.Clamp(density, 0f, 0.2f);
     }
 
+    // ========== Phase control ==========
+
+    public void SetPhase(int phase)
+    {
+        Debug.Log($"[EnvironmentAgent] SetPhase({phase})");
+        if (phase >= 2)
+            ActivatePhase2();
+    }
+
+    private void ActivatePhase2()
+    {
+        // 1. Tag the XR Origin / Camera Rig as "Player"
+        GameObject rig = FindXRRig();
+        if (rig != null && !rig.CompareTag("Player"))
+        {
+            rig.tag = "Player";
+            Debug.Log($"[EnvironmentAgent] Tagged '{rig.name}' as Player.");
+        }
+
+        // 2. Ensure PlayerTouchHighlighter exists and is enabled
+        PlayerTouchHighlighter pth = FindFirstObjectByType<PlayerTouchHighlighter>(FindObjectsInactive.Include);
+        if (pth == null)
+        {
+            pth = gameObject.AddComponent<PlayerTouchHighlighter>();
+            Debug.Log("[EnvironmentAgent] Added PlayerTouchHighlighter.");
+        }
+
+        if (rig != null && pth.playerTransform == null)
+            pth.playerTransform = rig.transform;
+
+        pth.enabled = true;
+        Debug.Log("[EnvironmentAgent] Phase 2 active — PlayerTouchHighlighter enabled.");
+    }
+
+    private static GameObject FindXRRig()
+    {
+        GameObject tagged = GameObject.FindWithTag("Player");
+        if (tagged != null) return tagged;
+
+        foreach (string n in new[] { "XR Origin", "XROrigin", "Camera Rig", "CameraRig" })
+        {
+            GameObject found = GameObject.Find(n);
+            if (found != null) return found;
+        }
+
+        if (Camera.main != null) return Camera.main.transform.root.gameObject;
+        return null;
+    }
+
     // ========== Interaction feedback commands (Phase 2) ==========
 
     /// <summary>Temporarily highlight an object with an outline / emission color.
@@ -362,31 +416,72 @@ public class EnvironmentAgent : MonoBehaviour
     {
         GameObject target = FindSpawnedObject(objectName);
         if (target == null) { Debug.LogWarning($"HighlightObject: '{objectName}' not found."); return; }
+        HighlightObject(target, r, g, b, duration);
+    }
+
+    /// <summary>Highlight a GameObject directly (no name lookup required).</summary>
+    public void HighlightObject(GameObject target, float r, float g, float b, float duration)
+    {
+        if (target == null) return;
         StartCoroutine(HighlightCoroutine(target, new Color(r, g, b), duration));
     }
 
     private System.Collections.IEnumerator HighlightCoroutine(GameObject target, Color color, float duration)
     {
         var renderers = target.GetComponentsInChildren<Renderer>();
-        // Store originals
-        var origColors = new Color[renderers.Length];
+
+        // Per-renderer: store original base color + emission state so we can restore them.
+        var origBase     = new Color[renderers.Length];
+        var origEmission = new Color[renderers.Length];
+        var hadEmission  = new bool[renderers.Length];
+
         for (int i = 0; i < renderers.Length; i++)
         {
-            origColors[i] = renderers[i].material.color;
-            renderers[i].material.EnableKeyword("_EMISSION");
-            renderers[i].material.SetColor("_EmissionColor", color * 0.5f);
+            Material mat = renderers[i].material;  // creates an instance (correct)
+
+            // --- Base color tint (works with every shader) ---
+            // URP Lit uses "_BaseColor"; Standard / fallback uses "_Color".
+            if (mat.HasProperty("_BaseColor"))
+            {
+                origBase[i] = mat.GetColor("_BaseColor");
+                mat.SetColor("_BaseColor", Color.Lerp(origBase[i], color, 0.6f));
+            }
+            else if (mat.HasProperty("_Color"))
+            {
+                origBase[i] = mat.GetColor("_Color");
+                mat.SetColor("_Color", Color.Lerp(origBase[i], color, 0.6f));
+            }
+
+            // --- Emission overlay (Standard / URP — silent no-op on shaders without it) ---
+            hadEmission[i]  = mat.IsKeywordEnabled("_EMISSION");
+            origEmission[i] = mat.HasProperty("_EmissionColor")
+                ? mat.GetColor("_EmissionColor")
+                : Color.black;
+
+            if (mat.HasProperty("_EmissionColor"))
+            {
+                mat.EnableKeyword("_EMISSION");
+                mat.SetColor("_EmissionColor", color * 0.8f);
+            }
         }
 
         if (duration > 0f)
         {
             yield return new WaitForSeconds(duration);
-            // Restore
             for (int i = 0; i < renderers.Length; i++)
             {
-                if (renderers[i] != null)
+                if (renderers[i] == null) continue;
+                Material mat = renderers[i].material;
+
+                if (mat.HasProperty("_BaseColor"))
+                    mat.SetColor("_BaseColor", origBase[i]);
+                else if (mat.HasProperty("_Color"))
+                    mat.SetColor("_Color", origBase[i]);
+
+                if (mat.HasProperty("_EmissionColor"))
                 {
-                    renderers[i].material.SetColor("_EmissionColor", Color.black);
-                    renderers[i].material.color = origColors[i];
+                    mat.SetColor("_EmissionColor", origEmission[i]);
+                    if (!hadEmission[i]) mat.DisableKeyword("_EMISSION");
                 }
             }
         }
@@ -649,6 +744,52 @@ public class EnvironmentAgent : MonoBehaviour
             defaultHumanModel = chosen.gameObject;
             Debug.Log($"EnvironmentAgent: auto-bound human = {defaultHumanModel.name}");
         }
+    }
+
+    // ========== Multi-character support ==========
+
+    /// <summary>
+    /// Find a named character by the name it was placed with.
+    /// Falls back to a scene search so pre-placed characters work too.
+    /// </summary>
+    public GameObject GetCharacterByName(string name)
+    {
+        if (string.IsNullOrEmpty(name)) return null;
+        if (_namedCharacters.TryGetValue(name, out var go) && go != null) return go;
+        return FindSpawnedObject(name);
+    }
+
+    /// <summary>Move a named character to a new position.</summary>
+    public void MoveCharacter(string name, Vector3 position, float rotationY)
+    {
+        GameObject target = GetCharacterByName(name);
+        if (target == null)
+        {
+            Debug.LogWarning($"[EnvironmentAgent] MoveCharacter: '{name}' not found.");
+            return;
+        }
+        target.transform.position = position;
+        target.transform.rotation = Quaternion.Euler(0, rotationY, 0);
+        WriteSceneState();
+        Debug.Log($"[EnvironmentAgent] MoveCharacter: '{name}' → {position}");
+    }
+
+    /// <summary>
+    /// Play an animation on a named character.  If characterName is null/empty,
+    /// falls back to defaultHumanModel (same behaviour as PlayHumanAnimationFromResources(null,...)).
+    /// </summary>
+    public void PlayHumanAnimationFromResourcesNamed(string characterName, string controllerPath, string stateName, float crossFadeTime = 0.25f)
+    {
+        GameObject target = string.IsNullOrEmpty(characterName)
+            ? GetHumanTarget(null)
+            : GetCharacterByName(characterName);
+
+        if (target == null)
+        {
+            Debug.LogWarning($"[EnvironmentAgent] PlayHumanAnimationFromResourcesNamed: character '{characterName}' not found.");
+            return;
+        }
+        PlayHumanAnimationFromResources(target, controllerPath, stateName, crossFadeTime);
     }
 
     static Animator ChooseBestSceneAnimator(Animator[] animators)

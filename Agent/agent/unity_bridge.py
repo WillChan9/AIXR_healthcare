@@ -64,7 +64,7 @@ def enqueue_set_time_of_day(hour: float) -> Dict[str, Any]:
     return enqueue_command({"action": "SetTimeOfDay", "hour": hour})
 
 
-def enqueue_play_human_animation(controller_path: str, state_name: str, cross_fade_time: float = 0.25f) -> Dict[str, Any]:
+def enqueue_play_human_animation(controller_path: str, state_name: str, cross_fade_time: float = 0.25) -> Dict[str, Any]:
     """Convenience helper: play human animation (ensure controller first, then play state)."""
     return enqueue_command({
         "action": "PlayHumanAnimationFromResources",

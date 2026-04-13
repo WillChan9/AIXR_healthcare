@@ -24,6 +24,7 @@ public class AgentNetworkBridge : MonoBehaviour
     [Header("Reference to EnvironmentAgent script")]
     public EnvironmentAgent environmentAgent;
 
+
     [System.Serializable]
     private class AgentCommand
     {
@@ -71,6 +72,12 @@ public class AgentNetworkBridge : MonoBehaviour
 
         // Status flags (optional)
         public bool done;
+
+        // Animation target: "player" → playerModel, null/empty → defaultHumanModel (NPC)
+        public string targetModel;
+
+        // Phase control
+        public int phase;
     }
 
     [System.Serializable]
@@ -82,9 +89,7 @@ public class AgentNetworkBridge : MonoBehaviour
     private void Awake()
     {
         if (environmentAgent == null)
-        {
             environmentAgent = FindFirstObjectByType<EnvironmentAgent>();
-        }
     }
 
     private void OnEnable()
@@ -313,11 +318,18 @@ public class AgentNetworkBridge : MonoBehaviour
             case "PlayHumanAnimation":
                 AddString("stateName", cmd.stateName);
                 AddFloat("crossFadeTime", cmd.crossFadeTime);
+                AddString("targetModel", cmd.targetModel);
                 break;
             case "PlayHumanAnimationFromResources":
                 AddString("controllerPath", cmd.controllerPath ?? cmd.controllerPathInResources);
                 AddString("stateName", cmd.stateName);
                 AddFloat("crossFadeTime", cmd.crossFadeTime);
+                AddString("targetModel", cmd.targetModel);
+                break;
+            case "MoveCharacter":
+                AddString("objectName", cmd.objectName ?? cmd.humanName);
+                AddFloat("x", cmd.x); AddFloat("y", cmd.y); AddFloat("z", cmd.z);
+                AddFloat("rotationY", cmd.rotationY);
                 break;
             case "SetHumanAnimatorFloat":
                 AddString("paramName", cmd.paramName);
@@ -435,12 +447,28 @@ public class AgentNetworkBridge : MonoBehaviour
 
             case "PlayHumanAnimation":
                 float blend = cmd.crossFadeTime > 0 ? cmd.crossFadeTime : 0.25f;
-                environmentAgent.PlayHumanAnimation(null, cmd.stateName ?? "", blend);
+                if (!string.IsNullOrEmpty(cmd.targetModel))
+                {
+                    var charTarget = environmentAgent.GetCharacterByName(cmd.targetModel);
+                    environmentAgent.PlayHumanAnimation(charTarget, cmd.stateName ?? "", blend);
+                }
+                else
+                    environmentAgent.PlayHumanAnimation(null, cmd.stateName ?? "", blend);
                 break;
 
             case "PlayHumanAnimationFromResources":
                 float t = cmd.crossFadeTime > 0 ? cmd.crossFadeTime : 0.25f;
-                environmentAgent.PlayHumanAnimationFromResources(null, (cmd.controllerPath ?? cmd.controllerPathInResources) ?? "", cmd.stateName ?? "", t);
+                environmentAgent.PlayHumanAnimationFromResourcesNamed(
+                    cmd.targetModel,
+                    (cmd.controllerPath ?? cmd.controllerPathInResources) ?? "",
+                    cmd.stateName ?? "", t);
+                break;
+
+            case "MoveCharacter":
+                environmentAgent.MoveCharacter(
+                    cmd.objectName ?? cmd.humanName ?? "",
+                    new Vector3(cmd.x, cmd.y, cmd.z),
+                    cmd.rotationY);
                 break;
 
             case "SetHumanAnimatorFloat":
@@ -465,6 +493,10 @@ public class AgentNetworkBridge : MonoBehaviour
 
             case "ClearHighlight":
                 environmentAgent.ClearHighlight(cmd.objectName);
+                break;
+
+            case "SetPhase":
+                environmentAgent.SetPhase(cmd.phase);
                 break;
 
             default:

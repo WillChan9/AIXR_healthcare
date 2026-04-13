@@ -1,106 +1,88 @@
 {
   "room_type": "Physical Therapy Gym",
-  "description": "A warm, recovery-focused physical therapy gym with multiple therapy stations in use.",
+  "description": "A 6m x 6m physical therapy gym designed to test all VR interaction categories.",
   "layout_goals": {
-    "interior_bounds": "5m x 5m",
-    "minimum_objects": 16,
-    "focal_point": "Parallel Bars / Walking Rails"
+    "interior_bounds": "6m x 6m",
+    "minimum_objects": 15,
+    "focal_point": "center of the room"
   },
   "steps": [
     {
       "step": 1,
-      "action": "Place parallel bars",
-      "objects": [
-        "parallel bars"
-      ],
-      "target_area": "center of the room",
-      "condition": "Ensure clear lanes around the bars"
+      "action": "place walls and ceiling",
+      "objects": [],
+      "target_area": "entire room",
+      "condition": "4 walls forming a 6m x 6m enclosure, 3.2m high, with a 1.4m doorway centered at x=0 on the front wall"
     },
     {
       "step": 2,
-      "action": "Position mat table",
+      "action": "add floor-accessible objects",
       "objects": [
-        "mat table"
+        "Treadmill_01",
+        "WheelChair_01",
+        "Trolley_01",
+        "Utility_Cart_01",
+        "Table_01 or Plinth_01",
+        "Towel_Dispenser_01",
+        "Sanitizer_Dispenser_01",
+        "Waste_Bin_01 or Waste_01",
+        "Caution_Sign_01 or Caution_01",
+        "ParallelBars_01"
       ],
-      "target_area": "left side of the room",
-      "condition": "Ensure accessibility for patient and therapist"
+      "target_area": "floor",
+      "condition": "all objects are floor-accessible (y=0) unless wall-mounted, and no two objects are within 0.8m of each other"
     },
     {
       "step": 3,
-      "action": "Install exercise equipment",
+      "action": "place wall-mounted objects",
       "objects": [
-        "exercise bike",
-        "treadmill",
-        "stair training unit"
+        "Clock_01",
+        "Poster_01 and Poster_02",
+        "Desk_01",
+        "Screen_01 or Monitor_01"
       ],
-      "target_area": "distributed across the room",
-      "condition": "Ensure clear paths between equipment"
+      "target_area": "walls",
+      "condition": "objects are mounted on walls at specified locations"
     },
     {
       "step": 4,
-      "action": "Add balance board",
+      "action": "add characters",
       "objects": [
-        "balance board"
+        "Patient character",
+        "Therapist character"
       ],
-      "target_area": "near parallel bars",
-      "condition": "Ensure safe access for patients"
+      "target_area": "near Treadmill_01 and ParallelBars_01",
+      "condition": "characters are placed near specified objects"
     },
     {
       "step": 5,
-      "action": "Set up equipment and supply wall",
-      "objects": [
-        "shelving unit",
-        "weights rack",
-        "utility cart",
-        "hot pack unit"
-      ],
-      "target_area": "left wall",
-      "condition": "Ensure organized and accessible storage"
+      "action": "add lighting and ambient color",
+      "objects": [],
+      "target_area": "entire room",
+      "condition": "SetLightIntensity warm (scale 1.4), SetAmbientColor warm white"
     },
     {
       "step": 6,
-      "action": "Create staff and admin zone",
+      "action": "finalize object placement",
       "objects": [
-        "desk",
-        "monitor",
-        "filing cabinet",
-        "wall-mounted mirror"
+        "Treadmill_01 at (right wall, z\u22484.0)",
+        "WheelChair_01 at (entry zone, z\u22480.5, x\u22481.5)",
+        "Trolley_01 at (center-left, z\u22482.5, x\u2248-1.5)",
+        "Utility_Cart_01 at (left wall, z\u22483.5)",
+        "Table_01 or Plinth_01 at (left-center, z\u22482.0, x\u2248-1.0)",
+        "Towel_Dispenser_01 at (right wall, z\u22482.0)",
+        "Sanitizer_Dispenser_01 at (near entry, z\u22480.3, x\u2248-1.0)",
+        "Waste_Bin_01 or Waste_01 at (entry corner, z\u22480.3, x\u22481.8)",
+        "Caution_Sign_01 or Caution_01 at (entry floor, z\u22480.6, x\u22480.5)",
+        "Clock_01 at (back wall, z\u22485.8, y\u22482.5)",
+        "Poster_01 and Poster_02 at (side walls, y\u22481.8)",
+        "Folder_01 and Folder_02 on Desk_01 surface, y\u22480.8",
+        "Screen_01 or Monitor_01 on Desk_01, z\u22485.0, x\u2248-1.5",
+        "Desk_01 at (back-left corner, z\u22484.8, x\u2248-1.8)",
+        "ParallelBars_01 at (room center, z\u22483.0)"
       ],
-      "target_area": "back wall",
-      "condition": "Ensure sufficient workspace for staff"
-    },
-    {
-      "step": 7,
-      "action": "Add entry and safety features",
-      "objects": [
-        "sanitizer dispenser",
-        "waste bin",
-        "wheelchair",
-        "caution sign"
-      ],
-      "target_area": "front wall",
-      "condition": "Ensure safe entry and exit"
-    },
-    {
-      "step": 8,
-      "action": "Add ambient details",
-      "objects": [
-        "clock",
-        "motivational posters",
-        "ceiling light fixtures"
-      ],
-      "target_area": "throughout the room",
-      "condition": "Ensure a warm and welcoming atmosphere"
-    },
-    {
-      "step": 9,
-      "action": "Populate with staff and patients",
-      "objects": [
-        "physical therapists",
-        "patients"
-      ],
-      "target_area": "throughout the room",
-      "condition": "Ensure active therapy sessions"
+      "target_area": "entire room",
+      "condition": "all objects are placed according to specifications"
     }
   ]
 }

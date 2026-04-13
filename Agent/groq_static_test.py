@@ -15,6 +15,7 @@ from groq import Groq
 sys.path.insert(0, str(Path(__file__).parent))
 from agent.Reflection_module import ReflectionModule
 from agent.logger import get_logger
+from agent.interaction_animations import InteractionAnimationHandler
 
 logger = get_logger("Pipeline")
 
@@ -1294,6 +1295,11 @@ def phase2_interaction_loop(
         "PlayHumanAnimationFromResources: trigger character animations "
     )
 
+    # Enable Phase 2 interaction system in Unity (PlayerTouchHighlighter + Player tag)
+    import main as _unity
+    _unity.add_command("SetPhase", phase=2)
+    logger.info("[Phase 2] SetPhase 2 sent to Unity.")
+
     # Derive interaction_events.json path (next to unity_commands.json)
     events_path = out_path.parent / "interaction_events.json"
 
@@ -1307,6 +1313,10 @@ def phase2_interaction_loop(
         logger.warning(f"[Phase 2] interaction_events.json does not exist yet. "
                        "Make sure InteractionEventReporter is attached to AI_Manager in Unity.")
 
+    # Deterministic animation handler: fires character animations immediately
+    # for every interaction without waiting for the LLM.
+    anim_handler = InteractionAnimationHandler(events_file=events_path)
+
     while True:
         if max_iterations and iterations >= max_iterations:
             logger.info("[Phase 2] Max iterations reached. Stopping.")
@@ -1316,6 +1326,15 @@ def phase2_interaction_loop(
         # Screenshots alone trigger LLM only at IDLE_LLM_INTERVAL cadence
         # to avoid wasting tokens on a constantly-refreshing screenshot stream.
         pending_events = _load_interaction_events(events_path)
+
+        # Fire deterministic animations immediately (no LLM cost).
+        # process_events_list() does NOT mark events in the file — the
+        # existing _mark_events_processed() call below handles that so the
+        # LLM still receives the same events for contextual responses.
+        if pending_events:
+            n_anims = anim_handler.process_events_list(pending_events)
+            if n_anims:
+                logger.info(f"[Phase 2] Animation handler fired {n_anims} animation(s)")
         latest_mtime = max(
             (p.stat().st_mtime if p.exists() else 0.0) for p in [xz_path, xy_path, yz_path]
         )
@@ -1323,6 +1342,9 @@ def phase2_interaction_loop(
         has_events = len(pending_events) > 0
         now = time.time()
         idle_check_due = (now - last_idle_llm_call) >= IDLE_LLM_INTERVAL
+
+        # Always tick idle returns even when skipping the LLM call.
+        anim_handler._fire_pending_idles()
 
         # Skip if: no events AND (no screenshots OR idle cooldown not elapsed)
         if not has_events and (not has_new_screenshots or not idle_check_due):

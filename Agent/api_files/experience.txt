@@ -1,59 +1,40 @@
-Physical Therapy Gym (open, warm, recovery-focused, realistic)
+Interaction Test — Physical Therapy Gym (interaction-rich, one of every interactable category)
 
-Create a believable hospital physical therapy gym that reads as a real, active rehabilitation space — not a sparse cluster of props. The room should feel encouraging and purposeful, with multiple therapy stations in use and a warm, recovery-oriented atmosphere. Less clinical sterility, more motivated movement.
+This scene is a physical therapy gym designed specifically to test ALL VR interaction categories. Every object in the interaction animation map must appear: treadmill, wheelchair, trolley, utility cart, patient, folder/chart, monitor/screen, sanitizer dispenser, waste bin, caution sign, therapy table, towel dispenser, clock, and posters. Pack in one clear representative of each type so every interaction event category fires correctly.
 
-Room size approx 5m x 5m with 4 walls, a ceiling, and a floor. The open floor plan accommodates multiple simultaneous therapy stations. Equipment is distributed across the room with clear lanes between stations. Natural warmth in the lighting and layout — this is a space designed to feel less like a hospital and more like a place of progress.
+Room 6m × 6m, open floor plan. Objects spread out so no two are within 0.8m of each other. Every interaction-relevant object is floor-accessible (y=0) unless wall-mounted.
 
-Primary anchor and workflow:
-- Parallel Bars / Walking Rails centered in the room as the main focal point — a patient actively walking between them with a Physical Therapist spotting alongside.
-- Second Patient present at a mat table / plinth on the left side, being assisted by a second Physical Therapist.
-- Third staff member (PT Aide or OT) visible at the far end managing equipment.
+REQUIRED INTERACTION OBJECTS (place every one of these — do not skip any):
+1. Treadmill_01 — right wall, z≈4.0
+2. WheelChair_01 — entry zone, z≈0.5, x≈1.5
+3. Trolley_01 — center-left, z≈2.5, x≈-1.5
+4. Utility_Cart_01 — left wall, z≈3.5
+5. Table_01 or Plinth_01 — left-center, z≈2.0, x≈-1.0 (therapy/mat table)
+6. Towel_Dispenser_01 — right wall, z≈2.0
+7. Sanitizer_Dispenser_01 — near entry, z≈0.3, x≈-1.0
+8. Waste_Bin_01 or Waste_01 — entry corner, z≈0.3, x≈1.8
+9. Caution_Sign_01 or Caution_01 — entry floor, z≈0.6, x≈0.5
+10. Clock_01 — back wall, z≈5.8, y≈2.5
+11. Poster_01 and Poster_02 — side walls, y≈1.8
+12. Folder_01 and Folder_02 — on Desk_01 surface, y≈0.8
+13. Screen_01 or Monitor_01 — on Desk_01, z≈5.0, x≈-1.5
+14. Desk_01 — back-left corner, z≈4.8, x≈-1.8
+15. ParallelBars_01 — room center, z≈3.0
 
-Rehabilitation stations (distributed across floor):
-- Mat Table / Treatment Plinth (padded, adjustable height) left side of room.
-- Exercise Bike / Pedal Exerciser near the right wall.
-- Treadmill (medical grade, low-speed) along the right wall behind the bike.
-- Steps / Stair Training Unit in the back-right corner (3-step practice stairs with rails).
-- Balance Board / Wobble Board on the floor near the parallel bars.
-
-Equipment and supply wall (left wall):
-- Shelving Unit with resistance bands, foam rollers, therapy balls stacked neatly.
-- Weights Rack (small dumbbells, 1–5kg range) mounted low on the left wall.
-- Utility Cart / Therapy Supply Trolley with drawers (hot packs, cold packs, tape, gloves).
-- Hot Pack Unit / Hydrocollator mounted or standing near the left wall.
-
-Staff and admin zone (back wall):
-- Desk / Workstation in the back-left corner (patient notes, scheduling).
-- Monitor / Computer Screen on the desk.
-- Filing Cabinet or Shelf with patient folders beside the desk.
-- Wall-Mounted Mirror running along the back wall (patients monitor their own form).
-
-Entry and safety zone (front wall):
-- Sanitizer Dispenser mounted near the entry.
-- Waste Bin near the entry corner.
-- Wheelchair parked near the entry wall (patient transport between sessions).
-- Caution / Wet Floor Sign near the entry (realism — therapy floors get wet).
-
-Ambient warm detail:
-- Clock on the back wall above the mirror.
-- Motivational / Anatomy Posters on the side walls.
-- Ceiling light fixtures (warm white, even and soft — SetLightIntensity moderate).
-- Window suggestion on the right wall (bright wall panel implying natural light).
-
-Realism requirements:
-- Include at least 16 total interior objects (parallel bars, mat table, exercise bike, treadmill, stair unit, balance board, shelving, weights rack, therapy cart, hydrocollator, desk, monitor, mirror, sanitizer, waste bin, wheelchair, clock, posters, 3 staff, 2 patients).
-- Room should feel mid-session: two therapy interactions happening simultaneously, equipment in active use, staff engaged with patients.
+Staff and patients:
+- 1 Patient character near Treadmill_01 (walking/therapy)
+- 1 Therapist character near ParallelBars_01 (assisting)
 
 Room exterior (required):
-- 4 walls forming a 5m x 5m enclosure (wall height 3.2m — gym-height ceiling for overhead clearance).
-- Front wall must have a wide doorway (approx 1.4m wide, centered at x=0) — wide enough for wheelchair and walker entry.
+- 4 walls forming a 6m × 6m enclosure (wall height 3.2m).
+- Front wall with 1.4m doorway centered at x=0.
 - Ceiling covering the full room.
-- Multiple evenly spaced ceiling light fixtures for full gym coverage (SetLightIntensity warm).
+- SetLightIntensity warm (scale 1.4), SetAmbientColor warm white.
 
 [room_config]
-scene_type = Physical Therapy Gym
-room_width = 5
-room_depth = 5
+scene_type = Interaction Test Gym
+room_width = 6
+room_depth = 6
 room_height = 3.2
 lighting_intensity = 1.4
 ambient_r = 0.95
@@ -61,18 +42,18 @@ ambient_g = 0.91
 ambient_b = 0.85
 doorway_width = 1.4
 doorway_x = 0
-x_min = -2.3
-x_max = 2.3
+x_min = -2.8
+x_max = 2.8
 z_min = 0.1
-z_max = 4.9
-max_objects = 35
-min_objects = 16
-surface_keywords = Table,Desk,Rack,Cart,Trolley,Counter,Plinth,Stand,Cabinet
-supply_keywords = Cart,Trolley,Rack,Dispenser,Stand,Hydrocollator,Basin
-character_prefixes = Therapist,Doctor,Nurse,Patient,Assistant,Aide,Technician
-small_prop_keywords = Folder,Tray,Band,Ball,Roller,Binder,Weights
-decor_keywords = Poster,Clock,Sign,Mirror,Panel,Board
-additions_furniture = Trolley_01,Desk_01,Cabinet_01,Basin_Stand_01,Towel_Dispenser_01
-additions_equipment = Screen_02,Bike_01,Treadmill_01,Hydrocollator_01,ParallelBars_01
-additions_props = Folder_02,Folder_03,Ball_01,Band_01,Roller_01
-additions_decor = Poster_03,Poster_04,Clock_01,Mirror_Wall_01,Sign_01
+z_max = 5.9
+max_objects = 30
+min_objects = 15
+surface_keywords = Table,Desk,Rack,Cart,Trolley,Counter,Plinth,Stand
+supply_keywords = Cart,Trolley,Rack,Dispenser,Stand
+character_prefixes = Therapist,Doctor,Nurse,Patient,Assistant,Aide
+small_prop_keywords = Folder,Tray,Band,Ball
+decor_keywords = Poster,Clock,Sign,Mirror,Panel
+additions_furniture = Trolley_01,Desk_01,Utility_Cart_01,WheelChair_01,Towel_Dispenser_01,Sanitizer_Dispenser_01,Waste_Bin_01,Cabinet_01
+additions_equipment = Treadmill_01,ParallelBars_01,Table_01,Plinth_01,Bike_01
+additions_props = Folder_01,Folder_02,Folder_03,Caution_Sign_01,Caution_01,Band_01
+additions_decor = Poster_01,Poster_02,Poster_03,Clock_01,Sign_01,Mirror_Wall_01
