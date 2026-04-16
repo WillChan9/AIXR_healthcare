@@ -108,7 +108,7 @@ public class InteractionEventReporter : MonoBehaviour
 
     // ========== Record + persist ==============================================
 
-    private void RecordEvent(string eventType, GameObject target)
+    public void RecordEvent(string eventType, GameObject target)
     {
         var evt = new InteractionEvent
         {

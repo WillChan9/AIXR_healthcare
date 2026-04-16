@@ -9,14 +9,14 @@
   "steps": [
     {
       "step": 1,
-      "action": "place walls and ceiling",
+      "action": "Place walls and ceiling",
       "objects": [],
       "target_area": "entire room",
       "condition": "4 walls forming a 6m x 6m enclosure, 3.2m high, with a 1.4m doorway centered at x=0 on the front wall"
     },
     {
       "step": 2,
-      "action": "add floor-accessible objects",
+      "action": "Add floor-accessible objects",
       "objects": [
         "Treadmill_01",
         "WheelChair_01",
@@ -30,59 +30,37 @@
         "ParallelBars_01"
       ],
       "target_area": "floor",
-      "condition": "all objects are floor-accessible (y=0) unless wall-mounted, and no two objects are within 0.8m of each other"
+      "condition": "all objects are floor-accessible (y=0) unless wall-mounted, and spaced at least 0.8m apart"
     },
     {
       "step": 3,
-      "action": "place wall-mounted objects",
+      "action": "Place wall-mounted objects",
       "objects": [
         "Clock_01",
         "Poster_01 and Poster_02",
-        "Desk_01",
         "Screen_01 or Monitor_01"
       ],
       "target_area": "walls",
-      "condition": "objects are mounted on walls at specified locations"
+      "condition": "Clock_01 at back wall, z\u22485.8, y\u22482.5; Poster_01 and Poster_02 on side walls, y\u22481.8; Screen_01 or Monitor_01 on Desk_01, z\u22485.0, x\u2248-1.5"
     },
     {
       "step": 4,
-      "action": "add characters",
+      "action": "Add desk and characters",
       "objects": [
+        "Desk_01",
+        "Folder_01 and Folder_02",
         "Patient character",
         "Therapist character"
       ],
-      "target_area": "near Treadmill_01 and ParallelBars_01",
-      "condition": "characters are placed near specified objects"
+      "target_area": "floor",
+      "condition": "Desk_01 at back-left corner, z\u22484.8, x\u2248-1.8; Folder_01 and Folder_02 on Desk_01 surface, y\u22480.8; Patient character near Treadmill_01; Therapist character near ParallelBars_01"
     },
     {
       "step": 5,
-      "action": "add lighting and ambient color",
+      "action": "Configure lighting",
       "objects": [],
       "target_area": "entire room",
       "condition": "SetLightIntensity warm (scale 1.4), SetAmbientColor warm white"
-    },
-    {
-      "step": 6,
-      "action": "finalize object placement",
-      "objects": [
-        "Treadmill_01 at (right wall, z\u22484.0)",
-        "WheelChair_01 at (entry zone, z\u22480.5, x\u22481.5)",
-        "Trolley_01 at (center-left, z\u22482.5, x\u2248-1.5)",
-        "Utility_Cart_01 at (left wall, z\u22483.5)",
-        "Table_01 or Plinth_01 at (left-center, z\u22482.0, x\u2248-1.0)",
-        "Towel_Dispenser_01 at (right wall, z\u22482.0)",
-        "Sanitizer_Dispenser_01 at (near entry, z\u22480.3, x\u2248-1.0)",
-        "Waste_Bin_01 or Waste_01 at (entry corner, z\u22480.3, x\u22481.8)",
-        "Caution_Sign_01 or Caution_01 at (entry floor, z\u22480.6, x\u22480.5)",
-        "Clock_01 at (back wall, z\u22485.8, y\u22482.5)",
-        "Poster_01 and Poster_02 at (side walls, y\u22481.8)",
-        "Folder_01 and Folder_02 on Desk_01 surface, y\u22480.8",
-        "Screen_01 or Monitor_01 on Desk_01, z\u22485.0, x\u2248-1.5",
-        "Desk_01 at (back-left corner, z\u22484.8, x\u2248-1.8)",
-        "ParallelBars_01 at (room center, z\u22483.0)"
-      ],
-      "target_area": "entire room",
-      "condition": "all objects are placed according to specifications"
     }
   ]
 }

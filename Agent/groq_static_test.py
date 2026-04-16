@@ -15,7 +15,9 @@ from groq import Groq
 sys.path.insert(0, str(Path(__file__).parent))
 from agent.Reflection_module import ReflectionModule
 from agent.logger import get_logger
-from agent.interaction_animations import InteractionAnimationHandler
+from interaction_animations import InteractionAnimationHandler
+from interaction_log import InteractionLog
+from agent.animation_planner import AnimationPlannerThread
 
 logger = get_logger("Pipeline")
 
@@ -1199,7 +1201,7 @@ def phase1_generate_environment(
             ]
             if has_screenshots:
                 image_content = [{"type": "text", "text": "Orthographic screenshots (XZ=top-down, XY=front, YZ=side):"}]
-                for lbl, data in view_images.items():
+                for data in view_images.values():
                     if data:
                         image_content.append({"type": "image_url", "image_url": {"url": f"data:image/png;base64,{data}"}})
                 loop_messages.append({"role": "user", "content": image_content})
@@ -1313,9 +1315,25 @@ def phase2_interaction_loop(
         logger.warning(f"[Phase 2] interaction_events.json does not exist yet. "
                        "Make sure InteractionEventReporter is attached to AI_Manager in Unity.")
 
+    # Persistent interaction log — tracks every event, animation chosen, and reasoning.
+    # Accumulates across runs (capped at 200 entries). Not cleared on restart so
+    # the history is visible even when the agent is not running.
+    interaction_log = InteractionLog()
+
     # Deterministic animation handler: fires character animations immediately
     # for every interaction without waiting for the LLM.
-    anim_handler = InteractionAnimationHandler(events_file=events_path)
+    # Shares the same interaction_log so all events are logged at the source.
+    anim_handler = InteractionAnimationHandler(events_file=events_path, interaction_log=interaction_log)
+
+    # LLM animation planner — separate thread, picks context-aware animations.
+    anim_planner = AnimationPlannerThread(
+        groq_client=client,
+        animators=animators,
+        all_placed=all_placed,
+        interaction_log=interaction_log,
+    )
+    anim_planner.start()
+    logger.info("[Phase 2] AnimationPlannerThread started.")
 
     while True:
         if max_iterations and iterations >= max_iterations:
@@ -1335,6 +1353,10 @@ def phase2_interaction_loop(
             n_anims = anim_handler.process_events_list(pending_events)
             if n_anims:
                 logger.info(f"[Phase 2] Animation handler fired {n_anims} animation(s)")
+            # Submit each event to the LLM planner for a contextual second response.
+            # Logging is handled inside anim_handler._handle_event (at the source).
+            for ev in pending_events:
+                anim_planner.submit_event(ev)
         latest_mtime = max(
             (p.stat().st_mtime if p.exists() else 0.0) for p in [xz_path, xy_path, yz_path]
         )
@@ -1348,7 +1370,7 @@ def phase2_interaction_loop(
 
         # Skip if: no events AND (no screenshots OR idle cooldown not elapsed)
         if not has_events and (not has_new_screenshots or not idle_check_due):
-            time.sleep(interval)
+            time.sleep(0.2)   # poll frequently so touch events are picked up quickly
             continue
 
         if has_new_screenshots:
@@ -1400,7 +1422,7 @@ def phase2_interaction_loop(
         # Attach screenshots
         if any(view_images.values()):
             image_content = [{"type": "text", "text": "Current scene (XZ=top-down, XY=front, YZ=side):"}]
-            for _lbl, data in view_images.items():
+            for data in view_images.values():
                 if data:
                     image_content.append({"type": "image_url", "image_url": {"url": f"data:image/png;base64,{data}"}})
             messages.append({"role": "user", "content": image_content})
@@ -1421,7 +1443,13 @@ def phase2_interaction_loop(
             _mark_events_processed(events_path, processed_ids)
 
         iterations += 1
-        time.sleep(interval)
+        # After processing events don't impose the full interval delay —
+        # loop back quickly to catch follow-up interactions.
+        if not has_events:
+            time.sleep(interval)
+
+    anim_planner.stop()
+    logger.info("[Phase 2] AnimationPlannerThread stopped.")
 
 
 # ---------------------------------------------------------------------------

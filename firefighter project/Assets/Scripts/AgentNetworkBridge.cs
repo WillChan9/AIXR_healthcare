@@ -19,7 +19,7 @@ public class AgentNetworkBridge : MonoBehaviour
     public string commandsFileRelativePath = "Scripts/unity_commands.json";
 
     [Header("Polling interval (seconds)")]
-    public float pollIntervalSeconds = 1.0f;
+    public float pollIntervalSeconds = 0.25f;
 
     [Header("Reference to EnvironmentAgent script")]
     public EnvironmentAgent environmentAgent;
@@ -353,6 +353,11 @@ public class AgentNetworkBridge : MonoBehaviour
             case "ClearHighlight":
                 AddString("objectName", cmd.objectName);
                 break;
+            case "ShowSpeechBubble":
+                AddString("objectName", cmd.objectName ?? cmd.humanName);
+                AddString("message", cmd.message);
+                if (cmd.duration > 0) AddFloat("duration", cmd.duration);
+                break;
             default:
                 break;
         }
@@ -493,6 +498,13 @@ public class AgentNetworkBridge : MonoBehaviour
 
             case "ClearHighlight":
                 environmentAgent.ClearHighlight(cmd.objectName);
+                break;
+
+            case "ShowSpeechBubble":
+                environmentAgent.ShowSpeechBubble(
+                    cmd.objectName ?? cmd.humanName ?? "",
+                    cmd.message ?? "",
+                    cmd.duration > 0 ? cmd.duration : 5f);
                 break;
 
             case "SetPhase":

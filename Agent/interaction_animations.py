@@ -34,9 +34,8 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 # ── path bootstrap so this module can be imported OR run directly ──────────
-_AGENT_DIR   = Path(__file__).parent          # Agent/agent/
-_AGENT_ROOT  = _AGENT_DIR.parent              # Agent/
-_PROJECT_ROOT = _AGENT_ROOT.parent            # repo root
+_AGENT_ROOT   = Path(__file__).parent          # Agent/
+_PROJECT_ROOT = _AGENT_ROOT.parent             # repo root
 
 if str(_AGENT_ROOT) not in sys.path:
     sys.path.insert(0, str(_AGENT_ROOT))
@@ -44,13 +43,15 @@ if str(_AGENT_ROOT) not in sys.path:
 import main as unity  # Agent/main.py  (play_human_animation, add_command)
 
 try:
-    from .logger import get_logger
+    from agent.logger import get_logger
 except ImportError:
     import logging
     def get_logger(name: str, **_):
         logging.basicConfig(level=logging.INFO,
                             format="%(asctime)s [%(name)s] %(message)s")
         return logging.getLogger(name)
+
+from interaction_log import InteractionLog
 
 logger = get_logger("InteractionAnimations",
                     module_log_file="api_files/interaction_animations.log")
@@ -253,12 +254,42 @@ ANIMATION_MAP: Dict[tuple, Dict[str, Any]] = {
     ("poster", "grab"): {
         "controller": _IDLE_CTRL, "state": _IDLE_STATE, "fade": 0.3,
     },
+
+    # ── Characters (proximity touch) ───────────────────────────────────────
+    # Player physically touches a character → character reacts by talking.
+    # Fast fade (0.1s) so the response feels immediate.
+    # The LLM animation planner will also generate a speech bubble separately.
+    ("doctor", "touch"): {
+        "controller": "AnimatorControllers/HumanM@Talking",
+        "state": "HumanM@Talking", "fade": 0.1, "idle_delay": 5.0,
+    },
+    ("nurse", "touch"): {
+        "controller": "AnimatorControllers/HumanM@Talking",
+        "state": "HumanM@Talking", "fade": 0.1, "idle_delay": 5.0,
+    },
+    ("patient", "touch"): {
+        "controller": "AnimatorControllers/HumanM@Talking",
+        "state": "HumanM@Talking", "fade": 0.1, "idle_delay": 5.0,
+    },
+    ("emt", "touch"): {
+        "controller": "AnimatorControllers/HumanM@Talking",
+        "state": "HumanM@Talking", "fade": 0.1, "idle_delay": 5.0,
+    },
+    ("surgeon", "touch"): {
+        "controller": "AnimatorControllers/HumanM@Talking",
+        "state": "HumanM@Talking", "fade": 0.1, "idle_delay": 5.0,
+    },
+    ("infectiologist", "touch"): {
+        "controller": "AnimatorControllers/HumanM@Talking",
+        "state": "HumanM@Talking", "fade": 0.1, "idle_delay": 5.0,
+    },
 }
 
 # Fallback if the exact (category, event) is not in the map
 _FALLBACK: Dict[str, Dict[str, Any]] = {
     "grab":        {"controller": _IDLE_CTRL, "state": _IDLE_STATE, "fade": 0.3},
     "activate":    {"controller": _IDLE_CTRL, "state": _IDLE_STATE, "fade": 0.25},
+    "touch":       None,   # proximity touch — logged but no animation unless explicitly mapped
     "hover_enter": None,   # most hovers with no mapping are silently ignored
     "hover_exit":  None,
     "release":     None,
@@ -307,12 +338,14 @@ class InteractionAnimationHandler:
     in response to player interactions with scene objects.
     """
 
-    def __init__(self, events_file: Optional[Path] = None):
+    def __init__(self, events_file: Optional[Path] = None, interaction_log: Optional["InteractionLog"] = None):
         self._events_file: Path = events_file or _EVENTS_FILE
         # IDs we have already acted on (survive across ticks)
         self._processed_ids: set = set()
         # Scheduled idle returns: list of (trigger_at_epoch, ctrl, state)
         self._pending_idles: List[tuple] = []
+        # Optional persistent log — always created so standalone runs also log
+        self._log: InteractionLog = interaction_log or InteractionLog()
 
     # ── public API ────────────────────────────────────────────────────────
 
@@ -388,31 +421,76 @@ class InteractionAnimationHandler:
 
         # Skip event types that are universally silent
         if event_type in _SILENT_TYPES:
+            self._log.append(
+                event_type, obj_name,
+                animation_triggered=None,
+                llm_chosen=False,
+                reasoning="silent event type — no response",
+                player_pos=event.get("playerPosition"),
+            )
             return False
 
         # Look up specific mapping, then fallback
         config = ANIMATION_MAP.get((category, event_type))
         if config is None:
             config = _FALLBACK.get(event_type)
-        if config is None:
+
+        # ── Touch events: deduplicate into a single log entry with a counter ──
+        if event_type == "touch":
+            entry = self._log.touch_count_or_append(
+                obj_name,
+                reasoning=f"proximity touch ({category})",
+                player_pos=event.get("playerPosition"),
+            )
+            count = entry.get("touch_count", 1)
+            # Only trigger animation on the first touch per object
+            if count > 1:
+                logger.debug("[touch] %s — repeat #%d, skipping animation", obj_name, count)
+                return False
+            if config is None:
+                logger.debug("[touch] %s (%s) — first touch, no animation mapped", obj_name, category)
+                return False
+            # First touch with a mapped animation — fall through to dispatch below
+
+        elif config is None:
+            reasoning = f"no mapping for ({category}, {event_type})"
+            logger.debug("[%s] %s (%s) — %s", event_type, obj_name, category, reasoning)
+            self._log.append(
+                event_type, obj_name,
+                animation_triggered=None,
+                llm_chosen=False,
+                reasoning=reasoning,
+                player_pos=event.get("playerPosition"),
+            )
             return False
 
-        logger.info(
-            "[%s] %s (%s) → %s",
-            event_type, obj_name, category, config["state"],
-        )
+        anim_state = config["state"]
+        logger.info("[%s] %s (%s) → %s", event_type, obj_name, category, anim_state)
 
         # Cancel any previously queued idle return — new interaction takes over
         self._pending_idles.clear()
 
-        self._play(config["controller"], config["state"], config.get("fade", 0.25))
+        self._play(config["controller"], anim_state, config.get("fade", 0.25))
 
         idle_delay = config.get("idle_delay", 0.0)
         if idle_delay > 0:
             self._schedule_idle(idle_delay)
 
-        # Highlight the object so the player gets visual feedback
-        self._highlight(obj_name, duration=min(idle_delay, 2.0) if idle_delay else 1.0)
+        # Highlight the object — skip for touch (PlayerTouchHighlighter already does it
+        # and a second concurrent HighlightCoroutine would save the tinted colour as
+        # "original" and never restore it, leaving the character permanently blue).
+        if event_type != "touch":
+            self._highlight(obj_name, duration=min(idle_delay, 2.0) if idle_delay else 1.0)
+
+        # Log the deterministic animation choice (touch already logged above)
+        if event_type != "touch":
+            self._log.append(
+                event_type, obj_name,
+                animation_triggered=anim_state,
+                llm_chosen=False,
+                reasoning=f"static map ({category}, {event_type})",
+                player_pos=event.get("playerPosition"),
+            )
 
         return True
 

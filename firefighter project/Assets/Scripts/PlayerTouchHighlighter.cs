@@ -27,8 +27,11 @@ public class PlayerTouchHighlighter : MonoBehaviour
     public LayerMask touchLayers = ~0;
 
     [Header("Highlight")]
-    [Tooltip("Colour flashed on the touched object.")]
+    [Tooltip("Colour flashed on touched scene objects.")]
     public Color touchColor = new Color(1.0f, 0.7f, 0.1f);
+
+    [Tooltip("Colour flashed on touched characters (NPCs with an Animator).")]
+    public Color characterTouchColor = new Color(0.2f, 0.8f, 1.0f);
 
     [Tooltip("Seconds the highlight lasts.")]
     public float highlightDuration = 1.5f;
@@ -39,6 +42,7 @@ public class PlayerTouchHighlighter : MonoBehaviour
     // ── Runtime ───────────────────────────────────────────────────────────────
 
     private EnvironmentAgent _envAgent;
+    private InteractionEventReporter _eventReporter;
 
     // instanceID → last-highlighted timestamp
     private readonly Dictionary<int, float> _lastHighlight = new Dictionary<int, float>();
@@ -53,6 +57,10 @@ public class PlayerTouchHighlighter : MonoBehaviour
         _envAgent = FindFirstObjectByType<EnvironmentAgent>();
         if (_envAgent == null)
             Debug.LogWarning("[PlayerTouchHighlighter] EnvironmentAgent not found — highlights disabled.");
+
+        _eventReporter = FindFirstObjectByType<InteractionEventReporter>();
+        if (_eventReporter == null)
+            Debug.LogWarning("[PlayerTouchHighlighter] InteractionEventReporter not found — touch events will not be logged.");
 
         if (playerTransform == null && Camera.main != null)
         {
@@ -72,6 +80,14 @@ public class PlayerTouchHighlighter : MonoBehaviour
     {
         if (playerTransform == null) return;
 
+        // Lazy-resolve reporter in case it wasn't ready during Awake()
+        if (_eventReporter == null)
+        {
+            _eventReporter = FindFirstObjectByType<InteractionEventReporter>();
+            if (_eventReporter != null)
+                Debug.Log("[PlayerTouchHighlighter] InteractionEventReporter found — touch events will now be logged.");
+        }
+
         Collider[] hits = Physics.OverlapSphere(playerTransform.position, touchRadius, touchLayers);
 
         foreach (var col in hits)
@@ -88,11 +104,26 @@ public class PlayerTouchHighlighter : MonoBehaviour
 
             _lastHighlight[id] = now;
 
+            bool isCharacter = propRoot.GetComponentInChildren<Animator>() != null;
             string objName = propRoot.name.Replace("(Clone)", "").Trim();
-            Debug.Log($"[PlayerTouchHighlighter] TOUCH → {objName}  (dist={Vector3.Distance(playerTransform.position, col.transform.position):F2}m)");
+            Debug.Log($"[PlayerTouchHighlighter] TOUCH → {objName} ({(isCharacter ? "character" : "object")})  (dist={Vector3.Distance(playerTransform.position, col.transform.position):F2}m)");
 
             if (_envAgent != null)
-                _envAgent.HighlightObject(objName, touchColor.r, touchColor.g, touchColor.b, highlightDuration);
+            {
+                if (isCharacter)
+                    _envAgent.HighlightObject(propRoot, characterTouchColor.r, characterTouchColor.g, characterTouchColor.b, highlightDuration);
+                else
+                    _envAgent.HighlightObject(objName, touchColor.r, touchColor.g, touchColor.b, highlightDuration);
+            }
+
+            // Log the touch event so the Python agent can process it
+            if (_eventReporter != null)
+            {
+                _eventReporter.RecordEvent("touch", propRoot);
+                Debug.Log($"[PlayerTouchHighlighter] Logged touch event for '{objName}' → interaction_events.json");
+            }
+            else
+                Debug.LogWarning("[PlayerTouchHighlighter] InteractionEventReporter still null — touch not logged to JSON.");
         }
     }
 
@@ -145,5 +176,8 @@ public class PlayerTouchHighlighter : MonoBehaviour
         Gizmos.DrawSphere(playerTransform.position, touchRadius);
         Gizmos.color = touchColor;
         Gizmos.DrawWireSphere(playerTransform.position, touchRadius);
+        // Second ring shows character highlight colour for reference
+        Gizmos.color = characterTouchColor;
+        Gizmos.DrawWireSphere(playerTransform.position, touchRadius * 0.9f);
     }
 }

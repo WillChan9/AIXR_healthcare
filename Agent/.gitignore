@@ -6,5 +6,5 @@ __pycache__/
 venv/
 .DS_Store
 api_files/*.log
-api_files/actions.json
-api_files/reflection.json
+api_files/*.png
+api_files/*.json

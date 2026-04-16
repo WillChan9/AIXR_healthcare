@@ -16,9 +16,13 @@ from __future__ import annotations
 
 import os
 import json
+import threading
 import time
 from typing import Dict, List, Optional, Any
 from pathlib import Path
+
+# Serialise all file writes from any thread (main + AnimationPlannerThread)
+_file_lock = threading.Lock()
 
 
 # Get the project root directory (main.py is under Agent/).
@@ -39,25 +43,33 @@ def _load_commands() -> List[Dict[str, Any]]:
     """Load existing command list."""
     if not _COMMANDS_FILE.exists():
         return []
-    
-    try:
-        with open(_COMMANDS_FILE, 'r', encoding='utf-8') as f:
-            content = f.read().strip()
-            if not content:
-                return []
-            commands = json.loads(content)
-            if not isinstance(commands, list):
-                return []
-            return commands
-    except (json.JSONDecodeError, IOError):
-        return []
+    with _file_lock:
+        try:
+            with open(_COMMANDS_FILE, 'r', encoding='utf-8') as f:
+                content = f.read().strip()
+                if not content:
+                    return []
+                commands = json.loads(content)
+                if not isinstance(commands, list):
+                    return []
+                return commands
+        except (json.JSONDecodeError, IOError):
+            return []
 
 
 def _save_commands(commands: List[Dict[str, Any]]):
-    """Save command list to file."""
+    """Save command list to file, serialised across threads and retrying if Unity has it locked."""
     _ensure_scripts_dir()
-    with open(_COMMANDS_FILE, 'w', encoding='utf-8') as f:
-        json.dump(commands, f, indent=2, ensure_ascii=False)
+    with _file_lock:
+        for attempt in range(20):
+            try:
+                with open(_COMMANDS_FILE, 'w', encoding='utf-8') as f:
+                    json.dump(commands, f, indent=2, ensure_ascii=False)
+                return
+            except PermissionError:
+                if attempt == 19:
+                    raise
+                time.sleep(0.1)
 
 
 def _add_command(action: str, **kwargs) -> Dict[str, Any]:

@@ -10,6 +10,7 @@ using UnityEngine;
 /// </summary>
 [RequireComponent(typeof(InteractionSetup))]
 [RequireComponent(typeof(InteractionAnimationController))]
+[RequireComponent(typeof(InteractionEventReporter))]
 public class EnvironmentAgent : MonoBehaviour
 {
     // ── Scene-state tracking ──────────────────────────────────────────────────
@@ -48,6 +49,13 @@ public class EnvironmentAgent : MonoBehaviour
             interactionSetup = GetComponent<InteractionSetup>();
         if (interactionSetup == null)
             interactionSetup = FindFirstObjectByType<InteractionSetup>();
+
+        // Ensure InteractionEventReporter is present — required for Phase 2 touch logging
+        if (GetComponent<InteractionEventReporter>() == null)
+        {
+            gameObject.AddComponent<InteractionEventReporter>();
+            Debug.Log("[EnvironmentAgent] Auto-added InteractionEventReporter.");
+        }
 
         AutoBindDefaultHumanIfNeeded();
     }
@@ -150,6 +158,17 @@ public class EnvironmentAgent : MonoBehaviour
                     mainAnim.runtimeAnimatorController = null;
                 }
             }
+            // Ensure a collider exists so Physics.OverlapSphere (PlayerTouchHighlighter) can detect the character.
+            if (spawned.GetComponentInChildren<Collider>() == null)
+            {
+                CapsuleCollider cap = spawned.AddComponent<CapsuleCollider>();
+                cap.height = 1.8f;
+                cap.radius = 0.3f;
+                cap.center = new Vector3(0f, 0.9f, 0f);
+                cap.isTrigger = false;
+                Debug.Log($"[EnvironmentAgent] Added CapsuleCollider to '{humanName}' for touch detection.");
+            }
+
             _trackedObjects[humanName] = spawned;
             _namedCharacters[humanName] = spawned;
             WriteSceneState();
@@ -430,38 +449,38 @@ public class EnvironmentAgent : MonoBehaviour
     {
         var renderers = target.GetComponentsInChildren<Renderer>();
 
-        // Per-renderer: store original base color + emission state so we can restore them.
+        // Store material instances up-front so the restore loop uses the exact
+        // same instances we modified (calling .material again can return a
+        // different instance if another coroutine ran between apply and restore).
+        var mats         = new Material[renderers.Length];
         var origBase     = new Color[renderers.Length];
         var origEmission = new Color[renderers.Length];
         var hadEmission  = new bool[renderers.Length];
 
         for (int i = 0; i < renderers.Length; i++)
         {
-            Material mat = renderers[i].material;  // creates an instance (correct)
+            mats[i] = renderers[i].material; // instantiates if needed; same ref hereafter
 
-            // --- Base color tint (works with every shader) ---
-            // URP Lit uses "_BaseColor"; Standard / fallback uses "_Color".
-            if (mat.HasProperty("_BaseColor"))
+            if (mats[i].HasProperty("_BaseColor"))
             {
-                origBase[i] = mat.GetColor("_BaseColor");
-                mat.SetColor("_BaseColor", Color.Lerp(origBase[i], color, 0.6f));
+                origBase[i] = mats[i].GetColor("_BaseColor");
+                mats[i].SetColor("_BaseColor", Color.Lerp(origBase[i], color, 0.6f));
             }
-            else if (mat.HasProperty("_Color"))
+            else if (mats[i].HasProperty("_Color"))
             {
-                origBase[i] = mat.GetColor("_Color");
-                mat.SetColor("_Color", Color.Lerp(origBase[i], color, 0.6f));
+                origBase[i] = mats[i].GetColor("_Color");
+                mats[i].SetColor("_Color", Color.Lerp(origBase[i], color, 0.6f));
             }
 
-            // --- Emission overlay (Standard / URP — silent no-op on shaders without it) ---
-            hadEmission[i]  = mat.IsKeywordEnabled("_EMISSION");
-            origEmission[i] = mat.HasProperty("_EmissionColor")
-                ? mat.GetColor("_EmissionColor")
+            hadEmission[i]  = mats[i].IsKeywordEnabled("_EMISSION");
+            origEmission[i] = mats[i].HasProperty("_EmissionColor")
+                ? mats[i].GetColor("_EmissionColor")
                 : Color.black;
 
-            if (mat.HasProperty("_EmissionColor"))
+            if (mats[i].HasProperty("_EmissionColor"))
             {
-                mat.EnableKeyword("_EMISSION");
-                mat.SetColor("_EmissionColor", color * 0.8f);
+                mats[i].EnableKeyword("_EMISSION");
+                mats[i].SetColor("_EmissionColor", color * 0.8f);
             }
         }
 
@@ -470,21 +489,34 @@ public class EnvironmentAgent : MonoBehaviour
             yield return new WaitForSeconds(duration);
             for (int i = 0; i < renderers.Length; i++)
             {
-                if (renderers[i] == null) continue;
-                Material mat = renderers[i].material;
+                if (renderers[i] == null || mats[i] == null) continue;
 
-                if (mat.HasProperty("_BaseColor"))
-                    mat.SetColor("_BaseColor", origBase[i]);
-                else if (mat.HasProperty("_Color"))
-                    mat.SetColor("_Color", origBase[i]);
+                if (mats[i].HasProperty("_BaseColor"))
+                    mats[i].SetColor("_BaseColor", origBase[i]);
+                else if (mats[i].HasProperty("_Color"))
+                    mats[i].SetColor("_Color", origBase[i]);
 
-                if (mat.HasProperty("_EmissionColor"))
+                if (mats[i].HasProperty("_EmissionColor"))
                 {
-                    mat.SetColor("_EmissionColor", origEmission[i]);
-                    if (!hadEmission[i]) mat.DisableKeyword("_EMISSION");
+                    mats[i].SetColor("_EmissionColor", origEmission[i]);
+                    if (!hadEmission[i]) mats[i].DisableKeyword("_EMISSION");
                 }
             }
         }
+    }
+
+    /// <summary>Show a speech bubble above a named character for <paramref name="duration"/> seconds.</summary>
+    public void ShowSpeechBubble(string characterName, string text, float duration = 5f)
+    {
+        var charGo = GetCharacterByName(characterName);
+        if (charGo == null)
+        {
+            Debug.LogWarning($"[EnvironmentAgent] ShowSpeechBubble: character '{characterName}' not found.");
+            return;
+        }
+        var bubble = charGo.GetComponent<SpeechBubble>() ?? charGo.AddComponent<SpeechBubble>();
+        bubble.Show(text, duration);
+        Debug.Log($"[EnvironmentAgent] Speech bubble → {characterName}: \"{text}\"");
     }
 
     /// <summary>Clear highlight from an object.</summary>
