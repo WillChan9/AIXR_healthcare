@@ -358,6 +358,9 @@ public class AgentNetworkBridge : MonoBehaviour
                 AddString("message", cmd.message);
                 if (cmd.duration > 0) AddFloat("duration", cmd.duration);
                 break;
+            case "AttachPlayerAvatar":
+                AddString("objectName", cmd.objectName ?? cmd.humanName);
+                break;
             default:
                 break;
         }
@@ -509,6 +512,10 @@ public class AgentNetworkBridge : MonoBehaviour
 
             case "SetPhase":
                 environmentAgent.SetPhase(cmd.phase);
+                break;
+
+            case "AttachPlayerAvatar":
+                environmentAgent.AttachPlayerAvatar(cmd.objectName ?? cmd.humanName ?? "");
                 break;
 
             default:

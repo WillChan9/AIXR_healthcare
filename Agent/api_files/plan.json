@@ -1,6 +1,6 @@
 {
   "room_type": "Physical Therapy Gym",
-  "description": "A 6m x 6m physical therapy gym designed to test all VR interaction categories.",
+  "description": "A 6m x 6m physical therapy gym with an open floor plan, designed to test all VR interaction categories.",
   "layout_goals": {
     "interior_bounds": "6m x 6m",
     "minimum_objects": 15,
@@ -30,7 +30,7 @@
         "ParallelBars_01"
       ],
       "target_area": "floor",
-      "condition": "all objects are floor-accessible (y=0) unless wall-mounted, and spaced at least 0.8m apart"
+      "condition": "all objects are floor-accessible (y=0) unless wall-mounted"
     },
     {
       "step": 3,
@@ -57,7 +57,7 @@
     },
     {
       "step": 5,
-      "action": "Configure lighting",
+      "action": "Set lighting and ambiance",
       "objects": [],
       "target_area": "entire room",
       "condition": "SetLightIntensity warm (scale 1.4), SetAmbientColor warm white"

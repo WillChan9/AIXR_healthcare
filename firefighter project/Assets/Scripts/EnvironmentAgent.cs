@@ -28,6 +28,10 @@ public class EnvironmentAgent : MonoBehaviour
     [Tooltip("Leave empty to auto-find the first object with an Animator in the scene at Start (prefer names containing 'Human').")]
     [SerializeField] GameObject defaultHumanModel;
 
+    [Header("Player avatar (optional)")]
+    [Tooltip("Attach PlayerAvatarController here to enable player body animations via targetModel='player'.")]
+    [SerializeField] PlayerAvatarController playerAvatarController;
+
     [Header("ithappy Medical Pack: test prefab references (assign in Inspector)")]
     [SerializeField] GameObject ithappyFurniturePrefab;   // e.g. Medical_Pack/Prefabs/Furniture/Table_01
     [SerializeField] GameObject ithappyPropPrefab;        // e.g. Medical_Pack/Prefabs/Props/Syringe_02
@@ -58,6 +62,14 @@ public class EnvironmentAgent : MonoBehaviour
         }
 
         AutoBindDefaultHumanIfNeeded();
+
+        // Auto-add PlayerAvatarController so the player body is always present without Inspector setup
+        if (playerAvatarController == null)
+        {
+            playerAvatarController = GetComponent<PlayerAvatarController>()
+                                  ?? gameObject.AddComponent<PlayerAvatarController>();
+            Debug.Log("[EnvironmentAgent] Auto-added PlayerAvatarController.");
+        }
     }
 
     // ========== Object placement (same as Chair/Table; all loaded from Resources/Prefabs/) ==========
@@ -389,6 +401,11 @@ public class EnvironmentAgent : MonoBehaviour
 
     private void ActivatePhase2()
     {
+        // 0. Ensure PlayerAvatarController exists on AI_Manager
+        if (playerAvatarController == null)
+            playerAvatarController = gameObject.GetComponent<PlayerAvatarController>()
+                                  ?? gameObject.AddComponent<PlayerAvatarController>();
+
         // 1. Tag the XR Origin / Camera Rig as "Player"
         GameObject rig = FindXRRig();
         if (rig != null && !rig.CompareTag("Player"))
@@ -409,22 +426,19 @@ public class EnvironmentAgent : MonoBehaviour
             pth.playerTransform = rig.transform;
 
         pth.enabled = true;
+
+        // Give PlayerAvatarController the now-tagged XR rig so it can lock avatar position to it
+        if (playerAvatarController != null && rig != null && playerAvatarController.xrRigRoot == null)
+            playerAvatarController.xrRigRoot = rig.transform;
+
         Debug.Log("[EnvironmentAgent] Phase 2 active — PlayerTouchHighlighter enabled.");
     }
 
     private static GameObject FindXRRig()
     {
-        GameObject tagged = GameObject.FindWithTag("Player");
-        if (tagged != null) return tagged;
-
-        foreach (string n in new[] { "XR Origin", "XROrigin", "Camera Rig", "CameraRig" })
-        {
-            GameObject found = GameObject.Find(n);
-            if (found != null) return found;
-        }
-
-        if (Camera.main != null) return Camera.main.transform.root.gameObject;
-        return null;
+        // Delegate to PlayerAvatarController's shared helper (partial-name search)
+        Transform t = PlayerAvatarController.FindXRRigRoot();
+        return t != null ? t.gameObject : null;
     }
 
     // ========== Interaction feedback commands (Phase 2) ==========
@@ -804,6 +818,45 @@ public class EnvironmentAgent : MonoBehaviour
         target.transform.rotation = Quaternion.Euler(0, rotationY, 0);
         WriteSceneState();
         Debug.Log($"[EnvironmentAgent] MoveCharacter: '{name}' → {position}");
+    }
+
+    /// <summary>
+    /// Attach (or replace) the player body avatar.
+    /// prefabName: Resources path or plain prefab name (same lookup as PlaceObject).
+    /// The spawned avatar is registered under "player" so animation commands with
+    /// targetModel="player" automatically target it.
+    /// </summary>
+    public void AttachPlayerAvatar(string prefabName)
+    {
+        // Auto-add controller if not assigned
+        if (playerAvatarController == null)
+        {
+            playerAvatarController = gameObject.GetComponent<PlayerAvatarController>()
+                                  ?? gameObject.AddComponent<PlayerAvatarController>();
+            Debug.Log("[EnvironmentAgent] Auto-added PlayerAvatarController.");
+        }
+
+        GameObject prefab = LoadPrefabByName(prefabName);
+        if (prefab == null)
+        {
+            // Try direct Resources path
+            prefab = Resources.Load<GameObject>(prefabName);
+        }
+        if (prefab == null)
+        {
+            Debug.LogError($"[EnvironmentAgent] AttachPlayerAvatar: prefab '{prefabName}' not found in Resources.");
+            return;
+        }
+
+        GameObject avatarRoot = playerAvatarController.AttachAvatar(prefab);
+        if (avatarRoot != null)
+        {
+            // Register as "player" so GetCharacterByName("player") works
+            _namedCharacters["player"] = avatarRoot;
+            _trackedObjects["PlayerAvatar"] = avatarRoot;
+            WriteSceneState();
+            Debug.Log($"[EnvironmentAgent] Player avatar '{prefabName}' attached and registered as 'player'.");
+        }
     }
 
     /// <summary>
