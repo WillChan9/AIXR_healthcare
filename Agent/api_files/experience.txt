@@ -1,59 +1,52 @@
-Interaction Test — Physical Therapy Gym (interaction-rich, one of every interactable category)
+Emergency Triage Room — Small cramped space for rapid patient assessment
 
-This scene is a physical therapy gym designed specifically to test ALL VR interaction categories. Every object in the interaction animation map must appear: treadmill, wheelchair, trolley, utility cart, patient, folder/chart, monitor/screen, sanitizer dispenser, waste bin, caution sign, therapy table, towel dispenser, clock, and posters. Pack in one clear representative of each type so every interaction event category fires correctly.
+A small 4m x 4m emergency triage room used for rapid patient assessment. The room is tightly packed with essential emergency equipment. There should be a stretcher near the back wall, an exam table on the left side, a trolley cart with supplies beside the exam table, and a monitoring screen on the right wall. One EMT stands near the stretcher, one patient lies nearby.
 
-Room 6m × 6m, open floor plan. Objects spread out so no two are within 0.8m of each other. Every interaction-relevant object is floor-accessible (y=0) unless wall-mounted.
+The room should feel urgent and functional with minimal empty space. All equipment should be accessible from the center.
 
-REQUIRED INTERACTION OBJECTS (place every one of these — do not skip any):
-1. Treadmill_01 — right wall, z≈4.0
-2. WheelChair_01 — entry zone, z≈0.5, x≈1.5
-3. Trolley_01 — center-left, z≈2.5, x≈-1.5
-4. Utility_Cart_01 — left wall, z≈3.5
-5. Table_01 or Plinth_01 — left-center, z≈2.0, x≈-1.0 (therapy/mat table)
-6. Towel_Dispenser_01 — right wall, z≈2.0
-7. Sanitizer_Dispenser_01 — near entry, z≈0.3, x≈-1.0
-8. Waste_Bin_01 or Waste_01 — entry corner, z≈0.3, x≈1.8
-9. Caution_Sign_01 or Caution_01 — entry floor, z≈0.6, x≈0.5
-10. Clock_01 — back wall, z≈5.8, y≈2.5
-11. Poster_01 and Poster_02 — side walls, y≈1.8
-12. Folder_01 and Folder_02 — on Desk_01 surface, y≈0.8
-13. Screen_01 or Monitor_01 — on Desk_01, z≈5.0, x≈-1.5
-14. Desk_01 — back-left corner, z≈4.8, x≈-1.8
-15. ParallelBars_01 — room center, z≈3.0
+REQUIRED OBJECTS:
+1. Stretchers_01 — back wall, z~3.5
+2. Exam_Table_01 — left side, x~-1.5, z~2.0
+3. Trolley_01 — beside exam table, x~-1.0, z~3.0
+4. Monitor_01 — right wall, x~1.5, z~2.5
+5. Aid_Kit_01 — on trolley surface, y~0.8
+6. Syringe_01 — near exam table
+7. Stethoscope_01 — near exam table
+8. Folder_01 — on any surface
 
 Staff and patients:
-- 1 Patient character near Treadmill_01 (walking/therapy)
-- 1 Therapist character near ParallelBars_01 (assisting)
+- 1 EMT_01 near Stretchers_01
+- 1 Patient_01 near exam table
 
-Room exterior (required):
-- 4 walls forming a 6m × 6m enclosure (wall height 3.2m).
-- Front wall with 1.4m doorway centered at x=0.
+Room exterior:
+- 4 walls forming a 4m x 4m enclosure (wall height 3.0m).
+- Front wall with 1.0m doorway centered at x=0.
 - Ceiling covering the full room.
-- SetLightIntensity warm (scale 1.4), SetAmbientColor warm white.
+- SetLightIntensity bright (scale 1.6), SetAmbientColor cool white.
 
 [room_config]
-scene_type = Interaction Test Gym
-room_width = 6
-room_depth = 6
-room_height = 3.2
-lighting_intensity = 1.4
-ambient_r = 0.95
-ambient_g = 0.91
-ambient_b = 0.85
-doorway_width = 1.4
+scene_type = Emergency Triage Room
+room_width = 4
+room_depth = 4
+room_height = 3.0
+lighting_intensity = 1.6
+ambient_r = 0.90
+ambient_g = 0.92
+ambient_b = 0.95
+doorway_width = 1.0
 doorway_x = 0
-x_min = -2.8
-x_max = 2.8
+x_min = -1.8
+x_max = 1.8
 z_min = 0.1
-z_max = 5.9
-max_objects = 30
-min_objects = 15
-surface_keywords = Table,Desk,Rack,Cart,Trolley,Counter,Plinth,Stand
-supply_keywords = Cart,Trolley,Rack,Dispenser,Stand
-character_prefixes = Therapist,Doctor,Nurse,Patient,Assistant,Aide
-small_prop_keywords = Folder,Tray,Band,Ball
-decor_keywords = Poster,Clock,Sign,Mirror,Panel
-additions_furniture = Trolley_01,Desk_01,Utility_Cart_01,WheelChair_01,Towel_Dispenser_01,Sanitizer_Dispenser_01,Waste_Bin_01,Cabinet_01
-additions_equipment = Treadmill_01,ParallelBars_01,Table_01,Plinth_01,Bike_01
-additions_props = Folder_01,Folder_02,Folder_03,Caution_Sign_01,Caution_01,Band_01
-additions_decor = Poster_01,Poster_02,Poster_03,Clock_01,Sign_01,Mirror_Wall_01
+z_max = 3.9
+max_objects = 12
+min_objects = 8
+surface_keywords = Table,Desk,Trolley,Cart,Stand
+supply_keywords = Cart,Trolley,Rack
+character_prefixes = EMT,Doctor,Nurse,Patient
+small_prop_keywords = Folder,Syringe,Stethoscope,Aid_Kit
+decor_keywords = Poster,Clock
+additions_furniture = Trolley_01,Utility_Cart_01
+additions_equipment = Monitor_01,Defibrillator_01
+additions_props = Folder_01,Syringe_01,Stethoscope_01,Aid_Kit_01,Mask_Box_01
+additions_decor = Clock_01

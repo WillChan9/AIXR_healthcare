@@ -1,0 +1,52 @@
+Emergency Triage Room — Small cramped space for rapid patient assessment
+
+A small 4m x 4m emergency triage room used for rapid patient assessment. The room is tightly packed with essential emergency equipment. There should be a stretcher near the back wall, an exam table on the left side, a trolley cart with supplies beside the exam table, and a monitoring screen on the right wall. One EMT stands near the stretcher, one patient lies nearby.
+
+The room should feel urgent and functional with minimal empty space. All equipment should be accessible from the center.
+
+REQUIRED OBJECTS:
+1. Stretchers_01 — back wall, z~3.5
+2. Exam_Table_01 — left side, x~-1.5, z~2.0
+3. Trolley_01 — beside exam table, x~-1.0, z~3.0
+4. Monitor_01 — right wall, x~1.5, z~2.5
+5. Aid_Kit_01 — on trolley surface, y~0.8
+6. Syringe_01 — near exam table
+7. Stethoscope_01 — near exam table
+8. Folder_01 — on any surface
+
+Staff and patients:
+- 1 EMT_01 near Stretchers_01
+- 1 Patient_01 near exam table
+
+Room exterior:
+- 4 walls forming a 4m x 4m enclosure (wall height 3.0m).
+- Front wall with 1.0m doorway centered at x=0.
+- Ceiling covering the full room.
+- SetLightIntensity bright (scale 1.6), SetAmbientColor cool white.
+
+[room_config]
+scene_type = Emergency Triage Room
+room_width = 4
+room_depth = 4
+room_height = 3.0
+lighting_intensity = 1.6
+ambient_r = 0.90
+ambient_g = 0.92
+ambient_b = 0.95
+doorway_width = 1.0
+doorway_x = 0
+x_min = -1.8
+x_max = 1.8
+z_min = 0.1
+z_max = 3.9
+max_objects = 12
+min_objects = 8
+surface_keywords = Table,Desk,Trolley,Cart,Stand
+supply_keywords = Cart,Trolley,Rack
+character_prefixes = EMT,Doctor,Nurse,Patient
+small_prop_keywords = Folder,Syringe,Stethoscope,Aid_Kit
+decor_keywords = Poster,Clock
+additions_furniture = Trolley_01,Utility_Cart_01
+additions_equipment = Monitor_01,Defibrillator_01
+additions_props = Folder_01,Syringe_01,Stethoscope_01,Aid_Kit_01,Mask_Box_01
+additions_decor = Clock_01

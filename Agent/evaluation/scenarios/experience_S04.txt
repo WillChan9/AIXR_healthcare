@@ -1,0 +1,53 @@
+Surgery Prep Room — Precise surface placement and instrument layout
+
+A 5m x 5m surgery preparation room with a focus on instruments and supplies placed ON surfaces (tables, carts). The room should have surgery carts, instrument trays, an autoclave for sterilization, and sterile supply containers. Small props (scalpels, forceps, bottles) should rest on table/cart surfaces at y>0.7, not on the floor.
+
+REQUIRED OBJECTS:
+1. Surgery_Cart_01 — center, z~2.5
+2. Surgical_Table_01 — back wall, z~4.0
+3. Autoclave_01 — right wall, x~2.0, z~3.0
+4. Trolley_01 — left side, x~-1.8, z~2.0
+5. Utility_Cart_01 — near door, z~1.0
+6. Tray_01 — ON Surgery_Cart_01 surface, y~0.8
+7. Scalpel_01 — ON surface, y~0.8
+8. Forceps_01 — ON surface, y~0.8
+9. Bottle_01 — ON Trolley_01, y~0.8
+10. Mask_Box_01 — ON Utility_Cart_01, y~0.8
+11. Syringe_01 — ON surface, y~0.8
+12. Sterilizer_Drum_01 — near Autoclave_01
+
+Staff:
+- 1 Doctor_01 near Surgical_Table_01
+
+Room exterior:
+- 4 walls forming a 5m x 5m enclosure (wall height 3.0m).
+- Front wall with 1.2m doorway centered at x=0.
+- Ceiling covering the full room.
+- SetLightIntensity bright (scale 1.8), SetAmbientColor cool white.
+
+[room_config]
+scene_type = Surgery Prep Room
+room_width = 5
+room_depth = 5
+room_height = 3.0
+lighting_intensity = 1.8
+ambient_r = 0.92
+ambient_g = 0.94
+ambient_b = 0.96
+doorway_width = 1.2
+doorway_x = 0
+x_min = -2.3
+x_max = 2.3
+z_min = 0.1
+z_max = 4.9
+max_objects = 20
+min_objects = 12
+surface_keywords = Table,Cart,Trolley,Stand,Tray
+supply_keywords = Cart,Trolley
+character_prefixes = Doctor,Surgeon,Nurse
+small_prop_keywords = Scalpel,Forceps,Syringe,Bottle,Tray,Mask_Box
+decor_keywords = Poster,Clock
+additions_furniture = Trolley_02,Utility_Cart_02
+additions_equipment = Sterilizer_01
+additions_props = Scalpel_02,Forceps_02,Bottle_02,Syringe_02,Bowl_01,Scissors_01
+additions_decor = Clock_01

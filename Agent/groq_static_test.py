@@ -159,6 +159,7 @@ def _strip_unknown_fields(commands: List[Dict]) -> List[Dict]:
         "SetHumanAnimatorTrigger": {"action", "paramName"},
         "MoveObject": {"action", "objectName", "x", "y", "z", "rotationY"},
         "DeleteObject": {"action", "objectName"},
+        "ClearScene": {"action"},
     }
     meta = {"id", "timestamp", "executed", "done"}
     result = []
@@ -417,6 +418,7 @@ def _validate_commands(commands: List[Dict]) -> None:
         "DeleteObject",
         "HighlightObject",
         "ClearHighlight",
+        "ClearScene",
     }
 
     allowed_meta = {"id", "timestamp", "executed", "done"}
@@ -442,6 +444,7 @@ def _validate_commands(commands: List[Dict]) -> None:
         "DeleteObject": {"action", "objectName"},
         "HighlightObject": {"action", "objectName", "r", "g", "b"},
         "ClearHighlight": {"action", "objectName"},
+        "ClearScene": {"action"},
     }
 
     allowed_fields_by_action = {
@@ -466,6 +469,7 @@ def _validate_commands(commands: List[Dict]) -> None:
         "DeleteObject": {"action", "objectName"},
         "HighlightObject": {"action", "objectName", "r", "g", "b", "duration"},
         "ClearHighlight": {"action", "objectName"},
+        "ClearScene": {"action"},
     }
 
     def _is_number(v):

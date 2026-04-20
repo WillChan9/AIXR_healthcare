@@ -1,0 +1,52 @@
+ICU Single-Patient Room — Character-centric, equipment-dense
+
+A small 4m x 5m ICU room focused on a single patient surrounded by monitoring and life support equipment. The patient bed is the focal point in the center-back of the room, with monitoring equipment on both sides and a nurse attending.
+
+REQUIRED OBJECTS:
+1. Bed_01 — center-back, x~0, z~3.5
+2. Monitor_01 — left of bed, x~-1.5, z~3.5
+3. Monitor_02 — right of bed, x~1.5, z~3.5
+4. IV_Drip_01 — right side, x~1.2, z~4.0
+5. Ventilator_01 — left side, x~-1.5, z~4.5
+6. Utility_Cart_01 — foot of bed, z~2.0
+7. Trolley_01 — right wall, x~1.8, z~2.0
+8. Syringe_01 — on cart surface
+9. Stethoscope_01 — near nurse
+10. Folder_01 — on cart surface
+
+Staff and patients:
+- 1 Patient_01 — near bed
+- 1 Nurse_01 — beside bed, x~-0.5, z~3.0
+
+Room exterior:
+- 4 walls forming a 4m x 5m enclosure (wall height 3.0m).
+- Front wall with 1.2m doorway centered at x=0.
+- Ceiling covering the full room.
+- SetLightIntensity moderate (scale 1.0), SetAmbientColor neutral.
+
+[room_config]
+scene_type = ICU Single-Patient Room
+room_width = 4
+room_depth = 5
+room_height = 3.0
+lighting_intensity = 1.0
+ambient_r = 0.90
+ambient_g = 0.90
+ambient_b = 0.92
+doorway_width = 1.2
+doorway_x = 0
+x_min = -1.8
+x_max = 1.8
+z_min = 0.1
+z_max = 4.9
+max_objects = 18
+min_objects = 10
+surface_keywords = Table,Cart,Trolley,Stand
+supply_keywords = Cart,Trolley,Dispenser
+character_prefixes = Doctor,Nurse,Patient
+small_prop_keywords = Syringe,Stethoscope,Folder,Bottle
+decor_keywords = Clock,Poster
+additions_furniture = Utility_Cart_02,Chair_01
+additions_equipment = Monitor_03,Life_Support_01,Oxygen_Concentrator_01
+additions_props = Syringe_02,Bottle_01,Mask_Box_01
+additions_decor = Clock_01

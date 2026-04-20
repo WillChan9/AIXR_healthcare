@@ -1,0 +1,63 @@
+Nurse Station (Open) — Maximum scale and density stress test
+
+A large 8m x 8m open nurse station that serves as the central hub of a hospital floor. Multiple desks with monitors and computers, supply cabinets, medication carts, and 3 nurse characters at various positions. This scenario stress-tests the system at maximum scale and object density.
+
+REQUIRED OBJECTS:
+1. Reception_Desk_01 — front-center, z~2.0, x~-2.0
+2. Reception_Desk_02 — front-center, z~2.0, x~2.0
+3. Reception_Desk_03 — back, z~6.0
+4. PC_Monitor_01 — ON desk 1, y~0.8
+5. Computer_01 — ON desk 2, y~0.8
+6. Keyboard_01 — ON desk 1, y~0.8
+7. Chair_01 — at desk 1
+8. Chair_02 — at desk 2
+9. Utility_Cart_01 — left side, x~-3.0, z~4.0
+10. Utility_Cart_02 — right side, x~3.0, z~4.0
+11. Trolley_01 — center, z~4.0
+12. Trolley_02 — back, z~6.5
+13. Folder_01 — ON desk surface
+14. Folder_02 — ON desk surface
+15. Folder_03 — ON desk surface
+16. Monitor_01 — wall-mounted or on desk
+17. Screen_01 — divider, z~4.0
+18. Poster_01 — wall
+19. Poster_02 — wall
+20. Clock_01 — back wall
+
+Staff:
+- 1 Nurse_01 — at desk 1
+- 1 Nurse_02 — at desk 2
+- 1 Nurse_03 — near supply cart
+
+Room exterior:
+- 4 walls forming an 8m x 8m enclosure (wall height 3.2m).
+- Front wall with 1.6m doorway centered at x=0.
+- Ceiling covering the full room.
+- SetLightIntensity bright (scale 1.5), SetAmbientColor daylight white.
+
+[room_config]
+scene_type = Nurse Station Open
+room_width = 8
+room_depth = 8
+room_height = 3.2
+lighting_intensity = 1.5
+ambient_r = 0.94
+ambient_g = 0.94
+ambient_b = 0.94
+doorway_width = 1.6
+doorway_x = 0
+x_min = -3.8
+x_max = 3.8
+z_min = 0.1
+z_max = 7.9
+max_objects = 35
+min_objects = 20
+surface_keywords = Table,Desk,Cart,Trolley,Counter,Stand
+supply_keywords = Cart,Trolley,Rack
+character_prefixes = Doctor,Nurse,Patient
+small_prop_keywords = Folder,Keyboard,Computer,Copybook,Mouse
+decor_keywords = Poster,Clock,Sign
+additions_furniture = Chair_01,Chair_02,Utility_Cart_03,Utility_Cart_04,Trolley_01
+additions_equipment = Monitor_02,Screen_02
+additions_props = Folder_04,Folder_05,Copybook_01,Copybook_02,Mouse_01
+additions_decor = Poster_03,Poster_04,Clock_01,Wall_Panel_01
