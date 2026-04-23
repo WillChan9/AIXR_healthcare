@@ -1,0 +1,79 @@
+{
+  "room_type": "ICU Single-Patient Room",
+  "description": "A small 4m x 5m ICU room focused on a single patient surrounded by monitoring and life support equipment.",
+  "layout_goals": {
+    "interior_bounds": "4m x 5m",
+    "minimum_objects": 10,
+    "focal_point": "Patient Bed"
+  },
+  "steps": [
+    {
+      "step": 1,
+      "action": "Place patient bed",
+      "objects": [
+        "Bed_01"
+      ],
+      "target_area": "center-back",
+      "condition": "x~0, z~3.5"
+    },
+    {
+      "step": 2,
+      "action": "Position monitoring equipment",
+      "objects": [
+        "Monitor_01",
+        "Monitor_02"
+      ],
+      "target_area": "left and right of bed",
+      "condition": "Monitor_01: x~-1.5, z~3.5; Monitor_02: x~1.5, z~3.5"
+    },
+    {
+      "step": 3,
+      "action": "Place IV drip and ventilator",
+      "objects": [
+        "IV_Drip_01",
+        "Ventilator_01"
+      ],
+      "target_area": "right and left sides",
+      "condition": "IV_Drip_01: x~1.2, z~4.0; Ventilator_01: x~-1.5, z~4.5"
+    },
+    {
+      "step": 4,
+      "action": "Position utility cart and trolley",
+      "objects": [
+        "Utility_Cart_01",
+        "Trolley_01"
+      ],
+      "target_area": "foot of bed and right wall",
+      "condition": "Utility_Cart_01: z~2.0; Trolley_01: x~1.8, z~2.0"
+    },
+    {
+      "step": 5,
+      "action": "Place medical supplies",
+      "objects": [
+        "Syringe_01",
+        "Folder_01"
+      ],
+      "target_area": "on cart surface",
+      "condition": "Syringe_01 and Folder_01 on Utility_Cart_01"
+    },
+    {
+      "step": 6,
+      "action": "Position nurse and patient",
+      "objects": [
+        "Nurse_01",
+        "Patient_01"
+      ],
+      "target_area": "near bed",
+      "condition": "Nurse_01: x~-0.5, z~3.0; Patient_01: near Bed_01"
+    },
+    {
+      "step": 7,
+      "action": "Place stethoscope",
+      "objects": [
+        "Stethoscope_01"
+      ],
+      "target_area": "near nurse",
+      "condition": "Stethoscope_01 within 1m of Nurse_01"
+    }
+  ]
+}

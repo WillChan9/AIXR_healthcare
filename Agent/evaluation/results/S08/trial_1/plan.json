@@ -1,0 +1,77 @@
+{
+  "room_type": "Rehabilitation Corridor",
+  "description": "Elongated room, linear layout",
+  "layout_goals": {
+    "interior_bounds": "3m x 10m",
+    "minimum_objects": 8,
+    "focal_point": "entrance"
+  },
+  "steps": [
+    {
+      "step": 1,
+      "action": "Install handrails",
+      "objects": [
+        "Handrail_01",
+        "Handrail_02"
+      ],
+      "target_area": "left and right walls at z~3.0",
+      "condition": "Handrails must be parallel and 2.4m apart"
+    },
+    {
+      "step": 2,
+      "action": "Install handrails",
+      "objects": [
+        "Handrail_03",
+        "Handrail_04"
+      ],
+      "target_area": "left and right walls at z~6.0",
+      "condition": "Handrails must be parallel and 2.4m apart"
+    },
+    {
+      "step": 3,
+      "action": "Place wheelchair",
+      "objects": [
+        "WheelChair_01"
+      ],
+      "target_area": "near entrance, z~1.0",
+      "condition": "Wheelchair must not obstruct doorway"
+    },
+    {
+      "step": 4,
+      "action": "Place walker",
+      "objects": [
+        "Walker_01"
+      ],
+      "target_area": "near entrance, z~1.5, x~1.0",
+      "condition": "Walker must be within 0.5m of wheelchair"
+    },
+    {
+      "step": 5,
+      "action": "Place bench",
+      "objects": [
+        "Bench_01"
+      ],
+      "target_area": "midway rest point, z~5.0",
+      "condition": "Bench must be centered between handrails"
+    },
+    {
+      "step": 6,
+      "action": "Place caution sign",
+      "objects": [
+        "Caution_Sign_01"
+      ],
+      "target_area": "entrance, z~0.5",
+      "condition": "Sign must be visible from doorway"
+    },
+    {
+      "step": 7,
+      "action": "Position patient and nurse",
+      "objects": [
+        "Patient_01",
+        "Nurse_01"
+      ],
+      "target_area": "corridor, z~4.0 and z~4.5",
+      "condition": "Patient and nurse must be within handrail reach"
+    }
+  ]
+}

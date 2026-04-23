@@ -1,0 +1,81 @@
+{
+  "room_type": "Nurse Station (Open)",
+  "description": "Maximum scale and density stress test",
+  "layout_goals": {
+    "interior_bounds": "8m x 8m",
+    "minimum_objects": 20,
+    "focal_point": "central hub of a hospital floor"
+  },
+  "steps": [
+    {
+      "step": 1,
+      "action": "Place furniture",
+      "objects": [
+        "Reception_Desk_01",
+        "Reception_Desk_02",
+        "Reception_Desk_03",
+        "Utility_Cart_01",
+        "Utility_Cart_02",
+        "Trolley_01",
+        "Trolley_02"
+      ],
+      "target_area": "front-center and back areas",
+      "condition": "desks and carts are placed with sufficient space for movement"
+    },
+    {
+      "step": 2,
+      "action": "Add computer equipment",
+      "objects": [
+        "PC_Monitor_01",
+        "Computer_01",
+        "Keyboard_01",
+        "Monitor_01"
+      ],
+      "target_area": "on desks",
+      "condition": "monitors and computers are placed on desks at a comfortable height (y~0.8)"
+    },
+    {
+      "step": 3,
+      "action": "Add seating",
+      "objects": [
+        "Chair_01",
+        "Chair_02"
+      ],
+      "target_area": "at desks",
+      "condition": "chairs are placed at desks for nurse seating"
+    },
+    {
+      "step": 4,
+      "action": "Add medical supplies and documents",
+      "objects": [
+        "Folder_01",
+        "Folder_02",
+        "Folder_03"
+      ],
+      "target_area": "on desk surfaces",
+      "condition": "folders are scattered on desk surfaces"
+    },
+    {
+      "step": 5,
+      "action": "Add room decorations and staff",
+      "objects": [
+        "Screen_01",
+        "Poster_01",
+        "Poster_02",
+        "Clock_01",
+        "Nurse_01",
+        "Nurse_02",
+        "Nurse_03"
+      ],
+      "target_area": "various locations",
+      "condition": "decorations are placed on walls and staff are positioned at desks and near supply carts"
+    },
+    {
+      "step": 6,
+      "action": "Finalize lighting and ambiance",
+      "objects": [],
+      "target_area": "entire room",
+      "condition": "light intensity is set to 1.5 and ambient color is daylight white"
+    }
+  ]
+}

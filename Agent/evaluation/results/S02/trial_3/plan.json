@@ -1,0 +1,83 @@
+{
+  "room_type": "Hospital Ward (4-Bed)",
+  "description": "Symmetric multi-bed patient care room",
+  "layout_goals": {
+    "interior_bounds": "8m x 6m",
+    "minimum_objects": 12,
+    "focal_point": "center of the room"
+  },
+  "steps": [
+    {
+      "step": 1,
+      "action": "Place beds in a 2x2 grid layout",
+      "objects": [
+        "Bed_01",
+        "Bed_02",
+        "Bed_03",
+        "Bed_04"
+      ],
+      "target_area": "entire room",
+      "condition": "Beds are evenly spaced with at least 1m walkway clearance between them"
+    },
+    {
+      "step": 2,
+      "action": "Add bedside tables",
+      "objects": [
+        "Table_01",
+        "Table_02",
+        "Table_03",
+        "Table_04"
+      ],
+      "target_area": "near each bed",
+      "condition": "Tables are placed beside each bed"
+    },
+    {
+      "step": 3,
+      "action": "Add chairs near beds",
+      "objects": [
+        "Chair_01",
+        "Chair_02"
+      ],
+      "target_area": "near Bed_01 and Bed_02",
+      "condition": "Chairs are placed near beds"
+    },
+    {
+      "step": 4,
+      "action": "Place room divider screen",
+      "objects": [
+        "Screen_01"
+      ],
+      "target_area": "center of the room, z~2.8",
+      "condition": "Screen is placed to divide the room"
+    },
+    {
+      "step": 5,
+      "action": "Place utility cart",
+      "objects": [
+        "Utility_Cart_01"
+      ],
+      "target_area": "center aisle",
+      "condition": "Cart is placed in the center aisle"
+    },
+    {
+      "step": 6,
+      "action": "Position nurses",
+      "objects": [
+        "Nurse_01",
+        "Nurse_02"
+      ],
+      "target_area": "center of room and back area",
+      "condition": "Nurses are positioned to attend patients"
+    },
+    {
+      "step": 7,
+      "action": "Position patients",
+      "objects": [
+        "Patient_01",
+        "Patient_02"
+      ],
+      "target_area": "near Bed_01 and Bed_03",
+      "condition": "Patients are positioned near assigned beds"
+    }
+  ]
+}

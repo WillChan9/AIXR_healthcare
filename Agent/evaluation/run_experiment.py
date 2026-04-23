@@ -54,45 +54,64 @@ def _find_scenario_file(scenario_id: str) -> Optional[Path]:
     return None
 
 
-def _clear_unity_scene(wait: float = 5.0) -> None:
-    """Send ClearScene command to Unity via unity_commands.json, then poll until confirmed."""
-    clear_cmd = [
-        {
-            "action": "ClearScene",
-            "id": f"cmd_clear_{int(time.time() * 1000)}",
-            "timestamp": time.time(),
-            "executed": False,
-        }
-    ]
+def _clear_unity_scene(wait: float = 5.0, retries: int = 3, stabilize: float = 3.0) -> bool:
+    """Send ClearScene to Unity and wait for confirmation.
+
+    Retries up to `retries` times if Unity doesn't respond within `wait` seconds.
+    After confirmation, waits `stabilize` seconds for Unity to finish destroying
+    objects and garbage-collect before the next trial loads more geometry.
+
+    Returns True if confirmed, False if all retries exhausted.
+    """
     COMMANDS_PATH.parent.mkdir(parents=True, exist_ok=True)
-    COMMANDS_PATH.write_text(json.dumps(clear_cmd, indent=2), encoding="utf-8")
-    print(f"    Sent ClearScene, polling for confirmation (max {wait}s)...")
 
-    # Poll: Unity sets executed=true and rewrites the file after processing
-    deadline = time.time() + wait
-    confirmed = False
-    while time.time() < deadline:
-        time.sleep(0.5)
-        try:
-            data = json.loads(COMMANDS_PATH.read_text(encoding="utf-8-sig"))
-            if isinstance(data, list) and data and data[0].get("executed"):
-                confirmed = True
-                break
-        except Exception:
-            pass
-        # Also check if scene_state.json is empty/has no non-Cube objects
-        try:
-            state = json.loads(SCENE_STATE_PATH.read_text(encoding="utf-8-sig"))
-            if isinstance(state, list) and len(state) == 0:
-                confirmed = True
-                break
-        except Exception:
-            pass
+    for attempt in range(1, retries + 1):
+        clear_cmd = [
+            {
+                "action": "ClearScene",
+                "id": f"cmd_clear_{int(time.time() * 1000)}",
+                "timestamp": time.time(),
+                "executed": False,
+            }
+        ]
+        COMMANDS_PATH.write_text(json.dumps(clear_cmd, indent=2), encoding="utf-8")
+        send_time = time.time()
+        print(f"    Sent ClearScene (attempt {attempt}/{retries}), polling {wait}s...")
 
-    if confirmed:
-        print(f"    ClearScene confirmed.")
-    else:
-        print(f"    ClearScene not confirmed within {wait}s — proceeding anyway.")
+        # Poll for confirmation.
+        # Do NOT check scene_state.json length — we write [] ourselves in
+        # _clear_api_files() which would cause a false-positive.
+        # Only trust: executed flag on the command, OR scene_state mtime > send_time
+        # (Unity wrote it after we sent — not our own clear).
+        deadline = time.time() + wait
+        confirmed = False
+        while time.time() < deadline:
+            time.sleep(0.5)
+            try:
+                data = json.loads(COMMANDS_PATH.read_text(encoding="utf-8-sig"))
+                if isinstance(data, list) and data and data[0].get("executed"):
+                    confirmed = True
+                    break
+            except Exception:
+                pass
+            try:
+                if SCENE_STATE_PATH.exists() and SCENE_STATE_PATH.stat().st_mtime > send_time:
+                    state = json.loads(SCENE_STATE_PATH.read_text(encoding="utf-8-sig"))
+                    if isinstance(state, list) and len(state) == 0:
+                        confirmed = True
+                        break
+            except Exception:
+                pass
+
+        if confirmed:
+            print(f"    ClearScene confirmed. Waiting {stabilize}s for Unity to stabilize...")
+            time.sleep(stabilize)
+            return True
+
+        print(f"    ClearScene not confirmed within {wait}s — retrying...")
+
+    print(f"    ClearScene not confirmed after {retries} attempts — proceeding anyway.")
+    return False
 
 
 def _clear_api_files() -> None:
@@ -112,6 +131,52 @@ def _clear_api_files() -> None:
         SCENE_STATE_PATH.write_text("[]", encoding="utf-8")
     except Exception:
         pass
+
+
+def _check_unity_alive(timeout: float = 10.0) -> bool:
+    """Return True if Unity is processing commands (at least 1 non-structural command
+    in unity_commands.json has executed=true after waiting up to `timeout` seconds).
+    Structural CreateObjectByName commands (walls) are excluded since they execute first
+    and may have been from a previous run."""
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        try:
+            cmds = json.loads(COMMANDS_PATH.read_text(encoding="utf-8-sig"))
+            executed = [
+                c for c in cmds
+                if c.get("executed")
+                and not (c.get("action") == "CreateObjectByName" and c.get("objectName") == "Cube")
+            ]
+            if executed:
+                return True
+        except Exception:
+            pass
+        time.sleep(1.0)
+    # Fall back: check if ANY command executed (even structural)
+    try:
+        cmds = json.loads(COMMANDS_PATH.read_text(encoding="utf-8-sig"))
+        if any(c.get("executed") for c in cmds):
+            return True
+    except Exception:
+        pass
+    return False
+
+
+def _wait_for_fresh_screenshots(after_time: float, timeout: float = 20.0) -> bool:
+    """Wait for Unity to write fresh screenshots captured after `after_time`.
+    Returns True if at least 2 of 3 views updated within the timeout."""
+    suffixes = ("_xz.png", "_xy.png", "_yz.png")
+    paths = [API_FILES_DIR / f"scene_screenshot{s}" for s in suffixes]
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        fresh = [
+            p for p in paths
+            if p.exists() and p.stat().st_size > 0 and p.stat().st_mtime > after_time
+        ]
+        if len(fresh) >= 2:
+            return True
+        time.sleep(1.0)
+    return False
 
 
 def _collect_artifacts(trial_dir: Path) -> None:
@@ -251,8 +316,12 @@ def main():
                         help="Number of trials per scenario (default: 3)")
     parser.add_argument("--timeout", type=int, default=300,
                         help="Timeout per trial in seconds (default: 300)")
-    parser.add_argument("--clear-wait", type=float, default=5.0,
-                        help="Seconds to wait after ClearScene for Unity to process (default: 5)")
+    parser.add_argument("--clear-wait", type=float, default=8.0,
+                        help="Seconds to wait per ClearScene attempt (default: 8)")
+    parser.add_argument("--clear-retries", type=int, default=3,
+                        help="Number of ClearScene retry attempts if Unity doesn't respond (default: 3)")
+    parser.add_argument("--stabilize", type=float, default=3.0,
+                        help="Seconds to wait after ClearScene confirms, for Unity GC to settle (default: 3)")
     parser.add_argument("--skip-judge", action="store_true",
                         help="Skip LLM judge evaluation")
     parser.add_argument("--judge-provider", choices=["groq", "openai"], default="groq",
@@ -261,6 +330,8 @@ def main():
                         help="Only run evaluation on existing results (no Phase 1 generation)")
     parser.add_argument("--aggregate-only", action="store_true",
                         help="Only run aggregation on existing evaluation reports")
+    parser.add_argument("--abort-no-unity", action="store_true",
+                        help="Abort the entire experiment if Unity stops responding")
     args = parser.parse_args()
 
     # Determine which scenarios to run
@@ -299,14 +370,38 @@ def main():
             # Phase 1 generation (unless eval-only)
             if not args.eval_only:
                 # Clear previous scene before each trial
-                _clear_unity_scene(wait=args.clear_wait)
+                _clear_unity_scene(
+                    wait=args.clear_wait,
+                    retries=args.clear_retries,
+                    stabilize=args.stabilize,
+                )
                 _clear_api_files()
 
+                phase1_end = time.time()
                 success = _run_phase1(scenario_file, timeout=args.timeout)
                 if not success:
                     print(f"    [FAIL] Skipping evaluation for this trial")
                     run_results.append({"scenario": scenario_id, "trial": trial, "status": "FAILED"})
                     continue
+
+                # Check Unity actually processed commands — if 0 executed, it's not running.
+                unity_alive = _check_unity_alive(timeout=10.0)
+                if not unity_alive:
+                    print(f"    [WARN] Unity does not appear to be running — 0 commands executed.")
+                    run_results.append({"scenario": scenario_id, "trial": trial, "status": "NO_UNITY"})
+                    if args.abort_no_unity:
+                        print(f"    [ABORT] --abort-no-unity set. Stopping experiment.")
+                        _run_aggregation()
+                        return
+                    # Skip screenshot wait and artifact collection for this trial
+                    continue
+
+                # Wait for Unity to capture a fresh screenshot of the final scene
+                # before collecting artifacts — avoids saving stale mid-trial images.
+                print(f"    Waiting for fresh screenshots of final scene state...")
+                got_fresh = _wait_for_fresh_screenshots(after_time=phase1_end, timeout=20.0)
+                if not got_fresh:
+                    print(f"    [WARN] Fresh screenshots not ready within 20s — collecting anyway")
 
                 # Collect artifacts
                 _collect_artifacts(trial_dir)

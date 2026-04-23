@@ -41,7 +41,7 @@
         "Monitor_01"
       ],
       "target_area": "right wall, x~1.5, z~2.5",
-      "condition": "monitor is within 0.5m of the right wall and at z=2.5"
+      "condition": "monitoring screen is within 0.5m of the right wall and at z=2.5"
     },
     {
       "step": 5,
@@ -69,7 +69,7 @@
         "Folder_01"
       ],
       "target_area": "any surface",
-      "condition": "folder is on a surface"
+      "condition": "folder is on a surface in the room"
     },
     {
       "step": 8,

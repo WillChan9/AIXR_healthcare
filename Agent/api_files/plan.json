@@ -1,93 +1,139 @@
 {
-  "room_type": "Emergency Triage Room",
-  "description": "A small 4m x 4m emergency triage room used for rapid patient assessment.",
+  "room_type": "Physical Therapy Gym",
+  "description": "High-diversity interaction test room with rehabilitation equipment, medical furniture, props, and characters spread across the space.",
   "layout_goals": {
-    "interior_bounds": "4m x 4m",
-    "minimum_objects": 8,
-    "focal_point": "center of the room"
+    "interior_bounds": "6m x 6m",
+    "minimum_objects": 12,
+    "focal_point": "open floor plan with diverse objects"
   },
   "steps": [
     {
       "step": 1,
-      "action": "Place stretcher against back wall",
+      "action": "Place Treadmill_01",
       "objects": [
-        "Stretchers_01"
+        "Treadmill_01"
       ],
-      "target_area": "back wall, z~3.5",
-      "condition": "stretcher is within 0.5m of back wall and centered at z~3.5"
+      "target_area": "right wall, z~4.0",
+      "condition": "distance from other objects >= 0.8m"
     },
     {
       "step": 2,
-      "action": "Position exam table on left side",
+      "action": "Place WheelChair_01",
       "objects": [
-        "Exam_Table_01"
+        "WheelChair_01"
       ],
-      "target_area": "left side, x~-1.5, z~2.0",
-      "condition": "exam table is within 0.5m of left wall and at x~-1.5, z~2.0"
+      "target_area": "entry zone, z~0.5, x~1.5",
+      "condition": "distance from other objects >= 0.8m"
     },
     {
       "step": 3,
-      "action": "Place trolley cart beside exam table",
+      "action": "Place Trolley_01",
       "objects": [
         "Trolley_01"
       ],
-      "target_area": "beside exam table, x~-1.0, z~3.0",
-      "condition": "trolley is within 0.5m of exam table and at x~-1.0, z~3.0"
+      "target_area": "center-left, z~2.5, x~-1.5",
+      "condition": "distance from other objects >= 0.8m"
     },
     {
       "step": 4,
-      "action": "Mount monitoring screen on right wall",
+      "action": "Place Utility_Cart_01",
       "objects": [
-        "Monitor_01"
+        "Utility_Cart_01"
       ],
-      "target_area": "right wall, x~1.5, z~2.5",
-      "condition": "monitoring screen is within 0.5m of right wall and at x~1.5, z~2.5"
+      "target_area": "left wall, z~3.5",
+      "condition": "distance from other objects >= 0.8m"
     },
     {
       "step": 5,
-      "action": "Place aid kit on trolley surface",
+      "action": "Place Table_01",
       "objects": [
-        "Aid_Kit_01"
+        "Table_01"
       ],
-      "target_area": "on trolley surface, y~0.8",
-      "condition": "aid kit is on trolley surface and at y~0.8"
+      "target_area": "left-center, z~2.0, x~-1.0",
+      "condition": "distance from other objects >= 0.8m"
     },
     {
       "step": 6,
-      "action": "Position syringe and stethoscope near exam table",
+      "action": "Place Towel_Dispenser_01",
       "objects": [
-        "Syringe_01",
-        "Stethoscope_01"
+        "Towel_Dispenser_01"
       ],
-      "target_area": "near exam table",
-      "condition": "syringe and stethoscope are within 1m of exam table"
+      "target_area": "right wall, z~2.0",
+      "condition": "distance from other objects >= 0.8m"
     },
     {
       "step": 7,
-      "action": "Place folder on any surface",
+      "action": "Place Caution_Sign_01",
       "objects": [
-        "Folder_01"
+        "Caution_Sign_01"
       ],
-      "target_area": "any surface",
-      "condition": "folder is on a surface"
+      "target_area": "entry floor, z~0.6, x~0.5",
+      "condition": "distance from other objects >= 0.8m"
     },
     {
       "step": 8,
-      "action": "Position EMT near stretcher",
+      "action": "Place Clock_01",
       "objects": [
-        "EMT_01"
+        "Clock_01"
       ],
-      "target_area": "near Stretchers_01",
-      "condition": "EMT is within 1m of stretcher"
+      "target_area": "back wall, z~5.8, y~2.5",
+      "condition": "distance from other objects >= 0.8m"
     },
     {
       "step": 9,
-      "action": "Position patient near exam table",
+      "action": "Place Posters",
+      "objects": [
+        "Poster_01",
+        "Poster_02"
+      ],
+      "target_area": "side walls, y~1.8",
+      "condition": "distance from other objects >= 0.8m"
+    },
+    {
+      "step": 10,
+      "action": "Place Folders",
+      "objects": [
+        "Folder_01",
+        "Folder_02"
+      ],
+      "target_area": "on desk surface, y~0.8",
+      "condition": "on Table_01"
+    },
+    {
+      "step": 11,
+      "action": "Place Screen_01",
+      "objects": [
+        "Screen_01"
+      ],
+      "target_area": "on desk, z~5.0, x~-1.5",
+      "condition": "on Table_01"
+    },
+    {
+      "step": 12,
+      "action": "Place Reception_Desk_01",
+      "objects": [
+        "Reception_Desk_01"
+      ],
+      "target_area": "back-left corner, z~4.8, x~-1.8",
+      "condition": "distance from other objects >= 0.8m"
+    },
+    {
+      "step": 13,
+      "action": "Place Patient_01",
       "objects": [
         "Patient_01"
       ],
-      "target_area": "near exam table",
-      "condition": "patient is within 1m of exam table"
+      "target_area": "near Treadmill_01",
+      "condition": "visible from Treadmill_01"
+    },
+    {
+      "step": 14,
+      "action": "Place Nurse_01",
+      "objects": [
+        "Nurse_01"
+      ],
+      "target_area": "near center",
+      "condition": "visible from Treadmill_01 and WheelChair_01"
     }
   ]
 }

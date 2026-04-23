@@ -1,0 +1,7 @@
+{
+  "raw_response": "```json\n{\n  \"coherence_score\": 1,\n  \"spatial_score\": 1,\n  \"coherence_reasoning\": \"The scene is empty and does not contain any objects, which means it does not meet the requirements for a Hospital Ward 4-Bed scene type. There are no beds, bedside tables, chairs, or any other necessary objects for patient care.\",\n  \"spatial_reasoning\": \"The scene is completely empty with no objects placed, resulting in a random and illogical placement of objects. There is no consideration for spatial arrangement, walkway clearance, or functional groupings.\"\n}\n```",
+  "coherence_score": 1,
+  "spatial_score": 1,
+  "scene_type": "Hospital Ward 4-Bed",
+  "results_dir": "C:\\Users\\Allison\\Programming\\GitHub\\AIXR_healthcare\\Agent\\evaluation\\results\\S02\\trial_3"
+}

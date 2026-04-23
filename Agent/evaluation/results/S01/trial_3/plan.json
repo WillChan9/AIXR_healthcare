@@ -1,0 +1,93 @@
+{
+  "room_type": "Emergency Triage Room",
+  "description": "A small 4m x 4m emergency triage room used for rapid patient assessment.",
+  "layout_goals": {
+    "interior_bounds": "4m x 4m",
+    "minimum_objects": 8,
+    "focal_point": "center of the room"
+  },
+  "steps": [
+    {
+      "step": 1,
+      "action": "Place stretcher against back wall",
+      "objects": [
+        "Stretchers_01"
+      ],
+      "target_area": "back wall, z~3.5",
+      "condition": "stretcher is within 0.5m of the back wall and centered at x=0"
+    },
+    {
+      "step": 2,
+      "action": "Position exam table on left side",
+      "objects": [
+        "Exam_Table_01"
+      ],
+      "target_area": "left side, x~-1.5, z~2.0",
+      "condition": "exam table is within 0.5m of the left wall and at z=2.0"
+    },
+    {
+      "step": 3,
+      "action": "Place trolley cart beside exam table",
+      "objects": [
+        "Trolley_01"
+      ],
+      "target_area": "beside exam table, x~-1.0, z~3.0",
+      "condition": "trolley is within 0.5m of the exam table and at z=3.0"
+    },
+    {
+      "step": 4,
+      "action": "Mount monitoring screen on right wall",
+      "objects": [
+        "Monitor_01"
+      ],
+      "target_area": "right wall, x~1.5, z~2.5",
+      "condition": "monitor is within 0.5m of the right wall and at z=2.5"
+    },
+    {
+      "step": 5,
+      "action": "Place aid kit on trolley surface",
+      "objects": [
+        "Aid_Kit_01"
+      ],
+      "target_area": "on trolley surface, y~0.8",
+      "condition": "aid kit is on the trolley surface at y=0.8"
+    },
+    {
+      "step": 6,
+      "action": "Position syringe and stethoscope near exam table",
+      "objects": [
+        "Syringe_01",
+        "Stethoscope_01"
+      ],
+      "target_area": "near exam table",
+      "condition": "syringe and stethoscope are within 1m of the exam table"
+    },
+    {
+      "step": 7,
+      "action": "Place folder on any surface",
+      "objects": [
+        "Folder_01"
+      ],
+      "target_area": "any surface",
+      "condition": "folder is on a surface"
+    },
+    {
+      "step": 8,
+      "action": "Position EMT near stretcher",
+      "objects": [
+        "EMT_01"
+      ],
+      "target_area": "near Stretchers_01",
+      "condition": "EMT is within 1m of the stretcher"
+    },
+    {
+      "step": 9,
+      "action": "Position patient near exam table",
+      "objects": [
+        "Patient_01"
+      ],
+      "target_area": "near exam table",
+      "condition": "patient is within 1m of the exam table"
+    }
+  ]
+}

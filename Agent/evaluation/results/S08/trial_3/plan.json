@@ -1,0 +1,69 @@
+{
+  "room_type": "Rehabilitation Corridor",
+  "description": "A long narrow 3m x 10m rehabilitation corridor with handrails along both walls for patient walking exercises.",
+  "layout_goals": {
+    "interior_bounds": "3m x 10m",
+    "minimum_objects": 8,
+    "focal_point": "entrance"
+  },
+  "steps": [
+    {
+      "step": 1,
+      "action": "Install handrails",
+      "objects": [
+        "Handrail_01",
+        "Handrail_02"
+      ],
+      "target_area": "left and right walls at z~3.0",
+      "condition": "handrails must be parallel and 2.4m apart"
+    },
+    {
+      "step": 2,
+      "action": "Position wheelchair and walker",
+      "objects": [
+        "WheelChair_01",
+        "Walker_01"
+      ],
+      "target_area": "near entrance, z~1.0",
+      "condition": "walker must be within 0.5m of wheelchair"
+    },
+    {
+      "step": 3,
+      "action": "Install additional handrails",
+      "objects": [
+        "Handrail_03",
+        "Handrail_04"
+      ],
+      "target_area": "left and right walls at z~6.0",
+      "condition": "handrails must be parallel and 2.4m apart"
+    },
+    {
+      "step": 4,
+      "action": "Place bench",
+      "objects": [
+        "Bench_01"
+      ],
+      "target_area": "midway rest point, z~5.0",
+      "condition": "bench must be centered between handrails"
+    },
+    {
+      "step": 5,
+      "action": "Position caution sign",
+      "objects": [
+        "Caution_Sign_01"
+      ],
+      "target_area": "entrance, z~0.5",
+      "condition": "sign must be centered above doorway"
+    },
+    {
+      "step": 6,
+      "action": "Place patient and nurse",
+      "objects": [
+        "Patient_01",
+        "Nurse_01"
+      ],
+      "target_area": "corridor, z~4.0 and z~4.5",
+      "condition": "patient and nurse must be within 1m of each other"
+    }
+  ]
+}

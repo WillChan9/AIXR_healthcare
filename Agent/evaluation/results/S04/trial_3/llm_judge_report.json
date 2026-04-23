@@ -1,0 +1,7 @@
+{
+  "raw_response": "```json\n{\n  \"coherence_score\": 1,\n  \"spatial_score\": 1,\n  \"coherence_reasoning\": \"The scene is empty and does not contain any of the required objects for a Surgery Prep Room, such as surgery carts, surgical tables, autoclaves, or sterile supply containers. This results in a completely wrong object selection for the intended scene type.\",\n  \"spatial_reasoning\": \"With no objects placed in the scene, there is no spatial arrangement to evaluate. The placement is considered random and illogical as there are no objects to be placed according to any spatial rules.\"\n}\n```",
+  "coherence_score": 1,
+  "spatial_score": 1,
+  "scene_type": "Surgery Prep Room",
+  "results_dir": "C:\\Users\\Allison\\Programming\\GitHub\\AIXR_healthcare\\Agent\\evaluation\\results\\S04\\trial_3"
+}

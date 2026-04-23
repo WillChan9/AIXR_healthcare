@@ -1,0 +1,308 @@
+2026-04-22 22:25:27 - Pipeline - INFO - [Init] Cleared log agent.log
+2026-04-22 22:25:27 - Pipeline - INFO - [Init] Cleared log reflection_log.log
+2026-04-22 22:25:29 - Pipeline - INFO - Generating room layout plan...
+2026-04-22 22:25:31 - Pipeline - INFO - Plan generated and saved to C:\Users\Allison\Programming\GitHub\AIXR_healthcare\Agent\api_files\plan.json
+2026-04-22 22:25:33 - Pipeline - INFO - ============================================================
+2026-04-22 22:25:33 - Pipeline - INFO -   PHASE 1: Static Environment Generation
+2026-04-22 22:25:33 - Pipeline - INFO - ============================================================
+2026-04-22 22:25:33 - Pipeline - INFO - [Phase 1] Room shell written: 9 structural commands
+2026-04-22 22:25:36 - Pipeline - INFO - ----- GROQ RAW RESPONSE (attempt 1/3) -----
+2026-04-22 22:25:36 - Pipeline - INFO - [
+  {"action": "PlaceObject", "objectName": "Bed_01", "x": -2.5, "y": 0, "z": 1.5, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Bed_02", "x": 2.5, "y": 0, "z": 1.5, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Bed_03", "x": -2.5, "y": 0, "z": 4.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Bed_04", "x": 2.5, "y": 0, "z": 4.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Table_01", "x": -1.5, "y": 0, "z": 1.5, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Table_02", "x": 1.5, "y": 0, "z": 1.5, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Table_03", "x": -1.5, "y": 0, "z": 4.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Table_04", "x": 1.5, "y": 0, "z": 4.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Chair_01", "x": -2.0, "y": 0, "z": 1.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Chair_02", "x": 2.0, "y": 0, "z": 1.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Screen_01", "x": 0, "y": 0, "z": 2.8, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Utility_Cart_01", "x": 0, "y": 0, "z": 3.0, "rotationY": 0},
+  {"action": "PlaceHuman", "humanName": "Nurse_01", "x": 0, "y": 0, "z": 2.5, "rotationY": 0},
+  {"action": "PlaceHuman", "humanName": "Nurse_02", "x": 0, "y": 0, "z": 3.5, "rotationY": 0},
+  {"action": "PlaceHuman", "humanName": "Patient_01", "x": -2.5, "y": 0, "z": 1.0, "rotationY": 0},
+  {"action": "PlaceHuman", "humanName": "Patient_02", "x": -2.5, "y": 0, "z": 3.5, "rotationY": 0}
+]
+2026-04-22 22:25:36 - Pipeline - INFO - ------------------------------------------------------
+2026-04-22 22:25:36 - Pipeline - INFO - [Phase 1] Interior objects: wrote 16 commands
+2026-04-22 22:25:36 - Pipeline - INFO - [Phase 1] Waiting up to 15s for Unity to refresh screenshots...
+2026-04-22 22:25:52 - Pipeline - INFO - [Phase 1] Using existing screenshots (may be stale). Starting reflection loop.
+2026-04-22 22:25:52 - Pipeline - INFO - [Phase 1 Reflection] Step 1/7: Place beds in a 2x2 grid layout
+2026-04-22 22:25:52 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 22:25:52 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 22:25:52 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 22:25:52 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 22:25:52 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 22:25:52 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 22:25:52 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 22:25:52 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 22:25:54 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:25:54 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 22:25:55 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:25:55 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 22:25:55 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:25:55 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 22:25:56 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:25:56 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 22:25:56 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 22:25:56 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 22:25:56 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 22:25:56 - ReflectionModule - INFO - Logged reflection entry for step 'Place beds in a 2x2 grid layout'
+2026-04-22 22:25:56 - Pipeline - INFO -   step_complete=no  room_status=good  suggest_additions=False  objects=16
+2026-04-22 22:25:56 - Pipeline - INFO -   layout: The room layout is generally good but needs fine-tuning for better character and object positioning.
+2026-04-22 22:25:56 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 22:25:59 - Pipeline - INFO - [Phase 1 Reflection] Step 1/7: Place beds in a 2x2 grid layout
+2026-04-22 22:25:59 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 22:25:59 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 22:25:59 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 22:25:59 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 22:25:59 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 22:25:59 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 22:25:59 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 22:25:59 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 22:26:01 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:26:01 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 22:26:03 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:26:03 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 22:26:03 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:26:03 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 22:26:03 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:26:03 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 22:26:03 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 22:26:03 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 22:26:03 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 22:26:03 - ReflectionModule - INFO - Logged reflection entry for step 'Place beds in a 2x2 grid layout'
+2026-04-22 22:26:03 - Pipeline - INFO -   step_complete=yes  room_status=good  suggest_additions=False  objects=16
+2026-04-22 22:26:03 - Pipeline - INFO -   layout: The room layout is generally good but needs fine-tuning for better character and object positioning. Beds are evenly spaced, but patients are too close to beds. Nurses are in the walkway and need repositioning.
+2026-04-22 22:26:03 - Pipeline - INFO -   Step complete — advancing 1 → 2: Add bedside tables
+2026-04-22 22:26:03 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 22:26:06 - Pipeline - INFO - [Phase 1 Reflection] Step 2/7: Add bedside tables
+2026-04-22 22:26:06 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 22:26:06 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 22:26:06 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 22:26:06 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 22:26:06 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 22:26:06 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 22:26:06 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 22:26:06 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 22:26:08 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:26:08 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 22:26:08 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:26:08 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 22:26:09 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:26:09 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 22:26:09 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:26:09 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 22:26:09 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 22:26:09 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 22:26:09 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 22:26:09 - ReflectionModule - INFO - Logged reflection entry for step 'Add bedside tables'
+2026-04-22 22:26:09 - Pipeline - INFO -   step_complete=yes  room_status=good  suggest_additions=False  objects=16
+2026-04-22 22:26:09 - Pipeline - INFO -   layout: The room layout is generally good but needs fine-tuning for better character and object positioning. Beds are evenly spaced, but patients are too close to beds. Nurses are in the walkway and need repositioning.
+2026-04-22 22:26:09 - Pipeline - INFO -   Step complete — advancing 2 → 3: Add chairs near beds
+2026-04-22 22:26:09 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 22:26:12 - Pipeline - INFO - [Phase 1 Reflection] Step 3/7: Add chairs near beds
+2026-04-22 22:26:12 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 22:26:12 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 22:26:12 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 22:26:12 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 22:26:12 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 22:26:12 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 22:26:12 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 22:26:12 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 22:26:14 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:26:14 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 22:26:15 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:26:15 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 22:26:15 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:26:15 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 22:26:16 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:26:16 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 22:26:16 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 22:26:16 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 22:26:16 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 22:26:16 - ReflectionModule - INFO - Logged reflection entry for step 'Add chairs near beds'
+2026-04-22 22:26:16 - Pipeline - INFO -   step_complete=no  room_status=good  suggest_additions=False  objects=16
+2026-04-22 22:26:16 - Pipeline - INFO -   layout: The room layout is generally good but needs fine-tuning for better character and object positioning. Beds are evenly spaced, but patients are too close to beds. Nurses are in the walkway and need repositioning.
+2026-04-22 22:26:16 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 22:26:19 - Pipeline - INFO - [Phase 1 Reflection] Step 3/7: Add chairs near beds
+2026-04-22 22:26:19 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 22:26:19 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 22:26:19 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 22:26:19 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 22:26:19 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 22:26:19 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 22:26:19 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 22:26:19 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 22:26:21 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:26:21 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 22:26:22 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:26:22 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 22:26:22 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:26:22 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 22:26:22 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:26:22 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 22:26:22 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 22:26:22 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 22:26:22 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 22:26:22 - ReflectionModule - INFO - Logged reflection entry for step 'Add chairs near beds'
+2026-04-22 22:26:22 - Pipeline - INFO -   step_complete=yes  room_status=good  suggest_additions=False  objects=16
+2026-04-22 22:26:22 - Pipeline - INFO -   layout: The room layout is generally good but needs fine-tuning for better character and object positioning. Beds are evenly spaced, chairs are near beds, and tables are beside beds. Patients are too close to beds and need adjustment. Nurses are in the walkway and need repositioning.
+2026-04-22 22:26:22 - Pipeline - INFO -   Step complete — advancing 3 → 4: Place room divider screen
+2026-04-22 22:26:22 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 22:26:25 - Pipeline - INFO - [Phase 1 Reflection] Step 4/7: Place room divider screen
+2026-04-22 22:26:25 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 22:26:25 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 22:26:25 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 22:26:25 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 22:26:25 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 22:26:25 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 22:26:25 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 22:26:25 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 22:26:27 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:26:27 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 22:26:28 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:26:28 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 22:26:28 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:26:28 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 22:26:28 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:26:28 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 22:26:28 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 22:26:28 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 22:26:28 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 22:26:28 - ReflectionModule - INFO - Logged reflection entry for step 'Place room divider screen'
+2026-04-22 22:26:28 - Pipeline - INFO -   step_complete=yes  room_status=good  suggest_additions=False  objects=16
+2026-04-22 22:26:28 - Pipeline - INFO -   layout: The room layout is generally good but needs fine-tuning for better character and object positioning. Beds are evenly spaced, chairs are near beds, and tables are beside beds. Patients are too close to beds and need adjustment. Nurses are in the walkway and need repositioning.
+2026-04-22 22:26:28 - Pipeline - INFO -   Step complete — advancing 4 → 5: Position utility cart
+2026-04-22 22:26:28 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 22:26:34 - Pipeline - INFO - [Phase 1 Reflection] Step 5/7: Position utility cart
+2026-04-22 22:26:34 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 22:26:34 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 22:26:34 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 22:26:34 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 22:26:34 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 22:26:34 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 22:26:34 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 22:26:34 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 22:26:35 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:26:35 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 22:26:37 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:26:37 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 22:26:38 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:26:38 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 22:26:38 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:26:38 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 22:26:38 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 22:26:38 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 22:26:38 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 22:26:38 - ReflectionModule - INFO - Logged reflection entry for step 'Position utility cart'
+2026-04-22 22:26:38 - Pipeline - INFO -   step_complete=yes  room_status=good  suggest_additions=False  objects=16
+2026-04-22 22:26:38 - Pipeline - INFO -   layout: The room layout is generally good but needs fine-tuning for better character and object positioning. Beds are evenly spaced, chairs are near beds, and tables are beside beds. Patients are too close to beds and need adjustment. Nurses are in the walkway and need repositioning.
+2026-04-22 22:26:38 - Pipeline - INFO -   Step complete — advancing 5 → 6: Position nurses
+2026-04-22 22:26:38 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 22:26:41 - Pipeline - INFO - [Phase 1 Reflection] Step 6/7: Position nurses
+2026-04-22 22:26:41 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 22:26:41 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 22:26:41 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 22:26:41 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 22:26:41 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 22:26:41 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 22:26:41 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 22:26:41 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 22:26:43 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:26:43 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 22:26:43 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:26:43 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 22:26:44 - ReflectionModule - WARNING - [SurfaceThread] attempt 1/3 failed: Invalid control character at: line 5 column 29 (char 570)
+2026-04-22 22:26:44 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:26:44 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 22:26:49 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:26:49 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 22:26:49 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 22:26:49 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 22:26:49 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 22:26:49 - ReflectionModule - INFO - Logged reflection entry for step 'Position nurses'
+2026-04-22 22:26:49 - Pipeline - INFO -   step_complete=yes  room_status=good  suggest_additions=False  objects=16
+2026-04-22 22:26:49 - Pipeline - INFO -   layout: The room layout is generally good but needs fine-tuning for better character and object positioning. Beds are evenly spaced, chairs are near beds, and tables are beside beds. Patients are too close to beds and need adjustment. Nurses are in the walkway and need repositioning.
+2026-04-22 22:26:49 - Pipeline - INFO -   Step complete — advancing 6 → 7: Position patients
+2026-04-22 22:26:49 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 22:26:52 - Pipeline - INFO - [Phase 1 Reflection] Step 7/7: Position patients
+2026-04-22 22:26:52 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 22:26:52 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 22:26:52 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 22:26:52 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 22:26:52 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 22:26:52 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 22:26:52 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 22:26:52 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 22:26:54 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:26:54 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 22:26:54 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:26:54 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 22:26:54 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:26:54 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 22:26:55 - ReflectionModule - WARNING - [SurfaceThread] attempt 1/3 failed: Invalid control character at: line 5 column 29 (char 570)
+2026-04-22 22:26:59 - ReflectionModule - WARNING - [SurfaceThread] attempt 2/3 failed: Invalid control character at: line 5 column 29 (char 570)
+2026-04-22 22:27:04 - ReflectionModule - ERROR - [SurfaceThread] failed after 3 attempts: Invalid control character at: line 5 column 29 (char 570)
+2026-04-22 22:27:04 - ReflectionModule - ERROR - [SurfaceThread] unrecoverable error — falling back to empty result: Invalid control character at: line 5 column 29 (char 570)
+2026-04-22 22:27:04 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:27:04 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 22:27:04 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 22:27:04 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 22:27:04 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 22:27:04 - ReflectionModule - INFO - Logged reflection entry for step 'Position patients'
+2026-04-22 22:27:04 - Pipeline - INFO -   step_complete=no  room_status=good  suggest_additions=False  objects=16
+2026-04-22 22:27:04 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 22:27:07 - Pipeline - INFO - [Phase 1 Reflection] Step 7/7: Position patients
+2026-04-22 22:27:07 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 22:27:07 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 22:27:07 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 22:27:07 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 22:27:07 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 22:27:07 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 22:27:07 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 22:27:07 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 22:27:09 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:27:09 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 22:27:09 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:27:09 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 22:27:11 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:27:11 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 22:27:17 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:27:17 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 22:27:17 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 22:27:17 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 22:27:17 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 22:27:17 - ReflectionModule - INFO - Logged reflection entry for step 'Position patients'
+2026-04-22 22:27:17 - Pipeline - INFO -   step_complete=no  room_status=good  suggest_additions=False  objects=16
+2026-04-22 22:27:17 - Pipeline - INFO -   layout: The room layout is generally good but needs fine-tuning for better character and object positioning. Beds are evenly spaced, chairs are near beds, and tables are beside beds. Patients are too close to beds and need adjustment. Nurses are in the walkway and need repositioning.
+2026-04-22 22:27:17 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 22:27:20 - Pipeline - INFO - [Phase 1 Reflection] Step 7/7: Position patients
+2026-04-22 22:27:20 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 22:27:20 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 22:27:20 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 22:27:20 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 22:27:20 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 22:27:20 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 22:27:20 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 22:27:20 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 22:27:22 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:27:22 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 22:27:23 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:27:23 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 22:27:28 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:27:28 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 22:27:28 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:27:28 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 22:27:28 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 22:27:28 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 22:27:28 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 22:27:28 - ReflectionModule - INFO - Logged reflection entry for step 'Position patients'
+2026-04-22 22:27:28 - Pipeline - INFO -   step_complete=yes  room_status=good  suggest_additions=False  objects=16
+2026-04-22 22:27:28 - Pipeline - INFO -   layout: The room layout is generally good but needs fine-tuning for better character and object positioning. Beds are evenly spaced, chairs are near beds, and tables are beside beds. Patients are too close to beds and need adjustment. Nurses are in the walkway and need repositioning.
+2026-04-22 22:27:28 - Pipeline - INFO -   Step complete — all 7 plan steps complete. Stopping environment generation.
+2026-04-22 22:27:32 - Pipeline - INFO - [InteractionMap] Generated map for 16 objects → interaction_map.json
+2026-04-22 22:27:32 - Pipeline - INFO - --phase1-only flag set. Skipping Phase 2.
+2026-04-22 22:27:32 - Pipeline - INFO - Total objects placed: 23

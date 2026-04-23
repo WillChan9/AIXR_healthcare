@@ -31,7 +31,7 @@ import json
 import time
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional
 
 # ── path bootstrap so this module can be imported OR run directly ──────────
 _AGENT_ROOT   = Path(__file__).parent          # Agent/
@@ -71,231 +71,7 @@ _EVENTS_FILE = (
 _IDLE_CTRL  = "AnimatorControllers/HumanM@Idles"
 _IDLE_STATE = "HumanM@Idles"
 
-# ---------------------------------------------------------------------------
-# Animation map
-#
-# Key   : (object_category, event_type)
-# Value : {
-#   controller  : Resources path for RuntimeAnimatorController (no extension)
-#   state       : Animator state name to CrossFade into
-#   fade        : crossFadeTime (seconds)
-#   idle_delay  : seconds until return-to-idle is queued (0 = no auto-return)
-# }
-#
-# object_category is derived from the object name by taking the lowercase
-# prefix before the first underscore or digit, e.g.:
-#   "Treadmill_01"   → "treadmill"
-#   "WheelChair_01"  → "wheelchair"
-#   "Utility_Cart_01"→ "utility"
-#   "Patient_01"     → "patient"
-# ---------------------------------------------------------------------------
-
-ANIMATION_MAP: Dict[tuple, Dict[str, Any]] = {
-
-    # ── Treadmill ──────────────────────────────────────────────────────────
-    # Grab  → patient steps on and begins walking
-    ("treadmill", "grab"): {
-        "controller": "AnimatorControllers/HumanM@Walk01_Forward",
-        "state": "HumanM@Walk01_Forward", "fade": 0.35, "idle_delay": 6.0,
-    },
-    # Release → patient steps off, return to idle
-    ("treadmill", "release"): {
-        "controller": _IDLE_CTRL, "state": _IDLE_STATE, "fade": 0.5,
-    },
-    # Hover → approach the machine
-    ("treadmill", "hover_enter"): {
-        "controller": "AnimatorControllers/HumanM@Walk01_Forward",
-        "state": "HumanM@Walk01_Forward", "fade": 0.4, "idle_delay": 2.5,
-    },
-
-    # ── WheelChair ─────────────────────────────────────────────────────────
-    # Hover → therapist approaches wheelchair
-    ("wheelchair", "hover_enter"): {
-        "controller": "AnimatorControllers/HumanM@Walk01_Forward",
-        "state": "HumanM@Walk01_Forward", "fade": 0.4, "idle_delay": 2.0,
-    },
-    # Grab → patient is helped into it; therapist goes to idle (assisting)
-    ("wheelchair", "grab"): {
-        "controller": _IDLE_CTRL, "state": _IDLE_STATE, "fade": 0.4,
-    },
-    # Release → push wheelchair → walk forward
-    ("wheelchair", "release"): {
-        "controller": "AnimatorControllers/HumanM@Walk01_Forward",
-        "state": "HumanM@Walk01_Forward", "fade": 0.35, "idle_delay": 3.0,
-    },
-
-    # ── Trolley ────────────────────────────────────────────────────────────
-    # Grab → push trolley forward
-    ("trolley", "grab"): {
-        "controller": "AnimatorControllers/HumanM@Walk01_Forward",
-        "state": "HumanM@Walk01_Forward", "fade": 0.3, "idle_delay": 4.0,
-    },
-    ("trolley", "release"): {
-        "controller": _IDLE_CTRL, "state": _IDLE_STATE, "fade": 0.4,
-    },
-
-    # ── Utility Cart ───────────────────────────────────────────────────────
-    # Grab → move cart sideways (strafing)
-    ("utility", "grab"): {
-        "controller": "AnimatorControllers/HumanM@Walk01_Left",
-        "state": "HumanM@Walk01_Left", "fade": 0.3, "idle_delay": 3.0,
-    },
-    ("utility", "release"): {
-        "controller": _IDLE_CTRL, "state": _IDLE_STATE, "fade": 0.4,
-    },
-
-    # ── Patient ────────────────────────────────────────────────────────────
-    # Hover → therapist greets / checks on patient
-    ("patient", "hover_enter"): {
-        "controller": "AnimatorControllers/HumanM@Talking",
-        "state": "HumanM@Talking", "fade": 0.3, "idle_delay": 5.0,
-    },
-    # Grab → guide the patient (walk forward together)
-    ("patient", "grab"): {
-        "controller": "AnimatorControllers/HumanM@Walk01_Forward",
-        "state": "HumanM@Walk01_Forward", "fade": 0.4, "idle_delay": 4.0,
-    },
-    # Activate → therapist gives instructions
-    ("patient", "activate"): {
-        "controller": "AnimatorControllers/HumanM@Talking",
-        "state": "HumanM@Talking", "fade": 0.25, "idle_delay": 5.0,
-    },
-
-    # ── Folder / Chart ─────────────────────────────────────────────────────
-    # Grab → review the chart
-    ("folder", "grab"): {
-        "controller": "AnimatorControllers/HumanM@Talking",
-        "state": "HumanM@Talking", "fade": 0.3, "idle_delay": 5.0,
-    },
-    ("folder", "activate"): {
-        "controller": "AnimatorControllers/HumanM@Talking",
-        "state": "HumanM@Talking", "fade": 0.25, "idle_delay": 6.0,
-    },
-    ("folder", "hover_enter"): {
-        "controller": _IDLE_CTRL, "state": _IDLE_STATE, "fade": 0.3,
-    },
-
-    # ── Monitor ────────────────────────────────────────────────────────────
-    # Hover → therapist explains results on screen
-    ("monitor", "hover_enter"): {
-        "controller": "AnimatorControllers/HumanM@Talking",
-        "state": "HumanM@Talking", "fade": 0.3, "idle_delay": 4.0,
-    },
-    ("monitor", "grab"): {
-        "controller": "AnimatorControllers/HumanM@Talking",
-        "state": "HumanM@Talking", "fade": 0.25, "idle_delay": 5.0,
-    },
-
-    # ── Reception Desk ─────────────────────────────────────────────────────
-    # Hover → approaching desk
-    ("reception", "hover_enter"): {
-        "controller": "AnimatorControllers/HumanM@Walk01_Forward",
-        "state": "HumanM@Walk01_Forward", "fade": 0.3, "idle_delay": 2.0,
-    },
-    ("reception", "grab"): {
-        "controller": "AnimatorControllers/HumanM@Talking",
-        "state": "HumanM@Talking", "fade": 0.25, "idle_delay": 4.0,
-    },
-
-    # ── Sanitizer Dispenser ────────────────────────────────────────────────
-    # Grab / activate → brief pause (cleaning hands), then idle
-    ("sanitizer", "grab"): {
-        "controller": _IDLE_CTRL, "state": _IDLE_STATE, "fade": 0.2, "idle_delay": 2.0,
-    },
-    ("sanitizer", "activate"): {
-        "controller": _IDLE_CTRL, "state": _IDLE_STATE, "fade": 0.2, "idle_delay": 2.0,
-    },
-
-    # ── Waste Bucket ───────────────────────────────────────────────────────
-    # Grab → walk toward bin to dispose
-    ("waste", "grab"): {
-        "controller": "AnimatorControllers/HumanM@Walk01_Forward",
-        "state": "HumanM@Walk01_Forward", "fade": 0.3, "idle_delay": 2.0,
-    },
-
-    # ── Caution Sign ───────────────────────────────────────────────────────
-    # Hover → stop and notice sign (idle)
-    ("caution", "hover_enter"): {
-        "controller": _IDLE_CTRL, "state": _IDLE_STATE, "fade": 0.3,
-    },
-    # Grab → back away carefully
-    ("caution", "grab"): {
-        "controller": "AnimatorControllers/HumanM@Walk01_Backward",
-        "state": "HumanM@Walk01_Backward", "fade": 0.3, "idle_delay": 2.0,
-    },
-
-    # ── Table (mat / therapy table) ────────────────────────────────────────
-    ("table", "grab"): {
-        "controller": "AnimatorControllers/HumanM@Walk01_Forward",
-        "state": "HumanM@Walk01_Forward", "fade": 0.3, "idle_delay": 2.0,
-    },
-    ("table", "hover_enter"): {
-        "controller": "AnimatorControllers/HumanM@Walk01_Forward",
-        "state": "HumanM@Walk01_Forward", "fade": 0.4, "idle_delay": 1.5,
-    },
-
-    # ── Towel Dispenser ────────────────────────────────────────────────────
-    ("towel", "grab"): {
-        "controller": _IDLE_CTRL, "state": _IDLE_STATE, "fade": 0.2,
-    },
-    ("towel", "activate"): {
-        "controller": _IDLE_CTRL, "state": _IDLE_STATE, "fade": 0.2,
-    },
-
-    # ── Clock ──────────────────────────────────────────────────────────────
-    ("clock", "hover_enter"): {
-        "controller": _IDLE_CTRL, "state": _IDLE_STATE, "fade": 0.3,
-    },
-
-    # ── Poster ─────────────────────────────────────────────────────────────
-    ("poster", "hover_enter"): {
-        "controller": _IDLE_CTRL, "state": _IDLE_STATE, "fade": 0.3,
-    },
-    ("poster", "grab"): {
-        "controller": _IDLE_CTRL, "state": _IDLE_STATE, "fade": 0.3,
-    },
-
-    # ── Characters (proximity touch) ───────────────────────────────────────
-    # Player physically touches a character → character reacts by talking.
-    # Fast fade (0.1s) so the response feels immediate.
-    # The LLM animation planner will also generate a speech bubble separately.
-    ("doctor", "touch"): {
-        "controller": "AnimatorControllers/HumanM@Talking",
-        "state": "HumanM@Talking", "fade": 0.1, "idle_delay": 5.0,
-    },
-    ("nurse", "touch"): {
-        "controller": "AnimatorControllers/HumanM@Talking",
-        "state": "HumanM@Talking", "fade": 0.1, "idle_delay": 5.0,
-    },
-    ("patient", "touch"): {
-        "controller": "AnimatorControllers/HumanM@Talking",
-        "state": "HumanM@Talking", "fade": 0.1, "idle_delay": 5.0,
-    },
-    ("emt", "touch"): {
-        "controller": "AnimatorControllers/HumanM@Talking",
-        "state": "HumanM@Talking", "fade": 0.1, "idle_delay": 5.0,
-    },
-    ("surgeon", "touch"): {
-        "controller": "AnimatorControllers/HumanM@Talking",
-        "state": "HumanM@Talking", "fade": 0.1, "idle_delay": 5.0,
-    },
-    ("infectiologist", "touch"): {
-        "controller": "AnimatorControllers/HumanM@Talking",
-        "state": "HumanM@Talking", "fade": 0.1, "idle_delay": 5.0,
-    },
-}
-
-# Fallback if the exact (category, event) is not in the map
-_FALLBACK: Dict[str, Dict[str, Any]] = {
-    "grab":        {"controller": _IDLE_CTRL, "state": _IDLE_STATE, "fade": 0.3},
-    "activate":    {"controller": _IDLE_CTRL, "state": _IDLE_STATE, "fade": 0.25},
-    "touch":       None,   # proximity touch — logged but no animation unless explicitly mapped
-    "hover_enter": None,   # most hovers with no mapping are silently ignored
-    "hover_exit":  None,
-    "release":     None,
-}
-
-# Interactions that are low-value to respond to unless explicitly mapped
+# Interaction types that are never worth responding to
 _SILENT_TYPES = {"hover_exit"}
 
 
@@ -338,6 +114,9 @@ class InteractionAnimationHandler:
     in response to player interactions with scene objects.
     """
 
+    # Path to the agent-generated per-object map written at the end of Phase 1
+    _MAP_FILE = _AGENT_ROOT / "api_files" / "interaction_map.json"
+
     def __init__(self, events_file: Optional[Path] = None, interaction_log: Optional["InteractionLog"] = None):
         self._events_file: Path = events_file or _EVENTS_FILE
         # IDs we have already acted on (survive across ticks)
@@ -346,6 +125,33 @@ class InteractionAnimationHandler:
         self._pending_idles: List[tuple] = []
         # Optional persistent log — always created so standalone runs also log
         self._log: InteractionLog = interaction_log or InteractionLog()
+        # Agent-generated per-object map: (objectName, event_type) → config dict
+        # Loaded from interaction_map.json written at end of Phase 1.
+        # Takes priority over the hardcoded ANIMATION_MAP (category-level fallback).
+        self._object_map: Dict[tuple, Dict] = {}
+        self._load_object_map()
+
+    # ── object map loading ────────────────────────────────────────────────
+
+    def _load_object_map(self):
+        """Load the agent-generated interaction_map.json (written at end of Phase 1).
+        Entries are keyed by (objectName, event_type) and override the hardcoded
+        ANIMATION_MAP when a match is found."""
+        if not self._MAP_FILE.exists():
+            logger.debug("[InteractionAnimations] No interaction_map.json found — using hardcoded map only.")
+            return
+        try:
+            data = json.loads(self._MAP_FILE.read_text(encoding="utf-8"))
+            for obj_name, events in data.items():
+                clean = obj_name.replace("(Clone)", "").strip()
+                for event_type, cfg in events.items():
+                    self._object_map[(clean, event_type)] = cfg
+            logger.info(
+                "[InteractionAnimations] Loaded agent interaction map: %d entries across %d objects",
+                len(self._object_map), len(data),
+            )
+        except Exception as exc:
+            logger.warning("[InteractionAnimations] Could not load interaction_map.json: %s", exc)
 
     # ── public API ────────────────────────────────────────────────────────
 
@@ -430,10 +236,9 @@ class InteractionAnimationHandler:
             )
             return False
 
-        # Look up specific mapping, then fallback
-        config = ANIMATION_MAP.get((category, event_type))
-        if config is None:
-            config = _FALLBACK.get(event_type)
+        # Look up config from the agent-generated per-object map only.
+        clean_name = obj_name.replace("(Clone)", "").strip()
+        config = self._object_map.get((clean_name, event_type))
 
         # ── Touch events: deduplicate into a single log entry with a counter ──
         if event_type == "touch":

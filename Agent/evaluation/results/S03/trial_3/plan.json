@@ -1,0 +1,64 @@
+{
+  "room_type": "Physical Therapy Gym",
+  "description": "High-diversity interaction test room with rehabilitation equipment, medical furniture, props, and characters spread across the space.",
+  "layout_goals": {
+    "interior_bounds": "6m x 6m",
+    "minimum_objects": 12,
+    "focal_point": "open floor plan with diverse objects and characters"
+  },
+  "steps": [
+    {
+      "step": 1,
+      "action": "Place walls and ceiling",
+      "objects": [],
+      "target_area": "entire room",
+      "condition": "4 walls forming a 6m x 6m enclosure with a 3.2m wall height, and a ceiling covering the full room"
+    },
+    {
+      "step": 2,
+      "action": "Add doorway",
+      "objects": [],
+      "target_area": "front wall",
+      "condition": "1.4m doorway centered at x=0"
+    },
+    {
+      "step": 3,
+      "action": "Place required objects",
+      "objects": [
+        "Treadmill_01",
+        "WheelChair_01",
+        "Trolley_01",
+        "Utility_Cart_01",
+        "Table_01",
+        "Towel_Dispenser_01",
+        "Caution_Sign_01",
+        "Clock_01",
+        "Poster_01",
+        "Poster_02",
+        "Folder_01",
+        "Folder_02",
+        "Screen_01",
+        "Reception_Desk_01"
+      ],
+      "target_area": "specified locations",
+      "condition": "objects are floor-accessible (y=0) unless wall-mounted, and no two objects are within 0.8m of each other"
+    },
+    {
+      "step": 4,
+      "action": "Position staff and patients",
+      "objects": [
+        "Patient_01",
+        "Nurse_01"
+      ],
+      "target_area": "near specified objects",
+      "condition": "Patient_01 near Treadmill_01, Nurse_01 near center of the room"
+    },
+    {
+      "step": 5,
+      "action": "Set lighting",
+      "objects": [],
+      "target_area": "entire room",
+      "condition": "SetLightIntensity warm (scale 1.4), SetAmbientColor warm white"
+    }
+  ]
+}

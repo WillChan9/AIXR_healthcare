@@ -1,0 +1,217 @@
+2026-04-22 23:19:50 - Pipeline - INFO - [Init] Cleared log agent.log
+2026-04-22 23:19:50 - Pipeline - INFO - [Init] Cleared log reflection_log.log
+2026-04-22 23:19:51 - Pipeline - INFO - Generating room layout plan...
+2026-04-22 23:19:53 - Pipeline - INFO - Plan generated and saved to C:\Users\Allison\Programming\GitHub\AIXR_healthcare\Agent\api_files\plan.json
+2026-04-22 23:19:54 - Pipeline - INFO - ============================================================
+2026-04-22 23:19:54 - Pipeline - INFO -   PHASE 1: Static Environment Generation
+2026-04-22 23:19:54 - Pipeline - INFO - ============================================================
+2026-04-22 23:19:54 - Pipeline - INFO - [Phase 1] Room shell written: 9 structural commands
+2026-04-22 23:19:56 - Pipeline - INFO - ----- GROQ RAW RESPONSE (attempt 1/3) -----
+2026-04-22 23:19:56 - Pipeline - INFO - [
+  {"action": "PlaceObject", "objectName": "Reception_Desk_01", "x": -1.5, "y": 0, "z": 4.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Chair_01", "x": -1.5, "y": 0, "z": 4.5, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Computer_01", "x": -1.5, "y": 0.8, "z": 4.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Keyboard_01", "x": -1.5, "y": 0.8, "z": 4.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Folder_01", "x": -1.5, "y": 0.8, "z": 4.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Folder_02", "x": -1.5, "y": 0.8, "z": 4.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Exam_Table_01", "x": 1.5, "y": 0, "z": 3.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Exam_Stool_01", "x": 0.8, "y": 0, "z": 3.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Scale_01", "x": 2.0, "y": 0, "z": 1.5, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Stethoscope_01", "x": 1.5, "y": 0.8, "z": 3.0, "rotationY": 0},
+  {"action": "PlaceHuman", "humanName": "Doctor_01", "x": -1.5, "y": 0, "z": 4.2, "rotationY": 0}
+]
+2026-04-22 23:19:56 - Pipeline - INFO - ------------------------------------------------------
+2026-04-22 23:19:56 - Pipeline - INFO - [Phase 1] Interior objects: wrote 11 commands
+2026-04-22 23:19:56 - Pipeline - INFO - [Phase 1] Waiting up to 15s for Unity to refresh screenshots...
+2026-04-22 23:20:12 - Pipeline - INFO - [Phase 1] Using existing screenshots (may be stale). Starting reflection loop.
+2026-04-22 23:20:12 - Pipeline - INFO - [Phase 1 Reflection] Step 1/5: Place desk and chair in the back-left corner
+2026-04-22 23:20:12 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 23:20:12 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 23:20:12 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 23:20:12 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 23:20:12 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 23:20:13 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 23:20:13 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 23:20:13 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 23:20:15 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:20:15 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 23:20:15 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:20:15 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 23:20:16 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:20:16 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 23:20:16 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:20:16 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 23:20:16 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 23:20:16 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 23:20:16 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 23:20:16 - ReflectionModule - INFO - Logged reflection entry for step 'Place desk and chair in the back-left corner'
+2026-04-22 23:20:16 - Pipeline - INFO -   step_complete=no  room_status=sparse  suggest_additions=True  objects=13
+2026-04-22 23:20:16 - Pipeline - INFO -   layout: The current layout seems mostly correct for a doctor's office. However, Exam_Stool_01 needs adjustment to be directly under Exam_Table_01. Other objects seem to be in their correct zones and on appropriate surfaces.
+2026-04-22 23:20:18 - Pipeline - INFO - ----- GROQ RAW RESPONSE (loop attempt 1/3) -----
+2026-04-22 23:20:18 - Pipeline - INFO - [{"action": "PlaceObject", "objectName": "Trolley_01", "x": 2.0, "y": 0.0, "z": 2.7, "rotationY": 0}, {"action": "PlaceObject", "objectName": "Folder_03", "x": -1.7, "y": 0.8, "z": 4.0, "rotationY": 0}, {"action": "PlaceObject", "objectName": "Clock_01", "x": 0.0, "y": 2.5, "z": 0.5, "rotationY": 0}]
+2026-04-22 23:20:18 - Pipeline - INFO - ------------------------------------------------------
+2026-04-22 23:20:18 - Pipeline - INFO - [Phase 1] Appended 3 fill commands
+2026-04-22 23:20:21 - Pipeline - INFO - [Phase 1 Reflection] Step 1/5: Place desk and chair in the back-left corner
+2026-04-22 23:20:21 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 23:20:21 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 23:20:21 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 23:20:21 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 23:20:21 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 23:20:21 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 23:20:21 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 23:20:21 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 23:20:24 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:20:24 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 23:20:24 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:20:24 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 23:20:25 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:20:25 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 23:20:25 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:20:25 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 23:20:25 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 23:20:25 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 23:20:25 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 23:20:25 - ReflectionModule - INFO - Logged reflection entry for step 'Place desk and chair in the back-left corner'
+2026-04-22 23:20:25 - Pipeline - INFO -   Object cap reached (16/15) — no additions
+2026-04-22 23:20:25 - Pipeline - INFO -   step_complete=no  room_status=sparse  suggest_additions=False  objects=16
+2026-04-22 23:20:25 - Pipeline - INFO -   layout: The current layout seems mostly correct for a doctor's office. However, Exam_Stool_01 needs adjustment to be directly under Exam_Table_01. Other objects seem to be in their correct zones and on appropriate surfaces.
+2026-04-22 23:20:25 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 23:20:28 - Pipeline - INFO - [Phase 1 Reflection] Step 1/5: Place desk and chair in the back-left corner
+2026-04-22 23:20:28 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 23:20:28 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 23:20:28 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 23:20:28 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 23:20:28 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 23:20:28 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 23:20:28 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 23:20:28 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 23:20:30 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:20:30 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 23:20:30 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:20:30 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 23:20:31 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:20:31 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 23:20:31 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:20:31 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 23:20:31 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 23:20:31 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 23:20:31 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 23:20:31 - ReflectionModule - INFO - Logged reflection entry for step 'Place desk and chair in the back-left corner'
+2026-04-22 23:20:31 - Pipeline - INFO -   Object cap reached (16/15) — no additions
+2026-04-22 23:20:31 - Pipeline - INFO -   step_complete=no  room_status=sparse  suggest_additions=False  objects=16
+2026-04-22 23:20:31 - Pipeline - INFO -   layout: The current layout seems mostly correct for a doctor's office. However, Exam_Stool_01 needs adjustment to be directly under Exam_Table_01. Other objects seem to be in their correct zones and on appropriate surfaces.
+2026-04-22 23:20:31 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 23:20:34 - Pipeline - INFO - [Phase 1 Reflection] Step 1/5: Place desk and chair in the back-left corner
+2026-04-22 23:20:34 - ReflectionModule - INFO - Step '1' reached max reflections (3). Forcing step_complete=yes to avoid infinite correction loop.
+2026-04-22 23:20:34 - ReflectionModule - INFO - Logged reflection entry for step 'Place desk and chair in the back-left corner'
+2026-04-22 23:20:34 - Pipeline - INFO -   Object cap reached (16/15) — no additions
+2026-04-22 23:20:34 - Pipeline - INFO -   step_complete=yes  room_status=good  suggest_additions=False  objects=16
+2026-04-22 23:20:34 - Pipeline - INFO -   layout: Layout accepted after maximum correction iterations.
+2026-04-22 23:20:34 - Pipeline - INFO -   Step complete — advancing 1 → 2: Add computer, keyboard, and folders to the desk
+2026-04-22 23:20:34 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 23:20:40 - Pipeline - INFO - [Phase 1 Reflection] Step 2/5: Add computer, keyboard, and folders to the desk
+2026-04-22 23:20:40 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 23:20:40 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 23:20:40 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 23:20:40 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 23:20:40 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 23:20:40 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 23:20:40 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 23:20:40 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 23:20:42 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:20:42 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 23:20:43 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:20:43 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 23:20:44 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:20:44 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 23:20:44 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:20:44 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 23:20:44 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 23:20:44 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 23:20:44 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 23:20:44 - ReflectionModule - INFO - Logged reflection entry for step 'Add computer, keyboard, and folders to the desk'
+2026-04-22 23:20:44 - Pipeline - INFO -   Object cap reached (16/15) — no additions
+2026-04-22 23:20:44 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=16
+2026-04-22 23:20:44 - Pipeline - INFO -   layout: The current layout seems mostly correct for a doctor's office. However, Exam_Stool_01 needs adjustment to be directly under Exam_Table_01. Folder_03 needs to be moved onto the Reception_Desk_01. Other objects seem to be in their correct zones and on appropriate surfaces.
+2026-04-22 23:20:44 - Pipeline - INFO -   Step complete — advancing 2 → 3: Place exam table and stool in the right side
+2026-04-22 23:20:44 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 23:20:47 - Pipeline - INFO - [Phase 1 Reflection] Step 3/5: Place exam table and stool in the right side
+2026-04-22 23:20:47 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 23:20:47 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 23:20:47 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 23:20:47 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 23:20:47 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 23:20:47 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 23:20:47 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 23:20:47 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 23:20:49 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:20:49 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 23:20:50 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:20:50 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 23:20:51 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:20:51 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 23:20:51 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:20:51 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 23:20:51 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 23:20:51 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 23:20:51 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 23:20:51 - ReflectionModule - INFO - Logged reflection entry for step 'Place exam table and stool in the right side'
+2026-04-22 23:20:51 - Pipeline - INFO -   Object cap reached (16/15) — no additions
+2026-04-22 23:20:51 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=16
+2026-04-22 23:20:51 - Pipeline - INFO -   layout: The current layout seems mostly correct for a doctor's office. However, Exam_Stool_01 needs adjustment to be directly under Exam_Table_01. Folder_03 needs to be moved onto Reception_Desk_01. Doctor_01 should be positioned near Reception_Desk_01.
+2026-04-22 23:20:51 - Pipeline - INFO -   Step complete — advancing 3 → 4: Add scale and stethoscope to the exam zone
+2026-04-22 23:20:51 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 23:20:54 - Pipeline - INFO - [Phase 1 Reflection] Step 4/5: Add scale and stethoscope to the exam zone
+2026-04-22 23:20:54 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 23:20:54 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 23:20:54 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 23:20:54 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 23:20:54 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 23:20:54 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 23:20:54 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 23:20:54 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 23:20:56 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:20:56 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 23:20:57 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:20:57 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 23:20:57 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:20:57 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 23:20:57 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:20:57 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 23:20:57 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 23:20:57 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 23:20:57 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 23:20:57 - ReflectionModule - INFO - Logged reflection entry for step 'Add scale and stethoscope to the exam zone'
+2026-04-22 23:20:57 - Pipeline - INFO -   Object cap reached (16/15) — no additions
+2026-04-22 23:20:57 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=16
+2026-04-22 23:20:57 - Pipeline - INFO -   layout: The current layout seems mostly correct for a doctor's office. However, Exam_Stool_01 needs adjustment to be directly under Exam_Table_01. Folder_03 needs to be moved onto Reception_Desk_01. Doctor_01 should be positioned near Reception_Desk_01.
+2026-04-22 23:20:57 - Pipeline - INFO -   Step complete — advancing 4 → 5: Place doctor near the desk
+2026-04-22 23:20:57 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 23:21:00 - Pipeline - INFO - [Phase 1 Reflection] Step 5/5: Place doctor near the desk
+2026-04-22 23:21:00 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 23:21:00 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 23:21:00 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 23:21:00 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 23:21:00 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 23:21:00 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 23:21:00 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 23:21:00 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 23:21:02 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:21:02 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 23:21:03 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:21:03 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 23:21:04 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:21:04 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 23:21:04 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:21:04 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 23:21:04 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 23:21:04 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 23:21:04 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 23:21:04 - ReflectionModule - INFO - Logged reflection entry for step 'Place doctor near the desk'
+2026-04-22 23:21:04 - Pipeline - INFO -   Object cap reached (16/15) — no additions
+2026-04-22 23:21:04 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=16
+2026-04-22 23:21:04 - Pipeline - INFO -   layout: The current layout seems mostly correct for a doctor's office. However, Exam_Stool_01 needs adjustment to be directly under Exam_Table_01. Folder_03 needs to be moved onto Reception_Desk_01. Doctor_01 should be positioned near Reception_Desk_01.
+2026-04-22 23:21:04 - Pipeline - INFO -   Step complete — all 5 plan steps complete. Stopping environment generation.
+2026-04-22 23:21:07 - Pipeline - INFO - [InteractionMap] Generated map for 13 objects → interaction_map.json
+2026-04-22 23:21:07 - Pipeline - INFO - --phase1-only flag set. Skipping Phase 2.
+2026-04-22 23:21:07 - Pipeline - INFO - Total objects placed: 21

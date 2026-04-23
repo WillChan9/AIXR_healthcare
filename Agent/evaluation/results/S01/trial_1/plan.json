@@ -1,6 +1,6 @@
 {
   "room_type": "Emergency Triage Room",
-  "description": "A small 4m x 4m emergency triage room for rapid patient assessment",
+  "description": "A small 4m x 4m emergency triage room used for rapid patient assessment.",
   "layout_goals": {
     "interior_bounds": "4m x 4m",
     "minimum_objects": 8,
@@ -14,7 +14,7 @@
         "Stretchers_01"
       ],
       "target_area": "back wall, z~3.5",
-      "condition": "stretcher is within 0.5m of the back wall and centered (x~0)"
+      "condition": "stretcher is within 0.5m of the back wall and centered at x=0"
     },
     {
       "step": 2,
@@ -23,7 +23,7 @@
         "Exam_Table_01"
       ],
       "target_area": "left side, x~-1.5, z~2.0",
-      "condition": "exam table is within 0.5m of the left wall and at z~2.0"
+      "condition": "exam table is within 0.5m of the left wall and at z=2.0"
     },
     {
       "step": 3,
@@ -32,16 +32,16 @@
         "Trolley_01"
       ],
       "target_area": "beside exam table, x~-1.0, z~3.0",
-      "condition": "trolley is within 0.5m of the exam table and at z~3.0"
+      "condition": "trolley is within 0.5m of the exam table and at z=3.0"
     },
     {
       "step": 4,
-      "action": "Install monitoring screen on right wall",
+      "action": "Mount monitoring screen on right wall",
       "objects": [
         "Monitor_01"
       ],
       "target_area": "right wall, x~1.5, z~2.5",
-      "condition": "monitoring screen is within 0.5m of the right wall and at z~2.5"
+      "condition": "monitoring screen is within 0.5m of the right wall and at z=2.5"
     },
     {
       "step": 5,
@@ -50,7 +50,7 @@
         "Aid_Kit_01"
       ],
       "target_area": "on trolley surface, y~0.8",
-      "condition": "aid kit is on the trolley surface at y~0.8"
+      "condition": "aid kit is on the trolley surface at y=0.8"
     },
     {
       "step": 6,
@@ -69,7 +69,7 @@
         "Folder_01"
       ],
       "target_area": "any surface",
-      "condition": "folder is on a surface"
+      "condition": "folder is on a surface in the room"
     },
     {
       "step": 8,

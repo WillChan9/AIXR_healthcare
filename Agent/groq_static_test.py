@@ -1228,6 +1228,106 @@ def phase1_generate_environment(
 
 
 # ---------------------------------------------------------------------------
+# Interaction map generation (end of Phase 1)
+# ---------------------------------------------------------------------------
+
+def generate_interaction_map(
+    client, all_placed: List[Dict], description: str, animators: List[str], out_path: Path
+) -> Dict:
+    """Ask the LLM to generate a scene-specific object→animation map based on the
+    objects that were actually placed in Phase 1.  Saves to out_path and returns
+    the dict so phase2_interaction_loop can pass it to InteractionAnimationHandler."""
+
+    placed_objects = []
+    for cmd in all_placed:
+        action = cmd.get("action", "")
+        if action in ("PlaceObject", "PlaceHuman"):
+            name = cmd.get("objectName") or cmd.get("humanName", "")
+            if name:
+                placed_objects.append({
+                    "name": name,
+                    "type": "character" if action == "PlaceHuman" else "object",
+                })
+
+    if not placed_objects:
+        logger.warning("[InteractionMap] No placed objects — skipping generation.")
+        return {}
+
+    system = """\
+You are an interaction design agent for a VR healthcare training simulation.
+Given the list of objects placed in the scene and the available animation controllers,
+generate a contextually appropriate interaction animation map.
+
+For each object decide which player interaction types should trigger an NPC animation
+and which animation fits the clinical/spatial context best.
+
+Rules:
+- Only use controller names that appear verbatim in available_controllers.
+- stateName must equal the controller stem (e.g. "HumanM@Talking").
+- fade: crossfade duration in seconds (0.1–0.5).
+- idle_delay: seconds before auto-return to idle (0 = no auto-return). Use 0 for release events.
+- Characters (doctor/nurse/patient/emt/surgeon): always include "touch" and "hover_enter".
+- Equipment with movement (treadmill/wheelchair/trolley): include "grab" and "release".
+- Stationary props/furniture: include "hover_enter" only when clinically relevant; "grab" when the player would pick it up.
+- Omit objects with no meaningful interaction value (walls, floor, decorative cubes).
+- Tailor choices to the scene description — a surgery prep room should feel different from a gym.
+
+Return ONLY a valid JSON object (no markdown, no explanation):
+{
+  "ObjectName_01": {
+    "hover_enter": {"controller": "<name>", "state": "<name>", "fade": 0.3, "idle_delay": 4.0},
+    "grab":        {"controller": "<name>", "state": "<name>", "fade": 0.3, "idle_delay": 3.0}
+  }
+}
+"""
+
+    user_payload = {
+        "scene_description": description[:400],
+        "placed_objects": placed_objects,
+        "available_controllers": animators,
+    }
+
+    try:
+        resp = client.chat.completions.create(
+            model="meta-llama/llama-4-scout-17b-16e-instruct",
+            messages=[
+                {"role": "system", "content": system},
+                {"role": "user",   "content": json.dumps(user_payload)},
+            ],
+            temperature=0.2,
+            max_completion_tokens=2000,
+        )
+        raw = (resp.choices[0].message.content or "").strip()
+
+        # Strip code fences if present
+        if "```" in raw:
+            start = raw.find("```") + 3
+            end   = raw.rfind("```")
+            inner = raw[start:end].strip()
+            raw   = inner[4:].strip() if inner.startswith("json") else inner
+
+        s = raw.find("{")
+        e = raw.rfind("}") + 1
+        if s == -1 or e <= s:
+            logger.warning("[InteractionMap] LLM returned no JSON object.")
+            return {}
+
+        interaction_map = json.loads(raw[s:e])
+
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(json.dumps(interaction_map, indent=2), encoding="utf-8")
+        logger.info(
+            "[InteractionMap] Generated map for %d objects → %s",
+            len(interaction_map), out_path.name,
+        )
+        return interaction_map
+
+    except Exception as exc:
+        logger.error("[InteractionMap] Generation failed: %s", exc)
+        return {}
+
+
+# ---------------------------------------------------------------------------
 # Phase 2: User interaction loop
 # ---------------------------------------------------------------------------
 
@@ -1561,6 +1661,10 @@ def main():
     if not all_placed:
         logger.error("Phase 1 produced no commands. Exiting.")
         return
+
+    # ===== INTERACTION MAP: Agent-generated per-object animation mapping =====
+    interaction_map_path = agent_dir / "api_files" / "interaction_map.json"
+    generate_interaction_map(client, all_placed, description, animators, interaction_map_path)
 
     if args.phase1_only:
         logger.info("--phase1-only flag set. Skipping Phase 2.")

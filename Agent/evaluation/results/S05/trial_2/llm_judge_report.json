@@ -1,0 +1,7 @@
+{
+  "raw_response": "```json\n{\n  \"coherence_score\": 1,\n  \"spatial_score\": 1,\n  \"coherence_reasoning\": \"The scene is empty and does not contain any of the required objects for a waiting room, such as chairs, a reception desk, or magazines. This results in a complete mismatch with the intended scene type.\",\n  \"spatial_reasoning\": \"There are no objects placed in the scene, which means there is no spatial arrangement to evaluate. The placement is considered random and illogical as it does not adhere to any spatial semantics or requirements of a waiting room.\"\n}\n```",
+  "coherence_score": 1,
+  "spatial_score": 1,
+  "scene_type": "Waiting Room",
+  "results_dir": "C:\\Users\\Allison\\Programming\\GitHub\\AIXR_healthcare\\Agent\\evaluation\\results\\S05\\trial_2"
+}

@@ -1,0 +1,273 @@
+2026-04-22 22:23:39 - Pipeline - INFO - [Init] Cleared log agent.log
+2026-04-22 22:23:39 - Pipeline - INFO - [Init] Cleared log reflection_log.log
+2026-04-22 22:23:40 - Pipeline - INFO - Generating room layout plan...
+2026-04-22 22:23:43 - Pipeline - INFO - Plan generated and saved to C:\Users\Allison\Programming\GitHub\AIXR_healthcare\Agent\api_files\plan.json
+2026-04-22 22:23:44 - Pipeline - INFO - ============================================================
+2026-04-22 22:23:44 - Pipeline - INFO -   PHASE 1: Static Environment Generation
+2026-04-22 22:23:44 - Pipeline - INFO - ============================================================
+2026-04-22 22:23:44 - Pipeline - INFO - [Phase 1] Room shell written: 9 structural commands
+2026-04-22 22:23:45 - Pipeline - INFO - ----- GROQ RAW RESPONSE (attempt 1/3) -----
+2026-04-22 22:23:45 - Pipeline - INFO - [
+  {"action": "PlaceObject", "objectName": "Stretchers_01", "x": 0, "y": 0, "z": 3.5, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Exam_Table_01", "x": -1.5, "y": 0, "z": 2.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Trolley_01", "x": -1.0, "y": 0, "z": 3.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Monitor_01", "x": 1.5, "y": 0, "z": 2.5, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Aid_Kit_01", "x": -1.0, "y": 0.8, "z": 3.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Syringe_01", "x": -1.5, "y": 0, "z": 1.9, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Stethoscope_01", "x": -1.5, "y": 0, "z": 2.1, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Folder_01", "x": -1.0, "y": 0.8, "z": 3.0, "rotationY": 0},
+  {"action": "PlaceHuman", "humanName": "EMT_01", "x": 0, "y": 0, "z": 3.3, "rotationY": 0},
+  {"action": "PlaceHuman", "humanName": "Patient_01", "x": -1.5, "y": 0, "z": 1.8, "rotationY": 0}
+]
+2026-04-22 22:23:45 - Pipeline - INFO - ------------------------------------------------------
+2026-04-22 22:23:45 - Pipeline - INFO - [Phase 1] Interior objects: wrote 10 commands
+2026-04-22 22:23:45 - Pipeline - INFO - [Phase 1] Waiting up to 15s for Unity to refresh screenshots...
+2026-04-22 22:24:01 - Pipeline - INFO - [Phase 1] Using existing screenshots (may be stale). Starting reflection loop.
+2026-04-22 22:24:01 - Pipeline - INFO - [Phase 1 Reflection] Step 1/9: Place stretcher against back wall
+2026-04-22 22:24:01 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 22:24:01 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 22:24:01 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 22:24:01 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 22:24:01 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 22:24:01 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 22:24:01 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 22:24:01 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 22:24:03 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:24:03 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 22:24:04 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:24:04 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 22:24:04 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:24:04 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 22:24:05 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:24:05 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 22:24:05 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 22:24:05 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 22:24:05 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 22:24:05 - ReflectionModule - INFO - Logged reflection entry for step 'Place stretcher against back wall'
+2026-04-22 22:24:05 - Pipeline - INFO -   Object cap reached (12/12) — no additions
+2026-04-22 22:24:05 - Pipeline - INFO -   step_complete=no  room_status=sparse  suggest_additions=False  objects=12
+2026-04-22 22:24:05 - Pipeline - INFO -   layout: The room seems to be in a good starting point. The stretcher is against the back wall, and other objects seem to be in their designated areas. However, small props like 'Syringe_01' and 'Stethoscope_01' need to be placed on surfaces.
+2026-04-22 22:24:05 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 22:24:08 - Pipeline - INFO - [Phase 1 Reflection] Step 1/9: Place stretcher against back wall
+2026-04-22 22:24:08 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 22:24:08 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 22:24:08 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 22:24:08 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 22:24:08 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 22:24:08 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 22:24:08 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 22:24:08 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 22:24:10 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:24:10 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 22:24:10 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:24:10 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 22:24:11 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:24:11 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 22:24:11 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:24:11 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 22:24:11 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 22:24:11 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 22:24:11 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 22:24:11 - ReflectionModule - INFO - Logged reflection entry for step 'Place stretcher against back wall'
+2026-04-22 22:24:11 - Pipeline - INFO -   Object cap reached (12/12) — no additions
+2026-04-22 22:24:11 - Pipeline - INFO -   step_complete=no  room_status=sparse  suggest_additions=False  objects=12
+2026-04-22 22:24:11 - Pipeline - INFO -   layout: The room seems to be in a good starting point. The stretcher is against the back wall, and other objects seem to be in their designated areas. However, small props like 'Syringe_01' and 'Stethoscope_01' need to be placed on surfaces.
+2026-04-22 22:24:11 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 22:24:14 - Pipeline - INFO - [Phase 1 Reflection] Step 1/9: Place stretcher against back wall
+2026-04-22 22:24:14 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 22:24:14 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 22:24:14 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 22:24:14 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 22:24:14 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 22:24:14 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 22:24:14 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 22:24:14 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 22:24:16 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:24:16 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 22:24:16 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:24:16 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 22:24:16 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:24:16 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 22:24:17 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 22:24:17 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 22:24:17 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 22:24:17 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 22:24:17 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 22:24:17 - ReflectionModule - INFO - Logged reflection entry for step 'Place stretcher against back wall'
+2026-04-22 22:24:17 - Pipeline - INFO -   Object cap reached (12/12) — no additions
+2026-04-22 22:24:17 - Pipeline - INFO -   step_complete=no  room_status=sparse  suggest_additions=False  objects=12
+2026-04-22 22:24:17 - Pipeline - INFO -   layout: The room seems to be in a good starting point. The stretcher is against the back wall, and other objects seem to be in their designated areas. However, small props like 'Syringe_01' and 'Stethoscope_01' need to be placed on surfaces.
+2026-04-22 22:24:17 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 22:24:20 - Pipeline - INFO - [Phase 1 Reflection] Step 1/9: Place stretcher against back wall
+2026-04-22 22:24:20 - ReflectionModule - INFO - Step '1' reached max reflections (3). Forcing step_complete=yes to avoid infinite correction loop.
+2026-04-22 22:24:20 - ReflectionModule - INFO - Logged reflection entry for step 'Place stretcher against back wall'
+2026-04-22 22:24:20 - Pipeline - INFO -   Object cap reached (12/12) — no additions
+2026-04-22 22:24:20 - Pipeline - INFO -   step_complete=yes  room_status=good  suggest_additions=False  objects=12
+2026-04-22 22:24:20 - Pipeline - INFO -   layout: Layout accepted after maximum correction iterations.
+2026-04-22 22:24:20 - Pipeline - INFO -   Step complete — advancing 1 → 2: Position exam table on left side
+2026-04-22 22:24:20 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 22:24:26 - Pipeline - INFO - [Phase 1 Reflection] Step 2/9: Position exam table on left side
+2026-04-22 22:24:26 - ReflectionModule - INFO - [SceneState] Loaded 11 live objects from scene_state.json.
+2026-04-22 22:24:26 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 22:24:26 - ReflectionModule - INFO - [DispatcherThread] 1 object(s) flagged: ['Monitor_01 → floating ([dispatcher→surface])']
+2026-04-22 22:24:26 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Stretchers_01 x=0.00 y=0.08 z=2.90 rotationY=0  — reason: [bounds] back edge clips wall (z=3.50, half=0.95)
+2026-04-22 22:24:26 - ReflectionModule - INFO - [CollisionThread][math] MoveObject EMT_01 x=0.00 y=0.12 z=2.00 rotationY=0  — reason: overlaps Stretchers_01 (pen_x=0.75m pen_z=0.59m; exact bounds)
+2026-04-22 22:24:26 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Trolley_01 x=-1.00 y=0.05 z=2.85 rotationY=0  — reason: [bounds] back edge clips wall (z=3.00, half=1.00)
+2026-04-22 22:24:26 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Patient_01 x=-1.02 y=0.85 z=1.80 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.50, half=0.73)
+2026-04-22 22:24:26 - ReflectionModule - INFO - [BoundsThread] 3 bound/doorway corrections generated.
+2026-04-22 22:24:26 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Trolley_01 x=-0.62 y=0.05 z=3.00 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.12m pen_z=0.55m; exact bounds)
+2026-04-22 22:24:26 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Syringe_01 x=-0.99 y=0.81 z=1.90 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.03m pen_z=0.09m; exact bounds)
+2026-04-22 22:24:26 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Stethoscope_01 x=-0.81 y=0.81 z=2.10 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.30m pen_z=0.50m; exact bounds)
+2026-04-22 22:24:26 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Patient_01 x=-0.27 y=0.85 z=1.80 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.49m pen_z=0.74m; exact bounds)
+2026-04-22 22:24:26 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Aid_Kit_01 x=-1.00 y=1.60 z=3.81 rotationY=0  — reason: overlaps Trolley_01 (pen_x=0.20m pen_z=0.17m; exact bounds)
+2026-04-22 22:24:26 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Folder_01 x=-0.35 y=1.63 z=3.00 rotationY=0  — reason: overlaps Trolley_01 (pen_x=0.05m pen_z=0.25m; exact bounds)
+2026-04-22 22:24:26 - ReflectionModule - INFO - [CollisionThread] math path: 7 collision(s) found.
+2026-04-22 22:24:29 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 22:24:29 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 22:24:30 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 22:24:30 - ReflectionModule - INFO - [BoundsThread] 3 correction(s) applied:
+2026-04-22 22:24:30 - ReflectionModule - INFO -   [BoundsThread] MoveObject Stretchers_01 x=0.00 y=0.08 z=2.90 rotationY=0  — reason: [bounds] back edge clips wall (z=3.50, half=0.95)
+2026-04-22 22:24:30 - ReflectionModule - INFO -   [BoundsThread] MoveObject Trolley_01 x=-1.00 y=0.05 z=2.85 rotationY=0  — reason: [bounds] back edge clips wall (z=3.00, half=1.00)
+2026-04-22 22:24:30 - ReflectionModule - INFO -   [BoundsThread] MoveObject Patient_01 x=-1.02 y=0.85 z=1.80 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.50, half=0.73)
+2026-04-22 22:24:30 - ReflectionModule - INFO - [CollisionThread] 7 correction(s) applied:
+2026-04-22 22:24:30 - ReflectionModule - INFO -   [CollisionThread] MoveObject EMT_01 x=0.00 y=0.12 z=2.00 rotationY=0  — reason: overlaps Stretchers_01 (pen_x=0.75m pen_z=0.59m; exact bounds)
+2026-04-22 22:24:30 - ReflectionModule - INFO -   [CollisionThread] MoveObject Trolley_01 x=-0.62 y=0.05 z=3.00 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.12m pen_z=0.55m; exact bounds)
+2026-04-22 22:24:30 - ReflectionModule - INFO -   [CollisionThread] MoveObject Syringe_01 x=-0.99 y=0.81 z=1.90 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.03m pen_z=0.09m; exact bounds)
+2026-04-22 22:24:30 - ReflectionModule - INFO -   [CollisionThread] MoveObject Stethoscope_01 x=-0.81 y=0.81 z=2.10 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.30m pen_z=0.50m; exact bounds)
+2026-04-22 22:24:30 - ReflectionModule - INFO -   [CollisionThread] MoveObject Patient_01 x=-0.27 y=0.85 z=1.80 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.49m pen_z=0.74m; exact bounds)
+2026-04-22 22:24:30 - ReflectionModule - INFO -   [CollisionThread] MoveObject Aid_Kit_01 x=-1.00 y=1.60 z=3.81 rotationY=0  — reason: overlaps Trolley_01 (pen_x=0.20m pen_z=0.17m; exact bounds)
+2026-04-22 22:24:30 - ReflectionModule - INFO -   [CollisionThread] MoveObject Folder_01 x=-0.35 y=1.63 z=3.00 rotationY=0  — reason: overlaps Trolley_01 (pen_x=0.05m pen_z=0.25m; exact bounds)
+2026-04-22 22:24:30 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied (skipped 1 already handled).
+2026-04-22 22:24:30 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied (skipped 1 already handled).
+2026-04-22 22:24:30 - ReflectionModule - INFO - Logged reflection entry for step 'Position exam table on left side'
+2026-04-22 22:24:30 - Pipeline - INFO -   Object cap reached (12/12) — no additions
+2026-04-22 22:24:30 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=12
+2026-04-22 22:24:30 - Pipeline - INFO -   layout: The room seems to be in a good starting point. The stretcher is against the back wall, and other objects seem to be in their designated areas. However, small props like 'Syringe_01' and 'Stethoscope_01' need to be placed on surfaces.
+2026-04-22 22:24:30 - Pipeline - INFO -   suggestions: MoveObject Stretchers_01 x=0.00 y=0.08 z=2.90 rotationY=0  — reason: [bounds] back edge clips wall (z=3.50, half=0.95)
+MoveObject Trolley_01 x=-1.00 y=0.05 z=2.85 rotationY=0  — reason: [bounds] back edge clips wall (z=3.00, half=1.00)
+MoveObject Patient_01 x=-1.02 y=0.85 z=1.80 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.50, half=0.73)
+MoveObject EMT_01 x=0.00 y=0.12 z=2.00 rotationY=0  — reason: overlaps Stretchers_01 (pen_x=0.75m pen_z=0.59m; exact bounds)
+MoveObject Trolley_01 x=-0.62 y=0.05 z=3.00 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.12m pen_z=0.55m; exact bounds)
+MoveObject Syringe_01 x=-0.99 y=0.81 z=1.90 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.03m pen_z=0.09m; exact bounds)
+MoveObject Stethoscope_01 x=-0.81 y=0.81 z=2.10 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.30m pen_z=0.50m; exact bounds)
+MoveObject Patient_01 x=-0.27 y=0.85 z=1.80 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.49m pen_z=0.74m; exact bounds)
+MoveObject Aid_Kit_01 x=-1.00 y=1.60 z=3.81 rotationY=0  — reason: overlaps Trolley_01 (pen_x=0.20m pen_z=0.17m; exact bounds)
+MoveObject Folder_01 x=-0.35 y=1.63 z=3.00 rotationY=0  — reason: overlaps Trolley_01 (pen_x=0.05m pen_z=0.25m; exact bounds)
+2026-04-22 22:24:30 - Pipeline - INFO -   Step complete — advancing 2 → 3: Place trolley cart beside exam table
+2026-04-22 22:24:30 - Pipeline - INFO -   [parse_alignment] MoveObject Stretchers_01 → x=0.0 y=0.08 z=2.9 rot=0.0
+2026-04-22 22:24:30 - Pipeline - INFO -   [parse_alignment] MoveObject Trolley_01 → x=-1.0 y=0.05 z=2.85 rot=0.0
+2026-04-22 22:24:30 - Pipeline - INFO -   [parse_alignment] MoveObject Patient_01 → x=-1.02 y=0.85 z=1.8 rot=0.0
+2026-04-22 22:24:30 - Pipeline - INFO -   [parse_alignment] MoveObject EMT_01 → x=0.0 y=0.12 z=2.0 rot=0.0
+2026-04-22 22:24:30 - Pipeline - INFO -   [parse_alignment] MoveObject Trolley_01 → x=-0.62 y=0.05 z=3.0 rot=0.0
+2026-04-22 22:24:30 - Pipeline - INFO -   [parse_alignment] MoveObject Syringe_01 → x=-0.99 y=0.81 z=1.9 rot=0.0
+2026-04-22 22:24:30 - Pipeline - INFO -   [parse_alignment] MoveObject Stethoscope_01 → x=-0.81 y=0.81 z=2.1 rot=0.0
+2026-04-22 22:24:30 - Pipeline - INFO -   [parse_alignment] MoveObject Patient_01 → x=-0.27 y=0.85 z=1.8 rot=0.0
+2026-04-22 22:24:30 - Pipeline - INFO -   [parse_alignment] MoveObject Aid_Kit_01 → x=-1.0 y=1.6 z=3.81 rot=0.0
+2026-04-22 22:24:30 - Pipeline - INFO -   [parse_alignment] MoveObject Folder_01 → x=-0.35 y=1.63 z=3.0 rot=0.0
+2026-04-22 22:24:30 - Pipeline - INFO - [Phase 1] Applied 10 direct corrections (MoveObject/DeleteObject)
+2026-04-22 22:24:30 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 22:24:33 - Pipeline - INFO - [Phase 1 Reflection] Step 3/9: Place trolley cart beside exam table
+2026-04-22 22:24:33 - ReflectionModule - INFO - [SceneState] Loaded 11 live objects from scene_state.json.
+2026-04-22 22:24:33 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 22:24:33 - ReflectionModule - INFO - [DispatcherThread] 1 object(s) flagged: ['Monitor_01 → floating ([dispatcher→surface])']
+2026-04-22 22:24:33 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Stretchers_01 x=0.00 y=0.08 z=2.90 rotationY=0  — reason: [bounds] back edge clips wall (z=3.50, half=0.95)
+2026-04-22 22:24:33 - ReflectionModule - INFO - [CollisionThread][math] MoveObject EMT_01 x=0.00 y=0.12 z=2.00 rotationY=0  — reason: overlaps Stretchers_01 (pen_x=0.75m pen_z=0.59m; exact bounds)
+2026-04-22 22:24:33 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Trolley_01 x=-1.00 y=0.05 z=2.85 rotationY=0  — reason: [bounds] back edge clips wall (z=3.00, half=1.00)
+2026-04-22 22:24:33 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Patient_01 x=-1.02 y=0.85 z=1.80 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.50, half=0.73)
+2026-04-22 22:24:33 - ReflectionModule - INFO - [BoundsThread] 3 bound/doorway corrections generated.
+2026-04-22 22:24:33 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Trolley_01 x=-0.62 y=0.05 z=3.00 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.12m pen_z=0.55m; exact bounds)
+2026-04-22 22:24:33 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Syringe_01 x=-0.99 y=0.81 z=1.90 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.03m pen_z=0.09m; exact bounds)
+2026-04-22 22:24:33 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Stethoscope_01 x=-0.81 y=0.81 z=2.10 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.30m pen_z=0.50m; exact bounds)
+2026-04-22 22:24:33 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Patient_01 x=-0.27 y=0.85 z=1.80 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.49m pen_z=0.74m; exact bounds)
+2026-04-22 22:24:33 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Aid_Kit_01 x=-1.00 y=1.60 z=3.81 rotationY=0  — reason: overlaps Trolley_01 (pen_x=0.20m pen_z=0.17m; exact bounds)
+2026-04-22 22:24:33 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Folder_01 x=-0.35 y=1.63 z=3.00 rotationY=0  — reason: overlaps Trolley_01 (pen_x=0.05m pen_z=0.25m; exact bounds)
+2026-04-22 22:24:33 - ReflectionModule - INFO - [CollisionThread] math path: 7 collision(s) found.
+2026-04-22 22:24:36 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 22:24:36 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 22:24:36 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 1 line(s).
+2026-04-22 22:24:36 - ReflectionModule - INFO - [BoundsThread] 3 correction(s) applied:
+2026-04-22 22:24:36 - ReflectionModule - INFO -   [BoundsThread] MoveObject Stretchers_01 x=0.00 y=0.08 z=2.90 rotationY=0  — reason: [bounds] back edge clips wall (z=3.50, half=0.95)
+2026-04-22 22:24:36 - ReflectionModule - INFO -   [BoundsThread] MoveObject Trolley_01 x=-1.00 y=0.05 z=2.85 rotationY=0  — reason: [bounds] back edge clips wall (z=3.00, half=1.00)
+2026-04-22 22:24:36 - ReflectionModule - INFO -   [BoundsThread] MoveObject Patient_01 x=-1.02 y=0.85 z=1.80 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.50, half=0.73)
+2026-04-22 22:24:36 - ReflectionModule - INFO - [CollisionThread] 7 correction(s) applied:
+2026-04-22 22:24:36 - ReflectionModule - INFO -   [CollisionThread] MoveObject EMT_01 x=0.00 y=0.12 z=2.00 rotationY=0  — reason: overlaps Stretchers_01 (pen_x=0.75m pen_z=0.59m; exact bounds)
+2026-04-22 22:24:36 - ReflectionModule - INFO -   [CollisionThread] MoveObject Trolley_01 x=-0.62 y=0.05 z=3.00 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.12m pen_z=0.55m; exact bounds)
+2026-04-22 22:24:36 - ReflectionModule - INFO -   [CollisionThread] MoveObject Syringe_01 x=-0.99 y=0.81 z=1.90 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.03m pen_z=0.09m; exact bounds)
+2026-04-22 22:24:36 - ReflectionModule - INFO -   [CollisionThread] MoveObject Stethoscope_01 x=-0.81 y=0.81 z=2.10 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.30m pen_z=0.50m; exact bounds)
+2026-04-22 22:24:36 - ReflectionModule - INFO -   [CollisionThread] MoveObject Patient_01 x=-0.27 y=0.85 z=1.80 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.49m pen_z=0.74m; exact bounds)
+2026-04-22 22:24:36 - ReflectionModule - INFO -   [CollisionThread] MoveObject Aid_Kit_01 x=-1.00 y=1.60 z=3.81 rotationY=0  — reason: overlaps Trolley_01 (pen_x=0.20m pen_z=0.17m; exact bounds)
+2026-04-22 22:24:36 - ReflectionModule - INFO -   [CollisionThread] MoveObject Folder_01 x=-0.35 y=1.63 z=3.00 rotationY=0  — reason: overlaps Trolley_01 (pen_x=0.05m pen_z=0.25m; exact bounds)
+2026-04-22 22:24:36 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied (skipped 1 already handled).
+2026-04-22 22:24:36 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied (skipped 1 already handled).
+2026-04-22 22:24:36 - ReflectionModule - INFO - Logged reflection entry for step 'Place trolley cart beside exam table'
+2026-04-22 22:24:36 - Pipeline - INFO -   Object cap reached (12/12) — no additions
+2026-04-22 22:24:36 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=12
+2026-04-22 22:24:36 - Pipeline - INFO -   layout: The room seems to be in a good starting point. The stretcher is against the back wall, and other objects seem to be in their designated areas. However, small props like 'Syringe_01' and 'Stethoscope_01' need to be placed on surfaces.
+2026-04-22 22:24:36 - Pipeline - INFO -   suggestions: MoveObject Stretchers_01 x=0.00 y=0.08 z=2.90 rotationY=0  — reason: [bounds] back edge clips wall (z=3.50, half=0.95)
+MoveObject Trolley_01 x=-1.00 y=0.05 z=2.85 rotationY=0  — reason: [bounds] back edge clips wall (z=3.00, half=1.00)
+MoveObject Patient_01 x=-1.02 y=0.85 z=1.80 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.50, half=0.73)
+MoveObject EMT_01 x=0.00 y=0.12 z=2.00 rotationY=0  — reason: overlaps Stretchers_01 (pen_x=0.75m pen_z=0.59m; exact bounds)
+MoveObject Trolley_01 x=-0.62 y=0.05 z=3.00 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.12m pen_z=0.55m; exact bounds)
+MoveObject Syringe_01 x=-0.99 y=0.81 z=1.90 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.03m pen_z=0.09m; exact bounds)
+MoveObject Stethoscope_01 x=-0.81 y=0.81 z=2.10 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.30m pen_z=0.50m; exact bounds)
+MoveObject Patient_01 x=-0.27 y=0.85 z=1.80 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.49m pen_z=0.74m; exact bounds)
+MoveObject Aid_Kit_01 x=-1.00 y=1.60 z=3.81 rotationY=0  — reason: overlaps Trolley_01 (pen_x=0.20m pen_z=0.17m; exact bounds)
+MoveObject Folder_01 x=-0.35 y=1.63 z=3.00 rotationY=0  — reason: overlaps Trolley_01 (pen_x=0.05m pen_z=0.25m; exact bounds)
+2026-04-22 22:24:36 - Pipeline - INFO -   Step complete — advancing 3 → 4: Mount monitoring screen on right wall
+2026-04-22 22:24:36 - Pipeline - INFO - [Phase 1] Same suggestions as last iteration — skipping (stale x1).
+2026-04-22 22:24:36 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 22:24:39 - Pipeline - INFO - [Phase 1 Reflection] Step 4/9: Mount monitoring screen on right wall
+2026-04-22 22:24:39 - ReflectionModule - INFO - [SceneState] Loaded 11 live objects from scene_state.json.
+2026-04-22 22:24:39 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 22:24:39 - ReflectionModule - INFO - [DispatcherThread] 1 object(s) flagged: ['Monitor_01 → floating ([dispatcher→surface])']
+2026-04-22 22:24:39 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Stretchers_01 x=0.00 y=0.08 z=2.90 rotationY=0  — reason: [bounds] back edge clips wall (z=3.50, half=0.95)
+2026-04-22 22:24:39 - ReflectionModule - INFO - [CollisionThread][math] MoveObject EMT_01 x=0.00 y=0.12 z=2.00 rotationY=0  — reason: overlaps Stretchers_01 (pen_x=0.75m pen_z=0.59m; exact bounds)
+2026-04-22 22:24:39 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Trolley_01 x=-1.00 y=0.05 z=2.85 rotationY=0  — reason: [bounds] back edge clips wall (z=3.00, half=1.00)
+2026-04-22 22:24:39 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Patient_01 x=-1.02 y=0.85 z=1.80 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.50, half=0.73)
+2026-04-22 22:24:39 - ReflectionModule - INFO - [BoundsThread] 3 bound/doorway corrections generated.
+2026-04-22 22:24:39 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Trolley_01 x=-0.62 y=0.05 z=3.00 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.12m pen_z=0.55m; exact bounds)
+2026-04-22 22:24:39 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Syringe_01 x=-0.99 y=0.81 z=1.90 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.03m pen_z=0.09m; exact bounds)
+2026-04-22 22:24:39 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Stethoscope_01 x=-0.81 y=0.81 z=2.10 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.30m pen_z=0.50m; exact bounds)
+2026-04-22 22:24:40 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Patient_01 x=-0.27 y=0.85 z=1.80 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.49m pen_z=0.74m; exact bounds)
+2026-04-22 22:24:40 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Aid_Kit_01 x=-1.00 y=1.60 z=3.81 rotationY=0  — reason: overlaps Trolley_01 (pen_x=0.20m pen_z=0.17m; exact bounds)
+2026-04-22 22:24:40 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Folder_01 x=-0.35 y=1.63 z=3.00 rotationY=0  — reason: overlaps Trolley_01 (pen_x=0.05m pen_z=0.25m; exact bounds)
+2026-04-22 22:24:40 - ReflectionModule - INFO - [CollisionThread] math path: 7 collision(s) found.
+2026-04-22 22:24:41 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 1 line(s).
+2026-04-22 22:24:42 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 22:24:43 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 2 line(s).
+2026-04-22 22:24:43 - ReflectionModule - INFO - [DispatcherThread] LLM visual check added 2 extra correction(s).
+2026-04-22 22:24:49 - ReflectionModule - WARNING - [SurfaceThread] attempt 1/3 failed: Illegal trailing comma before end of array: line 10 column 95 (char 1171)
+2026-04-22 22:24:54 - ReflectionModule - INFO - [BoundsThread] 3 correction(s) applied:
+2026-04-22 22:24:54 - ReflectionModule - INFO -   [BoundsThread] MoveObject Stretchers_01 x=0.00 y=0.08 z=2.90 rotationY=0  — reason: [bounds] back edge clips wall (z=3.50, half=0.95)
+2026-04-22 22:24:54 - ReflectionModule - INFO -   [BoundsThread] MoveObject Trolley_01 x=-1.00 y=0.05 z=2.85 rotationY=0  — reason: [bounds] back edge clips wall (z=3.00, half=1.00)
+2026-04-22 22:24:54 - ReflectionModule - INFO -   [BoundsThread] MoveObject Patient_01 x=-1.02 y=0.85 z=1.80 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.50, half=0.73)
+2026-04-22 22:24:54 - ReflectionModule - INFO - [CollisionThread] 7 correction(s) applied:
+2026-04-22 22:24:54 - ReflectionModule - INFO -   [CollisionThread] MoveObject EMT_01 x=0.00 y=0.12 z=2.00 rotationY=0  — reason: overlaps Stretchers_01 (pen_x=0.75m pen_z=0.59m; exact bounds)
+2026-04-22 22:24:54 - ReflectionModule - INFO -   [CollisionThread] MoveObject Trolley_01 x=-0.62 y=0.05 z=3.00 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.12m pen_z=0.55m; exact bounds)
+2026-04-22 22:24:54 - ReflectionModule - INFO -   [CollisionThread] MoveObject Syringe_01 x=-0.99 y=0.81 z=1.90 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.03m pen_z=0.09m; exact bounds)
+2026-04-22 22:24:54 - ReflectionModule - INFO -   [CollisionThread] MoveObject Stethoscope_01 x=-0.81 y=0.81 z=2.10 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.30m pen_z=0.50m; exact bounds)
+2026-04-22 22:24:54 - ReflectionModule - INFO -   [CollisionThread] MoveObject Patient_01 x=-0.27 y=0.85 z=1.80 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.49m pen_z=0.74m; exact bounds)
+2026-04-22 22:24:54 - ReflectionModule - INFO -   [CollisionThread] MoveObject Aid_Kit_01 x=-1.00 y=1.60 z=3.81 rotationY=0  — reason: overlaps Trolley_01 (pen_x=0.20m pen_z=0.17m; exact bounds)
+2026-04-22 22:24:54 - ReflectionModule - INFO -   [CollisionThread] MoveObject Folder_01 x=-0.35 y=1.63 z=3.00 rotationY=0  — reason: overlaps Trolley_01 (pen_x=0.05m pen_z=0.25m; exact bounds)
+2026-04-22 22:24:54 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied (skipped 3 already handled).
+2026-04-22 22:24:54 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied (skipped 1 already handled).
+2026-04-22 22:24:54 - ReflectionModule - INFO - Logged reflection entry for step 'Mount monitoring screen on right wall'
+2026-04-22 22:24:54 - Pipeline - INFO -   Object cap reached (12/12) — no additions
+2026-04-22 22:24:54 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=12
+2026-04-22 22:24:54 - Pipeline - INFO -   layout: The room seems to be in a good starting point. The stretcher is against the back wall, and other objects seem to be in their designated areas. However, small props need precise placement on surfaces.
+2026-04-22 22:24:54 - Pipeline - INFO -   suggestions: MoveObject Stretchers_01 x=0.00 y=0.08 z=2.90 rotationY=0  — reason: [bounds] back edge clips wall (z=3.50, half=0.95)
+MoveObject Trolley_01 x=-1.00 y=0.05 z=2.85 rotationY=0  — reason: [bounds] back edge clips wall (z=3.00, half=1.00)
+MoveObject Patient_01 x=-1.02 y=0.85 z=1.80 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.50, half=0.73)
+MoveObject EMT_01 x=0.00 y=0.12 z=2.00 rotationY=0  — reason: overlaps Stretchers_01 (pen_x=0.75m pen_z=0.59m; exact bounds)
+MoveObject Trolley_01 x=-0.62 y=0.05 z=3.00 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.12m pen_z=0.55m; exact bounds)
+MoveObject Syringe_01 x=-0.99 y=0.81 z=1.90 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.03m pen_z=0.09m; exact bounds)
+MoveObject Stethoscope_01 x=-0.81 y=0.81 z=2.10 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.30m pen_z=0.50m; exact bounds)
+MoveObject Patient_01 x=-0.27 y=0.85 z=1.80 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.49m pen_z=0.74m; exact bounds)
+MoveObject Aid_Kit_01 x=-1.00 y=1.60 z=3.81 rotationY=0  — reason: overlaps Trolley_01 (pen_x=0.20m pen_z=0.17m; exact bounds)
+MoveObject Folder_01 x=-0.35 y=1.63 z=3.00 rotationY=0  — reason: overlaps Trolley_01 (pen_x=0.05m pen_z=0.25m; exact bounds)
+2026-04-22 22:24:54 - Pipeline - INFO -   Step complete — advancing 4 → 5: Place aid kit on trolley surface
+2026-04-22 22:24:54 - Pipeline - INFO - [Phase 1] Same suggestions as last iteration — skipping (stale x2).
+2026-04-22 22:24:54 - Pipeline - INFO - [Phase 1] Reflection stale + object cap reached — finishing early.
+2026-04-22 22:24:57 - Pipeline - INFO - [InteractionMap] Generated map for 10 objects → interaction_map.json
+2026-04-22 22:24:57 - Pipeline - INFO - --phase1-only flag set. Skipping Phase 2.
+2026-04-22 22:24:57 - Pipeline - INFO - Total objects placed: 17

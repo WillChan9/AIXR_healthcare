@@ -1,0 +1,7 @@
+{
+  "raw_response": "```json\n{\n  \"coherence_score\": 1,\n  \"spatial_score\": 1,\n  \"coherence_reasoning\": \"The scene is empty and does not contain any of the required objects for a rehabilitation corridor, such as handrails, wheelchair, or walker. This results in a completely wrong object selection for the intended scene type.\",\n  \"spatial_reasoning\": \"With no objects placed in the scene, the spatial arrangement is random and illogical. There are no objects to evaluate for proper placement, functional groupings, or walkway clearance.\"\n}\n```",
+  "coherence_score": 1,
+  "spatial_score": 1,
+  "scene_type": "Rehabilitation Corridor",
+  "results_dir": "C:\\Users\\Allison\\Programming\\GitHub\\AIXR_healthcare\\Agent\\evaluation\\results\\S08\\trial_1"
+}

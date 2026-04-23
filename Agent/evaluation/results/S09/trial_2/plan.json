@@ -1,0 +1,62 @@
+{
+  "room_type": "Doctor's Office",
+  "description": "A 5m x 5m doctor's office divided into two functional zones: a desk/office zone and an examination zone.",
+  "layout_goals": {
+    "interior_bounds": "5m x 5m",
+    "minimum_objects": 10,
+    "focal_point": "Reception_Desk_01"
+  },
+  "steps": [
+    {
+      "step": 1,
+      "action": "Place desk and chair in the back-left corner",
+      "objects": [
+        "Reception_Desk_01",
+        "Chair_01"
+      ],
+      "target_area": "Back-left corner, x~-1.5, z~4.0",
+      "condition": "Chair_01 is behind Reception_Desk_01"
+    },
+    {
+      "step": 2,
+      "action": "Add computer, keyboard, and folders to the desk",
+      "objects": [
+        "Computer_01",
+        "Keyboard_01",
+        "Folder_01",
+        "Folder_02"
+      ],
+      "target_area": "On Reception_Desk_01, y~0.8",
+      "condition": "All objects are on the desk"
+    },
+    {
+      "step": 3,
+      "action": "Place exam table and stool in the right side",
+      "objects": [
+        "Exam_Table_01",
+        "Exam_Stool_01"
+      ],
+      "target_area": "Right side, x~1.5, z~3.0",
+      "condition": "Exam_Stool_01 is near Exam_Table_01"
+    },
+    {
+      "step": 4,
+      "action": "Add scale and stethoscope to the exam zone",
+      "objects": [
+        "Scale_01",
+        "Stethoscope_01"
+      ],
+      "target_area": "Near wall, x~2.0, z~1.5 and near exam area",
+      "condition": "Scale_01 is near the wall and Stethoscope_01 is near the exam area"
+    },
+    {
+      "step": 5,
+      "action": "Place doctor near the desk",
+      "objects": [
+        "Doctor_01"
+      ],
+      "target_area": "Near Reception_Desk_01",
+      "condition": "Doctor_01 is near the desk"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "raw_response": "```json\n{\n  \"coherence_score\": 1,\n  \"spatial_score\": 1,\n  \"coherence_reasoning\": \"The scene is empty and does not contain any objects, which means it does not meet the requirements for a doctor's office scene. There are no objects to assess for appropriateness to the scene type.\",\n  \"spatial_reasoning\": \"The scene is empty with no objects placed, resulting in a completely illogical spatial arrangement as there are no objects to arrange.\"\n}\n```",
+  "coherence_score": 1,
+  "spatial_score": 1,
+  "scene_type": "Doctor Office",
+  "results_dir": "C:\\Users\\Allison\\Programming\\GitHub\\AIXR_healthcare\\Agent\\evaluation\\results\\S09\\trial_3"
+}

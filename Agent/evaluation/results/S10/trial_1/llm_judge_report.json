@@ -1,0 +1,7 @@
+{
+  "raw_response": "```json\n{\n  \"coherence_score\": 1,\n  \"spatial_score\": 1,\n  \"coherence_reasoning\": \"The scene is empty and does not contain any of the required objects for a Nurse Station Open scenario, such as desks, monitors, computers, supply cabinets, or medication carts. This results in a complete mismatch with the expected scene type.\",\n  \"spatial_reasoning\": \"With no objects placed in the scene, there is no spatial arrangement to evaluate. The placement is random by default, as there are no objects to place logically within the given space.\"\n}\n```",
+  "coherence_score": 1,
+  "spatial_score": 1,
+  "scene_type": "Nurse Station Open",
+  "results_dir": "C:\\Users\\Allison\\Programming\\GitHub\\AIXR_healthcare\\Agent\\evaluation\\results\\S10\\trial_1"
+}

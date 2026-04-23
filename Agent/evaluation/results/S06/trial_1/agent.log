@@ -1,0 +1,296 @@
+2026-04-22 23:00:01 - Pipeline - INFO - [Init] Cleared log agent.log
+2026-04-22 23:00:01 - Pipeline - INFO - [Init] Cleared log reflection_log.log
+2026-04-22 23:00:03 - Pipeline - INFO - Generating room layout plan...
+2026-04-22 23:00:05 - Pipeline - INFO - Plan generated and saved to C:\Users\Allison\Programming\GitHub\AIXR_healthcare\Agent\api_files\plan.json
+2026-04-22 23:00:06 - Pipeline - INFO - ============================================================
+2026-04-22 23:00:06 - Pipeline - INFO -   PHASE 1: Static Environment Generation
+2026-04-22 23:00:06 - Pipeline - INFO - ============================================================
+2026-04-22 23:00:06 - Pipeline - INFO - [Phase 1] Room shell written: 9 structural commands
+2026-04-22 23:00:09 - Pipeline - INFO - ----- GROQ RAW RESPONSE (attempt 1/3) -----
+2026-04-22 23:00:09 - Pipeline - INFO - [
+  {"action": "PlaceObject", "objectName": "Bed_01", "x": 0, "y": 0, "z": 3.5, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Monitor_01", "x": -1.5, "y": 0, "z": 3.5, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Monitor_02", "x": 1.5, "y": 0, "z": 3.5, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "IV_Drip_01", "x": 1.2, "y": 0, "z": 4.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Ventilator_01", "x": -1.5, "y": 0, "z": 4.5, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Utility_Cart_01", "x": 0, "y": 0, "z": 2.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Trolley_01", "x": 1.8, "y": 0, "z": 2.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Syringe_01", "x": 0, "y": 0, "z": 2.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Folder_01", "x": 0, "y": 0, "z": 2.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Stethoscope_01", "x": -0.5, "y": 0, "z": 3.0, "rotationY": 0},
+  {"action": "PlaceHuman", "humanName": "Patient_01", "x": 0, "y": 0, "z": 3.5, "rotationY": 0},
+  {"action": "PlaceHuman", "humanName": "Nurse_01", "x": -0.5, "y": 0, "z": 3.0, "rotationY": 0}
+]
+2026-04-22 23:00:09 - Pipeline - INFO - ------------------------------------------------------
+2026-04-22 23:00:09 - Pipeline - INFO - [Phase 1] Interior objects: wrote 12 commands
+2026-04-22 23:00:09 - Pipeline - INFO - [Phase 1] Waiting up to 15s for Unity to refresh screenshots...
+2026-04-22 23:00:25 - Pipeline - INFO - [Phase 1] Using existing screenshots (may be stale). Starting reflection loop.
+2026-04-22 23:00:25 - Pipeline - INFO - [Phase 1 Reflection] Step 1/6: Place patient bed
+2026-04-22 23:00:25 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 23:00:25 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 23:00:25 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 23:00:25 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 23:00:25 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 23:00:25 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 23:00:25 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 23:00:25 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 23:00:27 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:00:27 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 23:00:28 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:00:28 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 23:00:28 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:00:28 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 23:00:29 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:00:29 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 23:00:29 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 23:00:29 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 23:00:29 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 23:00:29 - ReflectionModule - INFO - Logged reflection entry for step 'Place patient bed'
+2026-04-22 23:00:29 - Pipeline - INFO -   step_complete=no  room_status=sparse  suggest_additions=True  objects=14
+2026-04-22 23:00:29 - Pipeline - INFO -   layout: The layout seems mostly correct, but some adjustments are needed for zone correctness and surface logic. Supply objects and small props need to be in their appropriate zones and on surfaces.
+2026-04-22 23:00:31 - Pipeline - INFO - ----- GROQ RAW RESPONSE (loop attempt 1/3) -----
+2026-04-22 23:00:31 - Pipeline - INFO - [
+  {
+    "action": "PlaceObject",
+    "objectName": "Oxygen_Concentrator_01",
+    "x": 1.7,
+    "y": 0.8,
+    "z": 4.5,
+    "rotationY": 0
+  },
+  {
+    "action": "PlaceObject",
+    "objectName": "Life_Support_01",
+    "x": -1.7,
+    "y": 0.8,
+    "z": 4.5,
+    "rotationY": 0
+  },
+  {
+    "action": "PlaceObject",
+    "objectName": "Clock_01",
+    "x": 0,
+    "y": 2.5,
+    "z": 0.5,
+    "rotationY": 0
+  }
+]
+2026-04-22 23:00:31 - Pipeline - INFO - ------------------------------------------------------
+2026-04-22 23:00:31 - Pipeline - INFO - [Phase 1] Appended 3 fill commands
+2026-04-22 23:00:34 - Pipeline - INFO - [Phase 1 Reflection] Step 1/6: Place patient bed
+2026-04-22 23:00:34 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 23:00:34 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 23:00:34 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 23:00:34 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 23:00:34 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 23:00:34 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 23:00:34 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 23:00:34 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 23:00:37 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:00:37 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 23:00:37 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:00:37 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 23:00:37 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:00:37 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 23:00:37 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:00:37 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 23:00:37 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 23:00:37 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 23:00:37 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 23:00:37 - ReflectionModule - INFO - Logged reflection entry for step 'Place patient bed'
+2026-04-22 23:00:37 - Pipeline - INFO -   step_complete=no  room_status=sparse  suggest_additions=True  objects=17
+2026-04-22 23:00:37 - Pipeline - INFO -   layout: The layout seems mostly correct, but some adjustments are needed for zone correctness and surface logic. Supply objects and small props need to be in their appropriate zones and on surfaces.
+2026-04-22 23:00:40 - Pipeline - INFO - ----- GROQ RAW RESPONSE (loop attempt 1/3) -----
+2026-04-22 23:00:40 - Pipeline - INFO - [
+  {
+    "action": "PlaceObject",
+    "objectName": "Mask_Box_01",
+    "x": 1.2,
+    "y": 0.8,
+    "z": 4.0,
+    "rotationY": 0
+  },
+  {
+    "action": "PlaceObject",
+    "objectName": "Syringe_02",
+    "x": -1.7,
+    "y": 0.8,
+    "z": 4.5,
+    "rotationY": 0
+  },
+  {
+    "action": "PlaceObject",
+    "objectName": "Bottle_01",
+    "x": 0.8,
+    "y": 0.8,
+    "z": 2.5,
+    "rotationY": 0
+  }
+]
+2026-04-22 23:00:40 - Pipeline - INFO - ------------------------------------------------------
+2026-04-22 23:00:40 - Pipeline - INFO - [Phase 1] Appended 3 fill commands
+2026-04-22 23:00:43 - Pipeline - INFO - [Phase 1 Reflection] Step 1/6: Place patient bed
+2026-04-22 23:00:43 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 23:00:43 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 23:00:43 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 23:00:43 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 23:00:43 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 23:00:43 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 23:00:43 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 23:00:43 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 23:00:45 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:00:45 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 23:00:46 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:00:46 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 23:00:46 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:00:46 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 23:00:47 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:00:47 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 23:00:47 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 23:00:47 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 23:00:47 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 23:00:47 - ReflectionModule - INFO - Logged reflection entry for step 'Place patient bed'
+2026-04-22 23:00:47 - Pipeline - INFO -   Object cap reached (20/18) — no additions
+2026-04-22 23:00:47 - Pipeline - INFO -   step_complete=no  room_status=sparse  suggest_additions=False  objects=20
+2026-04-22 23:00:47 - Pipeline - INFO -   layout: The layout seems mostly correct, but some adjustments are needed for zone correctness and surface logic. Supply objects and small props need to be in their appropriate zones and on surfaces. Characters need to be positioned correctly in relation to other objects.
+2026-04-22 23:00:47 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 23:00:50 - Pipeline - INFO - [Phase 1 Reflection] Step 1/6: Place patient bed
+2026-04-22 23:00:50 - ReflectionModule - INFO - Step '1' reached max reflections (3). Forcing step_complete=yes to avoid infinite correction loop.
+2026-04-22 23:00:50 - ReflectionModule - INFO - Logged reflection entry for step 'Place patient bed'
+2026-04-22 23:00:50 - Pipeline - INFO -   Object cap reached (20/18) — no additions
+2026-04-22 23:00:50 - Pipeline - INFO -   step_complete=yes  room_status=good  suggest_additions=False  objects=20
+2026-04-22 23:00:50 - Pipeline - INFO -   layout: Layout accepted after maximum correction iterations.
+2026-04-22 23:00:50 - Pipeline - INFO -   Step complete — advancing 1 → 2: Position monitoring equipment
+2026-04-22 23:00:50 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 23:00:56 - Pipeline - INFO - [Phase 1 Reflection] Step 2/6: Position monitoring equipment
+2026-04-22 23:00:56 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 23:00:56 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 23:00:56 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 23:00:56 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 23:00:56 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 23:00:56 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 23:00:56 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 23:00:56 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 23:00:58 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:00:58 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 23:00:59 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:00:59 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 23:00:59 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:00:59 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 23:01:00 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:01:00 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 23:01:00 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 23:01:00 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 23:01:00 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 23:01:00 - ReflectionModule - INFO - Logged reflection entry for step 'Position monitoring equipment'
+2026-04-22 23:01:00 - Pipeline - INFO -   Object cap reached (20/18) — no additions
+2026-04-22 23:01:00 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=20
+2026-04-22 23:01:00 - Pipeline - INFO -   layout: The layout seems mostly correct, but some adjustments are needed for zone correctness and surface logic. Supply objects and small props need to be in their appropriate zones and on surfaces. Characters need to be positioned correctly in relation to other objects.
+2026-04-22 23:01:00 - Pipeline - INFO -   Step complete — advancing 2 → 3: Place IV drip and ventilator
+2026-04-22 23:01:00 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 23:01:03 - Pipeline - INFO - [Phase 1 Reflection] Step 3/6: Place IV drip and ventilator
+2026-04-22 23:01:03 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 23:01:03 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 23:01:03 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 23:01:03 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 23:01:03 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 23:01:03 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 23:01:03 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 23:01:03 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 23:01:05 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:01:05 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 23:01:05 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:01:05 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 23:01:07 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:01:07 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 23:01:07 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:01:07 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 23:01:07 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 23:01:07 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 23:01:07 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 23:01:07 - ReflectionModule - INFO - Logged reflection entry for step 'Place IV drip and ventilator'
+2026-04-22 23:01:07 - Pipeline - INFO -   Object cap reached (20/18) — no additions
+2026-04-22 23:01:07 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=20
+2026-04-22 23:01:07 - Pipeline - INFO -   layout: The layout seems mostly correct, but some adjustments are needed for zone correctness and surface logic. Supply objects and small props need to be in their appropriate zones and on surfaces. Characters need to be positioned correctly in relation to other objects.
+2026-04-22 23:01:07 - Pipeline - INFO -   Step complete — advancing 3 → 4: Position utility cart and trolley
+2026-04-22 23:01:07 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 23:01:10 - Pipeline - INFO - [Phase 1 Reflection] Step 4/6: Position utility cart and trolley
+2026-04-22 23:01:10 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 23:01:10 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 23:01:10 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 23:01:10 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 23:01:10 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 23:01:10 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 23:01:10 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 23:01:10 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 23:01:12 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:01:12 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 23:01:12 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:01:12 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 23:01:13 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:01:13 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 23:01:13 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:01:13 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 23:01:13 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 23:01:13 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 23:01:13 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 23:01:13 - ReflectionModule - INFO - Logged reflection entry for step 'Position utility cart and trolley'
+2026-04-22 23:01:13 - Pipeline - INFO -   Object cap reached (20/18) — no additions
+2026-04-22 23:01:13 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=20
+2026-04-22 23:01:13 - Pipeline - INFO -   layout: The layout seems mostly correct, but some adjustments are needed for zone correctness and surface logic. Supply objects and small props need to be in their appropriate zones and on surfaces. Characters need to be positioned correctly in relation to other objects.
+2026-04-22 23:01:13 - Pipeline - INFO -   Step complete — advancing 4 → 5: Place medical supplies
+2026-04-22 23:01:13 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 23:01:16 - Pipeline - INFO - [Phase 1 Reflection] Step 5/6: Place medical supplies
+2026-04-22 23:01:16 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 23:01:16 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 23:01:16 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 23:01:16 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 23:01:16 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 23:01:16 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 23:01:16 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 23:01:16 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 23:01:18 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:01:18 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 23:01:18 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:01:18 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 23:01:19 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:01:19 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 23:01:20 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:01:20 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 23:01:20 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 23:01:20 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 23:01:20 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 23:01:20 - ReflectionModule - INFO - Logged reflection entry for step 'Place medical supplies'
+2026-04-22 23:01:20 - Pipeline - INFO -   Object cap reached (20/18) — no additions
+2026-04-22 23:01:20 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=20
+2026-04-22 23:01:20 - Pipeline - INFO -   layout: The layout seems mostly correct, but some adjustments are needed for zone correctness and surface logic. Supply objects and small props need to be in their appropriate zones and on surfaces. Characters need to be positioned correctly in relation to other objects.
+2026-04-22 23:01:20 - Pipeline - INFO -   Step complete — advancing 5 → 6: Position staff and patient
+2026-04-22 23:01:20 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 23:01:23 - Pipeline - INFO - [Phase 1 Reflection] Step 6/6: Position staff and patient
+2026-04-22 23:01:23 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 23:01:23 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 23:01:23 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 23:01:23 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 23:01:23 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 23:01:23 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 23:01:23 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 23:01:23 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 23:01:26 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:01:26 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 23:01:26 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:01:26 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 23:01:27 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:01:27 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 23:01:27 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:01:27 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 23:01:27 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 23:01:27 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 23:01:27 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 23:01:27 - ReflectionModule - INFO - Logged reflection entry for step 'Position staff and patient'
+2026-04-22 23:01:27 - Pipeline - INFO -   Object cap reached (20/18) — no additions
+2026-04-22 23:01:27 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=20
+2026-04-22 23:01:27 - Pipeline - INFO -   layout: The layout seems mostly correct, but some adjustments are needed for zone correctness and surface logic. Supply objects and small props need to be in their appropriate zones and on surfaces. Characters need to be positioned correctly in relation to other objects.
+2026-04-22 23:01:27 - Pipeline - INFO -   Step complete — all 6 plan steps complete. Stopping environment generation.
+2026-04-22 23:01:31 - Pipeline - INFO - [InteractionMap] Generated map for 17 objects → interaction_map.json
+2026-04-22 23:01:31 - Pipeline - INFO - --phase1-only flag set. Skipping Phase 2.
+2026-04-22 23:01:31 - Pipeline - INFO - Total objects placed: 25

@@ -1,0 +1,301 @@
+2026-04-22 23:17:51 - Pipeline - INFO - [Init] Cleared log agent.log
+2026-04-22 23:17:51 - Pipeline - INFO - [Init] Cleared log reflection_log.log
+2026-04-22 23:17:53 - Pipeline - INFO - Generating room layout plan...
+2026-04-22 23:17:55 - Pipeline - INFO - Plan generated and saved to C:\Users\Allison\Programming\GitHub\AIXR_healthcare\Agent\api_files\plan.json
+2026-04-22 23:17:56 - Pipeline - INFO - ============================================================
+2026-04-22 23:17:56 - Pipeline - INFO -   PHASE 1: Static Environment Generation
+2026-04-22 23:17:56 - Pipeline - INFO - ============================================================
+2026-04-22 23:17:56 - Pipeline - INFO - [Phase 1] Room shell written: 9 structural commands
+2026-04-22 23:17:58 - Pipeline - INFO - ----- GROQ RAW RESPONSE (attempt 1/3) -----
+2026-04-22 23:17:58 - Pipeline - INFO - [
+  {"action": "PlaceObject", "objectName": "Handrail_01", "x": -1.2, "y": 0, "z": 3.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Handrail_02", "x": 1.2, "y": 0, "z": 3.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Handrail_01", "x": -1.2, "y": 0, "z": 6.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Handrail_02", "x": 1.2, "y": 0, "z": 6.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "WheelChair_01", "x": 0, "y": 0, "z": 1.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Walker_01", "x": 1.0, "y": 0, "z": 1.5, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Bench_01", "x": 0, "y": 0, "z": 5.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Caution_Sign_01", "x": 0, "y": 0, "z": 0.5, "rotationY": 0},
+  {"action": "PlaceHuman", "humanName": "Patient_01", "x": 0, "y": 0, "z": 4.0, "rotationY": 0},
+  {"action": "PlaceHuman", "humanName": "Nurse_01", "x": 0, "y": 0, "z": 4.5, "rotationY": 0}
+]
+2026-04-22 23:17:58 - Pipeline - INFO - ------------------------------------------------------
+2026-04-22 23:17:58 - Pipeline - INFO - [Phase 1] Interior objects: wrote 10 commands
+2026-04-22 23:17:58 - Pipeline - INFO - [Phase 1] Waiting up to 15s for Unity to refresh screenshots...
+2026-04-22 23:18:14 - Pipeline - INFO - [Phase 1] Using existing screenshots (may be stale). Starting reflection loop.
+2026-04-22 23:18:14 - Pipeline - INFO - [Phase 1 Reflection] Step 1/6: Install handrails
+2026-04-22 23:18:14 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 23:18:14 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 23:18:14 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 23:18:14 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 23:18:14 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 23:18:14 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 23:18:14 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 23:18:14 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 23:18:17 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:18:17 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 23:18:17 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:18:17 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 23:18:17 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:18:17 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 23:18:17 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:18:17 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 23:18:17 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 23:18:17 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 23:18:17 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 23:18:17 - ReflectionModule - INFO - Logged reflection entry for step 'Install handrails'
+2026-04-22 23:18:17 - Pipeline - INFO -   step_complete=no  room_status=sparse  suggest_additions=True  objects=12
+2026-04-22 23:18:17 - Pipeline - INFO -   layout: The handrails seem to be installed but require verification of their positions and rotations.
+2026-04-22 23:18:20 - Pipeline - INFO - ----- GROQ RAW RESPONSE (loop attempt 1/3) -----
+2026-04-22 23:18:20 - Pipeline - INFO - [
+  {
+    "action": "PlaceObject",
+    "objectName": "Clock_01",
+    "x": -1.2,
+    "y": 0.8,
+    "z": 8.0,
+    "rotationY": 0
+  },
+  {
+    "action": "PlaceObject",
+    "objectName": "Poster_02",
+    "x": 1.2,
+    "y": 0.8,
+    "z": 8.0,
+    "rotationY": 0
+  },
+  {
+    "action": "PlaceObject",
+    "objectName": "Handrail_05",
+    "x": -1.2,
+    "y": 0.0,
+    "z": 8.0,
+    "rotationY": 0
+  },
+  {
+    "action": "PlaceObject",
+    "objectName": "Handrail_06",
+    "objectName": "Handrail_06",
+    "x": 1.2,
+    "y": 0.0,
+    "z": 8.0,
+    "rotationY": 0
+  }
+]
+2026-04-22 23:18:20 - Pipeline - INFO - ------------------------------------------------------
+2026-04-22 23:18:20 - Pipeline - INFO - [Phase 1] Appended 4 fill commands
+2026-04-22 23:18:23 - Pipeline - INFO - [Phase 1 Reflection] Step 1/6: Install handrails
+2026-04-22 23:18:23 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 23:18:23 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 23:18:23 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 23:18:23 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 23:18:23 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 23:18:23 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 23:18:23 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 23:18:23 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 23:18:25 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:18:25 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 23:18:27 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:18:27 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 23:18:28 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:18:28 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 23:18:28 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:18:28 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 23:18:28 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 23:18:28 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 23:18:28 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 23:18:28 - ReflectionModule - INFO - Logged reflection entry for step 'Install handrails'
+2026-04-22 23:18:28 - Pipeline - INFO -   Object cap reached (16/15) — no additions
+2026-04-22 23:18:28 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=16
+2026-04-22 23:18:28 - Pipeline - INFO -   layout: The handrails seem to be installed but require verification of their positions and rotations. They should be parallel and 2.4m apart.
+2026-04-22 23:18:28 - Pipeline - INFO -   Step complete — advancing 1 → 2: Position wheelchair and walker
+2026-04-22 23:18:28 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 23:18:31 - Pipeline - INFO - [Phase 1 Reflection] Step 2/6: Position wheelchair and walker
+2026-04-22 23:18:31 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 23:18:31 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 23:18:31 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 23:18:31 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 23:18:31 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 23:18:31 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 23:18:31 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 23:18:31 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 23:18:33 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:18:33 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 23:18:33 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:18:33 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 23:18:34 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:18:34 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 23:18:34 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:18:34 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 23:18:34 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 23:18:34 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 23:18:34 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 23:18:34 - ReflectionModule - INFO - Logged reflection entry for step 'Position wheelchair and walker'
+2026-04-22 23:18:34 - Pipeline - INFO -   Object cap reached (16/15) — no additions
+2026-04-22 23:18:34 - Pipeline - INFO -   step_complete=no  room_status=sparse  suggest_additions=False  objects=16
+2026-04-22 23:18:34 - Pipeline - INFO -   layout: The wheelchair and walker seem to be positioned near the entrance but require verification of their positions and rotations.
+2026-04-22 23:18:34 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 23:18:37 - Pipeline - INFO - [Phase 1 Reflection] Step 2/6: Position wheelchair and walker
+2026-04-22 23:18:37 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 23:18:37 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 23:18:37 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 23:18:37 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 23:18:37 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 23:18:37 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 23:18:37 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 23:18:37 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 23:18:40 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:18:40 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 23:18:40 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:18:40 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 23:18:40 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:18:40 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 23:18:40 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:18:40 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 23:18:40 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 23:18:40 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 23:18:40 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 23:18:40 - ReflectionModule - INFO - Logged reflection entry for step 'Position wheelchair and walker'
+2026-04-22 23:18:40 - Pipeline - INFO -   Object cap reached (16/15) — no additions
+2026-04-22 23:18:40 - Pipeline - INFO -   step_complete=no  room_status=sparse  suggest_additions=False  objects=16
+2026-04-22 23:18:40 - Pipeline - INFO -   layout: The wheelchair and walker seem to be positioned near the entrance but require verification of their positions and rotations.
+2026-04-22 23:18:40 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 23:18:43 - Pipeline - INFO - [Phase 1 Reflection] Step 2/6: Position wheelchair and walker
+2026-04-22 23:18:43 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 23:18:43 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 23:18:43 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 23:18:43 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 23:18:43 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 23:18:43 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 23:18:43 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 23:18:43 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 23:18:46 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:18:46 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 23:18:46 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:18:46 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 23:18:47 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:18:47 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 23:18:47 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:18:47 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 23:18:47 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 23:18:47 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 23:18:47 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 23:18:47 - ReflectionModule - INFO - Logged reflection entry for step 'Position wheelchair and walker'
+2026-04-22 23:18:47 - Pipeline - INFO -   Object cap reached (16/15) — no additions
+2026-04-22 23:18:47 - Pipeline - INFO -   step_complete=no  room_status=sparse  suggest_additions=False  objects=16
+2026-04-22 23:18:47 - Pipeline - INFO -   layout: The wheelchair and walker are near the entrance but require fine-tuning of positions and rotations.
+2026-04-22 23:18:47 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 23:18:50 - Pipeline - INFO - [Phase 1 Reflection] Step 2/6: Position wheelchair and walker
+2026-04-22 23:18:50 - ReflectionModule - INFO - Step '2' reached max reflections (3). Forcing step_complete=yes to avoid infinite correction loop.
+2026-04-22 23:18:50 - ReflectionModule - INFO - Logged reflection entry for step 'Position wheelchair and walker'
+2026-04-22 23:18:50 - Pipeline - INFO -   Object cap reached (16/15) — no additions
+2026-04-22 23:18:50 - Pipeline - INFO -   step_complete=yes  room_status=good  suggest_additions=False  objects=16
+2026-04-22 23:18:50 - Pipeline - INFO -   layout: Layout accepted after maximum correction iterations.
+2026-04-22 23:18:50 - Pipeline - INFO -   Step complete — advancing 2 → 3: Install additional handrails
+2026-04-22 23:18:50 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 23:18:56 - Pipeline - INFO - [Phase 1 Reflection] Step 3/6: Install additional handrails
+2026-04-22 23:18:56 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 23:18:56 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 23:18:56 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 23:18:56 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 23:18:56 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 23:18:56 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 23:18:56 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 23:18:56 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 23:18:58 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:18:58 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 23:18:59 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:18:59 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 23:18:59 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:18:59 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 23:19:00 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:19:00 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 23:19:00 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 23:19:00 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 23:19:00 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 23:19:00 - ReflectionModule - INFO - Logged reflection entry for step 'Install additional handrails'
+2026-04-22 23:19:00 - Pipeline - INFO -   Object cap reached (16/15) — no additions
+2026-04-22 23:19:00 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=16
+2026-04-22 23:19:00 - Pipeline - INFO -   layout: The handrails seem to be installed but require verification of their positions and rotations. They should be parallel and 2.4m apart.
+2026-04-22 23:19:00 - Pipeline - INFO -   Step complete — advancing 3 → 4: Place bench
+2026-04-22 23:19:00 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 23:19:03 - Pipeline - INFO - [Phase 1 Reflection] Step 4/6: Place bench
+2026-04-22 23:19:03 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 23:19:03 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 23:19:03 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 23:19:03 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 23:19:03 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 23:19:03 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 23:19:03 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 23:19:03 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 23:19:05 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:19:05 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 23:19:05 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:19:05 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 23:19:06 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:19:06 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 23:19:06 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:19:06 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 23:19:06 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 23:19:06 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 23:19:06 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 23:19:06 - ReflectionModule - INFO - Logged reflection entry for step 'Place bench'
+2026-04-22 23:19:06 - Pipeline - INFO -   Object cap reached (16/15) — no additions
+2026-04-22 23:19:06 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=16
+2026-04-22 23:19:06 - Pipeline - INFO -   layout: The bench seems to be positioned at the midway rest point but requires adjustment of its height to be on the surface.
+2026-04-22 23:19:06 - Pipeline - INFO -   Step complete — advancing 4 → 5: Position caution sign
+2026-04-22 23:19:06 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 23:19:09 - Pipeline - INFO - [Phase 1 Reflection] Step 5/6: Position caution sign
+2026-04-22 23:19:09 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 23:19:09 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 23:19:09 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 23:19:09 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 23:19:09 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 23:19:09 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 23:19:09 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 23:19:09 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 23:19:11 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:19:11 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 23:19:12 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:19:12 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 23:19:12 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:19:12 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 23:19:12 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:19:12 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 23:19:12 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 23:19:12 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 23:19:12 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 23:19:12 - ReflectionModule - INFO - Logged reflection entry for step 'Position caution sign'
+2026-04-22 23:19:12 - Pipeline - INFO -   Object cap reached (16/15) — no additions
+2026-04-22 23:19:12 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=16
+2026-04-22 23:19:12 - Pipeline - INFO -   layout: The caution sign seems to be positioned at the entrance but requires adjustment of its height to be centered above the doorway.
+2026-04-22 23:19:12 - Pipeline - INFO -   Step complete — advancing 5 → 6: Place patient and nurse
+2026-04-22 23:19:12 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-22 23:19:15 - Pipeline - INFO - [Phase 1 Reflection] Step 6/6: Place patient and nurse
+2026-04-22 23:19:15 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
+2026-04-22 23:19:15 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-22 23:19:15 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-22 23:19:15 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-22 23:19:15 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
+2026-04-22 23:19:15 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
+2026-04-22 23:19:15 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-22 23:19:16 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
+2026-04-22 23:19:17 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:19:17 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-22 23:19:18 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:19:18 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-22 23:19:19 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:19:19 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-22 23:19:19 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
+2026-04-22 23:19:19 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-22 23:19:19 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-22 23:19:19 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-22 23:19:19 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-22 23:19:19 - ReflectionModule - INFO - Logged reflection entry for step 'Place patient and nurse'
+2026-04-22 23:19:19 - Pipeline - INFO -   Object cap reached (16/15) — no additions
+2026-04-22 23:19:19 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=16
+2026-04-22 23:19:19 - Pipeline - INFO -   layout: The patient and nurse seem to be positioned in the corridor but require fine-tuning of their positions and rotations. They should be facing the room's primary equipment and not obstructing the walkway.
+2026-04-22 23:19:19 - Pipeline - INFO -   Step complete — all 6 plan steps complete. Stopping environment generation.
+2026-04-22 23:19:21 - Pipeline - INFO - [InteractionMap] Generated map for 6 objects → interaction_map.json
+2026-04-22 23:19:21 - Pipeline - INFO - --phase1-only flag set. Skipping Phase 2.
+2026-04-22 23:19:21 - Pipeline - INFO - Total objects placed: 21

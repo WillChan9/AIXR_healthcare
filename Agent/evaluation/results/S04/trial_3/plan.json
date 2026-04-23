@@ -1,0 +1,128 @@
+{
+  "room_type": "Surgery Prep Room",
+  "description": "Precise surface placement and instrument layout",
+  "layout_goals": {
+    "interior_bounds": "5m x 5m x 3m",
+    "minimum_objects": 12,
+    "focal_point": "Surgical_Table_01"
+  },
+  "steps": [
+    {
+      "step": 1,
+      "action": "Place Surgery Cart",
+      "objects": [
+        "Surgery_Cart_01"
+      ],
+      "target_area": "center of room",
+      "condition": "z=2.5"
+    },
+    {
+      "step": 2,
+      "action": "Place Surgical Table",
+      "objects": [
+        "Surgical_Table_01"
+      ],
+      "target_area": "back wall",
+      "condition": "z=4.0"
+    },
+    {
+      "step": 3,
+      "action": "Place Autoclave",
+      "objects": [
+        "Autoclave_01"
+      ],
+      "target_area": "right wall",
+      "condition": "x=2.0, z=3.0"
+    },
+    {
+      "step": 4,
+      "action": "Place Trolley",
+      "objects": [
+        "Trolley_01"
+      ],
+      "target_area": "left side",
+      "condition": "x=-1.8, z=2.0"
+    },
+    {
+      "step": 5,
+      "action": "Place Utility Cart",
+      "objects": [
+        "Utility_Cart_01"
+      ],
+      "target_area": "near door",
+      "condition": "z=1.0"
+    },
+    {
+      "step": 6,
+      "action": "Place Tray on Surgery Cart",
+      "objects": [
+        "Tray_01"
+      ],
+      "target_area": "Surgery_Cart_01 surface",
+      "condition": "y=0.8"
+    },
+    {
+      "step": 7,
+      "action": "Place Scalpel on surface",
+      "objects": [
+        "Scalpel_01"
+      ],
+      "target_area": "any surface",
+      "condition": "y>0.7"
+    },
+    {
+      "step": 8,
+      "action": "Place Forceps on surface",
+      "objects": [
+        "Forceps_01"
+      ],
+      "target_area": "any surface",
+      "condition": "y>0.7"
+    },
+    {
+      "step": 9,
+      "action": "Place Bottle on Trolley",
+      "objects": [
+        "Bottle_01"
+      ],
+      "target_area": "Trolley_01 surface",
+      "condition": "y=0.8"
+    },
+    {
+      "step": 10,
+      "action": "Place Mask Box on Utility Cart",
+      "objects": [
+        "Mask_Box_01"
+      ],
+      "target_area": "Utility_Cart_01 surface",
+      "condition": "y=0.8"
+    },
+    {
+      "step": 11,
+      "action": "Place Syringe on surface",
+      "objects": [
+        "Syringe_01"
+      ],
+      "target_area": "any surface",
+      "condition": "y>0.7"
+    },
+    {
+      "step": 12,
+      "action": "Place Sterilizer Drum near Autoclave",
+      "objects": [
+        "Sterilizer_Drum_01"
+      ],
+      "target_area": "near Autoclave_01",
+      "condition": ""
+    },
+    {
+      "step": 13,
+      "action": "Position Doctor",
+      "objects": [
+        "Doctor_01"
+      ],
+      "target_area": "near Surgical_Table_01",
+      "condition": ""
+    }
+  ]
+}

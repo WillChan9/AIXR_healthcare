@@ -1,0 +1,7 @@
+{
+  "raw_response": "```json\n{\n  \"coherence_score\": 1,\n  \"spatial_score\": 1,\n  \"coherence_reasoning\": \"The scene is empty and lacks any objects, which are essential for an ICU Single-Patient Room. This results in a complete mismatch between the scene type and the objects present.\",\n  \"spatial_reasoning\": \"The scene is empty with no objects placed, leading to a completely illogical and random placement of objects, as there are none to place.\"\n}\n```",
+  "coherence_score": 1,
+  "spatial_score": 1,
+  "scene_type": "ICU Single-Patient Room",
+  "results_dir": "C:\\Users\\Allison\\Programming\\GitHub\\AIXR_healthcare\\Agent\\evaluation\\results\\S06\\trial_1"
+}
