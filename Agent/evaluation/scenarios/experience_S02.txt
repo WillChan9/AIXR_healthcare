@@ -1,58 +1,23 @@
 Hospital Ward (4-Bed) — Symmetric multi-bed patient care room
 
-A spacious 8m x 6m hospital ward containing 4 patient beds arranged in a symmetric 2x2 grid layout. Each bed should have a bedside table and a chair nearby. The beds should be evenly spaced with adequate walkway clearance between them (at least 1m).
+A spacious, well-organized hospital ward holding four patient beds
+arranged in two symmetric pairs along the long walls. Each bed has its
+own bedside table and a chair for visitors, with wide walkways between
+beds for nurse access. Two nurses move between beds tending to patients;
+two of the four beds are occupied by patients, the other two are empty
+and made up. The room should feel calm and routine — soft warm lighting,
+neat rows, easy circulation.
 
-Two nurses attend the ward, positioned between beds. Two patients occupy beds on one side.
+[interactions]
+When the player walks up to either nurse, the nurse explains what she's
+currently doing on rounds (e.g., "checking the IV", "updating the
+chart"). Touching either occupied bed lets the patient briefly describe
+how they feel. Touching a chart on a bedside table should briefly
+highlight the corresponding patient bed, and the nurse should comment on
+that patient's progress.
 
-REQUIRED OBJECTS:
-1. Bed_01 — left-front, x~-2.5, z~1.5
-2. Bed_02 — right-front, x~2.5, z~1.5
-3. Bed_03 — left-back, x~-2.5, z~4.0
-4. Bed_04 — right-back, x~2.5, z~4.0
-5. Table_01 — bedside Bed_01, x~-1.5, z~1.5
-6. Table_02 — bedside Bed_02, x~1.5, z~1.5
-7. Table_03 — bedside Bed_03, x~-1.5, z~4.0
-8. Table_04 — bedside Bed_04, x~1.5, z~4.0
-9. Chair_01 — near Bed_01
-10. Chair_02 — near Bed_02
-11. Screen_01 — room divider, center, z~2.8
-12. Utility_Cart_01 — center aisle
-
-Staff and patients:
-- 1 Nurse_01 — center of room
-- 1 Nurse_02 — back area
-- 1 Patient_01 — near Bed_01
-- 1 Patient_02 — near Bed_03
-
-Room exterior:
-- 4 walls forming an 8m x 6m enclosure (wall height 3.2m).
-- Front wall with 1.4m doorway centered at x=0.
-- Ceiling covering the full room.
-- SetLightIntensity warm (scale 1.3), SetAmbientColor warm white.
-
-[room_config]
-scene_type = Hospital Ward 4-Bed
-room_width = 8
-room_depth = 6
-room_height = 3.2
-lighting_intensity = 1.3
-ambient_r = 0.95
-ambient_g = 0.93
-ambient_b = 0.88
-doorway_width = 1.4
-doorway_x = 0
-x_min = -3.8
-x_max = 3.8
-z_min = 0.1
-z_max = 5.9
-max_objects = 25
-min_objects = 14
-surface_keywords = Table,Desk,Cart,Stand
-supply_keywords = Cart,Trolley
-character_prefixes = Doctor,Nurse,Patient
-small_prop_keywords = Folder,Tray
-decor_keywords = Poster,Clock
-additions_furniture = Chair_01,Chair_02,Utility_Cart_02,Trolley_01
-additions_equipment = Monitor_01,IV_Drip_01
-additions_props = Folder_01,Folder_02,Tray_01
-additions_decor = Poster_01,Clock_01
+A short story arc: touching one nurse should make her walk to the
+nearest occupied bed and start a check-up animation. Touching the
+patient afterward should make the patient say a brief positive line
+about feeling better. Touching the bedside chart finally should brighten
+the lighting slightly as the nurse marks a note.

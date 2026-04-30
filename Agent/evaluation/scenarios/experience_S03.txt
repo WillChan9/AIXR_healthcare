@@ -1,56 +1,24 @@
 Physical Therapy Gym — High-diversity interaction test room
 
-This scene is a physical therapy gym designed to test broad object diversity. The room contains rehabilitation equipment, medical furniture, props, and characters spread across the space.
+A physical therapy gym designed for active movement rehabilitation. The
+space holds a varied mix of rehabilitation equipment (a treadmill,
+exercise mats, parallel bars, exercise balls), supportive medical
+furniture (an exam stool, a wheelchair on standby), and a few small
+props for therapy exercises. A physical therapist supervises one or
+two patients who are mid-exercise on different equipment. The atmosphere
+is bright, open and active — equipment is well spread out with clear
+walkways, no clutter.
 
-Room 6m x 6m, open floor plan. Objects spread out so no two are within 0.8m of each other. Every object is floor-accessible (y=0) unless wall-mounted.
+[interactions]
+Touching the therapist should make her explain what each piece of
+equipment is used for in general terms. Touching any major equipment
+(treadmill, parallel bars, exercise ball, wheelchair) should display a
+short description of its purpose. Touching the patient currently
+exercising should make the patient mention their progress and how the
+therapy is going.
 
-REQUIRED OBJECTS:
-1. Treadmill_01 — right wall, z~4.0
-2. WheelChair_01 — entry zone, z~0.5, x~1.5
-3. Trolley_01 — center-left, z~2.5, x~-1.5
-4. Utility_Cart_01 — left wall, z~3.5
-5. Table_01 — left-center, z~2.0, x~-1.0
-6. Towel_Dispenser_01 — right wall, z~2.0
-7. Caution_Sign_01 — entry floor, z~0.6, x~0.5
-8. Clock_01 — back wall, z~5.8, y~2.5
-9. Poster_01 and Poster_02 — side walls, y~1.8
-10. Folder_01 and Folder_02 — on desk surface, y~0.8
-11. Screen_01 — on desk, z~5.0, x~-1.5
-12. Reception_Desk_01 — back-left corner, z~4.8, x~-1.8
-
-Staff and patients:
-- 1 Patient_01 near Treadmill_01
-- 1 Nurse_01 near center
-
-Room exterior:
-- 4 walls forming a 6m x 6m enclosure (wall height 3.2m).
-- Front wall with 1.4m doorway centered at x=0.
-- Ceiling covering the full room.
-- SetLightIntensity warm (scale 1.4), SetAmbientColor warm white.
-
-[room_config]
-scene_type = Physical Therapy Gym
-room_width = 6
-room_depth = 6
-room_height = 3.2
-lighting_intensity = 1.4
-ambient_r = 0.95
-ambient_g = 0.91
-ambient_b = 0.85
-doorway_width = 1.4
-doorway_x = 0
-x_min = -2.8
-x_max = 2.8
-z_min = 0.1
-z_max = 5.9
-max_objects = 30
-min_objects = 15
-surface_keywords = Table,Desk,Rack,Cart,Trolley,Counter,Stand
-supply_keywords = Cart,Trolley,Rack,Dispenser,Stand
-character_prefixes = Doctor,Nurse,Patient
-small_prop_keywords = Folder,Tray,Band
-decor_keywords = Poster,Clock,Sign
-additions_furniture = Trolley_01,Utility_Cart_01,WheelChair_01,Towel_Dispenser_01
-additions_equipment = Treadmill_01,Table_01
-additions_props = Folder_01,Folder_02,Folder_03,Caution_Sign_01
-additions_decor = Poster_01,Poster_02,Poster_03,Clock_01
+A short story arc: when the player first touches the therapist, she
+gestures toward the treadmill (which highlights). Touching the
+treadmill afterward should make her walk over to it and demonstrate
+proper form. Touching the parallel bars after that should make a
+patient walk between them while the therapist watches.

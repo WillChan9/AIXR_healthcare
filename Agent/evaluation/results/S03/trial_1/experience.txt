@@ -1,0 +1,47 @@
+Physical Therapy Gym — High-diversity interaction test room
+
+A physical therapy gym designed for active movement rehabilitation. The
+space holds a varied mix of rehabilitation equipment (a treadmill,
+exercise mats, parallel bars, exercise balls), supportive medical
+furniture (an exam stool, a wheelchair on standby), and a few small
+props for therapy exercises. A physical therapist supervises one or
+two patients who are mid-exercise on different equipment. The atmosphere
+is bright, open and active — equipment is well spread out with clear
+walkways, no clutter.
+
+[interactions]
+Touching the therapist should make her explain what each piece of
+equipment is used for in general terms. Touching any major equipment
+(treadmill, parallel bars, exercise ball, wheelchair) should display a
+short description of its purpose. Touching the patient currently
+exercising should make the patient mention their progress and how the
+therapy is going.
+
+A short story arc: when the player first touches the therapist, she
+gestures toward the treadmill (which highlights). Touching the
+treadmill afterward should make her walk over to it and demonstrate
+proper form. Touching the parallel bars after that should make a
+patient walk between them while the therapist watches.
+
+[room_config]
+scene_type = Physical Therapy Gym
+room_width = 8.0
+room_depth = 7.0
+room_height = 3.2
+x_min = -3.8
+x_max = 3.8
+z_min = 0.1
+z_max = 6.9
+doorway_width = 1.4
+doorway_x = 0.0
+lighting_intensity = 1.8
+ambient_r = 0.95
+ambient_g = 0.97
+ambient_b = 1.0
+min_objects = 18
+max_objects = 24
+surface_keywords = Table,Cart,Trolley,Stand,Bench,Stool
+supply_keywords = Utility_Cart,Trolley,Cart,Rack
+character_prefixes = Nurse,Patient
+small_prop_keywords = Aid_Kit,Bottle,Folder,Bandage,Crutch,Neuro_Hammer,Tray
+decor_keywords = Poster,Clock,Sign,Frame

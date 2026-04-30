@@ -1,0 +1,5214 @@
+[
+  {
+    "id": "cmd_1777044154797_0",
+    "executed": true,
+    "done": true,
+    "action": "CreateObjectByName",
+    "objectName": "Cube",
+    "x": 0,
+    "y": -0.01,
+    "z": 2.5,
+    "rotationY": 0,
+    "scaleX": 5,
+    "scaleY": 0.02,
+    "scaleZ": 5
+  },
+  {
+    "id": "cmd_1777044154797_1",
+    "executed": true,
+    "done": true,
+    "action": "CreateObjectByName",
+    "objectName": "Cube",
+    "x": 0,
+    "y": 3,
+    "z": 2.5,
+    "rotationY": 0,
+    "scaleX": 5,
+    "scaleY": 0.2,
+    "scaleZ": 5
+  },
+  {
+    "id": "cmd_1777044154797_2",
+    "executed": true,
+    "done": true,
+    "action": "CreateObjectByName",
+    "objectName": "Cube",
+    "x": -2.5,
+    "y": 1.5,
+    "z": 2.5,
+    "rotationY": 0,
+    "scaleX": 0.2,
+    "scaleY": 3,
+    "scaleZ": 5
+  },
+  {
+    "id": "cmd_1777044154797_3",
+    "executed": true,
+    "done": true,
+    "action": "CreateObjectByName",
+    "objectName": "Cube",
+    "x": 2.5,
+    "y": 1.5,
+    "z": 2.5,
+    "rotationY": 0,
+    "scaleX": 0.2,
+    "scaleY": 3,
+    "scaleZ": 5
+  },
+  {
+    "id": "cmd_1777044154797_4",
+    "executed": true,
+    "done": true,
+    "action": "CreateObjectByName",
+    "objectName": "Cube",
+    "x": 0,
+    "y": 1.5,
+    "z": 5,
+    "rotationY": 0,
+    "scaleX": 5,
+    "scaleY": 3,
+    "scaleZ": 0.2
+  },
+  {
+    "id": "cmd_1777044154797_5",
+    "executed": true,
+    "done": true,
+    "action": "CreateObjectByName",
+    "objectName": "Cube",
+    "x": -1.55,
+    "y": 1.5,
+    "z": 0,
+    "rotationY": 0,
+    "scaleX": 1.9,
+    "scaleY": 3,
+    "scaleZ": 0.2
+  },
+  {
+    "id": "cmd_1777044154797_6",
+    "executed": true,
+    "done": true,
+    "action": "CreateObjectByName",
+    "objectName": "Cube",
+    "x": 1.55,
+    "y": 1.5,
+    "z": 0,
+    "rotationY": 0,
+    "scaleX": 1.9,
+    "scaleY": 3,
+    "scaleZ": 0.2
+  },
+  {
+    "id": "cmd_1777044154797_7",
+    "executed": true,
+    "done": true,
+    "action": "SetLightIntensity",
+    "scale": 1.8
+  },
+  {
+    "id": "cmd_1777044154797_8",
+    "executed": true,
+    "done": true,
+    "action": "SetAmbientColor",
+    "r": 0.92,
+    "g": 0.94,
+    "b": 0.96
+  },
+  {
+    "id": "cmd_1777044156794_0",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Surgery_Cart_01",
+    "x": 0,
+    "y": 0,
+    "z": 2.5,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044156794_1",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Surgical_Table_01",
+    "x": 0,
+    "y": 0,
+    "z": 4,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044156794_2",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Autoclave_01",
+    "x": 2,
+    "y": 0,
+    "z": 3,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044156794_3",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Trolley_01",
+    "x": -1.8,
+    "y": 0,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044156794_4",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Utility_Cart_01",
+    "x": 0,
+    "y": 0,
+    "z": 1,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044156794_5",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Tray_01",
+    "x": 0,
+    "y": 0.8,
+    "z": 2.5,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044156794_6",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Scalpel_01",
+    "x": 0,
+    "y": 0.8,
+    "z": 2.5,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044156794_7",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Forceps_01",
+    "x": 0,
+    "y": 0.8,
+    "z": 2.5,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044156794_8",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Bottle_01",
+    "x": -1.8,
+    "y": 0.8,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044156794_9",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Mask_Box_01",
+    "x": 0,
+    "y": 0.8,
+    "z": 1,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044156794_10",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Syringe_01",
+    "x": 0,
+    "y": 0.8,
+    "z": 2.5,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044156794_11",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Sterilizer_Drum_01",
+    "x": 2,
+    "y": 0,
+    "z": 2.9,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044156794_12",
+    "executed": true,
+    "done": true,
+    "action": "PlaceHuman",
+    "humanName": "Doctor_01",
+    "x": 0,
+    "y": 0,
+    "z": 4,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044178362_0",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Bowl_01",
+    "x": -2.1,
+    "y": 0.8,
+    "z": 2.5,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044178362_1",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Scissors_01",
+    "x": 2,
+    "y": 0.8,
+    "z": 2.9,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044178362_2",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Clock_01",
+    "x": -2.3,
+    "y": 2.5,
+    "z": 0.1,
+    "rotationY": 270
+  },
+  {
+    "id": "cmd_1777044186652_0",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Bowl_01",
+    "x": -2.3,
+    "y": 0.8,
+    "z": 2.9,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044186652_1",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Sterilizer_01",
+    "x": 1.8,
+    "y": 0,
+    "z": 2.7,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044186652_2",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Trolley_02",
+    "x": -1.7,
+    "y": 0,
+    "z": 1.2,
+    "rotationY": 0
+  },
+  {
+    "id": "271a3507-6277-4445-98db-0fd0775a07de",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Treadmill_01 <-> Patient_01  pen_x=0.71m pen_z=0.79m  moving Patient_01 to (1.04, 0.01, 4.00)"
+  },
+  {
+    "id": "3a3ce836-ac43-41fd-b1fe-3f14f544255b",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Treadmill_01 <-> Autoclave_01  pen_x=0.55m pen_z=0.19m  moving Autoclave_01 to (2.00, 0.01, 2.58)"
+  },
+  {
+    "id": "215c5a34-fc72-471f-a788-5e6d56402155",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_01 <-> Table_01  pen_x=0.24m pen_z=0.57m  moving Table_01 to (-0.51, 0.01, 2.00)"
+  },
+  {
+    "id": "6340f129-ba3b-4a9a-a731-f95190579588",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_01 <-> Bottle_01  pen_x=0.07m pen_z=0.07m  moving Bottle_01 to (-1.14, 1.56, 2.00)"
+  },
+  {
+    "id": "a4722377-0cb7-4bd4-960e-ed116f658ed2",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_01 <-> Trolley_02  pen_x=0.62m pen_z=1.15m  moving Trolley_02 to (-0.84, 0.01, 1.20)"
+  },
+  {
+    "id": "033020a6-a8f4-461a-a2aa-483b11a0b249",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Utility_Cart_01 <-> Mask_Box_01  pen_x=0.27m pen_z=0.12m  moving Mask_Box_01 to (0.00, 0.80, 1.56)"
+  },
+  {
+    "id": "66cabd8a-5a61-4161-8c4e-4f90b4c875c2",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Folder_01  pen_x=0.05m pen_z=0.25m  moving Folder_01 to (-0.06, 0.76, 2.00)"
+  },
+  {
+    "id": "0a2036da-fef7-43a9-9e93-9c9f03ee662c",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Folder_02  pen_x=0.06m pen_z=0.25m  moving Folder_02 to (-0.05, 1.09, 2.00)"
+  },
+  {
+    "id": "64882b05-3f80-4818-b680-5c7806f65532",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Towel_Dispenser_01 <-> Poster_02  pen_x=0.29m pen_z=0.02m  moving Poster_02 to (2.50, 0.36, 2.44)"
+  },
+  {
+    "id": "442e32c1-dcfa-4603-bf40-7898fb7d8441",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Screen_01 <-> Reception_Desk_01  pen_x=0.80m pen_z=0.40m  moving Reception_Desk_01 to (-1.80, 0.01, 4.15)"
+  },
+  {
+    "id": "f52765d5-e29e-4d23-9a89-16639f72368a",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Nurse_01 <-> Surgery_Cart_01  pen_x=0.61m pen_z=0.63m  moving Surgery_Cart_01 to (0.89, 0.01, 2.50)"
+  },
+  {
+    "id": "7bee7272-51d7-4997-9a4c-65b90f2d4f9e",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Nurse_01 <-> Scalpel_01  pen_x=0.02m pen_z=0.25m  moving Scalpel_01 to (0.60, 1.03, 2.50)"
+  },
+  {
+    "id": "a6f30163-b64f-4f97-a77b-5151e8167f68",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Nurse_01 <-> Forceps_01  pen_x=0.02m pen_z=0.23m  moving Forceps_01 to (0.60, 1.05, 2.50)"
+  },
+  {
+    "id": "5effde4f-8e87-40aa-82ef-6665f0271baa",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Nurse_01 <-> Syringe_01  pen_x=0.03m pen_z=0.09m  moving Syringe_01 to (0.60, 1.08, 2.50)"
+  },
+  {
+    "id": "78b34b41-5e24-4d22-90cb-6704530ab56a",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgical_Table_01 <-> Doctor_01  pen_x=0.58m pen_z=0.71m  moving Doctor_01 to (1.27, 0.01, 4.00)"
+  },
+  {
+    "id": "e1f99203-de3e-4442-9e78-a84a4dc8c44f",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Autoclave_01 <-> Sterilizer_Drum_01  pen_x=0.26m pen_z=0.26m  moving Sterilizer_Drum_01 to (2.17, 0.42, 2.90)"
+  },
+  {
+    "id": "e82fe382-b93b-4585-99f3-c321b6356112",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Autoclave_01 <-> Scissors_01  pen_x=0.05m pen_z=0.24m  moving Scissors_01 to (2.28, 0.60, 2.90)"
+  },
+  {
+    "id": "180b29de-63ef-4775-8062-1ef189c24d2a",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Autoclave_01 <-> Sterilizer_01  pen_x=0.25m pen_z=0.13m  moving Sterilizer_01 to (1.80, 0.01, 2.32)"
+  },
+  {
+    "id": "cmd_1777044255548_0",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Treadmill_01",
+    "x": 1.7,
+    "y": 0.01,
+    "z": 3.95,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044255548_1",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "WheelChair_01",
+    "x": 1.5,
+    "y": 0.01,
+    "z": 0.67,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044255548_2",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Utility_Cart_01",
+    "x": -1.08,
+    "y": 0.01,
+    "z": 1,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044255548_3",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Towel_Dispenser_01",
+    "x": 2.1,
+    "y": 0.01,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044255548_4",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Caution_Sign_01",
+    "x": 0.9,
+    "y": 0.01,
+    "z": 0.6,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044255548_5",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Clock_01",
+    "x": -2.22,
+    "y": 3.3,
+    "z": 0.34,
+    "rotationY": 270
+  },
+  {
+    "id": "cmd_1777044255548_6",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Poster_01",
+    "x": -2.04,
+    "y": 0.01,
+    "z": 3,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044255548_7",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Poster_02",
+    "x": 2.04,
+    "y": 0.36,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044255548_8",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Screen_01",
+    "x": -1.5,
+    "y": 0.01,
+    "z": 4.65,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044255548_9",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Reception_Desk_01",
+    "x": -1.8,
+    "y": 0.01,
+    "z": 4.45,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044255548_10",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Patient_01",
+    "x": 1.88,
+    "y": 0.01,
+    "z": 4,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044255548_11",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Surgical_Table_01",
+    "x": 0,
+    "y": 0.01,
+    "z": 3.78,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044255548_12",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Autoclave_01",
+    "x": 1.97,
+    "y": 0.01,
+    "z": 3,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044255548_13",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Mask_Box_01",
+    "x": -0.88,
+    "y": 0.8,
+    "z": 1,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044255548_14",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Bowl_01",
+    "x": -2.18,
+    "y": 0.01,
+    "z": 2.9,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044255548_15",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Trolley_02",
+    "x": -1.7,
+    "y": 0.01,
+    "z": 1.21,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044255548_16",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Patient_01",
+    "x": 1.04,
+    "y": 0.01,
+    "z": 4,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044255548_17",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Autoclave_01",
+    "x": 2,
+    "y": 0.01,
+    "z": 2.58,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044255548_18",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Table_01",
+    "x": -0.51,
+    "y": 0.01,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044255548_19",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Bottle_01",
+    "x": -1.14,
+    "y": 1.56,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044255548_20",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Trolley_02",
+    "x": -0.84,
+    "y": 0.01,
+    "z": 1.2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044255548_21",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Mask_Box_01",
+    "x": 0,
+    "y": 0.8,
+    "z": 1.56,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044255548_22",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Folder_01",
+    "x": -0.06,
+    "y": 0.76,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044255548_23",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Folder_02",
+    "x": -0.05,
+    "y": 1.09,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044255548_24",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Poster_02",
+    "x": 2.3,
+    "y": 0.36,
+    "z": 2.44,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044255548_25",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Reception_Desk_01",
+    "x": -1.8,
+    "y": 0.01,
+    "z": 4.15,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044255548_26",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Surgery_Cart_01",
+    "x": 0.89,
+    "y": 0.01,
+    "z": 2.5,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044255548_27",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Tray_01",
+    "x": 0.72,
+    "y": 0.99,
+    "z": 2.5,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044255548_28",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Scalpel_01",
+    "x": 0.6,
+    "y": 1.03,
+    "z": 2.5,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044255548_29",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Forceps_01",
+    "x": 0.6,
+    "y": 1.05,
+    "z": 2.5,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044255548_30",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Syringe_01",
+    "x": 0.6,
+    "y": 1.08,
+    "z": 2.5,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044255548_31",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Doctor_01",
+    "x": 1.27,
+    "y": 0.01,
+    "z": 4,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044255548_32",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Sterilizer_Drum_01",
+    "x": 2.17,
+    "y": 0.42,
+    "z": 2.9,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044255548_33",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Scissors_01",
+    "x": 2.28,
+    "y": 0.6,
+    "z": 2.9,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777044255548_34",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Sterilizer_01",
+    "x": 1.8,
+    "y": 0.01,
+    "z": 2.32,
+    "rotationY": 0
+  },
+  {
+    "id": "89155950-fd29-4846-a093-8fc4cd0b49b9",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Treadmill_01 <-> Patient_01  pen_x=0.26m pen_z=0.77m  moving Patient_01 to (0.54, 0.01, 4.00)"
+  },
+  {
+    "id": "3b7914a8-8c37-43d2-9b59-abfc86fd547f",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Treadmill_01 <-> Doctor_01  pen_x=0.48m pen_z=0.78m  moving Doctor_01 to (0.56, 0.01, 4.00)"
+  },
+  {
+    "id": "2c914c03-feaf-4160-ae06-e95b19834a7d",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_01 <-> Bowl_01  pen_x=0.07m pen_z=0.15m  moving Bowl_01 to (-2.23, 0.01, 2.90)"
+  },
+  {
+    "id": "d997e9c0-7f69-4355-a4ff-d44d987203b8",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Utility_Cart_01 <-> Trolley_02  pen_x=0.43m pen_z=0.51m  moving Trolley_02 to (-0.16, 0.01, 1.20)"
+  },
+  {
+    "id": "3de86b4e-5099-4142-b9d8-190ee5bd4f53",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Folder_01  pen_x=0.05m pen_z=0.25m  moving Folder_01 to (0.43, 0.76, 2.00)"
+  },
+  {
+    "id": "95d7ef9e-77e6-4d6a-b90a-56369e1fce48",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Folder_02  pen_x=0.06m pen_z=0.25m  moving Folder_02 to (0.43, 1.09, 2.00)"
+  },
+  {
+    "id": "6f844bcc-318f-4d50-9fb0-0ffcb40824bd",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Nurse_01  pen_x=0.47m pen_z=0.11m  moving Nurse_01 to (0.00, 0.01, 2.87)"
+  },
+  {
+    "id": "21504347-031b-4a07-9b7c-a67288ab64f9",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Bottle_01  pen_x=0.07m pen_z=0.07m  moving Bottle_01 to (-1.46, 1.56, 2.00)"
+  },
+  {
+    "id": "b5a10a69-edd4-41ba-853c-088030582092",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Towel_Dispenser_01 <-> Sterilizer_01  pen_x=0.02m pen_z=0.04m  moving Sterilizer_01 to (1.52, 0.01, 2.32)"
+  },
+  {
+    "id": "97df574a-c5db-4c34-826d-638901524ed0",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Poster_02 <-> Autoclave_01  pen_x=0.19m pen_z=0.02m  moving Autoclave_01 to (2.00, 0.01, 2.97)"
+  },
+  {
+    "id": "6d5e394f-cac1-48ca-b038-55ea4270127d",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Screen_01 <-> Reception_Desk_01  pen_x=0.80m pen_z=0.41m  moving Reception_Desk_01 to (-1.80, 0.01, 3.80)"
+  },
+  {
+    "id": "6343670d-eee1-40ba-bd8f-a9be800572bd",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Nurse_01 <-> Surgical_Table_01  pen_x=0.58m pen_z=0.17m  moving Surgical_Table_01 to (0.00, 0.01, 3.83)"
+  },
+  {
+    "id": "ee9b3a6e-19cf-43a6-aeda-cd2304a66ecd",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Tray_01  pen_x=0.26m pen_z=0.35m  moving Tray_01 to (0.21, 0.99, 2.50)"
+  },
+  {
+    "id": "df284d22-9fdf-4a6c-a383-310dafa65964",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Scalpel_01  pen_x=0.01m pen_z=0.25m  moving Scalpel_01 to (0.34, 1.03, 2.50)"
+  },
+  {
+    "id": "d574d5a6-6b2e-4bf9-942e-9c0c897354a0",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Forceps_01  pen_x=0.02m pen_z=0.23m  moving Forceps_01 to (0.33, 1.05, 2.50)"
+  },
+  {
+    "id": "515d5566-f015-40fa-9581-ab7733388ac3",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Syringe_01  pen_x=0.02m pen_z=0.09m  moving Syringe_01 to (0.33, 1.08, 2.50)"
+  },
+  {
+    "id": "1fd5576b-57b6-40a2-8224-891d63f2946e",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Autoclave_01 <-> Sterilizer_Drum_01  pen_x=0.23m pen_z=0.09m  moving Sterilizer_Drum_01 to (2.17, 0.42, 3.24)"
+  },
+  {
+    "id": "db36112a-8a79-481a-a724-8bb35e84deeb",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Autoclave_01 <-> Scissors_01  pen_x=0.03m pen_z=0.19m  moving Scissors_01 to (2.28, 0.60, 2.90)"
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Treadmill_01",
+    "x": 1.7,
+    "y": 0.01,
+    "z": 3.95,
+    "rotationY": 0.0,
+    "id": "cmd_1777044267258_0",
+    "timestamp": 1777044267.2588933,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Poster_01",
+    "x": -2.04,
+    "y": 0.01,
+    "z": 3.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044267258_1",
+    "timestamp": 1777044267.2588933,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Poster_02",
+    "x": 2.04,
+    "y": 0.36,
+    "z": 2.44,
+    "rotationY": 0.0,
+    "id": "cmd_1777044267258_2",
+    "timestamp": 1777044267.2588933,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Screen_01",
+    "x": -1.5,
+    "y": 0.01,
+    "z": 4.65,
+    "rotationY": 0.0,
+    "id": "cmd_1777044267258_3",
+    "timestamp": 1777044267.2588933,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Surgical_Table_01",
+    "x": 0.0,
+    "y": 0.01,
+    "z": 3.78,
+    "rotationY": 0.0,
+    "id": "cmd_1777044267258_4",
+    "timestamp": 1777044267.2588933,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Autoclave_01",
+    "x": 1.97,
+    "y": 0.01,
+    "z": 2.58,
+    "rotationY": 0.0,
+    "id": "cmd_1777044267258_5",
+    "timestamp": 1777044267.2588933,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Sterilizer_Drum_01",
+    "x": 2.12,
+    "y": 0.42,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044267258_6",
+    "timestamp": 1777044267.2588933,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Bowl_01",
+    "x": -2.18,
+    "y": 0.01,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044267258_7",
+    "timestamp": 1777044267.2588933,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Scissors_01",
+    "x": 2.23,
+    "y": 0.6,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044267258_8",
+    "timestamp": 1777044267.2588933,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Trolley_02",
+    "x": -0.84,
+    "y": 0.01,
+    "z": 1.21,
+    "rotationY": 0.0,
+    "id": "cmd_1777044267258_9",
+    "timestamp": 1777044267.2588933,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Clock_01",
+    "x": -2.25,
+    "y": 3.3,
+    "z": 0.34,
+    "rotationY": 270.0,
+    "id": "cmd_1777044267258_10",
+    "timestamp": 1777044267.2588933,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "WheelChair_01",
+    "x": 0.8,
+    "y": 0.01,
+    "z": 0.67,
+    "rotationY": 0.0,
+    "id": "cmd_1777044267258_11",
+    "timestamp": 1777044267.2588933,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Patient_01",
+    "x": 0.54,
+    "y": 0.01,
+    "z": 4.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044267258_12",
+    "timestamp": 1777044267.2588933,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Doctor_01",
+    "x": 0.56,
+    "y": 0.01,
+    "z": 4.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044267258_13",
+    "timestamp": 1777044267.2588933,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Bowl_01",
+    "x": -2.23,
+    "y": 0.01,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044267258_14",
+    "timestamp": 1777044267.2588933,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Trolley_02",
+    "x": -0.16,
+    "y": 0.01,
+    "z": 1.2,
+    "rotationY": 0.0,
+    "id": "cmd_1777044267258_15",
+    "timestamp": 1777044267.2588933,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Folder_01",
+    "x": 0.43,
+    "y": 0.76,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044267258_16",
+    "timestamp": 1777044267.2588933,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Folder_02",
+    "x": 0.43,
+    "y": 1.09,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044267258_17",
+    "timestamp": 1777044267.2588933,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Nurse_01",
+    "x": 0.0,
+    "y": 0.01,
+    "z": 2.87,
+    "rotationY": 0.0,
+    "id": "cmd_1777044267258_18",
+    "timestamp": 1777044267.2588933,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Bottle_01",
+    "x": -1.46,
+    "y": 1.56,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044267258_19",
+    "timestamp": 1777044267.2588933,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Sterilizer_01",
+    "x": 1.52,
+    "y": 0.01,
+    "z": 2.32,
+    "rotationY": 0.0,
+    "id": "cmd_1777044267258_20",
+    "timestamp": 1777044267.2588933,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Autoclave_01",
+    "x": 2.0,
+    "y": 0.01,
+    "z": 2.97,
+    "rotationY": 0.0,
+    "id": "cmd_1777044267258_21",
+    "timestamp": 1777044267.2588933,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Reception_Desk_01",
+    "x": -1.8,
+    "y": 0.01,
+    "z": 3.8,
+    "rotationY": 0.0,
+    "id": "cmd_1777044267258_22",
+    "timestamp": 1777044267.2588933,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Surgical_Table_01",
+    "x": 0.0,
+    "y": 0.01,
+    "z": 3.83,
+    "rotationY": 0.0,
+    "id": "cmd_1777044267258_23",
+    "timestamp": 1777044267.2588933,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Tray_01",
+    "x": 0.21,
+    "y": 0.99,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044267258_24",
+    "timestamp": 1777044267.2588933,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Scalpel_01",
+    "x": 0.34,
+    "y": 1.03,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044267258_25",
+    "timestamp": 1777044267.2588933,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Forceps_01",
+    "x": 0.33,
+    "y": 1.05,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044267258_26",
+    "timestamp": 1777044267.2588933,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Syringe_01",
+    "x": 0.33,
+    "y": 1.08,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044267258_27",
+    "timestamp": 1777044267.2588933,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Sterilizer_Drum_01",
+    "x": 2.17,
+    "y": 0.42,
+    "z": 3.24,
+    "rotationY": 0.0,
+    "id": "cmd_1777044267258_28",
+    "timestamp": 1777044267.2588933,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Scissors_01",
+    "x": 2.28,
+    "y": 0.6,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044267258_29",
+    "timestamp": 1777044267.2588933,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Mask_Box_01",
+    "x": -0.51,
+    "y": 0.11,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044267258_30",
+    "timestamp": 1777044267.2588933,
+    "executed": false
+  },
+  {
+    "id": "b7f57891-aaec-420b-b752-8a5608fd3593",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Treadmill_01 <-> Patient_01  pen_x=0.26m pen_z=0.77m  moving Patient_01 to (0.54, 0.01, 4.00)"
+  },
+  {
+    "id": "17de63d4-bac0-4123-b601-be9aecd00bb8",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Treadmill_01 <-> Doctor_01  pen_x=0.48m pen_z=0.78m  moving Doctor_01 to (0.56, 0.01, 4.00)"
+  },
+  {
+    "id": "01789e22-c27f-451f-be06-b22253840a32",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_01 <-> Bowl_01  pen_x=0.07m pen_z=0.15m  moving Bowl_01 to (-2.23, 0.01, 2.90)"
+  },
+  {
+    "id": "6fcb16ea-46f8-4226-96b9-4214ab647e8f",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Utility_Cart_01 <-> Trolley_02  pen_x=0.43m pen_z=0.51m  moving Trolley_02 to (-0.16, 0.01, 1.20)"
+  },
+  {
+    "id": "ed5f0b24-7e42-4541-934d-214d554ef5e9",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Folder_01  pen_x=0.05m pen_z=0.25m  moving Folder_01 to (0.43, 0.76, 2.00)"
+  },
+  {
+    "id": "afe070ef-2cfe-4ac5-b662-1e4aec883810",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Folder_02  pen_x=0.06m pen_z=0.25m  moving Folder_02 to (0.43, 1.09, 2.00)"
+  },
+  {
+    "id": "641d4e71-4164-4230-9294-0bd25895e101",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Nurse_01  pen_x=0.47m pen_z=0.11m  moving Nurse_01 to (0.00, 0.01, 2.87)"
+  },
+  {
+    "id": "f6cdab59-f98d-49c2-993e-75f21fb65e56",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Bottle_01  pen_x=0.07m pen_z=0.07m  moving Bottle_01 to (-1.46, 1.56, 2.00)"
+  },
+  {
+    "id": "3821344c-7662-4e00-abbd-0e5fba208772",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Towel_Dispenser_01 <-> Sterilizer_01  pen_x=0.02m pen_z=0.04m  moving Sterilizer_01 to (1.52, 0.01, 2.32)"
+  },
+  {
+    "id": "1bcad04b-5aa5-4d86-8315-a1fd7b6a9413",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Poster_02 <-> Autoclave_01  pen_x=0.19m pen_z=0.02m  moving Autoclave_01 to (2.00, 0.01, 2.97)"
+  },
+  {
+    "id": "c7a95207-23aa-440c-8fe6-6bca1e942054",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Screen_01 <-> Reception_Desk_01  pen_x=0.80m pen_z=0.41m  moving Reception_Desk_01 to (-1.80, 0.01, 3.80)"
+  },
+  {
+    "id": "b9629c4d-c7c6-47fa-93f9-b00a9ddaf337",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Nurse_01 <-> Surgical_Table_01  pen_x=0.58m pen_z=0.17m  moving Surgical_Table_01 to (0.00, 0.01, 3.83)"
+  },
+  {
+    "id": "97143ade-8800-4636-ba82-59b11df37b9d",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Tray_01  pen_x=0.26m pen_z=0.35m  moving Tray_01 to (0.21, 0.99, 2.50)"
+  },
+  {
+    "id": "adad4dbe-ca25-45ea-9013-f5be53bdcc0f",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Scalpel_01  pen_x=0.01m pen_z=0.25m  moving Scalpel_01 to (0.34, 1.03, 2.50)"
+  },
+  {
+    "id": "47e8f0b9-6d3d-45d8-ad9e-ce82bc9b07bd",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Forceps_01  pen_x=0.02m pen_z=0.23m  moving Forceps_01 to (0.33, 1.05, 2.50)"
+  },
+  {
+    "id": "4a900908-ac89-4d59-ba08-72719f00d16a",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Syringe_01  pen_x=0.02m pen_z=0.09m  moving Syringe_01 to (0.33, 1.08, 2.50)"
+  },
+  {
+    "id": "43508f3a-7204-407c-b36a-0f291be4464b",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Autoclave_01 <-> Sterilizer_Drum_01  pen_x=0.23m pen_z=0.09m  moving Sterilizer_Drum_01 to (2.17, 0.42, 3.24)"
+  },
+  {
+    "id": "b4c009b6-121b-49c8-91e1-c358539eb205",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Autoclave_01 <-> Scissors_01  pen_x=0.03m pen_z=0.19m  moving Scissors_01 to (2.28, 0.60, 2.90)"
+  },
+  {
+    "id": "6995e534-8fcc-45e7-9036-3b0b457b6cd5",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (image) Cube: MoveObject Cube x=0.5 y=0.0 z=2.5  \u2014 reason: visually overlaps Trolley_01"
+  },
+  {
+    "id": "d9439fc7-2bd1-41c1-a926-3ee9672f95a6",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (image) Cube: MoveObject Cube x=0.58 y=0.01 z=2.51  \u2014 reason: visually overlaps Surgery_Cart_01"
+  },
+  {
+    "id": "f3812457-6367-4f04-9e21-55be790cbb6a",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (image) Cube: MoveObject Cube x=0.56 y=0.01 z=2.49  \u2014 reason: visually overlaps Surgery_Cart_01"
+  },
+  {
+    "id": "1eb0bbdc-ceaf-4f1e-81bd-8bfcd573318c",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (image) Cube: MoveObject Cube x=1.52 y=0.01 z=0.69  \u2014 reason: visually overlaps WheelChair_01"
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Treadmill_01",
+    "x": 1.7,
+    "y": 0.01,
+    "z": 3.95,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_0",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Poster_01",
+    "x": -2.04,
+    "y": 0.01,
+    "z": 3.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_1",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Poster_02",
+    "x": 2.04,
+    "y": 0.36,
+    "z": 2.44,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_2",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Screen_01",
+    "x": -1.5,
+    "y": 0.01,
+    "z": 4.65,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_3",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Surgical_Table_01",
+    "x": 0.0,
+    "y": 0.01,
+    "z": 3.78,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_4",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Autoclave_01",
+    "x": 1.97,
+    "y": 0.01,
+    "z": 2.58,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_5",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Sterilizer_Drum_01",
+    "x": 2.12,
+    "y": 0.42,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_6",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Bowl_01",
+    "x": -2.18,
+    "y": 0.01,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_7",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Scissors_01",
+    "x": 2.23,
+    "y": 0.6,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_8",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Trolley_02",
+    "x": -0.84,
+    "y": 0.01,
+    "z": 1.21,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_9",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Caution_Sign_01",
+    "x": 0.7,
+    "y": 0.01,
+    "z": 0.6,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_10",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Patient_01",
+    "x": 0.54,
+    "y": 0.01,
+    "z": 4.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_11",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Doctor_01",
+    "x": 0.56,
+    "y": 0.01,
+    "z": 4.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_12",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Bowl_01",
+    "x": -2.23,
+    "y": 0.01,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_13",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Trolley_02",
+    "x": -0.16,
+    "y": 0.01,
+    "z": 1.2,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_14",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Folder_01",
+    "x": 0.43,
+    "y": 0.76,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_15",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Folder_02",
+    "x": 0.43,
+    "y": 1.09,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_16",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Nurse_01",
+    "x": 0.0,
+    "y": 0.01,
+    "z": 2.87,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_17",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Bottle_01",
+    "x": -1.46,
+    "y": 1.56,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_18",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Sterilizer_01",
+    "x": 1.52,
+    "y": 0.01,
+    "z": 2.32,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_19",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Autoclave_01",
+    "x": 2.0,
+    "y": 0.01,
+    "z": 2.97,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_20",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Reception_Desk_01",
+    "x": -1.8,
+    "y": 0.01,
+    "z": 3.8,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_21",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Surgical_Table_01",
+    "x": 0.0,
+    "y": 0.01,
+    "z": 3.83,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_22",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Tray_01",
+    "x": 0.21,
+    "y": 0.99,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_23",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Scalpel_01",
+    "x": 0.34,
+    "y": 1.03,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_24",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Forceps_01",
+    "x": 0.33,
+    "y": 1.05,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_25",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Syringe_01",
+    "x": 0.33,
+    "y": 1.08,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_26",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Sterilizer_Drum_01",
+    "x": 2.17,
+    "y": 0.42,
+    "z": 3.24,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_27",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Scissors_01",
+    "x": 2.28,
+    "y": 0.6,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_28",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Cube",
+    "x": 0.5,
+    "y": 0.0,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_29",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Cube",
+    "x": 0.58,
+    "y": 0.01,
+    "z": 2.51,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_30",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Cube",
+    "x": 0.56,
+    "y": 0.01,
+    "z": 2.49,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_31",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Cube",
+    "x": 1.52,
+    "y": 0.01,
+    "z": 0.69,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_32",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Mask_Box_01",
+    "x": -0.51,
+    "y": 0.11,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044293976_33",
+    "timestamp": 1777044293.9760573,
+    "executed": false
+  },
+  {
+    "id": "d8f6fe40-d538-4644-b638-a29aa4e62f2b",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Treadmill_01 <-> Patient_01  pen_x=0.26m pen_z=0.77m  moving Patient_01 to (0.54, 0.01, 4.00)"
+  },
+  {
+    "id": "b7c1532b-2bc7-4459-92c1-96fed7ec7189",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Treadmill_01 <-> Doctor_01  pen_x=0.48m pen_z=0.78m  moving Doctor_01 to (0.56, 0.01, 4.00)"
+  },
+  {
+    "id": "5b3e0e54-84a5-4403-99a0-03bbbef90c4b",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_01 <-> Bowl_01  pen_x=0.07m pen_z=0.15m  moving Bowl_01 to (-2.23, 0.01, 2.90)"
+  },
+  {
+    "id": "0c3add4c-94e3-40bf-8b0e-7aeff9aa1353",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Utility_Cart_01 <-> Trolley_02  pen_x=0.43m pen_z=0.51m  moving Trolley_02 to (-0.16, 0.01, 1.20)"
+  },
+  {
+    "id": "76ff534d-3c1b-4ad2-b6b7-324d605dec12",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Folder_01  pen_x=0.05m pen_z=0.25m  moving Folder_01 to (0.43, 0.76, 2.00)"
+  },
+  {
+    "id": "972a1342-c780-46bc-ab88-46d4860e992a",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Folder_02  pen_x=0.06m pen_z=0.25m  moving Folder_02 to (0.43, 1.09, 2.00)"
+  },
+  {
+    "id": "94027ea8-a7ee-460b-a5fe-d03e0c86163b",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Nurse_01  pen_x=0.47m pen_z=0.11m  moving Nurse_01 to (0.00, 0.01, 2.87)"
+  },
+  {
+    "id": "8e02a42d-c925-471e-a8c0-ac6f40d6f67f",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Bottle_01  pen_x=0.07m pen_z=0.07m  moving Bottle_01 to (-1.46, 1.56, 2.00)"
+  },
+  {
+    "id": "910e94b7-6047-4da7-ab14-045dc08e2d2d",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Towel_Dispenser_01 <-> Sterilizer_01  pen_x=0.02m pen_z=0.04m  moving Sterilizer_01 to (1.52, 0.01, 2.32)"
+  },
+  {
+    "id": "e917deca-565a-4cfa-bb11-45528f795dd5",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Poster_02 <-> Autoclave_01  pen_x=0.19m pen_z=0.02m  moving Autoclave_01 to (2.00, 0.01, 2.97)"
+  },
+  {
+    "id": "9d655be5-3585-4ee3-9bb9-dc7d1fa7cf2c",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Screen_01 <-> Reception_Desk_01  pen_x=0.80m pen_z=0.41m  moving Reception_Desk_01 to (-1.80, 0.01, 3.80)"
+  },
+  {
+    "id": "28419e1e-b0c2-4ece-8253-3e3c7d3bee96",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Nurse_01 <-> Surgical_Table_01  pen_x=0.58m pen_z=0.17m  moving Surgical_Table_01 to (0.00, 0.01, 3.83)"
+  },
+  {
+    "id": "6d7b51e8-fd7e-466a-825e-426d6de1ff66",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Tray_01  pen_x=0.26m pen_z=0.35m  moving Tray_01 to (0.21, 0.99, 2.50)"
+  },
+  {
+    "id": "c133c815-51ff-4cfa-aecf-32d3da77fc95",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Scalpel_01  pen_x=0.01m pen_z=0.25m  moving Scalpel_01 to (0.34, 1.03, 2.50)"
+  },
+  {
+    "id": "0e40a32b-1141-454d-938e-0e42b281f9ee",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Forceps_01  pen_x=0.02m pen_z=0.23m  moving Forceps_01 to (0.33, 1.05, 2.50)"
+  },
+  {
+    "id": "de56c48c-dbc5-4de6-bd0f-a87b6e0d963f",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Syringe_01  pen_x=0.02m pen_z=0.09m  moving Syringe_01 to (0.33, 1.08, 2.50)"
+  },
+  {
+    "id": "c95254c3-da60-445e-87a7-61f3b3877f97",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Autoclave_01 <-> Sterilizer_Drum_01  pen_x=0.23m pen_z=0.09m  moving Sterilizer_Drum_01 to (2.17, 0.42, 3.24)"
+  },
+  {
+    "id": "a059946d-b9a4-4b00-8689-3232b73a7e0e",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Autoclave_01 <-> Scissors_01  pen_x=0.03m pen_z=0.19m  moving Scissors_01 to (2.28, 0.60, 2.90)"
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Treadmill_01",
+    "x": 1.7,
+    "y": 0.01,
+    "z": 3.95,
+    "rotationY": 0.0,
+    "id": "cmd_1777044305797_0",
+    "timestamp": 1777044305.7976704,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Poster_01",
+    "x": -2.04,
+    "y": 0.01,
+    "z": 3.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044305797_1",
+    "timestamp": 1777044305.7976704,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Poster_02",
+    "x": 2.04,
+    "y": 0.36,
+    "z": 2.44,
+    "rotationY": 0.0,
+    "id": "cmd_1777044305797_2",
+    "timestamp": 1777044305.7976704,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Screen_01",
+    "x": -1.5,
+    "y": 0.01,
+    "z": 4.65,
+    "rotationY": 0.0,
+    "id": "cmd_1777044305797_3",
+    "timestamp": 1777044305.7976704,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Surgical_Table_01",
+    "x": 0.0,
+    "y": 0.01,
+    "z": 3.78,
+    "rotationY": 0.0,
+    "id": "cmd_1777044305797_4",
+    "timestamp": 1777044305.7976704,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Autoclave_01",
+    "x": 1.97,
+    "y": 0.01,
+    "z": 2.58,
+    "rotationY": 0.0,
+    "id": "cmd_1777044305797_5",
+    "timestamp": 1777044305.7976704,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Sterilizer_Drum_01",
+    "x": 2.12,
+    "y": 0.42,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044305797_6",
+    "timestamp": 1777044305.7976704,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Bowl_01",
+    "x": -2.18,
+    "y": 0.01,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044305797_7",
+    "timestamp": 1777044305.7976704,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Scissors_01",
+    "x": 2.23,
+    "y": 0.6,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044305797_8",
+    "timestamp": 1777044305.7976704,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Trolley_02",
+    "x": -0.84,
+    "y": 0.01,
+    "z": 1.21,
+    "rotationY": 0.0,
+    "id": "cmd_1777044305797_9",
+    "timestamp": 1777044305.7976704,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Patient_01",
+    "x": 0.54,
+    "y": 0.01,
+    "z": 4.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044305797_10",
+    "timestamp": 1777044305.7976704,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Doctor_01",
+    "x": 0.56,
+    "y": 0.01,
+    "z": 4.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044305797_11",
+    "timestamp": 1777044305.7976704,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Bowl_01",
+    "x": -2.23,
+    "y": 0.01,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044305797_12",
+    "timestamp": 1777044305.7976704,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Trolley_02",
+    "x": -0.16,
+    "y": 0.01,
+    "z": 1.2,
+    "rotationY": 0.0,
+    "id": "cmd_1777044305797_13",
+    "timestamp": 1777044305.7976704,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Folder_01",
+    "x": 0.43,
+    "y": 0.76,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044305797_14",
+    "timestamp": 1777044305.7976704,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Folder_02",
+    "x": 0.43,
+    "y": 1.09,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044305797_15",
+    "timestamp": 1777044305.7976704,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Nurse_01",
+    "x": 0.0,
+    "y": 0.01,
+    "z": 2.87,
+    "rotationY": 0.0,
+    "id": "cmd_1777044305797_16",
+    "timestamp": 1777044305.7976704,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Bottle_01",
+    "x": -1.46,
+    "y": 1.56,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044305797_17",
+    "timestamp": 1777044305.7976704,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Sterilizer_01",
+    "x": 1.52,
+    "y": 0.01,
+    "z": 2.32,
+    "rotationY": 0.0,
+    "id": "cmd_1777044305797_18",
+    "timestamp": 1777044305.7976704,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Autoclave_01",
+    "x": 2.0,
+    "y": 0.01,
+    "z": 2.97,
+    "rotationY": 0.0,
+    "id": "cmd_1777044305797_19",
+    "timestamp": 1777044305.7976704,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Reception_Desk_01",
+    "x": -1.8,
+    "y": 0.01,
+    "z": 3.8,
+    "rotationY": 0.0,
+    "id": "cmd_1777044305797_20",
+    "timestamp": 1777044305.7976704,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Surgical_Table_01",
+    "x": 0.0,
+    "y": 0.01,
+    "z": 3.83,
+    "rotationY": 0.0,
+    "id": "cmd_1777044305797_21",
+    "timestamp": 1777044305.7976704,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Tray_01",
+    "x": 0.21,
+    "y": 0.99,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044305797_22",
+    "timestamp": 1777044305.7976704,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Scalpel_01",
+    "x": 0.34,
+    "y": 1.03,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044305797_23",
+    "timestamp": 1777044305.7976704,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Forceps_01",
+    "x": 0.33,
+    "y": 1.05,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044305797_24",
+    "timestamp": 1777044305.7976704,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Syringe_01",
+    "x": 0.33,
+    "y": 1.08,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044305797_25",
+    "timestamp": 1777044305.7976704,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Sterilizer_Drum_01",
+    "x": 2.17,
+    "y": 0.42,
+    "z": 3.24,
+    "rotationY": 0.0,
+    "id": "cmd_1777044305797_26",
+    "timestamp": 1777044305.7976704,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Scissors_01",
+    "x": 2.28,
+    "y": 0.6,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044305797_27",
+    "timestamp": 1777044305.7976704,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Mask_Box_01",
+    "x": -0.51,
+    "y": 0.11,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044305797_28",
+    "timestamp": 1777044305.7976704,
+    "executed": false
+  },
+  {
+    "id": "57c5b725-a286-4f6f-a1be-ecde71377713",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Treadmill_01 <-> Patient_01  pen_x=0.26m pen_z=0.77m  moving Patient_01 to (0.54, 0.01, 4.00)"
+  },
+  {
+    "id": "065cf630-fcbb-4033-bbb5-994a6450c99e",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Treadmill_01 <-> Doctor_01  pen_x=0.48m pen_z=0.78m  moving Doctor_01 to (0.56, 0.01, 4.00)"
+  },
+  {
+    "id": "595ed842-8061-4045-8238-b84496542406",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_01 <-> Bowl_01  pen_x=0.07m pen_z=0.15m  moving Bowl_01 to (-2.23, 0.01, 2.90)"
+  },
+  {
+    "id": "74e37b83-f5ab-4cf1-b548-d2a1abff8b25",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Utility_Cart_01 <-> Trolley_02  pen_x=0.43m pen_z=0.51m  moving Trolley_02 to (-0.16, 0.01, 1.20)"
+  },
+  {
+    "id": "ffef5d92-bc0e-4d98-8e57-907332404fc0",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Folder_01  pen_x=0.05m pen_z=0.25m  moving Folder_01 to (0.43, 0.76, 2.00)"
+  },
+  {
+    "id": "15387112-8620-44b6-94e0-28543f0ba93a",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Folder_02  pen_x=0.06m pen_z=0.25m  moving Folder_02 to (0.43, 1.09, 2.00)"
+  },
+  {
+    "id": "f911d3b8-0635-43b2-b57d-f13dc448dfac",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Nurse_01  pen_x=0.47m pen_z=0.11m  moving Nurse_01 to (0.00, 0.01, 2.87)"
+  },
+  {
+    "id": "a8b1985e-c4f7-4adf-b170-f50e1b28dd54",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Bottle_01  pen_x=0.07m pen_z=0.07m  moving Bottle_01 to (-1.46, 1.56, 2.00)"
+  },
+  {
+    "id": "acbf73a8-982c-4ea6-95cb-046bfdf53277",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Towel_Dispenser_01 <-> Sterilizer_01  pen_x=0.02m pen_z=0.04m  moving Sterilizer_01 to (1.52, 0.01, 2.32)"
+  },
+  {
+    "id": "7ac4575f-e645-4070-803b-1c0ec540c972",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Poster_02 <-> Autoclave_01  pen_x=0.19m pen_z=0.02m  moving Autoclave_01 to (2.00, 0.01, 2.97)"
+  },
+  {
+    "id": "b8536ffb-edb6-4413-ad85-82d19609cace",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Screen_01 <-> Reception_Desk_01  pen_x=0.80m pen_z=0.41m  moving Reception_Desk_01 to (-1.80, 0.01, 3.80)"
+  },
+  {
+    "id": "26186c1f-37ac-4d80-868a-5d371ee56e9a",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Nurse_01 <-> Surgical_Table_01  pen_x=0.58m pen_z=0.17m  moving Surgical_Table_01 to (0.00, 0.01, 3.83)"
+  },
+  {
+    "id": "7e4aaa6b-b577-414c-bb8e-2b966d5b5bb1",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Tray_01  pen_x=0.26m pen_z=0.35m  moving Tray_01 to (0.21, 0.99, 2.50)"
+  },
+  {
+    "id": "24975a12-7c1d-44e7-9ea0-b5d04a58f7cf",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Scalpel_01  pen_x=0.01m pen_z=0.25m  moving Scalpel_01 to (0.34, 1.03, 2.50)"
+  },
+  {
+    "id": "71b9a92f-1576-4e01-9f31-0813d6a30899",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Forceps_01  pen_x=0.02m pen_z=0.23m  moving Forceps_01 to (0.33, 1.05, 2.50)"
+  },
+  {
+    "id": "4e7c1839-6231-42f2-a472-b0d057bb4e20",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Syringe_01  pen_x=0.02m pen_z=0.09m  moving Syringe_01 to (0.33, 1.08, 2.50)"
+  },
+  {
+    "id": "30ab0a25-2de7-40f5-94eb-c9d76f47ad31",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Autoclave_01 <-> Sterilizer_Drum_01  pen_x=0.23m pen_z=0.09m  moving Sterilizer_Drum_01 to (2.17, 0.42, 3.24)"
+  },
+  {
+    "id": "da45ebbb-7226-4f61-aa8b-1166d0820a7c",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Autoclave_01 <-> Scissors_01  pen_x=0.03m pen_z=0.19m  moving Scissors_01 to (2.28, 0.60, 2.90)"
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Treadmill_01",
+    "x": 1.7,
+    "y": 0.01,
+    "z": 3.95,
+    "rotationY": 0.0,
+    "id": "cmd_1777044317786_0",
+    "timestamp": 1777044317.7864068,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Poster_01",
+    "x": -2.04,
+    "y": 0.01,
+    "z": 3.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044317786_1",
+    "timestamp": 1777044317.7864068,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Poster_02",
+    "x": 2.04,
+    "y": 0.36,
+    "z": 2.44,
+    "rotationY": 0.0,
+    "id": "cmd_1777044317786_2",
+    "timestamp": 1777044317.7864068,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Screen_01",
+    "x": -1.5,
+    "y": 0.01,
+    "z": 4.65,
+    "rotationY": 0.0,
+    "id": "cmd_1777044317786_3",
+    "timestamp": 1777044317.7864068,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Surgical_Table_01",
+    "x": 0.0,
+    "y": 0.01,
+    "z": 3.78,
+    "rotationY": 0.0,
+    "id": "cmd_1777044317786_4",
+    "timestamp": 1777044317.7864068,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Autoclave_01",
+    "x": 1.97,
+    "y": 0.01,
+    "z": 2.58,
+    "rotationY": 0.0,
+    "id": "cmd_1777044317786_5",
+    "timestamp": 1777044317.7864068,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Sterilizer_Drum_01",
+    "x": 2.12,
+    "y": 0.42,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044317786_6",
+    "timestamp": 1777044317.7864068,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Bowl_01",
+    "x": -2.18,
+    "y": 0.01,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044317786_7",
+    "timestamp": 1777044317.7864068,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Scissors_01",
+    "x": 2.23,
+    "y": 0.6,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044317786_8",
+    "timestamp": 1777044317.7864068,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Trolley_02",
+    "x": -0.84,
+    "y": 0.01,
+    "z": 1.21,
+    "rotationY": 0.0,
+    "id": "cmd_1777044317786_9",
+    "timestamp": 1777044317.7864068,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Patient_01",
+    "x": 0.54,
+    "y": 0.01,
+    "z": 4.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044317786_10",
+    "timestamp": 1777044317.7864068,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Doctor_01",
+    "x": 0.56,
+    "y": 0.01,
+    "z": 4.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044317786_11",
+    "timestamp": 1777044317.7864068,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Bowl_01",
+    "x": -2.23,
+    "y": 0.01,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044317786_12",
+    "timestamp": 1777044317.7864068,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Trolley_02",
+    "x": -0.16,
+    "y": 0.01,
+    "z": 1.2,
+    "rotationY": 0.0,
+    "id": "cmd_1777044317786_13",
+    "timestamp": 1777044317.7864068,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Folder_01",
+    "x": 0.43,
+    "y": 0.76,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044317786_14",
+    "timestamp": 1777044317.7864068,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Folder_02",
+    "x": 0.43,
+    "y": 1.09,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044317786_15",
+    "timestamp": 1777044317.7864068,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Nurse_01",
+    "x": 0.0,
+    "y": 0.01,
+    "z": 2.87,
+    "rotationY": 0.0,
+    "id": "cmd_1777044317786_16",
+    "timestamp": 1777044317.7864068,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Bottle_01",
+    "x": -1.46,
+    "y": 1.56,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044317786_17",
+    "timestamp": 1777044317.7864068,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Sterilizer_01",
+    "x": 1.52,
+    "y": 0.01,
+    "z": 2.32,
+    "rotationY": 0.0,
+    "id": "cmd_1777044317786_18",
+    "timestamp": 1777044317.7864068,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Autoclave_01",
+    "x": 2.0,
+    "y": 0.01,
+    "z": 2.97,
+    "rotationY": 0.0,
+    "id": "cmd_1777044317786_19",
+    "timestamp": 1777044317.7864068,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Reception_Desk_01",
+    "x": -1.8,
+    "y": 0.01,
+    "z": 3.8,
+    "rotationY": 0.0,
+    "id": "cmd_1777044317786_20",
+    "timestamp": 1777044317.7864068,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Surgical_Table_01",
+    "x": 0.0,
+    "y": 0.01,
+    "z": 3.83,
+    "rotationY": 0.0,
+    "id": "cmd_1777044317786_21",
+    "timestamp": 1777044317.7864068,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Tray_01",
+    "x": 0.21,
+    "y": 0.99,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044317786_22",
+    "timestamp": 1777044317.7864068,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Scalpel_01",
+    "x": 0.34,
+    "y": 1.03,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044317786_23",
+    "timestamp": 1777044317.7864068,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Forceps_01",
+    "x": 0.33,
+    "y": 1.05,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044317786_24",
+    "timestamp": 1777044317.7864068,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Syringe_01",
+    "x": 0.33,
+    "y": 1.08,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044317786_25",
+    "timestamp": 1777044317.7864068,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Sterilizer_Drum_01",
+    "x": 2.17,
+    "y": 0.42,
+    "z": 3.24,
+    "rotationY": 0.0,
+    "id": "cmd_1777044317786_26",
+    "timestamp": 1777044317.7864068,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Scissors_01",
+    "x": 2.28,
+    "y": 0.6,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044317786_27",
+    "timestamp": 1777044317.7864068,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Mask_Box_01",
+    "x": -0.51,
+    "y": 0.11,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044317786_28",
+    "timestamp": 1777044317.7864068,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Cube",
+    "x": -0.43,
+    "y": 0.01,
+    "z": 2.87,
+    "rotationY": 0.0,
+    "id": "cmd_1777044317786_29",
+    "timestamp": 1777044317.7864068,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Cube",
+    "x": 1.15,
+    "y": 0.01,
+    "z": 0.1,
+    "rotationY": 0.0,
+    "id": "cmd_1777044317786_30",
+    "timestamp": 1777044317.7864068,
+    "executed": false
+  },
+  {
+    "id": "d02f7ba5-74f5-42b0-8628-2ae43f76c46e",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Treadmill_01 <-> Patient_01  pen_x=0.26m pen_z=0.77m  moving Patient_01 to (0.54, 0.01, 4.00)"
+  },
+  {
+    "id": "4622ae23-fca9-4e2c-8148-b0063016f0af",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Treadmill_01 <-> Doctor_01  pen_x=0.48m pen_z=0.78m  moving Doctor_01 to (0.56, 0.01, 4.00)"
+  },
+  {
+    "id": "353ceecf-73be-49d6-a85e-ebd2546feccd",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_01 <-> Bowl_01  pen_x=0.07m pen_z=0.15m  moving Bowl_01 to (-2.23, 0.01, 2.90)"
+  },
+  {
+    "id": "cfcb06a5-72f7-4614-ac39-0fbab0b4b59a",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Utility_Cart_01 <-> Trolley_02  pen_x=0.43m pen_z=0.51m  moving Trolley_02 to (-0.16, 0.01, 1.20)"
+  },
+  {
+    "id": "e3be0acf-19ee-4db5-ad3f-979f569f3b43",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Folder_01  pen_x=0.05m pen_z=0.25m  moving Folder_01 to (0.43, 0.76, 2.00)"
+  },
+  {
+    "id": "69a9385b-5ab1-4152-8a5f-e3b4bd296383",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Folder_02  pen_x=0.06m pen_z=0.25m  moving Folder_02 to (0.43, 1.09, 2.00)"
+  },
+  {
+    "id": "0e444b43-cad8-47c1-9372-855090e15855",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Nurse_01  pen_x=0.47m pen_z=0.11m  moving Nurse_01 to (0.00, 0.01, 2.87)"
+  },
+  {
+    "id": "7d52ba4a-28f7-4044-b360-c1272b48393a",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Bottle_01  pen_x=0.07m pen_z=0.07m  moving Bottle_01 to (-1.46, 1.56, 2.00)"
+  },
+  {
+    "id": "0d906fe2-679a-42f8-9f4b-ad509f78b1d4",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Towel_Dispenser_01 <-> Sterilizer_01  pen_x=0.02m pen_z=0.04m  moving Sterilizer_01 to (1.52, 0.01, 2.32)"
+  },
+  {
+    "id": "3a5d657d-13fb-4014-8b55-7ea217fe2c77",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Poster_02 <-> Autoclave_01  pen_x=0.19m pen_z=0.02m  moving Autoclave_01 to (2.00, 0.01, 2.97)"
+  },
+  {
+    "id": "a71e1e05-f715-435d-8fc7-99f8e81dc7b9",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Screen_01 <-> Reception_Desk_01  pen_x=0.80m pen_z=0.41m  moving Reception_Desk_01 to (-1.80, 0.01, 3.80)"
+  },
+  {
+    "id": "13569c8e-9df4-4a2a-a31d-d6ce3141caa6",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Nurse_01 <-> Surgical_Table_01  pen_x=0.58m pen_z=0.17m  moving Surgical_Table_01 to (0.00, 0.01, 3.83)"
+  },
+  {
+    "id": "003f7dfc-1eff-456b-a3b6-abe506ccd65c",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Tray_01  pen_x=0.26m pen_z=0.35m  moving Tray_01 to (0.21, 0.99, 2.50)"
+  },
+  {
+    "id": "3277e1d9-25c6-427f-864b-1205f349409a",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Scalpel_01  pen_x=0.01m pen_z=0.25m  moving Scalpel_01 to (0.34, 1.03, 2.50)"
+  },
+  {
+    "id": "7d092981-f4b9-43ec-8955-2d39a773fec8",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Forceps_01  pen_x=0.02m pen_z=0.23m  moving Forceps_01 to (0.33, 1.05, 2.50)"
+  },
+  {
+    "id": "22abf8f8-25a0-48f9-94b0-11c6984c59d2",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Syringe_01  pen_x=0.02m pen_z=0.09m  moving Syringe_01 to (0.33, 1.08, 2.50)"
+  },
+  {
+    "id": "e80edac3-47a2-4bf9-8308-13e3b39f247c",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Autoclave_01 <-> Sterilizer_Drum_01  pen_x=0.23m pen_z=0.09m  moving Sterilizer_Drum_01 to (2.17, 0.42, 3.24)"
+  },
+  {
+    "id": "be88027f-960f-4dfc-901e-0131d5fea6a1",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Autoclave_01 <-> Scissors_01  pen_x=0.03m pen_z=0.19m  moving Scissors_01 to (2.28, 0.60, 2.90)"
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Treadmill_01",
+    "x": 1.7,
+    "y": 0.01,
+    "z": 3.95,
+    "rotationY": 0.0,
+    "id": "cmd_1777044331990_0",
+    "timestamp": 1777044331.990587,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Poster_01",
+    "x": -2.04,
+    "y": 0.01,
+    "z": 3.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044331990_1",
+    "timestamp": 1777044331.990587,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Poster_02",
+    "x": 2.04,
+    "y": 0.36,
+    "z": 2.44,
+    "rotationY": 0.0,
+    "id": "cmd_1777044331990_2",
+    "timestamp": 1777044331.990587,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Screen_01",
+    "x": -1.5,
+    "y": 0.01,
+    "z": 4.65,
+    "rotationY": 0.0,
+    "id": "cmd_1777044331990_3",
+    "timestamp": 1777044331.990587,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Surgical_Table_01",
+    "x": 0.0,
+    "y": 0.01,
+    "z": 3.78,
+    "rotationY": 0.0,
+    "id": "cmd_1777044331990_4",
+    "timestamp": 1777044331.990587,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Autoclave_01",
+    "x": 1.97,
+    "y": 0.01,
+    "z": 2.58,
+    "rotationY": 0.0,
+    "id": "cmd_1777044331990_5",
+    "timestamp": 1777044331.990587,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Sterilizer_Drum_01",
+    "x": 2.12,
+    "y": 0.42,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044331990_6",
+    "timestamp": 1777044331.990587,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Bowl_01",
+    "x": -2.18,
+    "y": 0.01,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044331990_7",
+    "timestamp": 1777044331.990587,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Scissors_01",
+    "x": 2.23,
+    "y": 0.6,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044331990_8",
+    "timestamp": 1777044331.990587,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Trolley_02",
+    "x": -0.84,
+    "y": 0.01,
+    "z": 1.21,
+    "rotationY": 0.0,
+    "id": "cmd_1777044331990_9",
+    "timestamp": 1777044331.990587,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Patient_01",
+    "x": 0.54,
+    "y": 0.01,
+    "z": 4.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044331990_10",
+    "timestamp": 1777044331.990587,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Doctor_01",
+    "x": 0.56,
+    "y": 0.01,
+    "z": 4.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044331990_11",
+    "timestamp": 1777044331.990587,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Bowl_01",
+    "x": -2.23,
+    "y": 0.01,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044331990_12",
+    "timestamp": 1777044331.990587,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Trolley_02",
+    "x": -0.16,
+    "y": 0.01,
+    "z": 1.2,
+    "rotationY": 0.0,
+    "id": "cmd_1777044331990_13",
+    "timestamp": 1777044331.990587,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Folder_01",
+    "x": 0.43,
+    "y": 0.76,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044331990_14",
+    "timestamp": 1777044331.990587,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Folder_02",
+    "x": 0.43,
+    "y": 1.09,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044331990_15",
+    "timestamp": 1777044331.990587,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Nurse_01",
+    "x": 0.0,
+    "y": 0.01,
+    "z": 2.87,
+    "rotationY": 0.0,
+    "id": "cmd_1777044331990_16",
+    "timestamp": 1777044331.990587,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Bottle_01",
+    "x": -1.46,
+    "y": 1.56,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044331990_17",
+    "timestamp": 1777044331.990587,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Sterilizer_01",
+    "x": 1.52,
+    "y": 0.01,
+    "z": 2.32,
+    "rotationY": 0.0,
+    "id": "cmd_1777044331990_18",
+    "timestamp": 1777044331.990587,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Autoclave_01",
+    "x": 2.0,
+    "y": 0.01,
+    "z": 2.97,
+    "rotationY": 0.0,
+    "id": "cmd_1777044331990_19",
+    "timestamp": 1777044331.990587,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Reception_Desk_01",
+    "x": -1.8,
+    "y": 0.01,
+    "z": 3.8,
+    "rotationY": 0.0,
+    "id": "cmd_1777044331990_20",
+    "timestamp": 1777044331.990587,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Surgical_Table_01",
+    "x": 0.0,
+    "y": 0.01,
+    "z": 3.83,
+    "rotationY": 0.0,
+    "id": "cmd_1777044331990_21",
+    "timestamp": 1777044331.990587,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Tray_01",
+    "x": 0.21,
+    "y": 0.99,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044331990_22",
+    "timestamp": 1777044331.990587,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Scalpel_01",
+    "x": 0.34,
+    "y": 1.03,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044331990_23",
+    "timestamp": 1777044331.990587,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Forceps_01",
+    "x": 0.33,
+    "y": 1.05,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044331990_24",
+    "timestamp": 1777044331.990587,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Syringe_01",
+    "x": 0.33,
+    "y": 1.08,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044331990_25",
+    "timestamp": 1777044331.990587,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Sterilizer_Drum_01",
+    "x": 2.17,
+    "y": 0.42,
+    "z": 3.24,
+    "rotationY": 0.0,
+    "id": "cmd_1777044331990_26",
+    "timestamp": 1777044331.990587,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Scissors_01",
+    "x": 2.28,
+    "y": 0.6,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044331990_27",
+    "timestamp": 1777044331.990587,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Mask_Box_01",
+    "x": -0.51,
+    "y": 0.11,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044331990_28",
+    "timestamp": 1777044331.990587,
+    "executed": false
+  },
+  {
+    "id": "60216dc0-6419-4e46-8a94-80b516b61d4e",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Treadmill_01 <-> Patient_01  pen_x=0.26m pen_z=0.77m  moving Patient_01 to (0.54, 0.01, 4.00)"
+  },
+  {
+    "id": "a51f4bbc-f404-4d4d-916f-a37713d6216a",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Treadmill_01 <-> Doctor_01  pen_x=0.48m pen_z=0.78m  moving Doctor_01 to (0.56, 0.01, 4.00)"
+  },
+  {
+    "id": "73f1e505-2909-4065-bb5d-78ff4349ae19",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_01 <-> Bowl_01  pen_x=0.07m pen_z=0.15m  moving Bowl_01 to (-2.23, 0.01, 2.90)"
+  },
+  {
+    "id": "8eff2895-9a3d-4dc9-b52a-3fee78708715",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Utility_Cart_01 <-> Trolley_02  pen_x=0.43m pen_z=0.51m  moving Trolley_02 to (-0.16, 0.01, 1.20)"
+  },
+  {
+    "id": "425c112a-b932-4d3f-89ff-a3622ac78bca",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Folder_01  pen_x=0.05m pen_z=0.25m  moving Folder_01 to (0.43, 0.76, 2.00)"
+  },
+  {
+    "id": "7060471c-a007-4c14-9210-2c7d2c29594d",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Folder_02  pen_x=0.06m pen_z=0.25m  moving Folder_02 to (0.43, 1.09, 2.00)"
+  },
+  {
+    "id": "fbf605ec-6c2d-4f30-868c-025469ba0b1d",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Nurse_01  pen_x=0.47m pen_z=0.11m  moving Nurse_01 to (0.00, 0.01, 2.87)"
+  },
+  {
+    "id": "264e6a6b-10d9-4853-be22-46898af7b596",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Bottle_01  pen_x=0.07m pen_z=0.07m  moving Bottle_01 to (-1.46, 1.56, 2.00)"
+  },
+  {
+    "id": "9be13c39-e3b6-427d-adbf-bbd4ed6ea776",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Towel_Dispenser_01 <-> Sterilizer_01  pen_x=0.02m pen_z=0.04m  moving Sterilizer_01 to (1.52, 0.01, 2.32)"
+  },
+  {
+    "id": "c8667a9f-d998-4d02-bde5-e2f6e9a35a76",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Poster_02 <-> Autoclave_01  pen_x=0.19m pen_z=0.02m  moving Autoclave_01 to (2.00, 0.01, 2.97)"
+  },
+  {
+    "id": "e763c68b-f3e0-41e7-8639-a36a6f67438e",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Screen_01 <-> Reception_Desk_01  pen_x=0.80m pen_z=0.41m  moving Reception_Desk_01 to (-1.80, 0.01, 3.80)"
+  },
+  {
+    "id": "5272d91a-2637-4974-81ee-0654c04447e5",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Nurse_01 <-> Surgical_Table_01  pen_x=0.58m pen_z=0.17m  moving Surgical_Table_01 to (0.00, 0.01, 3.83)"
+  },
+  {
+    "id": "83ba264f-0e38-4a25-b853-9d8d6938e002",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Tray_01  pen_x=0.26m pen_z=0.35m  moving Tray_01 to (0.21, 0.99, 2.50)"
+  },
+  {
+    "id": "2ac251a3-1e39-4e6b-9ef0-381da2af8266",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Scalpel_01  pen_x=0.01m pen_z=0.25m  moving Scalpel_01 to (0.34, 1.03, 2.50)"
+  },
+  {
+    "id": "38c6e007-61bd-4403-a865-b9ed107aac9f",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Forceps_01  pen_x=0.02m pen_z=0.23m  moving Forceps_01 to (0.33, 1.05, 2.50)"
+  },
+  {
+    "id": "20a436a9-db20-410a-8cfe-14557dea4f09",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Syringe_01  pen_x=0.02m pen_z=0.09m  moving Syringe_01 to (0.33, 1.08, 2.50)"
+  },
+  {
+    "id": "39a5b6a5-cbf8-4275-8c04-8c27ec5a4a5f",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Autoclave_01 <-> Sterilizer_Drum_01  pen_x=0.23m pen_z=0.09m  moving Sterilizer_Drum_01 to (2.17, 0.42, 3.24)"
+  },
+  {
+    "id": "01a28411-4145-4f97-bebe-992c3530d2c6",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Autoclave_01 <-> Scissors_01  pen_x=0.03m pen_z=0.19m  moving Scissors_01 to (2.28, 0.60, 2.90)"
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Treadmill_01",
+    "x": 1.7,
+    "y": 0.01,
+    "z": 3.95,
+    "rotationY": 0.0,
+    "id": "cmd_1777044354734_0",
+    "timestamp": 1777044354.7349288,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Poster_01",
+    "x": -2.04,
+    "y": 0.01,
+    "z": 3.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044354734_1",
+    "timestamp": 1777044354.7349288,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Poster_02",
+    "x": 2.04,
+    "y": 0.36,
+    "z": 2.44,
+    "rotationY": 0.0,
+    "id": "cmd_1777044354734_2",
+    "timestamp": 1777044354.7349288,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Screen_01",
+    "x": -1.5,
+    "y": 0.01,
+    "z": 4.65,
+    "rotationY": 0.0,
+    "id": "cmd_1777044354734_3",
+    "timestamp": 1777044354.7349288,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Surgical_Table_01",
+    "x": 0.0,
+    "y": 0.01,
+    "z": 3.78,
+    "rotationY": 0.0,
+    "id": "cmd_1777044354734_4",
+    "timestamp": 1777044354.7349288,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Autoclave_01",
+    "x": 1.97,
+    "y": 0.01,
+    "z": 2.58,
+    "rotationY": 0.0,
+    "id": "cmd_1777044354734_5",
+    "timestamp": 1777044354.7349288,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Sterilizer_Drum_01",
+    "x": 2.12,
+    "y": 0.42,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044354734_6",
+    "timestamp": 1777044354.7349288,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Bowl_01",
+    "x": -2.18,
+    "y": 0.01,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044354734_7",
+    "timestamp": 1777044354.7349288,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Scissors_01",
+    "x": 2.23,
+    "y": 0.6,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044354734_8",
+    "timestamp": 1777044354.7349288,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Trolley_02",
+    "x": -0.84,
+    "y": 0.01,
+    "z": 1.21,
+    "rotationY": 0.0,
+    "id": "cmd_1777044354734_9",
+    "timestamp": 1777044354.7349288,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Patient_01",
+    "x": 0.54,
+    "y": 0.01,
+    "z": 4.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044354734_10",
+    "timestamp": 1777044354.7349288,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Doctor_01",
+    "x": 0.56,
+    "y": 0.01,
+    "z": 4.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044354734_11",
+    "timestamp": 1777044354.7349288,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Bowl_01",
+    "x": -2.23,
+    "y": 0.01,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044354734_12",
+    "timestamp": 1777044354.7349288,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Trolley_02",
+    "x": -0.16,
+    "y": 0.01,
+    "z": 1.2,
+    "rotationY": 0.0,
+    "id": "cmd_1777044354734_13",
+    "timestamp": 1777044354.7349288,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Folder_01",
+    "x": 0.43,
+    "y": 0.76,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044354734_14",
+    "timestamp": 1777044354.7349288,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Folder_02",
+    "x": 0.43,
+    "y": 1.09,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044354734_15",
+    "timestamp": 1777044354.7349288,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Nurse_01",
+    "x": 0.0,
+    "y": 0.01,
+    "z": 2.87,
+    "rotationY": 0.0,
+    "id": "cmd_1777044354734_16",
+    "timestamp": 1777044354.7349288,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Bottle_01",
+    "x": -1.46,
+    "y": 1.56,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044354734_17",
+    "timestamp": 1777044354.7349288,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Sterilizer_01",
+    "x": 1.52,
+    "y": 0.01,
+    "z": 2.32,
+    "rotationY": 0.0,
+    "id": "cmd_1777044354734_18",
+    "timestamp": 1777044354.7349288,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Autoclave_01",
+    "x": 2.0,
+    "y": 0.01,
+    "z": 2.97,
+    "rotationY": 0.0,
+    "id": "cmd_1777044354734_19",
+    "timestamp": 1777044354.7349288,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Reception_Desk_01",
+    "x": -1.8,
+    "y": 0.01,
+    "z": 3.8,
+    "rotationY": 0.0,
+    "id": "cmd_1777044354734_20",
+    "timestamp": 1777044354.7349288,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Surgical_Table_01",
+    "x": 0.0,
+    "y": 0.01,
+    "z": 3.83,
+    "rotationY": 0.0,
+    "id": "cmd_1777044354734_21",
+    "timestamp": 1777044354.7349288,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Tray_01",
+    "x": 0.21,
+    "y": 0.99,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044354734_22",
+    "timestamp": 1777044354.7349288,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Scalpel_01",
+    "x": 0.34,
+    "y": 1.03,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044354734_23",
+    "timestamp": 1777044354.7349288,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Forceps_01",
+    "x": 0.33,
+    "y": 1.05,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044354734_24",
+    "timestamp": 1777044354.7349288,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Syringe_01",
+    "x": 0.33,
+    "y": 1.08,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044354734_25",
+    "timestamp": 1777044354.7349288,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Sterilizer_Drum_01",
+    "x": 2.17,
+    "y": 0.42,
+    "z": 3.24,
+    "rotationY": 0.0,
+    "id": "cmd_1777044354734_26",
+    "timestamp": 1777044354.7349288,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Scissors_01",
+    "x": 2.28,
+    "y": 0.6,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044354734_27",
+    "timestamp": 1777044354.7349288,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Mask_Box_01",
+    "x": -0.51,
+    "y": 0.11,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044354734_28",
+    "timestamp": 1777044354.7349288,
+    "executed": false
+  },
+  {
+    "id": "11842bcb-d98e-4447-8f89-65aa76c8f5c8",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Treadmill_01 <-> Patient_01  pen_x=0.26m pen_z=0.77m  moving Patient_01 to (0.54, 0.01, 4.00)"
+  },
+  {
+    "id": "506e883d-c0df-40bd-bb69-b2f7094aff0e",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Treadmill_01 <-> Doctor_01  pen_x=0.48m pen_z=0.78m  moving Doctor_01 to (0.56, 0.01, 4.00)"
+  },
+  {
+    "id": "47fc4dcf-3c00-4249-bdbb-f904a6d07a76",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_01 <-> Bowl_01  pen_x=0.07m pen_z=0.15m  moving Bowl_01 to (-2.23, 0.01, 2.90)"
+  },
+  {
+    "id": "5b7747b0-fc0f-429b-9ef1-5dc98db21382",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Utility_Cart_01 <-> Trolley_02  pen_x=0.43m pen_z=0.51m  moving Trolley_02 to (-0.16, 0.01, 1.20)"
+  },
+  {
+    "id": "ceb4d807-2df1-4faa-855e-98565443eaf4",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Folder_01  pen_x=0.05m pen_z=0.25m  moving Folder_01 to (0.43, 0.76, 2.00)"
+  },
+  {
+    "id": "7aaccf9f-c1f9-4772-a9c1-c56921be82f0",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Folder_02  pen_x=0.06m pen_z=0.25m  moving Folder_02 to (0.43, 1.09, 2.00)"
+  },
+  {
+    "id": "e31149a9-bc87-4f53-a86b-47caa41e7687",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Nurse_01  pen_x=0.47m pen_z=0.11m  moving Nurse_01 to (0.00, 0.01, 2.87)"
+  },
+  {
+    "id": "65f70ac0-65fd-446f-b882-9589bc28ce11",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Bottle_01  pen_x=0.07m pen_z=0.07m  moving Bottle_01 to (-1.46, 1.56, 2.00)"
+  },
+  {
+    "id": "a25a41cd-1f7d-4210-a955-de90b61ff80b",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Towel_Dispenser_01 <-> Sterilizer_01  pen_x=0.02m pen_z=0.04m  moving Sterilizer_01 to (1.52, 0.01, 2.32)"
+  },
+  {
+    "id": "1dc61790-ef19-45a9-9dd1-27e475cf7c9c",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Poster_02 <-> Autoclave_01  pen_x=0.19m pen_z=0.02m  moving Autoclave_01 to (2.00, 0.01, 2.97)"
+  },
+  {
+    "id": "22fb26cb-97d1-40b5-bda7-9864b90550ce",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Screen_01 <-> Reception_Desk_01  pen_x=0.80m pen_z=0.41m  moving Reception_Desk_01 to (-1.80, 0.01, 3.80)"
+  },
+  {
+    "id": "200ea8b8-f63c-4898-b1f7-b323d2ff5db9",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Nurse_01 <-> Surgical_Table_01  pen_x=0.58m pen_z=0.17m  moving Surgical_Table_01 to (0.00, 0.01, 3.83)"
+  },
+  {
+    "id": "6bfdc60a-4894-46eb-abf3-4854575f1ebd",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Tray_01  pen_x=0.26m pen_z=0.35m  moving Tray_01 to (0.21, 0.99, 2.50)"
+  },
+  {
+    "id": "81e86796-6735-405a-ad5f-0b3fc20ced69",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Scalpel_01  pen_x=0.01m pen_z=0.25m  moving Scalpel_01 to (0.34, 1.03, 2.50)"
+  },
+  {
+    "id": "4ff3a6c3-6654-4bde-9784-6e4552989b13",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Forceps_01  pen_x=0.02m pen_z=0.23m  moving Forceps_01 to (0.33, 1.05, 2.50)"
+  },
+  {
+    "id": "fca00c1d-5575-45f0-a6f3-e9ed6dc356ec",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Syringe_01  pen_x=0.02m pen_z=0.09m  moving Syringe_01 to (0.33, 1.08, 2.50)"
+  },
+  {
+    "id": "028f2952-4150-4832-b39c-67c81923d4bc",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Autoclave_01 <-> Sterilizer_Drum_01  pen_x=0.23m pen_z=0.09m  moving Sterilizer_Drum_01 to (2.17, 0.42, 3.24)"
+  },
+  {
+    "id": "36b83536-0507-4be2-8f7b-4da4decae688",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Autoclave_01 <-> Scissors_01  pen_x=0.03m pen_z=0.19m  moving Scissors_01 to (2.28, 0.60, 2.90)"
+  },
+  {
+    "id": "cdfea9a8-3275-4b83-9644-78fdb61a666f",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (image) Cube: MoveObject Cube x=1.5 y=0.5 z=2.5 rotationY=0.0  \u2014 reason: visually overlaps Trolley_01"
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Treadmill_01",
+    "x": 1.7,
+    "y": 0.01,
+    "z": 3.95,
+    "rotationY": 0.0,
+    "id": "cmd_1777044369570_0",
+    "timestamp": 1777044369.570376,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Poster_01",
+    "x": -2.04,
+    "y": 0.01,
+    "z": 3.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044369570_1",
+    "timestamp": 1777044369.570376,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Poster_02",
+    "x": 2.04,
+    "y": 0.36,
+    "z": 2.44,
+    "rotationY": 0.0,
+    "id": "cmd_1777044369570_2",
+    "timestamp": 1777044369.570376,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Screen_01",
+    "x": -1.5,
+    "y": 0.01,
+    "z": 4.65,
+    "rotationY": 0.0,
+    "id": "cmd_1777044369570_3",
+    "timestamp": 1777044369.570376,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Surgical_Table_01",
+    "x": 0.0,
+    "y": 0.01,
+    "z": 3.78,
+    "rotationY": 0.0,
+    "id": "cmd_1777044369570_4",
+    "timestamp": 1777044369.570376,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Autoclave_01",
+    "x": 1.97,
+    "y": 0.01,
+    "z": 2.58,
+    "rotationY": 0.0,
+    "id": "cmd_1777044369570_5",
+    "timestamp": 1777044369.570376,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Sterilizer_Drum_01",
+    "x": 2.12,
+    "y": 0.42,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044369570_6",
+    "timestamp": 1777044369.570376,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Bowl_01",
+    "x": -2.18,
+    "y": 0.01,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044369570_7",
+    "timestamp": 1777044369.570376,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Scissors_01",
+    "x": 2.23,
+    "y": 0.6,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044369570_8",
+    "timestamp": 1777044369.570376,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Trolley_02",
+    "x": -0.84,
+    "y": 0.01,
+    "z": 1.21,
+    "rotationY": 0.0,
+    "id": "cmd_1777044369570_9",
+    "timestamp": 1777044369.570376,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Caution_Sign_01",
+    "x": 0.9,
+    "y": 0.01,
+    "z": 0.7,
+    "rotationY": 0.0,
+    "id": "cmd_1777044369570_10",
+    "timestamp": 1777044369.570376,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Patient_01",
+    "x": 0.54,
+    "y": 0.01,
+    "z": 4.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044369570_11",
+    "timestamp": 1777044369.570376,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Doctor_01",
+    "x": 0.56,
+    "y": 0.01,
+    "z": 4.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044369570_12",
+    "timestamp": 1777044369.570376,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Bowl_01",
+    "x": -2.23,
+    "y": 0.01,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044369570_13",
+    "timestamp": 1777044369.570376,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Trolley_02",
+    "x": -0.16,
+    "y": 0.01,
+    "z": 1.2,
+    "rotationY": 0.0,
+    "id": "cmd_1777044369570_14",
+    "timestamp": 1777044369.570376,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Folder_01",
+    "x": 0.43,
+    "y": 0.76,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044369570_15",
+    "timestamp": 1777044369.570376,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Folder_02",
+    "x": 0.43,
+    "y": 1.09,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044369570_16",
+    "timestamp": 1777044369.570376,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Nurse_01",
+    "x": 0.0,
+    "y": 0.01,
+    "z": 2.87,
+    "rotationY": 0.0,
+    "id": "cmd_1777044369570_17",
+    "timestamp": 1777044369.570376,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Bottle_01",
+    "x": -1.46,
+    "y": 1.56,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044369570_18",
+    "timestamp": 1777044369.570376,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Sterilizer_01",
+    "x": 1.52,
+    "y": 0.01,
+    "z": 2.32,
+    "rotationY": 0.0,
+    "id": "cmd_1777044369570_19",
+    "timestamp": 1777044369.570376,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Autoclave_01",
+    "x": 2.0,
+    "y": 0.01,
+    "z": 2.97,
+    "rotationY": 0.0,
+    "id": "cmd_1777044369570_20",
+    "timestamp": 1777044369.570376,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Reception_Desk_01",
+    "x": -1.8,
+    "y": 0.01,
+    "z": 3.8,
+    "rotationY": 0.0,
+    "id": "cmd_1777044369570_21",
+    "timestamp": 1777044369.570376,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Surgical_Table_01",
+    "x": 0.0,
+    "y": 0.01,
+    "z": 3.83,
+    "rotationY": 0.0,
+    "id": "cmd_1777044369570_22",
+    "timestamp": 1777044369.570376,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Tray_01",
+    "x": 0.21,
+    "y": 0.99,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044369570_23",
+    "timestamp": 1777044369.570376,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Scalpel_01",
+    "x": 0.34,
+    "y": 1.03,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044369570_24",
+    "timestamp": 1777044369.570376,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Forceps_01",
+    "x": 0.33,
+    "y": 1.05,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044369570_25",
+    "timestamp": 1777044369.570376,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Syringe_01",
+    "x": 0.33,
+    "y": 1.08,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044369570_26",
+    "timestamp": 1777044369.570376,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Sterilizer_Drum_01",
+    "x": 2.17,
+    "y": 0.42,
+    "z": 3.24,
+    "rotationY": 0.0,
+    "id": "cmd_1777044369570_27",
+    "timestamp": 1777044369.570376,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Scissors_01",
+    "x": 2.28,
+    "y": 0.6,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044369570_28",
+    "timestamp": 1777044369.570376,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Cube",
+    "x": 1.5,
+    "y": 0.5,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044369570_29",
+    "timestamp": 1777044369.570376,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Mask_Box_01",
+    "x": -0.51,
+    "y": 0.11,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044369570_30",
+    "timestamp": 1777044369.570376,
+    "executed": false
+  },
+  {
+    "id": "56524d1c-66ea-422d-9c94-732ec8e4c4d4",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Treadmill_01 <-> Patient_01  pen_x=0.26m pen_z=0.77m  moving Patient_01 to (0.54, 0.01, 4.00)"
+  },
+  {
+    "id": "3a2cb5c8-b79f-4d17-9bf9-851e41046e8c",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Treadmill_01 <-> Doctor_01  pen_x=0.48m pen_z=0.78m  moving Doctor_01 to (0.56, 0.01, 4.00)"
+  },
+  {
+    "id": "54958f60-4f96-4bfe-b3e2-4c2104aea442",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_01 <-> Bowl_01  pen_x=0.07m pen_z=0.15m  moving Bowl_01 to (-2.23, 0.01, 2.90)"
+  },
+  {
+    "id": "5aa71766-e3fb-4e78-85f3-bad82621657d",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Utility_Cart_01 <-> Trolley_02  pen_x=0.43m pen_z=0.51m  moving Trolley_02 to (-0.16, 0.01, 1.20)"
+  },
+  {
+    "id": "86372d68-879c-4119-aa4d-63bc5e59bd09",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Folder_01  pen_x=0.05m pen_z=0.25m  moving Folder_01 to (0.43, 0.76, 2.00)"
+  },
+  {
+    "id": "a254ca69-be03-412b-91c0-02bb546127b0",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Folder_02  pen_x=0.06m pen_z=0.25m  moving Folder_02 to (0.43, 1.09, 2.00)"
+  },
+  {
+    "id": "4fd76aad-b8b2-422a-aa67-983d88db8ffe",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Nurse_01  pen_x=0.47m pen_z=0.11m  moving Nurse_01 to (0.00, 0.01, 2.87)"
+  },
+  {
+    "id": "320d45ac-b707-494f-b4b0-0cb3c0b2c59a",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Bottle_01  pen_x=0.07m pen_z=0.07m  moving Bottle_01 to (-1.46, 1.56, 2.00)"
+  },
+  {
+    "id": "8d8d771b-5fce-425d-a4cb-ba4c5b57db27",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Towel_Dispenser_01 <-> Sterilizer_01  pen_x=0.02m pen_z=0.04m  moving Sterilizer_01 to (1.52, 0.01, 2.32)"
+  },
+  {
+    "id": "b75137c6-95af-44cd-ae3a-b83c10bdbf8f",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Poster_02 <-> Autoclave_01  pen_x=0.19m pen_z=0.02m  moving Autoclave_01 to (2.00, 0.01, 2.97)"
+  },
+  {
+    "id": "d2e310b5-5d29-462a-b4c9-8ede1cfba198",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Screen_01 <-> Reception_Desk_01  pen_x=0.80m pen_z=0.41m  moving Reception_Desk_01 to (-1.80, 0.01, 3.80)"
+  },
+  {
+    "id": "137078a8-fc37-4859-9244-24f0d935e656",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Nurse_01 <-> Surgical_Table_01  pen_x=0.58m pen_z=0.17m  moving Surgical_Table_01 to (0.00, 0.01, 3.83)"
+  },
+  {
+    "id": "0ca752b3-3843-49b7-96a6-a1a78ca2cdc1",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Tray_01  pen_x=0.26m pen_z=0.35m  moving Tray_01 to (0.21, 0.99, 2.50)"
+  },
+  {
+    "id": "54fa56e6-2b46-492a-8ed2-3a57d3654367",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Scalpel_01  pen_x=0.01m pen_z=0.25m  moving Scalpel_01 to (0.34, 1.03, 2.50)"
+  },
+  {
+    "id": "0aca35aa-09a7-4e1c-a0ed-e7614e224a6b",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Forceps_01  pen_x=0.02m pen_z=0.23m  moving Forceps_01 to (0.33, 1.05, 2.50)"
+  },
+  {
+    "id": "40f81675-35c3-4b2e-8ed8-61b950692be4",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Syringe_01  pen_x=0.02m pen_z=0.09m  moving Syringe_01 to (0.33, 1.08, 2.50)"
+  },
+  {
+    "id": "0f9aadf0-8c3a-40bd-bc9a-0716df09d2e9",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Autoclave_01 <-> Sterilizer_Drum_01  pen_x=0.23m pen_z=0.09m  moving Sterilizer_Drum_01 to (2.17, 0.42, 3.24)"
+  },
+  {
+    "id": "648d4de6-0ea3-4d68-86f9-2fe6c1a045a7",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Autoclave_01 <-> Scissors_01  pen_x=0.03m pen_z=0.19m  moving Scissors_01 to (2.28, 0.60, 2.90)"
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Treadmill_01",
+    "x": 1.7,
+    "y": 0.01,
+    "z": 3.95,
+    "rotationY": 0.0,
+    "id": "cmd_1777044377603_0",
+    "timestamp": 1777044377.6038003,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Poster_01",
+    "x": -2.04,
+    "y": 0.01,
+    "z": 3.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044377603_1",
+    "timestamp": 1777044377.6038003,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Poster_02",
+    "x": 2.04,
+    "y": 0.36,
+    "z": 2.44,
+    "rotationY": 0.0,
+    "id": "cmd_1777044377603_2",
+    "timestamp": 1777044377.6038003,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Screen_01",
+    "x": -1.5,
+    "y": 0.01,
+    "z": 4.65,
+    "rotationY": 0.0,
+    "id": "cmd_1777044377603_3",
+    "timestamp": 1777044377.6038003,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Surgical_Table_01",
+    "x": 0.0,
+    "y": 0.01,
+    "z": 3.78,
+    "rotationY": 0.0,
+    "id": "cmd_1777044377603_4",
+    "timestamp": 1777044377.6038003,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Autoclave_01",
+    "x": 1.97,
+    "y": 0.01,
+    "z": 2.58,
+    "rotationY": 0.0,
+    "id": "cmd_1777044377603_5",
+    "timestamp": 1777044377.6038003,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Sterilizer_Drum_01",
+    "x": 2.12,
+    "y": 0.42,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044377603_6",
+    "timestamp": 1777044377.6038003,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Bowl_01",
+    "x": -2.18,
+    "y": 0.01,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044377603_7",
+    "timestamp": 1777044377.6038003,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Scissors_01",
+    "x": 2.23,
+    "y": 0.6,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044377603_8",
+    "timestamp": 1777044377.6038003,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Trolley_02",
+    "x": -0.84,
+    "y": 0.01,
+    "z": 1.21,
+    "rotationY": 0.0,
+    "id": "cmd_1777044377603_9",
+    "timestamp": 1777044377.6038003,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Clock_01",
+    "x": -2.25,
+    "y": 3.3,
+    "z": 0.34,
+    "rotationY": 270.0,
+    "id": "cmd_1777044377603_10",
+    "timestamp": 1777044377.6038003,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Patient_01",
+    "x": 0.54,
+    "y": 0.01,
+    "z": 4.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044377603_11",
+    "timestamp": 1777044377.6038003,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Doctor_01",
+    "x": 0.56,
+    "y": 0.01,
+    "z": 4.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044377603_12",
+    "timestamp": 1777044377.6038003,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Bowl_01",
+    "x": -2.23,
+    "y": 0.01,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044377603_13",
+    "timestamp": 1777044377.6038003,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Trolley_02",
+    "x": -0.16,
+    "y": 0.01,
+    "z": 1.2,
+    "rotationY": 0.0,
+    "id": "cmd_1777044377603_14",
+    "timestamp": 1777044377.6038003,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Folder_01",
+    "x": 0.43,
+    "y": 0.76,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044377603_15",
+    "timestamp": 1777044377.6038003,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Folder_02",
+    "x": 0.43,
+    "y": 1.09,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044377603_16",
+    "timestamp": 1777044377.6038003,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Nurse_01",
+    "x": 0.0,
+    "y": 0.01,
+    "z": 2.87,
+    "rotationY": 0.0,
+    "id": "cmd_1777044377603_17",
+    "timestamp": 1777044377.6038003,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Bottle_01",
+    "x": -1.46,
+    "y": 1.56,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044377603_18",
+    "timestamp": 1777044377.6038003,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Sterilizer_01",
+    "x": 1.52,
+    "y": 0.01,
+    "z": 2.32,
+    "rotationY": 0.0,
+    "id": "cmd_1777044377603_19",
+    "timestamp": 1777044377.6038003,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Autoclave_01",
+    "x": 2.0,
+    "y": 0.01,
+    "z": 2.97,
+    "rotationY": 0.0,
+    "id": "cmd_1777044377603_20",
+    "timestamp": 1777044377.6038003,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Reception_Desk_01",
+    "x": -1.8,
+    "y": 0.01,
+    "z": 3.8,
+    "rotationY": 0.0,
+    "id": "cmd_1777044377603_21",
+    "timestamp": 1777044377.6038003,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Surgical_Table_01",
+    "x": 0.0,
+    "y": 0.01,
+    "z": 3.83,
+    "rotationY": 0.0,
+    "id": "cmd_1777044377603_22",
+    "timestamp": 1777044377.6038003,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Tray_01",
+    "x": 0.21,
+    "y": 0.99,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044377603_23",
+    "timestamp": 1777044377.6038003,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Scalpel_01",
+    "x": 0.34,
+    "y": 1.03,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044377603_24",
+    "timestamp": 1777044377.6038003,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Forceps_01",
+    "x": 0.33,
+    "y": 1.05,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044377603_25",
+    "timestamp": 1777044377.6038003,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Syringe_01",
+    "x": 0.33,
+    "y": 1.08,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044377603_26",
+    "timestamp": 1777044377.6038003,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Sterilizer_Drum_01",
+    "x": 2.17,
+    "y": 0.42,
+    "z": 3.24,
+    "rotationY": 0.0,
+    "id": "cmd_1777044377603_27",
+    "timestamp": 1777044377.6038003,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Scissors_01",
+    "x": 2.28,
+    "y": 0.6,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044377603_28",
+    "timestamp": 1777044377.6038003,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Mask_Box_01",
+    "x": -0.51,
+    "y": 0.11,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044377603_29",
+    "timestamp": 1777044377.6038003,
+    "executed": false
+  },
+  {
+    "id": "7b5f8bad-9c16-4321-97c0-1cd80e14f20e",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Treadmill_01 <-> Patient_01  pen_x=0.26m pen_z=0.77m  moving Patient_01 to (0.54, 0.01, 4.00)"
+  },
+  {
+    "id": "0e2d774c-2f2f-4f85-89a3-23bde1898094",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Treadmill_01 <-> Doctor_01  pen_x=0.48m pen_z=0.78m  moving Doctor_01 to (0.56, 0.01, 4.00)"
+  },
+  {
+    "id": "db071203-2431-442f-b9e1-d0b36146d4c2",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_01 <-> Bowl_01  pen_x=0.07m pen_z=0.15m  moving Bowl_01 to (-2.23, 0.01, 2.90)"
+  },
+  {
+    "id": "5bd56099-385a-49c3-b852-95d09e6aa0d7",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Utility_Cart_01 <-> Trolley_02  pen_x=0.43m pen_z=0.51m  moving Trolley_02 to (-0.16, 0.01, 1.20)"
+  },
+  {
+    "id": "f3228380-e2ce-4473-8848-c2a76d059fa9",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Folder_01  pen_x=0.05m pen_z=0.25m  moving Folder_01 to (0.43, 0.76, 2.00)"
+  },
+  {
+    "id": "7cb7a433-04da-4006-bb85-8fa16f95df99",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Folder_02  pen_x=0.06m pen_z=0.25m  moving Folder_02 to (0.43, 1.09, 2.00)"
+  },
+  {
+    "id": "c0bb0b1e-5781-4264-853e-0f457c28b939",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Nurse_01  pen_x=0.47m pen_z=0.11m  moving Nurse_01 to (0.00, 0.01, 2.87)"
+  },
+  {
+    "id": "dac639b1-e5d5-472f-9d38-3b5961e31312",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Bottle_01  pen_x=0.07m pen_z=0.07m  moving Bottle_01 to (-1.46, 1.56, 2.00)"
+  },
+  {
+    "id": "fd313ea3-a020-441d-a0ef-6fead3618bfc",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Towel_Dispenser_01 <-> Sterilizer_01  pen_x=0.02m pen_z=0.04m  moving Sterilizer_01 to (1.52, 0.01, 2.32)"
+  },
+  {
+    "id": "24b3e1d9-188c-4152-88bc-c6695d526908",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Poster_02 <-> Autoclave_01  pen_x=0.19m pen_z=0.02m  moving Autoclave_01 to (2.00, 0.01, 2.97)"
+  },
+  {
+    "id": "3c776010-cbfd-409e-a023-6477f15b1cbb",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Screen_01 <-> Reception_Desk_01  pen_x=0.80m pen_z=0.41m  moving Reception_Desk_01 to (-1.80, 0.01, 3.80)"
+  },
+  {
+    "id": "ef31d9b2-37ef-4a75-96fc-8ec2c65f5de2",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Nurse_01 <-> Surgical_Table_01  pen_x=0.58m pen_z=0.17m  moving Surgical_Table_01 to (0.00, 0.01, 3.83)"
+  },
+  {
+    "id": "6121c110-78d2-49a4-a0f1-d25835f8f7dd",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Tray_01  pen_x=0.26m pen_z=0.35m  moving Tray_01 to (0.21, 0.99, 2.50)"
+  },
+  {
+    "id": "e2507ae4-ceae-4757-a138-0bed414205a0",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Scalpel_01  pen_x=0.01m pen_z=0.25m  moving Scalpel_01 to (0.34, 1.03, 2.50)"
+  },
+  {
+    "id": "6afb8190-ab9b-465e-88b0-cef62e927a4f",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Forceps_01  pen_x=0.02m pen_z=0.23m  moving Forceps_01 to (0.33, 1.05, 2.50)"
+  },
+  {
+    "id": "9684754c-bf63-4ca2-882c-71bcb75181c9",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Syringe_01  pen_x=0.02m pen_z=0.09m  moving Syringe_01 to (0.33, 1.08, 2.50)"
+  },
+  {
+    "id": "16f70035-ac8a-47e7-97dc-96d0cb88fa73",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Autoclave_01 <-> Sterilizer_Drum_01  pen_x=0.23m pen_z=0.09m  moving Sterilizer_Drum_01 to (2.17, 0.42, 3.24)"
+  },
+  {
+    "id": "27587f58-3c09-4bd7-b272-85425da5a232",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Autoclave_01 <-> Scissors_01  pen_x=0.03m pen_z=0.19m  moving Scissors_01 to (2.28, 0.60, 2.90)"
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Treadmill_01",
+    "x": 1.7,
+    "y": 0.01,
+    "z": 3.95,
+    "rotationY": 0.0,
+    "id": "cmd_1777044391818_0",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Poster_01",
+    "x": -2.04,
+    "y": 0.01,
+    "z": 3.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044391818_1",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Poster_02",
+    "x": 2.04,
+    "y": 0.36,
+    "z": 2.44,
+    "rotationY": 0.0,
+    "id": "cmd_1777044391818_2",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Screen_01",
+    "x": -1.5,
+    "y": 0.01,
+    "z": 4.65,
+    "rotationY": 0.0,
+    "id": "cmd_1777044391818_3",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Surgical_Table_01",
+    "x": 0.0,
+    "y": 0.01,
+    "z": 3.78,
+    "rotationY": 0.0,
+    "id": "cmd_1777044391818_4",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Autoclave_01",
+    "x": 1.97,
+    "y": 0.01,
+    "z": 2.58,
+    "rotationY": 0.0,
+    "id": "cmd_1777044391818_5",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Sterilizer_Drum_01",
+    "x": 2.12,
+    "y": 0.42,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044391818_6",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Bowl_01",
+    "x": -2.18,
+    "y": 0.01,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044391818_7",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Scissors_01",
+    "x": 2.23,
+    "y": 0.6,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044391818_8",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Trolley_02",
+    "x": -0.84,
+    "y": 0.01,
+    "z": 1.21,
+    "rotationY": 0.0,
+    "id": "cmd_1777044391818_9",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Clock_01",
+    "x": -2.27,
+    "y": 3.3,
+    "z": 0.34,
+    "rotationY": 270.0,
+    "id": "cmd_1777044391818_10",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Trolley_01",
+    "x": -1.8,
+    "y": 0.01,
+    "z": 1.01,
+    "rotationY": 0.0,
+    "id": "cmd_1777044391818_11",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Clock_01",
+    "x": -2.27,
+    "y": 3.3,
+    "z": 0.34,
+    "rotationY": 270.0,
+    "id": "cmd_1777044391818_12",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Trolley_01",
+    "x": -1.8,
+    "y": 0.01,
+    "z": 1.01,
+    "rotationY": 0.0,
+    "id": "cmd_1777044391818_13",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Patient_01",
+    "x": 0.54,
+    "y": 0.01,
+    "z": 4.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044391818_14",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Doctor_01",
+    "x": 0.56,
+    "y": 0.01,
+    "z": 4.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044391818_15",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Bowl_01",
+    "x": -2.23,
+    "y": 0.01,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044391818_16",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Trolley_02",
+    "x": -0.16,
+    "y": 0.01,
+    "z": 1.2,
+    "rotationY": 0.0,
+    "id": "cmd_1777044391818_17",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Folder_01",
+    "x": 0.43,
+    "y": 0.76,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044391818_18",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Folder_02",
+    "x": 0.43,
+    "y": 1.09,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044391818_19",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Nurse_01",
+    "x": 0.0,
+    "y": 0.01,
+    "z": 2.87,
+    "rotationY": 0.0,
+    "id": "cmd_1777044391818_20",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Bottle_01",
+    "x": -1.46,
+    "y": 1.56,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044391818_21",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Sterilizer_01",
+    "x": 1.52,
+    "y": 0.01,
+    "z": 2.32,
+    "rotationY": 0.0,
+    "id": "cmd_1777044391818_22",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Autoclave_01",
+    "x": 2.0,
+    "y": 0.01,
+    "z": 2.97,
+    "rotationY": 0.0,
+    "id": "cmd_1777044391818_23",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Reception_Desk_01",
+    "x": -1.8,
+    "y": 0.01,
+    "z": 3.8,
+    "rotationY": 0.0,
+    "id": "cmd_1777044391818_24",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Surgical_Table_01",
+    "x": 0.0,
+    "y": 0.01,
+    "z": 3.83,
+    "rotationY": 0.0,
+    "id": "cmd_1777044391818_25",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Tray_01",
+    "x": 0.21,
+    "y": 0.99,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044391818_26",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Scalpel_01",
+    "x": 0.34,
+    "y": 1.03,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044391818_27",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Forceps_01",
+    "x": 0.33,
+    "y": 1.05,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044391818_28",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Syringe_01",
+    "x": 0.33,
+    "y": 1.08,
+    "z": 2.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777044391818_29",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Sterilizer_Drum_01",
+    "x": 2.17,
+    "y": 0.42,
+    "z": 3.24,
+    "rotationY": 0.0,
+    "id": "cmd_1777044391818_30",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Scissors_01",
+    "x": 2.28,
+    "y": 0.6,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1777044391818_31",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Mask_Box_01",
+    "x": -0.51,
+    "y": 0.11,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777044391818_32",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Cube",
+    "x": 0.61,
+    "y": 0.0,
+    "z": 0.47,
+    "rotationY": 0.0,
+    "id": "cmd_1777044391818_33",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Cube",
+    "x": 2.3,
+    "y": 0.0,
+    "z": 0.53,
+    "rotationY": 0.0,
+    "id": "cmd_1777044391818_34",
+    "timestamp": 1777044391.8182602,
+    "executed": false
+  },
+  {
+    "id": "8589e185-9201-4875-9dae-2741d5d0af89",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Treadmill_01 <-> Patient_01  pen_x=0.26m pen_z=0.77m  moving Patient_01 to (0.54, 0.01, 4.00)"
+  },
+  {
+    "id": "8d3b8435-8683-4b89-995d-ccc84ac6313f",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Treadmill_01 <-> Doctor_01  pen_x=0.48m pen_z=0.78m  moving Doctor_01 to (0.56, 0.01, 4.00)"
+  },
+  {
+    "id": "a25866ec-62c3-4ecd-bd98-86e8f416f6be",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_01 <-> Bowl_01  pen_x=0.07m pen_z=0.15m  moving Bowl_01 to (-2.23, 0.01, 2.90)"
+  },
+  {
+    "id": "198a407c-ebe3-47a3-b3bf-07d2ec1ab360",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Utility_Cart_01 <-> Trolley_02  pen_x=0.43m pen_z=0.51m  moving Trolley_02 to (-0.16, 0.01, 1.20)"
+  },
+  {
+    "id": "17428372-395d-418f-a1d1-241150b04d3d",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Folder_01  pen_x=0.05m pen_z=0.25m  moving Folder_01 to (0.43, 0.76, 2.00)"
+  },
+  {
+    "id": "41c2eef3-833b-4eb4-96ba-7476a6b3df65",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Folder_02  pen_x=0.06m pen_z=0.25m  moving Folder_02 to (0.43, 1.09, 2.00)"
+  },
+  {
+    "id": "e6a72438-131b-4147-ac09-68eeb51c6493",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Nurse_01  pen_x=0.47m pen_z=0.11m  moving Nurse_01 to (0.00, 0.01, 2.87)"
+  },
+  {
+    "id": "4587a57e-eeb0-48f2-b2cd-4bae957397a5",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Table_01 <-> Bottle_01  pen_x=0.07m pen_z=0.07m  moving Bottle_01 to (-1.46, 1.56, 2.00)"
+  },
+  {
+    "id": "216f33dc-e0af-4f14-95c1-8e759109b035",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Towel_Dispenser_01 <-> Sterilizer_01  pen_x=0.02m pen_z=0.04m  moving Sterilizer_01 to (1.52, 0.01, 2.32)"
+  },
+  {
+    "id": "a759a0dd-6233-459f-957c-13bc0e66ac92",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Poster_02 <-> Autoclave_01  pen_x=0.19m pen_z=0.02m  moving Autoclave_01 to (2.00, 0.01, 2.97)"
+  },
+  {
+    "id": "22a0c80b-6990-4681-ae4d-b63b27685585",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Screen_01 <-> Reception_Desk_01  pen_x=0.80m pen_z=0.41m  moving Reception_Desk_01 to (-1.80, 0.01, 3.80)"
+  },
+  {
+    "id": "e6e44ecd-a4bb-421b-a38a-3507f2f254d4",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Nurse_01 <-> Surgical_Table_01  pen_x=0.58m pen_z=0.17m  moving Surgical_Table_01 to (0.00, 0.01, 3.83)"
+  },
+  {
+    "id": "a825189b-d7ff-4f2c-8628-316d77b4dae4",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Tray_01  pen_x=0.26m pen_z=0.35m  moving Tray_01 to (0.21, 0.99, 2.50)"
+  },
+  {
+    "id": "eb4bd3db-7ed2-4840-b758-4788c65ee7b2",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Scalpel_01  pen_x=0.01m pen_z=0.25m  moving Scalpel_01 to (0.34, 1.03, 2.50)"
+  },
+  {
+    "id": "587f77b7-d5ca-4c15-9626-d4f3870ff4af",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Forceps_01  pen_x=0.02m pen_z=0.23m  moving Forceps_01 to (0.33, 1.05, 2.50)"
+  },
+  {
+    "id": "3bf23f17-8c22-4e96-8b05-0bc3f769061a",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Surgery_Cart_01 <-> Syringe_01  pen_x=0.02m pen_z=0.09m  moving Syringe_01 to (0.33, 1.08, 2.50)"
+  },
+  {
+    "id": "692a73d1-d617-487e-ab96-cdb669b0e1d7",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Autoclave_01 <-> Sterilizer_Drum_01  pen_x=0.23m pen_z=0.09m  moving Sterilizer_Drum_01 to (2.17, 0.42, 3.24)"
+  },
+  {
+    "id": "fc28dd40-f571-4e3c-a907-b5bbf48680d3",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Autoclave_01 <-> Scissors_01  pen_x=0.03m pen_z=0.19m  moving Scissors_01 to (2.28, 0.60, 2.90)"
+  },
+  {
+    "id": "01636dd5-6b10-4cbf-b498-9ca6af4ae253",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (image) Cube: MoveObject Cube x=<newX> y=<newY> z=<newZ> rotationY=<newR> \u2014 reason: visually overlaps Treadmill_01"
+  },
+  {
+    "id": "edf2c76e-57cd-48c5-86e1-a42f6de30204",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (image) Cube: MoveObject Cube x=1.9 y=0.01 z=3.9 rotationY=0.0 \u2014 reason: visually overlaps Treadmill_01"
+  }
+]

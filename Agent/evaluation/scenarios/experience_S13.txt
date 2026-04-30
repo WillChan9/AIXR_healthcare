@@ -1,0 +1,30 @@
+Ophthalmology Exam Room — Specialty 1-on-1 eye examination
+
+A focused ophthalmology examination room arranged for a single patient
+seated in a specialized ophthalmology chair facing a slit-lamp / vision
+testing setup. The room contains an autorefkeratometer (eye-refraction
+machine), a colposcope-style imaging device, a small ophthalmology
+table with reference glasses and a skin microscope, and an eye chart
+poster on the wall opposite the patient. The ophthalmologist (Doctor)
+sits on a small adjustable stool facing the patient. Lighting should
+be slightly dim (to support pupil dilation tests) with one focused
+lamp. The room reads as quiet, clinical, and focused on a single
+seated patient.
+
+[interactions]
+When the player touches the ophthalmologist, she explains what test
+is currently in progress ("checking refraction", "pupil dilation
+review"). Touching the autorefkeratometer should display its function
+("Autorefkeratometer — measures the eye's refraction automatically").
+Touching the colposcope-style imaging device should describe its use.
+Touching the eye chart poster should display "Snellen chart — tests
+visual acuity at 20 feet". Touching the patient should make him
+describe what he can/cannot see clearly.
+
+A short story arc: when the player first touches the ophthalmologist,
+the autorefkeratometer briefly highlights yellow to indicate the
+current test. When the player then touches the highlighted machine,
+the doctor walks one step closer to the patient and says "small
+pressure now". When the player finally touches the patient, the
+overhead light brightens momentarily to signal "examination complete"
+and the doctor plays a Talking animation summarizing the result.

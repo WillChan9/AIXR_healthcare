@@ -1,93 +1,116 @@
 {
   "room_type": "Emergency Triage Room",
-  "description": "A small 4m x 4m emergency triage room used for rapid patient assessment.",
+  "description": "A small, cramped emergency triage room for rapid patient assessment under time pressure. The room is tightly packed but navigable, with an exam table as the active assessment focus, a stretcher pushed against the back wall, a wheeled supply trolley beside the table, and a wall-mounted patient monitor visible to the EMT and player. Bright cool lighting and minimal empty floor space create an urgent clinical atmosphere.",
   "layout_goals": {
-    "interior_bounds": "4m x 4m",
-    "minimum_objects": 8,
-    "focal_point": "center of the room"
+    "focal_point": "Exam_Table_01 with Patient_01, EMT_01, and Monitor_01 forming the assessment triangle",
+    "minimum_objects": 12,
+    "interior_bounds": {
+      "x_min": -2.0,
+      "x_max": 2.0,
+      "z_min": 0.1,
+      "z_max": 4.7
+    }
   },
   "steps": [
     {
       "step": 1,
-      "action": "Place stretcher against back wall",
+      "action": "Place the primary examination area slightly right of center so the player can approach the patient from the doorway while still feeling the room is cramped.",
       "objects": [
-        "Stretchers_01"
+        "Exam_Table_01",
+        "Patient_01"
       ],
-      "target_area": "back wall, z~3.5",
-      "condition": "stretcher is within 0.5m of the back wall and centered at x=0"
+      "target_area": "center-right of room, length aligned roughly along the z-axis",
+      "condition": "Patient_01 should appear positioned on or directly aligned with Exam_Table_01 as the assessment subject."
     },
     {
       "step": 2,
-      "action": "Position exam table on left side",
+      "action": "Place the stretcher tight against the back wall to communicate overflow emergency use and limited space.",
       "objects": [
-        "Exam_Table_01"
+        "Stretchers_01"
       ],
-      "target_area": "left side, x~-1.5, z~2.0",
-      "condition": "exam table is within 0.5m of the left wall and at z=2.0"
+      "target_area": "back wall, slightly left of center",
+      "condition": "Leave only a narrow clearance between Stretchers_01 and the exam table."
     },
     {
       "step": 3,
-      "action": "Place trolley cart beside exam table",
-      "objects": [
-        "Trolley_01"
-      ],
-      "target_area": "beside exam table, x~-1.0, z~3.0",
-      "condition": "trolley is within 0.5m of the exam table and at z=3.0"
-    },
-    {
-      "step": 4,
-      "action": "Mount monitoring screen on right wall",
-      "objects": [
-        "Monitor_01"
-      ],
-      "target_area": "right wall, x~1.5, z~2.5",
-      "condition": "monitoring screen is within 0.5m of the right wall and at z=2.5"
-    },
-    {
-      "step": 5,
-      "action": "Place aid kit on trolley surface",
-      "objects": [
-        "Aid_Kit_01"
-      ],
-      "target_area": "on trolley surface, y~0.8",
-      "condition": "aid kit is on the trolley surface at y=0.8"
-    },
-    {
-      "step": 6,
-      "action": "Position syringe and stethoscope near exam table",
-      "objects": [
-        "Syringe_01",
-        "Stethoscope_01"
-      ],
-      "target_area": "near exam table",
-      "condition": "syringe and stethoscope are within 1m of the exam table"
-    },
-    {
-      "step": 7,
-      "action": "Place folder on any surface",
-      "objects": [
-        "Folder_01"
-      ],
-      "target_area": "any surface",
-      "condition": "folder is on a surface in the room"
-    },
-    {
-      "step": 8,
-      "action": "Position EMT near stretcher",
+      "action": "Place the EMT urgently near the stretcher but oriented toward the exam table and monitor, enabling the first interaction beat.",
       "objects": [
         "EMT_01"
       ],
-      "target_area": "near Stretchers_01",
-      "condition": "EMT is within 1m of the stretcher"
+      "target_area": "back-left quadrant between Stretchers_01 and Exam_Table_01",
+      "condition": "EMT_01 must be reachable by the player and have a clear implied line of sight to Monitor_01."
+    },
+    {
+      "step": 4,
+      "action": "Mount or position the patient monitor on the wall beside the exam table so it is visually tied to the EMT explanation and vitals interaction.",
+      "objects": [
+        "Monitor_01"
+      ],
+      "target_area": "right wall near the head of Exam_Table_01",
+      "condition": "Monitor_01 should be clearly visible from the doorway and close enough to be touched after interacting with EMT_01."
+    },
+    {
+      "step": 5,
+      "action": "Place a wheeled supply trolley flanking the exam table, close enough to feel crowded but not blocking access to the patient.",
+      "objects": [
+        "Trolley_01"
+      ],
+      "target_area": "left side of Exam_Table_01",
+      "condition": "Trolley_01 should function as the surface for highlighted small props."
+    },
+    {
+      "step": 6,
+      "action": "Arrange assessment props on the supply trolley for the highlight interaction.",
+      "objects": [
+        "Syringe_01",
+        "Stethoscope_01",
+        "Tray_01",
+        "Bandage_01"
+      ],
+      "target_area": "on or immediately above Trolley_01",
+      "condition": "Syringe_01 and Stethoscope_01 are the primary highlighted props when Trolley_01 is touched."
+    },
+    {
+      "step": 7,
+      "action": "Add compact emergency support equipment along the walls to reinforce rapid-response triage without making the room unusable.",
+      "objects": [
+        "IV_Drip_01",
+        "Oxygen_Tanks_01",
+        "Defibrillator_01"
+      ],
+      "target_area": "perimeter near back and side walls",
+      "condition": "Keep equipment close to walls and avoid blocking the path from doorway to EMT_01, Monitor_01, and Patient_01."
+    },
+    {
+      "step": 8,
+      "action": "Add a small emergency kit and biohazard disposal point to complete the functional triage setup.",
+      "objects": [
+        "Aid_Kit_01",
+        "Trash_Biohazard_01"
+      ],
+      "target_area": "front-left or side-wall corners",
+      "condition": "Objects should be visible but secondary to the patient assessment area."
     },
     {
       "step": 9,
-      "action": "Position patient near exam table",
+      "action": "Add minimal clinical wall decor and time pressure cues without softening the urgent atmosphere.",
       "objects": [
+        "Clock_01",
+        "Poster_01"
+      ],
+      "target_area": "upper wall surfaces, away from the doorway opening",
+      "condition": "Clock_01 should be readable from the room center; Poster_01 should remain secondary decor."
+    },
+    {
+      "step": 10,
+      "action": "Support the scripted interaction arc: touching EMT_01 highlights Monitor_01; touching Monitor_01 prompts EMT_01 to move one step toward Patient_01; touching Patient_01 brightens the already cool clinical lighting slightly.",
+      "objects": [
+        "EMT_01",
+        "Monitor_01",
         "Patient_01"
       ],
-      "target_area": "near exam table",
-      "condition": "patient is within 1m of the exam table"
+      "target_area": "interaction path from doorway to EMT_01, then Monitor_01, then Patient_01",
+      "condition": "Maintain clear player access to all three interactive targets despite the cramped layout."
     }
   ]
 }

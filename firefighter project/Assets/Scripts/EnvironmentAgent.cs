@@ -14,8 +14,10 @@ using UnityEngine;
 public class EnvironmentAgent : MonoBehaviour
 {
     // ── Scene-state tracking ──────────────────────────────────────────────────
-    // Maps prefab name → spawned GameObject so WriteSceneState() can query live transforms/bounds.
+    // Maps unique key → spawned GameObject so WriteSceneState() can query live transforms/bounds.
     private readonly Dictionary<string, GameObject> _trackedObjects = new Dictionary<string, GameObject>();
+    // Counter for generating unique keys when the same objectName is used multiple times (e.g. Cube walls).
+    private int _spawnCounter = 0;
     // Maps character name → spawned character GameObject for multi-character support.
     private readonly Dictionary<string, GameObject> _namedCharacters = new Dictionary<string, GameObject>();
     [Header("Optional: assign for Time-of-Day control")]
@@ -73,7 +75,23 @@ public class EnvironmentAgent : MonoBehaviour
     }
 
     // ========== Object placement (same as Chair/Table; all loaded from Resources/Prefabs/) ==========
-    /// <summary>Called by Agent: place a prefab at the given position. Prefab must be under Resources/Prefabs/.</summary>
+
+    /// <summary>Track a spawned object under a unique key. If the key already exists,
+    /// destroy the old GameObject first so it doesn't become an orphan.</summary>
+    private void TrackObject(string key, GameObject spawned)
+    {
+        if (_trackedObjects.TryGetValue(key, out var old) && old != null && old != spawned)
+        {
+            Debug.Log($"[Track] Replacing existing '{key}' — destroying old instance.");
+            Destroy(old);
+        }
+        _trackedObjects[key] = spawned;
+    }
+
+    /// <summary>Called by Agent: place a prefab at the given position. Prefab must be under Resources/Prefabs/.
+    /// If the same prefab name has already been placed, this call generates a unique
+    /// track key with suffix `__inst_N` so multiple instances coexist instead of
+    /// silently destroying the earlier one (e.g. 4× PlaceObject Bed_01 → all 4 beds spawn).</summary>
     public void PlaceObject(string objectName, Vector3 position, float rotationY)
     {
         GameObject prefab = LoadPrefabByName(objectName);
@@ -82,15 +100,28 @@ public class EnvironmentAgent : MonoBehaviour
         {
             GameObject spawned = Instantiate(prefab, position, Quaternion.Euler(0, rotationY, 0));
             SnapToFloor(spawned);
-            _trackedObjects[objectName] = spawned;
+            string trackKey = _uniqueTrackKey(objectName);
+            spawned.name = trackKey;
+            TrackObject(trackKey, spawned);
             WriteSceneState();
             if (interactionSetup != null) interactionSetup.MakeInteractable(spawned);
-            Debug.Log($"AI Agent placed: {objectName} at {position}");
+            Debug.Log($"AI Agent placed: {trackKey} at {position}");
         }
         else
         {
             Debug.LogError($"AI Agent Error: Prefab '{objectName}' not found in Resources/Prefabs/");
         }
+    }
+
+    /// <summary>Generate a tracking key that doesn't collide with an existing one.
+    /// First call returns `name` unchanged; subsequent calls return `name__inst_2`,
+    /// `name__inst_3`, etc.</summary>
+    private string _uniqueTrackKey(string baseName)
+    {
+        if (!_trackedObjects.ContainsKey(baseName)) return baseName;
+        int n = 2;
+        while (_trackedObjects.ContainsKey($"{baseName}__inst_{n}")) n++;
+        return $"{baseName}__inst_{n}";
     }
 
     /// <summary>
@@ -134,7 +165,15 @@ public class EnvironmentAgent : MonoBehaviour
             bool isStructural = position.y > 0.05f || sy > 1.5f;
             if (!isStructural)
                 SnapToFloor(spawned);
-            _trackedObjects[objectName] = spawned;
+
+            // Use a unique key so multiple Cubes (walls, floor, ceiling) each get their own entry.
+            string trackKey = objectName;
+            if (_trackedObjects.ContainsKey(trackKey))
+            {
+                trackKey = $"{objectName}__struct_{_spawnCounter++}";
+            }
+            spawned.name = trackKey;  // Rename in scene hierarchy for clarity
+            TrackObject(trackKey, spawned);
             WriteSceneState();
             if (interactionSetup != null) interactionSetup.MakeInteractable(spawned);
         }
@@ -148,7 +187,7 @@ public class EnvironmentAgent : MonoBehaviour
         if (prefab != null)
         {
             GameObject spawned = Instantiate(prefab, position, Quaternion.Euler(0, rotationY, 0));
-            SnapToFloor(spawned);
+            SnapHumanToFloor(spawned);
             defaultHumanModel = spawned;
             // Ensure only the main Animator drives the humanoid rig (remove extra Animators on clothing, etc.)
             Animator mainAnim = FindPrimaryAnimator(spawned);
@@ -181,10 +220,12 @@ public class EnvironmentAgent : MonoBehaviour
                 Debug.Log($"[EnvironmentAgent] Added CapsuleCollider to '{humanName}' for touch detection.");
             }
 
-            _trackedObjects[humanName] = spawned;
-            _namedCharacters[humanName] = spawned;
+            string trackKey = _uniqueTrackKey(humanName);
+            spawned.name = trackKey;
+            TrackObject(trackKey, spawned);
+            _namedCharacters[trackKey] = spawned;
             WriteSceneState();
-            Debug.Log($"AI Agent placed human: {humanName} at {position} (set as default human, idle pose)");
+            Debug.Log($"AI Agent placed human: {trackKey} at {position} (set as default human, idle pose)");
         }
         else
         {
@@ -207,6 +248,102 @@ public class EnvironmentAgent : MonoBehaviour
         {
             Debug.LogWarning($"AI Agent DeleteObject: '{objectName}' not found in scene.");
         }
+    }
+
+    /// <summary>Called by Agent: destroy ALL spawned objects and characters, resetting the scene to empty.
+    /// Uses a full scene scan because _trackedObjects loses duplicates (e.g. multiple "Cube" walls).
+    /// Floor objects (flat Cubes near y=0) are preserved so characters don't fall through.</summary>
+    public void ClearScene()
+    {
+        int count = 0;
+
+        // 1. Destroy everything in the tracking dictionaries, but keep floor objects
+        var keepObjects = new System.Collections.Generic.Dictionary<string, GameObject>();
+        foreach (var kvp in _trackedObjects)
+        {
+            if (kvp.Value != null)
+            {
+                if (IsFloorObject(kvp.Value))
+                {
+                    keepObjects[kvp.Key] = kvp.Value;
+                    continue;
+                }
+                Destroy(kvp.Value);
+                count++;
+            }
+        }
+        _trackedObjects.Clear();
+        // Re-add preserved floor objects
+        foreach (var kvp in keepObjects)
+            _trackedObjects[kvp.Key] = kvp.Value;
+
+        foreach (var kvp in _namedCharacters)
+        {
+            if (kvp.Value != null) { Destroy(kvp.Value); count++; }
+        }
+        _namedCharacters.Clear();
+
+        // 2. Full scene scan: destroy any remaining objects that were Instantiated
+        //    (Unity appends "(Clone)" to their name) or created as primitives by the agent.
+        //    Preserve scene infrastructure: cameras, lights, EventSystem, XR rigs, Canvas, etc.
+        var preserve = new System.Collections.Generic.HashSet<string>(System.StringComparer.OrdinalIgnoreCase)
+        {
+            "Main Camera", "Directional Light", "EventSystem",
+            "XR Interaction Manager", "Canvas", "MixedRealityPlayspace",
+            "ScreenshotSender", "AIAgent",
+        };
+
+        var toDestroy = new System.Collections.Generic.List<GameObject>();
+        foreach (var go in FindObjectsByType<GameObject>(FindObjectsSortMode.None))
+        {
+            if (go == null) continue;
+            // Only consider root-level objects (no parents) to avoid destroying child components
+            if (go.transform.parent != null) continue;
+            // Skip the EnvironmentAgent's own GameObject and its ancestors
+            if (go == this.gameObject) continue;
+            // Skip preserved infrastructure objects
+            string cleanName = go.name.Replace("(Clone)", "").Trim();
+            if (preserve.Contains(cleanName)) continue;
+            // Skip objects with cameras, lights, or AudioListener (infrastructure)
+            if (go.GetComponent<Camera>() != null) continue;
+            if (go.GetComponent<Light>() != null) continue;
+            if (go.GetComponent<AudioListener>() != null) continue;
+            // Skip XR rigs (detected by common XR component names)
+            if (go.name.Contains("XR") || go.name.Contains("xr") ||
+                go.name.Contains("OVR") || go.name.Contains("Rig")) continue;
+            // Skip player avatar (tagged "Player" by PlayerAvatarController)
+            if (go.CompareTag("Player")) continue;
+            // Skip floor objects
+            if (IsFloorObject(go)) continue;
+
+            toDestroy.Add(go);
+        }
+
+        foreach (var go in toDestroy)
+        {
+            if (go != null) { Destroy(go); count++; }
+        }
+
+        defaultHumanModel = null;
+        ithappyCharacterInstance = null;
+        _spawnCounter = 0;
+
+        WriteSceneState();
+        Debug.Log($"AI Agent ClearScene: destroyed {count} objects, kept {keepObjects.Count} floor(s).");
+    }
+
+    /// <summary>Check if a GameObject is a floor (flat Cube near ground level).</summary>
+    private static bool IsFloorObject(GameObject go)
+    {
+        if (go == null) return false;
+        // Floor is a Cube primitive with flat proportions near y=0
+        bool isCube = go.name.Contains("Cube");
+        if (!isCube) return false;
+        Vector3 pos = go.transform.position;
+        Vector3 scale = go.transform.localScale;
+        bool nearGround = pos.y <= 0.15f;
+        bool isFlat = scale.y <= 0.5f && scale.x >= 1f && scale.z >= 1f;
+        return nearGround && isFlat;
     }
 
     /// <summary>Called by Agent: find a previously spawned object by name and move/rotate it.</summary>
@@ -260,7 +397,10 @@ public class EnvironmentAgent : MonoBehaviour
 
         foreach (var kv in _trackedObjects)
         {
+            // Strip the __struct_N suffix so scene_state.json reports the original prefab name
             string prefabName = kv.Key;
+            int structIdx = prefabName.IndexOf("__struct_");
+            if (structIdx >= 0) prefabName = prefabName.Substring(0, structIdx);
             GameObject go = kv.Value;
             if (go == null) continue;  // destroyed but not yet removed
 
@@ -475,15 +615,18 @@ public class EnvironmentAgent : MonoBehaviour
         {
             mats[i] = renderers[i].material; // instantiates if needed; same ref hereafter
 
+            // Tint base color almost fully toward the highlight color so the
+            // change is actually visible (was 0.6 before — too subtle on light
+            // materials. Now 0.85 = strongly tinted but not pure replacement.)
             if (mats[i].HasProperty("_BaseColor"))
             {
                 origBase[i] = mats[i].GetColor("_BaseColor");
-                mats[i].SetColor("_BaseColor", Color.Lerp(origBase[i], color, 0.6f));
+                mats[i].SetColor("_BaseColor", Color.Lerp(origBase[i], color, 0.85f));
             }
             else if (mats[i].HasProperty("_Color"))
             {
                 origBase[i] = mats[i].GetColor("_Color");
-                mats[i].SetColor("_Color", Color.Lerp(origBase[i], color, 0.6f));
+                mats[i].SetColor("_Color", Color.Lerp(origBase[i], color, 0.85f));
             }
 
             hadEmission[i]  = mats[i].IsKeywordEnabled("_EMISSION");
@@ -491,10 +634,14 @@ public class EnvironmentAgent : MonoBehaviour
                 ? mats[i].GetColor("_EmissionColor")
                 : Color.black;
 
+            // Boost emission to HDR levels so the object actually glows (with
+            // bloom enabled the brightness threshold is around 1.0; was 0.8
+            // = below threshold, no glow. Now 2.5x for a real glow.)
             if (mats[i].HasProperty("_EmissionColor"))
             {
                 mats[i].EnableKeyword("_EMISSION");
-                mats[i].SetColor("_EmissionColor", color * 0.8f);
+                mats[i].SetColor("_EmissionColor", color * 2.5f);
+                mats[i].globalIlluminationFlags = MaterialGlobalIlluminationFlags.RealtimeEmissive;
             }
         }
 
@@ -805,8 +952,13 @@ public class EnvironmentAgent : MonoBehaviour
         return FindSpawnedObject(name);
     }
 
-    /// <summary>Move a named character to a new position.</summary>
-    public void MoveCharacter(string name, Vector3 position, float rotationY)
+    // Tracks active smooth-move coroutines per character so a new MoveCharacter
+    // call cancels and replaces any previous in-flight motion on the same target.
+    private readonly Dictionary<GameObject, Coroutine> _activeCharMoves = new Dictionary<GameObject, Coroutine>();
+
+    /// <summary>Move a named character to a new position.
+    /// duration=0 (default) → instant teleport. duration>0 → smooth lerp over that many seconds.</summary>
+    public void MoveCharacter(string name, Vector3 position, float rotationY, float duration = 0f)
     {
         GameObject target = GetCharacterByName(name);
         if (target == null)
@@ -814,10 +966,146 @@ public class EnvironmentAgent : MonoBehaviour
             Debug.LogWarning($"[EnvironmentAgent] MoveCharacter: '{name}' not found.");
             return;
         }
-        target.transform.position = position;
-        target.transform.rotation = Quaternion.Euler(0, rotationY, 0);
-        WriteSceneState();
-        Debug.Log($"[EnvironmentAgent] MoveCharacter: '{name}' → {position}");
+
+        // Cancel any in-flight smooth move on this character so the new call wins.
+        if (_activeCharMoves.TryGetValue(target, out var prev) && prev != null)
+        {
+            StopCoroutine(prev);
+            _activeCharMoves.Remove(target);
+        }
+
+        if (duration <= 0f)
+        {
+            target.transform.position = position;
+            target.transform.rotation = Quaternion.Euler(0, rotationY, 0);
+            WriteSceneState();
+            Debug.Log($"[EnvironmentAgent] MoveCharacter: '{name}' → {position} (instant)");
+            return;
+        }
+
+        var co = StartCoroutine(MoveCharacterSmoothCoroutine(target, name, position, rotationY, duration));
+        _activeCharMoves[target] = co;
+        Debug.Log($"[EnvironmentAgent] MoveCharacter: '{name}' → {position} over {duration}s");
+    }
+
+    private System.Collections.IEnumerator MoveCharacterSmoothCoroutine(
+        GameObject target, string name, Vector3 endPos, float endRotY, float duration)
+    {
+        Vector3 startPos = target.transform.position;
+        Quaternion startRot = target.transform.rotation;
+        Quaternion endRot = Quaternion.Euler(0, endRotY, 0);
+        float t = 0f;
+        while (t < duration)
+        {
+            if (target == null) yield break;
+            t += Time.deltaTime;
+            float k = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(t / duration));
+            target.transform.position = Vector3.Lerp(startPos, endPos, k);
+            target.transform.rotation = Quaternion.Slerp(startRot, endRot, k);
+            yield return null;
+        }
+        if (target != null)
+        {
+            target.transform.position = endPos;
+            target.transform.rotation = endRot;
+            WriteSceneState();
+        }
+        _activeCharMoves.Remove(target);
+    }
+
+    /// <summary>
+    /// Make a named character walk to a target position: plays a walk animation,
+    /// smoothly interpolates position + rotation over <paramref name="duration"/>,
+    /// then crossfades back to the idle animation when arrived.
+    ///
+    /// walkController / idleController are full Resources paths
+    /// (e.g. "AnimatorControllers/HumanF@Walk01_Forward"). If null/empty,
+    /// defaults to HumanM@Walk01_Forward and HumanM@Idles respectively.
+    /// </summary>
+    public void WalkCharacterTo(string name, Vector3 position, float rotationY, float duration,
+                                string walkController, string idleController)
+    {
+        GameObject target = GetCharacterByName(name);
+        if (target == null)
+        {
+            Debug.LogWarning($"[EnvironmentAgent] WalkCharacterTo: '{name}' not found.");
+            return;
+        }
+
+        if (string.IsNullOrEmpty(walkController))
+            walkController = "AnimatorControllers/HumanM@Walk01_Forward";
+        if (string.IsNullOrEmpty(idleController))
+            idleController = "AnimatorControllers/HumanM@Idles";
+        if (duration <= 0f) duration = 2.0f;
+
+        // Cancel any in-flight motion on this character
+        if (_activeCharMoves.TryGetValue(target, out var prev) && prev != null)
+        {
+            StopCoroutine(prev);
+            _activeCharMoves.Remove(target);
+        }
+
+        // Disable RootMotion during transform-driven motion. Walk animations
+        // typically have RootMotion which would fight our transform.position
+        // lerp and visually leave the character moving in place. Save the
+        // original setting so we can restore it when the walk finishes.
+        var animator = target.GetComponentInChildren<Animator>();
+        bool savedRootMotion = false;
+        if (animator != null)
+        {
+            savedRootMotion = animator.applyRootMotion;
+            animator.applyRootMotion = false;
+        }
+
+        // Kick off the walk animation immediately, then start the move coroutine.
+        string walkState = LeafName(walkController);
+        PlayHumanAnimationFromResources(target, walkController, walkState, 0.3f);
+
+        var co = StartCoroutine(WalkCoroutine(target, name, position, rotationY, duration,
+                                              idleController, animator, savedRootMotion));
+        _activeCharMoves[target] = co;
+        Debug.Log($"[EnvironmentAgent] WalkCharacterTo: '{name}' → {position} over {duration}s "
+                  + $"(walk={walkState}, rootMotion saved={savedRootMotion})");
+    }
+
+    private System.Collections.IEnumerator WalkCoroutine(
+        GameObject target, string name, Vector3 endPos, float endRotY, float duration,
+        string idleController, Animator animator, bool restoreRootMotion)
+    {
+        Vector3 startPos = target.transform.position;
+        Quaternion startRot = target.transform.rotation;
+        Quaternion endRot = Quaternion.Euler(0, endRotY, 0);
+        float t = 0f;
+        while (t < duration)
+        {
+            if (target == null) yield break;
+            t += Time.deltaTime;
+            float k = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(t / duration));
+            target.transform.position = Vector3.Lerp(startPos, endPos, k);
+            target.transform.rotation = Quaternion.Slerp(startRot, endRot, k);
+            yield return null;
+        }
+        if (target != null)
+        {
+            target.transform.position = endPos;
+            target.transform.rotation = endRot;
+            // Restore the original RootMotion setting before switching to idle
+            // so the idle animation can drive the character normally.
+            if (animator != null) animator.applyRootMotion = restoreRootMotion;
+            // Crossfade back to idle
+            string idleState = LeafName(idleController);
+            PlayHumanAnimationFromResources(target, idleController, idleState, 0.4f);
+            WriteSceneState();
+            Debug.Log($"[EnvironmentAgent] WalkCharacterTo: '{name}' arrived → idle ({idleState}).");
+        }
+        _activeCharMoves.Remove(target);
+    }
+
+    private static string LeafName(string resourcesPath)
+    {
+        if (string.IsNullOrEmpty(resourcesPath)) return "";
+        int slash = resourcesPath.LastIndexOf('/');
+        return slash >= 0 ? resourcesPath.Substring(slash + 1) : resourcesPath;
     }
 
     /// <summary>
@@ -1080,6 +1368,37 @@ public class EnvironmentAgent : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Snap a character to the actual floor — never perch onto chairs/desks/trolleys.
+    /// Casts from high above (to ignore the agent's spawn-y guess) and picks the
+    /// highest IsFloorObject hit. Falls back to y=0 if no floor collider is found.
+    /// Use this instead of SnapToFloor when spawning humans.
+    /// </summary>
+    private void SnapHumanToFloor(GameObject obj)
+    {
+        Vector3 origin = obj.transform.position + Vector3.up * 20f;
+        RaycastHit[] hits = Physics.RaycastAll(origin, Vector3.down, 25f);
+
+        float bestFloorY = float.NaN;
+        if (hits != null)
+        {
+            foreach (var h in hits)
+            {
+                if (h.collider == null) continue;
+                GameObject root = h.collider.transform.root.gameObject;
+                if (!IsFloorObject(root)) continue;
+                if (float.IsNaN(bestFloorY) || h.point.y > bestFloorY)
+                    bestFloorY = h.point.y;
+            }
+        }
+
+        Vector3 p = obj.transform.position;
+        if (!float.IsNaN(bestFloorY))
+            obj.transform.position = new Vector3(p.x, bestFloorY, p.z);
+        else
+            obj.transform.position = new Vector3(p.x, 0f, p.z);
+    }
+
     private bool TryCreatePrimitive(string objectName, out GameObject spawned)
     {
         spawned = null;
@@ -1199,7 +1518,7 @@ public class EnvironmentAgent : MonoBehaviour
             return;
         }
         ithappyCharacterInstance = Instantiate(ithappyCharacterPrefab, new Vector3(-1.5f, 0, 2), Quaternion.identity);
-        SnapToFloor(ithappyCharacterInstance);
+        SnapHumanToFloor(ithappyCharacterInstance);
         Debug.Log($"EnvironmentAgent: Spawn ithappy character '{ithappyCharacterPrefab.name}' (set as ithappyCharacterInstance)");
     }
 

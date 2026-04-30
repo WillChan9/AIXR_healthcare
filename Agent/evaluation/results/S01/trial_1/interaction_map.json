@@ -1,0 +1,189 @@
+{
+  "Exam_Table_01": {
+    "touch": {
+      "bubble_message": "Exam table — supports rapid assessment and focused examination.",
+      "bubble_on": "Exam_Table_01",
+      "bubble_duration": 4.0
+    }
+  },
+  "Trolley_01": {
+    "touch": {
+      "bubble_message": "Supply trolley — keeps emergency tools organized and within reach.",
+      "bubble_on": "Trolley_01",
+      "bubble_duration": 4.0
+    },
+    "grab": {
+      "controller": "AnimatorControllers/HumanM@Walk01_Forward",
+      "state": "HumanM@Walk01_Forward",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "EMT_01",
+      "bubble_message": "I'll move the trolley closer for faster access.",
+      "bubble_on": "EMT_01",
+      "bubble_duration": 4.0
+    },
+    "release": {
+      "controller": "AnimatorControllers/HumanM@Walk01_Forward",
+      "state": "HumanM@Walk01_Forward",
+      "fade": 0.3,
+      "idle_delay": 2.0,
+      "target_character": "EMT_01",
+      "bubble_message": "Trolley parked; supplies are ready.",
+      "bubble_on": "EMT_01",
+      "bubble_duration": 4.0
+    }
+  },
+  "Stretchers_01": {
+    "touch": {
+      "bubble_message": "Stretcher — transports patients safely during urgent care.",
+      "bubble_on": "Stretchers_01",
+      "bubble_duration": 4.0
+    },
+    "grab": {
+      "controller": "AnimatorControllers/HumanM@Walk01_Forward",
+      "state": "HumanM@Walk01_Forward",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "EMT_01",
+      "bubble_message": "Keep the stretcher path clear for rapid transfer.",
+      "bubble_on": "EMT_01",
+      "bubble_duration": 4.0
+    },
+    "release": {
+      "controller": "AnimatorControllers/HumanM@Walk01_Forward",
+      "state": "HumanM@Walk01_Forward",
+      "fade": 0.3,
+      "idle_delay": 2.0,
+      "target_character": "EMT_01",
+      "bubble_message": "Stretcher secured beside the assessment area.",
+      "bubble_on": "EMT_01",
+      "bubble_duration": 4.0
+    }
+  },
+  "Monitor_01": {
+    "hover_enter": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "EMT_01",
+      "bubble_message": "BP 120/80, HR 72, SpO2 98%.",
+      "bubble_on": "EMT_01",
+      "bubble_duration": 4.0
+    },
+    "touch": {
+      "bubble_message": "Patient monitor — displays vital signs for rapid triage decisions.",
+      "bubble_on": "Monitor_01",
+      "bubble_duration": 4.0
+    }
+  },
+  "EMT_01": {
+    "hover_enter": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "EMT_01",
+      "bubble_message": "I'm checking airway, breathing, and circulation.",
+      "bubble_on": "EMT_01",
+      "bubble_duration": 4.0
+    },
+    "touch": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "EMT_01",
+      "bubble_message": "I'm checking airway, breathing, and circulation.",
+      "bubble_on": "EMT_01",
+      "bubble_duration": 4.0
+    }
+  },
+  "Patient_01": {
+    "hover_enter": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Patient_01",
+      "bubble_message": "My chest feels tight. Please keep checking me.",
+      "bubble_on": "Patient_01",
+      "bubble_duration": 4.0
+    },
+    "touch": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Patient_01",
+      "bubble_message": "My chest feels tight. Please keep checking me.",
+      "bubble_on": "Patient_01",
+      "bubble_duration": 4.0
+    }
+  },
+  "Aid_Kit_01": {
+    "touch": {
+      "bubble_message": "Aid kit — contains supplies for immediate bleeding and wound care.",
+      "bubble_on": "Aid_Kit_01",
+      "bubble_duration": 4.0
+    },
+    "grab": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "EMT_01",
+      "bubble_message": "Open the kit and select sterile supplies first.",
+      "bubble_on": "EMT_01",
+      "bubble_duration": 4.0
+    }
+  },
+  "IV_Drip_01": {
+    "touch": {
+      "bubble_message": "IV drip — delivers fluids or medication into the bloodstream.",
+      "bubble_on": "IV_Drip_01",
+      "bubble_duration": 4.0
+    }
+  },
+  "Stethoscope_01": {
+    "touch": {
+      "bubble_message": "Stethoscope — used to listen to heart, lung, and bowel sounds.",
+      "bubble_on": "Stethoscope_01",
+      "bubble_duration": 4.0
+    },
+    "grab": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "EMT_01",
+      "bubble_message": "Use the diaphragm to listen to heart and lung sounds.",
+      "bubble_on": "EMT_01",
+      "bubble_duration": 4.0
+    }
+  },
+  "Defibrillator_01": {
+    "touch": {
+      "bubble_message": "Defibrillator — delivers a shock to restore heart rhythm.",
+      "bubble_on": "Defibrillator_01",
+      "bubble_duration": 4.0
+    },
+    "activate": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "EMT_01",
+      "bubble_message": "Stand clear before shock delivery.",
+      "bubble_on": "EMT_01",
+      "bubble_duration": 4.0
+    }
+  },
+  "Oxygen_Tanks_01": {
+    "touch": {
+      "bubble_message": "Oxygen tank — supplies oxygen for patients with breathing difficulty.",
+      "bubble_on": "Oxygen_Tanks_01",
+      "bubble_duration": 4.0
+    }
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "results_dir": "S:\\Firefighter_project\\Agent\\evaluation\\results2\\S03\\trial_1",
+  "experience_file": "S:\\Firefighter_project\\Agent\\evaluation\\scenarios\\experience_S03.txt",
+  "scene_type": "Physical Therapy Gym",
+  "geometric": {
+    "object_count": 23,
+    "collision_count": 9,
+    "collision_rate": 0.03557312252964427,
+    "oob_count": 0,
+    "oob_rate": 0.0,
+    "mean_nn_distance": 0.46336228170338634,
+    "std_nn_distance": 0.44516699873665033,
+    "min_pairwise_distance": 0.0,
+    "floor_coverage": 0.25614866666666664,
+    "small_prop_count": 5,
+    "height_violation_count": 2,
+    "height_violation_rate": 0.4
+  },
+  "semantic": {
+    "required_object_count": 14,
+    "required_objects_placed": 14,
+    "prefab_hit_rate": 1.0,
+    "duplicate_count": 0,
+    "duplicate_rate": 0.0,
+    "character_count": 2
+  },
+  "plan": {
+    "total_plan_steps": 14,
+    "steps_completed": 14,
+    "step_completion_rate": 1.0,
+    "total_reflection_iterations": 21,
+    "avg_iterations_per_step": 1.5,
+    "total_corrections": 298,
+    "room_status_sparse_count": 8,
+    "room_status_good_count": 13,
+    "room_status_cluttered_count": 0
+  },
+  "efficiency": {
+    "fill_commands_total": 15,
+    "dropped_prefabs": 0,
+    "llm_calls": 6,
+    "screenshot_wait_seconds": 15,
+    "total_commands": 434,
+    "place_object_count": 29,
+    "place_human_count": 2,
+    "move_object_count": 229,
+    "delete_object_count": 0,
+    "create_object_count": 7
+  },
+  "composite_score": 87.11
+}

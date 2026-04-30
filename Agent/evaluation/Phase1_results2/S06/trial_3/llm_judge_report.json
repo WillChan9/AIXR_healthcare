@@ -1,0 +1,7 @@
+{
+  "raw_response": "```json\n{\n  \"coherence_score\": 4,\n  \"spatial_score\": 3,\n  \"coherence_reasoning\": \"The ICU single-patient room contains most of the required objects for the scene type, such as the bed, monitors, IV drip, and ventilator. Additional objects like a utility cart, trolley, syringe, folder, stethoscope, oxygen concentrator, mask box, and life support equipment are also appropriate for an ICU setting. However, the presence of a clock, chair, and bottle seems less critical but still plausible. The object selection is mostly appropriate, hence a score of 4.\",\n  \"spatial_reasoning\": \"The placement of objects shows some logical organization but also some inconsistencies. The bed is correctly positioned at the center-back of the room. Monitors are on either side of the bed at appropriate heights. However, the IV drip and ventilator are placed close to the walls and at a low y-position (y=0.01), which is correct. Issues include: the patient is positioned outside the bed; some objects like the syringe, folder, and bottle are on surfaces at appropriate heights but seem clustered; the nurse's position is somewhat low (y=0.05); and the clock is high but seems out of functional reach. Overall, the placement is mostly logical but could be improved for better functionality and workflow, hence a score of 3.\"\n}\n```",
+  "coherence_score": 4,
+  "spatial_score": 3,
+  "scene_type": "ICU Single-Patient Room",
+  "results_dir": "S:\\Firefighter_project\\Agent\\evaluation\\results2\\S06\\trial_3"
+}

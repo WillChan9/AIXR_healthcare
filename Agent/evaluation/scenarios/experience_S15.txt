@@ -1,0 +1,32 @@
+Cosmetic Treatment Room — Aesthetic clinic with laser-based devices
+
+A medium-sized cosmetic / aesthetic treatment room arranged around a
+single reclining cosmetic chair where the patient relaxes. A large
+cosmetic laser device stands on one side of the chair; a smaller
+secondary laser device and a multi-function cosmetic combine machine
+sit on the other side. A wheeled cosmetic cart holds smaller bottles,
+applicators, and skincare supplies within easy reach of the chair.
+A cosmetic technician (Doctor) operates the equipment; the patient
+reclines in the chair. The room should feel modern, calm, and
+slightly dim with focused accent lighting on the chair area, more
+spa than hospital — a private, indulgent atmosphere.
+
+[interactions]
+When the player touches the cosmetic technician, she explains today's
+treatment ("laser hair removal", "skin resurfacing"). Touching either
+cosmetic laser device should briefly highlight it and display a
+description ("Cosmetic laser — non-ablative resurfacing"). Touching
+the cosmetic combine machine should describe its multi-function uses
+(microdermabrasion, ultrasound, etc.). Touching the cosmetic cart
+should highlight the bottles on top of it briefly. Touching the
+patient should make her describe how she feels ("a little warm where
+the laser passes").
+
+A short story arc: when the player first touches the technician, the
+main cosmetic laser briefly highlights yellow to indicate it's the
+device for today's session. When the player then touches the
+highlighted laser, the technician walks one step closer to the
+patient and says "starting low intensity now". When the player
+finally touches the patient, the lighting dims slightly to "treatment
+mode" and the technician plays a Talking animation announcing the
+session has begun.

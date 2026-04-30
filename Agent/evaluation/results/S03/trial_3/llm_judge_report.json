@@ -1,7 +1,18 @@
 {
-  "raw_response": "```json\n{\n  \"coherence_score\": 1,\n  \"spatial_score\": 1,\n  \"coherence_reasoning\": \"The scene is empty and does not contain any objects, let alone the required objects for a Physical Therapy Gym. This results in a completely wrong object selection for the intended scene type.\",\n  \"spatial_reasoning\": \"With no objects placed in the scene, the spatial arrangement is random and illogical by default, as there are no objects to arrange.\"\n}\n```",
-  "coherence_score": 1,
-  "spatial_score": 1,
-  "scene_type": "Physical Therapy Gym",
-  "results_dir": "C:\\Users\\Allison\\Programming\\GitHub\\AIXR_healthcare\\Agent\\evaluation\\results\\S03\\trial_3"
+  "raw_response": "{\"coherence_score\":4,\"spatial_score\":4,\"coherence_reasoning\":\"The object selection is highly appropriate for a physical therapy gym: treadmill, wheelchair, walker, crutch, scale, kinesotherapy apparatus, benches, exam stool, therapist/doctor, patient, and aid kit all fit the rehabilitation setting. It lacks some described items such as mats, parallel bars, and exercise balls, but the overall selection is coherent.\",\"spatial_reasoning\":\"Most objects are placed logically: floor equipment is near floor level, the aid kit appears to be placed on or near a bench-height surface, the wheelchair and stool are off to the sides, and the therapist/patient are positioned near rehab equipment. The layout suggests usable groupings, though some equipment is clustered toward the back/right and the patient is not clearly aligned with a specific apparatus, preventing a perfect score.\"}",
+  "coherence_score": 4,
+  "spatial_score": 4,
+  "coherence_reasoning": "The object selection is highly appropriate for a physical therapy gym: treadmill, wheelchair, walker, crutch, scale, kinesotherapy apparatus, benches, exam stool, therapist/doctor, patient, and aid kit all fit the rehabilitation setting. It lacks some described items such as mats, parallel bars, and exercise balls, but the overall selection is coherent.",
+  "spatial_reasoning": "Most objects are placed logically: floor equipment is near floor level, the aid kit appears to be placed on or near a bench-height surface, the wheelchair and stool are off to the sides, and the therapist/patient are positioned near rehab equipment. The layout suggests usable groupings, though some equipment is clustered toward the back/right and the patient is not clearly aligned with a specific apparatus, preventing a perfect score.",
+  "scene_type": "Unknown",
+  "results_dir": "S:\\Firefighter_project\\Agent\\evaluation\\results\\S03\\trial_3",
+  "judge_model": "gpt-5.5",
+  "phase2": {
+    "raw_response": "{\"bubble_informativeness\":4,\"narrative_coherence\":4,\"character_voice_consistency\":4,\"bubble_object_fit\":4,\"reasoning\":\"Object bubbles are concise and generally educational, giving functional rehab uses for treadmill, wheelchair, walker, crutch, benches, and other equipment, though most stop at basic descriptions rather than deeper clinical insight. The story has a clear progression from introduction to gait training, balance support, rest/transport, and patient confidence payoff, but there is a slight mismatch where the treadmill beat highlights the kinesotherapy apparatus and the apparatus line seems to describe support bars. Character voices fit their roles: the clinician gives coaching and safety guidance, while the patient expresses effort and confidence, though the voices are not highly distinctive. Object fit is mostly accurate and on-target, with minor vagueness around the kinesotherapy apparatus and some generic medical props.\"}",
+    "bubble_informativeness": 4,
+    "narrative_coherence": 4,
+    "character_voice_consistency": 4,
+    "bubble_object_fit": 4,
+    "reasoning": "Object bubbles are concise and generally educational, giving functional rehab uses for treadmill, wheelchair, walker, crutch, benches, and other equipment, though most stop at basic descriptions rather than deeper clinical insight. The story has a clear progression from introduction to gait training, balance support, rest/transport, and patient confidence payoff, but there is a slight mismatch where the treadmill beat highlights the kinesotherapy apparatus and the apparatus line seems to describe support bars. Character voices fit their roles: the clinician gives coaching and safety guidance, while the patient expresses effort and confidence, though the voices are not highly distinctive. Object fit is mostly accurate and on-target, with minor vagueness around the kinesotherapy apparatus and some generic medical props."
+  }
 }

@@ -1,0 +1,33 @@
+Clinical Laboratory — Bench-dense diagnostic lab
+
+A working clinical laboratory laid out around long bench tables that
+run along multiple walls. Heavy diagnostic instruments line the
+benches in functional clusters: a centrifuge and biochemical analyzer
+in one bench cluster, a hematology analyzer and immunoanalyzer in
+another, and microscopes (general + specimen) at the far bench. A
+test tube rack and petri dish sit on a central bench surrounded by
+flasks for active samples. A lab doctor (Doctor) is reviewing results
+at one bench; a lab technician (Nurse) is operating the centrifuge.
+The room should feel busy but organized — every bench is occupied by
+specific equipment with no empty space, no patients (this is a
+back-of-house lab, not a clinical exam room). Lighting is bright
+clinical white.
+
+[interactions]
+When the player touches the lab doctor, he explains what tests are
+currently running ("running CBC", "checking electrolytes"). Touching
+any analyzer (biochemical, hematology, immuno, cellular) should
+display a one-sentence description of what it tests for ("Hematology
+analyzer — measures complete blood counts"). Touching either
+microscope should describe its specialty (general histology vs skin
+microscopy). Touching the test tube rack or petri dish should mention
+the samples currently in process. Touching the technician should
+make her say what step of the workflow she is on.
+
+A short story arc: when the player first touches the lab doctor, the
+centrifuge briefly highlights to indicate it is the current focus.
+When the player then touches the highlighted centrifuge, the
+technician walks one step toward it to retrieve a sample. When the
+player finally touches a microscope, the lighting brightens slightly
+and the doctor plays a Talking animation announcing "results ready
+for review".

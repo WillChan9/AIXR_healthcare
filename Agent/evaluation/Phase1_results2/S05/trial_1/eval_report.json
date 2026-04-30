@@ -1,0 +1,51 @@
+{
+  "results_dir": "S:\\Firefighter_project\\Agent\\evaluation\\results2\\S05\\trial_1",
+  "experience_file": "S:\\Firefighter_project\\Agent\\evaluation\\scenarios\\experience_S05.txt",
+  "scene_type": "Waiting Room",
+  "geometric": {
+    "object_count": 14,
+    "collision_count": 0,
+    "collision_rate": 0.0,
+    "oob_count": 0,
+    "oob_rate": 0.0,
+    "mean_nn_distance": 0.7066417104966185,
+    "std_nn_distance": 0.46918659871631513,
+    "min_pairwise_distance": 0.30999999999999983,
+    "floor_coverage": 0.09031756249999999,
+    "small_prop_count": 3,
+    "height_violation_count": 3,
+    "height_violation_rate": 1.0
+  },
+  "semantic": {
+    "required_object_count": 5,
+    "required_objects_placed": 5,
+    "prefab_hit_rate": 1.0,
+    "duplicate_count": 0,
+    "duplicate_rate": 0.0,
+    "character_count": 1
+  },
+  "plan": {
+    "total_plan_steps": 7,
+    "steps_completed": 7,
+    "step_completion_rate": 1.0,
+    "total_reflection_iterations": 11,
+    "avg_iterations_per_step": 1.5714285714285714,
+    "total_corrections": 28,
+    "room_status_sparse_count": 7,
+    "room_status_good_count": 4,
+    "room_status_cluttered_count": 0
+  },
+  "efficiency": {
+    "fill_commands_total": 9,
+    "dropped_prefabs": 0,
+    "llm_calls": 4,
+    "screenshot_wait_seconds": 15,
+    "total_commands": 64,
+    "place_object_count": 15,
+    "place_human_count": 1,
+    "move_object_count": 27,
+    "delete_object_count": 0,
+    "create_object_count": 7
+  },
+  "composite_score": 90.0
+}

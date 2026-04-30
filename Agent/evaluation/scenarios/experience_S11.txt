@@ -1,0 +1,33 @@
+Radiology Imaging Suite — Large-machine scan room with separate control area
+
+A spacious radiology imaging suite zoned into two distinct areas: a
+large scan-equipment zone dominated by big machines (a CT-style
+tomograph, a mammograph, an ultrasound machine, and additional X-ray
+imaging hardware), and a separate control / monitoring zone along one
+wall containing a control panel, multiple monitors for image review,
+and a chair for the technician. A radiologist (Doctor) operates the
+control panel; a patient lies prepared on the imaging table inside the
+scan zone. A nurse assists patient positioning. Lighting should be
+clinical white, slightly cooler than typical wards. The room should
+read as "scan zone vs control zone" with a clear visual separation
+between the heavy machinery and the control desk.
+
+[interactions]
+When the player touches the radiologist at the control panel, the
+radiologist explains what scan is being performed ("CT scan of the
+abdomen" or similar). Touching any of the big imaging machines
+(tomograph, mammograph, ultrasound) should display a one-sentence
+description of what it does. Touching the control panel should make
+the radiologist say "preparing the scan now" and a nearby monitor
+should briefly highlight. Touching the nurse should make her describe
+the patient prep ("contrast injected, ready in two minutes").
+Touching the patient should make him describe how he feels ("a little
+nervous about the scan").
+
+A short story arc: when the player first touches the radiologist, the
+main scanning machine highlights yellow to indicate it's the active
+scanner. When the player then touches the highlighted machine, the
+nurse walks one step toward the patient table to assist positioning.
+When the player finally touches the patient, the lighting dims
+slightly and the radiologist plays a Talking animation announcing
+"scan beginning".

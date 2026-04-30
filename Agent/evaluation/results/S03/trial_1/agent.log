@@ -1,641 +1,664 @@
-2026-04-22 22:32:26 - Pipeline - INFO - [Init] Cleared log agent.log
-2026-04-22 22:32:26 - Pipeline - INFO - [Init] Cleared log reflection_log.log
-2026-04-22 22:32:28 - Pipeline - INFO - Generating room layout plan...
-2026-04-22 22:32:34 - Pipeline - INFO - Plan generated and saved to C:\Users\Allison\Programming\GitHub\AIXR_healthcare\Agent\api_files\plan.json
-2026-04-22 22:32:36 - Pipeline - INFO - ============================================================
-2026-04-22 22:32:36 - Pipeline - INFO -   PHASE 1: Static Environment Generation
-2026-04-22 22:32:36 - Pipeline - INFO - ============================================================
-2026-04-22 22:32:36 - Pipeline - INFO - [Phase 1] Room shell written: 9 structural commands
-2026-04-22 22:32:38 - Pipeline - INFO - ----- GROQ RAW RESPONSE (attempt 1/3) -----
-2026-04-22 22:32:38 - Pipeline - INFO - [
-  {"action": "PlaceObject", "objectName": "Treadmill_01", "x": 2.2, "y": 0, "z": 4.0, "rotationY": 0},
-  {"action": "PlaceObject", "objectName": "WheelChair_01", "x": 1.5, "y": 0, "z": 0.5, "rotationY": 0},
-  {"action": "PlaceObject", "objectName": "Trolley_01", "x": -1.5, "y": 0, "z": 2.5, "rotationY": 0},
-  {"action": "PlaceObject", "objectName": "Utility_Cart_01", "x": -2.8, "y": 0, "z": 3.5, "rotationY": 0},
-  {"action": "PlaceObject", "objectName": "Table_01", "x": -1.0, "y": 0, "z": 2.0, "rotationY": 0},
-  {"action": "PlaceObject", "objectName": "Towel_Dispenser_01", "x": 2.8, "y": 0, "z": 2.0, "rotationY": 0},
-  {"action": "PlaceObject", "objectName": "Caution_Sign_01", "x": 0.5, "y": 0, "z": 0.6, "rotationY": 0},
-  {"action": "PlaceObject", "objectName": "Clock_01", "x": 0, "y": 2.5, "z": 5.8, "rotationY": 0},
-  {"action": "PlaceObject", "objectName": "Poster_01", "x": -2.8, "y": 1.8, "z": 3.0, "rotationY": 0},
-  {"action": "PlaceObject", "objectName": "Poster_02", "x": 2.8, "y": 1.8, "z": 3.0, "rotationY": 0},
-  {"action": "PlaceObject", "objectName": "Folder_01", "x": -1.0, "y": 0.8, "z": 2.0, "rotationY": 0},
-  {"action": "PlaceObject", "objectName": "Folder_02", "x": -1.0, "y": 0.8, "z": 2.0, "rotationY": 0},
-  {"action": "PlaceObject", "objectName": "Screen_01", "x": -1.5, "y": 0, "z": 5.0, "rotationY": 0},
-  {"action": "PlaceObject", "objectName": "Reception_Desk_01", "x": -1.8, "y": 0, "z": 4.8, "rotationY": 0},
-  {"action": "PlaceHuman", "humanName": "Patient_01", "x": 2.1, "y": 0, "z": 4.0, "rotationY": 0},
-  {"action": "PlaceHuman", "humanName": "Nurse_01", "x": 0, "y": 0, "z": 2.5, "rotationY": 0}
+2026-04-30 01:03:55 - Pipeline - INFO - [Init] Cleared log agent.log
+2026-04-30 01:03:55 - Pipeline - INFO - [Init] Cleared log reflection_log.log
+2026-04-30 01:03:55 - Pipeline - INFO - [Frontier] Running scene_synthesis with gpt-5.5 …
+2026-04-30 01:04:41 - Pipeline - INFO - [SceneSynthesis] cfg: scene_type='Physical Therapy Gym' size=8.0×7.0 chars='Nurse,Patient' objects=18–24
+2026-04-30 01:04:41 - Pipeline - INFO - [SceneSynthesis] plan: 6 steps focal=central parallel-bar walking lane with treadmill visible on one side and therapist positioned to supervise both active patients
+2026-04-30 01:04:41 - Pipeline - INFO - [SceneSynthesis] Wrote 21 cfg fields to [room_config] in experience.txt
+2026-04-30 01:04:41 - Pipeline - INFO - [Frontier] Synthesis complete. Plan has 6 steps.
+2026-04-30 01:04:42 - Pipeline - INFO - ============================================================
+2026-04-30 01:04:42 - Pipeline - INFO -   PHASE 1: Static Environment Generation
+2026-04-30 01:04:42 - Pipeline - INFO - ============================================================
+2026-04-30 01:04:42 - Pipeline - INFO - [Phase 1] Room shell written: 9 structural commands
+2026-04-30 01:04:43 - Pipeline - INFO - ----- GROQ RAW RESPONSE (attempt 1/3) -----
+2026-04-30 01:04:43 - Pipeline - INFO - [
+  {"action": "PlaceObject", "objectName": "Treadmill_01", "x": 0, "y": 0, "z": 3.5, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Exam_Stool_01", "x": -2, "y": 0, "z": 2, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "WheelChair_01", "x": 2, "y": 0, "z": 1.5, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Exercise_Ball_01", "x": -1.5, "y": 0, "z": 4, "rotationY": 0},
+  {"action": "PlaceHuman", "humanName": "Doctor_01", "x": 0, "y": 0, "z": 2.5, "rotationY": 0},
+  {"action": "PlaceHuman", "humanName": "Patient_01", "x": -2.5, "y": 0, "z": 3.5, "rotationY": 0}
 ]
-2026-04-22 22:32:38 - Pipeline - INFO - ------------------------------------------------------
-2026-04-22 22:32:38 - Pipeline - INFO - [Phase 1] Interior objects: wrote 16 commands
-2026-04-22 22:32:38 - Pipeline - INFO - [Phase 1] Waiting up to 15s for Unity to refresh screenshots...
-2026-04-22 22:32:54 - Pipeline - INFO - [Phase 1] Using existing screenshots (may be stale). Starting reflection loop.
-2026-04-22 22:32:54 - Pipeline - INFO - [Phase 1 Reflection] Step 1/14: place
-2026-04-22 22:32:54 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
-2026-04-22 22:32:54 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
-2026-04-22 22:32:54 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
-2026-04-22 22:32:54 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
-2026-04-22 22:32:54 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
-2026-04-22 22:32:54 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
-2026-04-22 22:32:54 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
-2026-04-22 22:32:54 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
-2026-04-22 22:32:56 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:32:56 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
-2026-04-22 22:32:57 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:32:57 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
-2026-04-22 22:32:57 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:32:57 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
-2026-04-22 22:32:58 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:32:58 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
-2026-04-22 22:32:58 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
-2026-04-22 22:32:58 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
-2026-04-22 22:32:58 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
-2026-04-22 22:32:58 - ReflectionModule - INFO - Logged reflection entry for step 'place'
-2026-04-22 22:32:58 - Pipeline - INFO -   step_complete=no  room_status=sparse  suggest_additions=True  objects=16
-2026-04-22 22:32:58 - Pipeline - INFO -   layout: The room layout seems to be taking shape with the placement of Treadmill_01 and other objects. However, some objects may need adjustments to meet the zone and surface requirements.
-2026-04-22 22:33:00 - Pipeline - INFO - ----- GROQ RAW RESPONSE (loop attempt 1/3) -----
-2026-04-22 22:33:00 - Pipeline - INFO - [
+2026-04-30 01:04:43 - Pipeline - INFO - ------------------------------------------------------
+2026-04-30 01:04:43 - Pipeline - WARNING - [fix_prefab_names] Dropping PlaceObject (prefab not found): Exercise_Ball_01
+2026-04-30 01:04:43 - Pipeline - INFO - [Phase 1] Interior objects: wrote 5 commands
+2026-04-30 01:04:43 - Pipeline - INFO - [Phase 1] Waiting up to 15s for Unity to refresh screenshots...
+2026-04-30 01:04:45 - Pipeline - INFO - [Phase 1] Fresh screenshots detected (3/3). Starting reflection loop.
+2026-04-30 01:04:45 - Pipeline - INFO - [Phase 1 Reflection] Step 1/6: Place the primary rehabilitation equipment in separated zones to create an active but uncluttered gym layout.
+2026-04-30 01:04:45 - ReflectionModule - INFO - [SceneState] Loaded 12 live objects from scene_state.json.
+2026-04-30 01:04:45 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread] [RosterThread]
+2026-04-30 01:04:45 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-30 01:04:45 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Treadmill_01 x=0.00 y=0.19 z=3.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.16, lifted by 0.16m)
+2026-04-30 01:04:45 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Doctor_01 x=0.00 y=0.03 z=1.99 rotationY=0  — reason: overlaps Treadmill_01 (pen_x=1.09m pen_z=0.24m; exact bounds)
+2026-04-30 01:04:45 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Doctor_01 x=0.00 y=0.12 z=2.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.09, lifted by 0.09m)
+2026-04-30 01:04:45 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Patient_01 x=-2.50 y=0.10 z=3.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.07, lifted by 0.07m)
+2026-04-30 01:04:45 - ReflectionModule - INFO - [BoundsThread] 3 bound/doorway corrections generated.
+2026-04-30 01:04:45 - ReflectionModule - INFO - [CollisionThread] math path: 1 collision(s) found.
+2026-04-30 01:04:48 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-30 01:04:48 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 1 line(s).
+2026-04-30 01:04:48 - ReflectionModule - INFO - [CollisionThread][image] MoveObject Exam_Stool_01 x=-2.5 y=0.03 z=2.0 rotationY=0.0  — reason: visually overlaps Patient_01
+2026-04-30 01:04:48 - ReflectionModule - INFO - [CollisionThread] image path added 1 extra correction(s).
+2026-04-30 01:04:49 - ReflectionModule - WARNING - [NameFix] 'Cube' is a structural cube (floor/wall/ceiling) — line dropped to protect room geometry: MoveObject Cube y=0.98 — reason: [dispatcher→surface] <issue>
+2026-04-30 01:04:49 - ReflectionModule - WARNING - [NameFix] 'Cube' is a structural cube (floor/wall/ceiling) — line dropped to protect room geometry: MoveObject Cube y=0.98 — reason: [dispatcher→surface] <issue>
+2026-04-30 01:04:49 - ReflectionModule - WARNING - [NameFix] 'Cube' is a structural cube (floor/wall/ceiling) — line dropped to protect room geometry: MoveObject Cube y=0.98 — reason: [dispatcher→surface] <issue>
+2026-04-30 01:04:49 - ReflectionModule - WARNING - [NameFix] 'Cube' is a structural cube (floor/wall/ceiling) — line dropped to protect room geometry: MoveObject Cube y=0.98 — reason: [dispatcher→surface] <issue>
+2026-04-30 01:04:49 - ReflectionModule - WARNING - [NameFix] 'Cube' is a structural cube (floor/wall/ceiling) — line dropped to protect room geometry: MoveObject Cube y=0.98 — reason: [dispatcher→surface] <issue>
+2026-04-30 01:04:49 - ReflectionModule - WARNING - [NameFix] 'Cube' is a structural cube (floor/wall/ceiling) — line dropped to protect room geometry: MoveObject Cube y=0.98 — reason: [dispatcher→surface] <issue>
+2026-04-30 01:04:49 - ReflectionModule - WARNING - [NameFix] 'Cube' is a structural cube (floor/wall/ceiling) — line dropped to protect room geometry: MoveObject Cube y=0.98 — reason
+2026-04-30 01:04:49 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-30 01:04:49 - ReflectionModule - INFO - [RosterThread] 0 corrections applied.
+2026-04-30 01:04:49 - ReflectionModule - INFO - [BoundsThread] 3 correction(s) applied:
+2026-04-30 01:04:49 - ReflectionModule - INFO -   [BoundsThread] MoveObject Treadmill_01 x=0.00 y=0.19 z=3.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.16, lifted by 0.16m)
+2026-04-30 01:04:49 - ReflectionModule - INFO -   [BoundsThread] MoveObject Doctor_01 x=0.00 y=0.12 z=2.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.09, lifted by 0.09m)
+2026-04-30 01:04:49 - ReflectionModule - INFO -   [BoundsThread] MoveObject Patient_01 x=-2.50 y=0.10 z=3.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.07, lifted by 0.07m)
+2026-04-30 01:04:49 - ReflectionModule - INFO - [CollisionThread] 2 correction(s) applied:
+2026-04-30 01:04:49 - ReflectionModule - INFO -   [CollisionThread] MoveObject Doctor_01 x=0.00 y=0.03 z=1.99 rotationY=0  — reason: overlaps Treadmill_01 (pen_x=1.09m pen_z=0.24m; exact bounds)
+2026-04-30 01:04:49 - ReflectionModule - INFO -   [CollisionThread] MoveObject Exam_Stool_01 x=-2.5 y=0.03 z=2.0 rotationY=0.0  — reason: visually overlaps Patient_01
+2026-04-30 01:04:49 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-30 01:04:49 - ReflectionModule - INFO - [SurfaceThread] 1 correction(s) applied:
+2026-04-30 01:04:49 - ReflectionModule - INFO -   [SurfaceThread] ['MoveObject Exam_Stool_01 x=-3.5 y=0.0 z=2.0 rotationY=90.0 — reason: near left wall', 'MoveObject WheelChair_01 x=3.5 y=0.0 z=1.5 rotationY=270.0 — reason: near right wall', 'MoveObject Patient_01 x=-2.5 y=0.0 z=4.5 rotationY=0.0 — reason: inside room, facing center', 'MoveObject Doctor_01 x=0.0 y=0.0 z=2.0 rotationY=0.0 — reason: in central area']
+2026-04-30 01:04:49 - ReflectionModule - INFO - Logged reflection entry for step 'Place the primary rehabilitation equipment in separated zones to create an active but uncluttered gym layout.'
+2026-04-30 01:04:49 - Pipeline - INFO -   step_complete=no  room_status=sparse  suggest_additions=True  objects=5
+2026-04-30 01:04:49 - Pipeline - INFO -   layout: Current layout has Treadmill_01 in a good position. Exam_Stool_01, WheelChair_01, Doctor_01, and Patient_01 need adjustments.
+2026-04-30 01:04:49 - Pipeline - INFO -   suggestions: MoveObject Treadmill_01 x=0.00 y=0.19 z=3.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.16, lifted by 0.16m)
+MoveObject Doctor_01 x=0.00 y=0.12 z=2.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.09, lifted by 0.09m)
+MoveObject Patient_01 x=-2.50 y=0.10 z=3.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.07, lifted by 0.07m)
+MoveObject Doctor_01 x=0.00 y=0.03 z=1.99 rotationY=0  — reason: overlaps Treadmill_01 (pen_x=1.09m pen_z=0.24m; exact bounds)
+MoveObject Exam_Stool_01 x=-2.5 y=0.03 z=2.0 rotationY=0.0  — reason: visually overlaps Patient_01
+['MoveObject Exam_Stool_01 x=-3.5 y=0.0 z=2.0 rotationY=90.0 — reason: near left wall', 'MoveObject WheelChair_01 x=3.5 y=0.0 z=1.5 rotationY=270.0 — reason: near right wall', 'MoveObject Patient_01 x=-2.5 y=0.0 z=4.5 rotationY=0.0 — reason: inside room, facing center', 'MoveObject Doctor_01 x=0.0 y=0.0 z=2.0 rotationY=0.0 — reason: in central area']
+2026-04-30 01:04:49 - Pipeline - INFO -   [parse_alignment] MoveObject Treadmill_01 → x=0.0 y=0.19 z=3.5 rot=0.0
+2026-04-30 01:04:49 - Pipeline - INFO -   [parse_alignment] MoveObject Doctor_01 → x=0.0 y=0.12 z=2.5 rot=0.0
+2026-04-30 01:04:49 - Pipeline - INFO -   [parse_alignment] MoveObject Patient_01 → x=-2.5 y=0.1 z=3.5 rot=0.0
+2026-04-30 01:04:49 - Pipeline - INFO -   [parse_alignment] MoveObject Doctor_01 → x=0.0 y=0.03 z=1.99 rot=0.0
+2026-04-30 01:04:49 - Pipeline - INFO -   [parse_alignment] MoveObject Exam_Stool_01 → x=-2.5 y=0.03 z=2.0 rot=0.0
+2026-04-30 01:04:49 - Pipeline - INFO -   [parse_alignment] MoveObject Exam_Stool_01 → x=-3.5 y=0.0 z=2.0 rot=90.0
+2026-04-30 01:04:49 - Pipeline - INFO -   [parse_alignment] MoveObject WheelChair_01 → x=3.5 y=0.0 z=1.5 rot=270.0
+2026-04-30 01:04:49 - Pipeline - INFO -   [parse_alignment] MoveObject Patient_01 → x=-2.5 y=0.0 z=4.5 rot=0.0
+2026-04-30 01:04:49 - Pipeline - INFO -   [parse_alignment] MoveObject Doctor_01 → x=0.0 y=0.0 z=2.0 rot=0.0
+2026-04-30 01:04:49 - Pipeline - INFO - [Phase 1] Applied 9 direct corrections (MoveObject/DeleteObject)
+2026-04-30 01:04:50 - Pipeline - INFO - ----- GROQ RAW RESPONSE (loop attempt 1/3) -----
+2026-04-30 01:04:50 - Pipeline - INFO - [
   {
     "action": "PlaceObject",
-    "objectName": "Poster_03",
-    "x": -2.8,
-    "y": 1.8,
-    "z": 2.0,
-    "rotationY": 0
-  },
-  {
-    "action": "PlaceObject",
-    "objectName": "Folder_03",
-    "x": -1.0,
+    "objectName": "Exercise_Ball_01",
+    "x": -3.5,
     "y": 0.8,
-    "z": 4.5,
+    "z": 5.5,
     "rotationY": 0
   },
   {
     "action": "PlaceObject",
-    "objectName": "Caution_Sign_01",
-    "x": -0.5,
+    "objectName": "Bench_01",
+    "x": 3.5,
     "y": 0.0,
-    "z": 5.8,
-    "rotationY": 0
-  }
-]
-2026-04-22 22:33:00 - Pipeline - INFO - ------------------------------------------------------
-2026-04-22 22:33:00 - Pipeline - INFO - [Phase 1] Appended 3 fill commands
-2026-04-22 22:33:03 - Pipeline - INFO - [Phase 1 Reflection] Step 1/14: place
-2026-04-22 22:33:03 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
-2026-04-22 22:33:03 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
-2026-04-22 22:33:03 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
-2026-04-22 22:33:03 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
-2026-04-22 22:33:03 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
-2026-04-22 22:33:03 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
-2026-04-22 22:33:03 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
-2026-04-22 22:33:03 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
-2026-04-22 22:33:06 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:33:06 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
-2026-04-22 22:33:06 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:33:06 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
-2026-04-22 22:33:07 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:33:07 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
-2026-04-22 22:33:07 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:33:07 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
-2026-04-22 22:33:07 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
-2026-04-22 22:33:07 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
-2026-04-22 22:33:07 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
-2026-04-22 22:33:07 - ReflectionModule - INFO - Logged reflection entry for step 'place'
-2026-04-22 22:33:07 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=True  objects=19
-2026-04-22 22:33:07 - Pipeline - INFO -   layout: The room layout is sparse with 17 non-Cube objects placed. The Treadmill_01 is correctly placed near the right wall. However, some objects like Caution_Sign_01 and Poster_03 are not in their optimal positions and need adjustments.
-2026-04-22 22:33:07 - Pipeline - INFO -   Step complete — advancing 1 → 2: place
-2026-04-22 22:33:10 - Pipeline - INFO - ----- GROQ RAW RESPONSE (loop attempt 1/3) -----
-2026-04-22 22:33:10 - Pipeline - INFO - [
-  {
-    "action": "PlaceObject",
-    "objectName": "Utility_Cart_01",
-    "x": -2.7,
-    "y": 0.0,
-    "z": 1.6,
-    "rotationY": 0.0
-  },
-  {
-    "action": "PlaceObject",
-    "objectName": "Towel_Dispenser_01",
-    "x": 2.2,
-    "y": 0.0,
-    "z": 1.0,
-    "rotationY": 0.0
-  },
-  {
-    "action": "PlaceObject",
-    "objectName": "Folder_03",
-    "x": 1.8,
-    "y": 0.8,
-    "z": 2.5,
-    "rotationY": 0.0
-  }
-]
-2026-04-22 22:33:10 - Pipeline - INFO - ------------------------------------------------------
-2026-04-22 22:33:10 - Pipeline - INFO - [Phase 1] Appended 3 fill commands
-2026-04-22 22:33:13 - Pipeline - INFO - [Phase 1 Reflection] Step 2/14: place
-2026-04-22 22:33:13 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
-2026-04-22 22:33:13 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
-2026-04-22 22:33:13 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
-2026-04-22 22:33:13 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
-2026-04-22 22:33:13 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
-2026-04-22 22:33:13 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
-2026-04-22 22:33:13 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
-2026-04-22 22:33:13 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
-2026-04-22 22:33:16 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:33:16 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
-2026-04-22 22:33:16 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:33:16 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
-2026-04-22 22:33:16 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:33:16 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
-2026-04-22 22:33:17 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:33:17 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
-2026-04-22 22:33:17 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
-2026-04-22 22:33:17 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
-2026-04-22 22:33:17 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
-2026-04-22 22:33:17 - ReflectionModule - INFO - Logged reflection entry for step 'place'
-2026-04-22 22:33:17 - Pipeline - INFO -   step_complete=no  room_status=sparse  suggest_additions=True  objects=22
-2026-04-22 22:33:17 - Pipeline - INFO -   layout: The room layout is sparse with 17 non-Cube objects placed. The Treadmill_01 is correctly placed near the right wall. However, some objects like Caution_Sign_01 and Poster_03 are not in their optimal positions and need adjustments.
-2026-04-22 22:33:19 - Pipeline - INFO - ----- GROQ RAW RESPONSE (loop attempt 1/3) -----
-2026-04-22 22:33:19 - Pipeline - INFO - [
-  {"action": "PlaceObject", "objectName": "Towel_Dispenser_01", "x": 2.5, "y": 0.8, "z": 0.8, "rotationY": 0},
-  {"action": "PlaceObject", "objectName": "Folder_04", "x": -2.7, "y": 0.8, "z": 4.3, "rotationY": 0},
-  {"action": "PlaceObject", "objectName": "Poster_05", "x": 2.2, "y": 1.7, "z": 2.2, "rotationY": 0}
-]
-2026-04-22 22:33:19 - Pipeline - INFO - ------------------------------------------------------
-2026-04-22 22:33:19 - Pipeline - INFO - [Phase 1] Appended 3 fill commands
-2026-04-22 22:33:22 - Pipeline - INFO - [Phase 1 Reflection] Step 2/14: place
-2026-04-22 22:33:22 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
-2026-04-22 22:33:22 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
-2026-04-22 22:33:22 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
-2026-04-22 22:33:22 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
-2026-04-22 22:33:22 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
-2026-04-22 22:33:22 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
-2026-04-22 22:33:22 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
-2026-04-22 22:33:22 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
-2026-04-22 22:33:24 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:33:24 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
-2026-04-22 22:33:24 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:33:24 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
-2026-04-22 22:33:26 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:33:26 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
-2026-04-22 22:33:26 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:33:26 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
-2026-04-22 22:33:26 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
-2026-04-22 22:33:26 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
-2026-04-22 22:33:26 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
-2026-04-22 22:33:26 - ReflectionModule - INFO - Logged reflection entry for step 'place'
-2026-04-22 22:33:26 - Pipeline - INFO -   step_complete=no  room_status=sparse  suggest_additions=True  objects=25
-2026-04-22 22:33:26 - Pipeline - INFO -   layout: The room layout is sparse with 17 non-Cube objects placed. The Treadmill_01 is correctly placed near the right wall. However, some objects like Caution_Sign_01 and Poster_03 are not in their optimal positions and need adjustments.
-2026-04-22 22:33:28 - Pipeline - INFO - ----- GROQ RAW RESPONSE (loop attempt 1/3) -----
-2026-04-22 22:33:28 - Pipeline - INFO - [
-  {"action": "PlaceObject", "objectName": "Trolley_01", "x": -2.2, "y": 0.0, "z": 1.8, "rotationY": 0.0},
-  {"action": "PlaceObject", "objectName": "Utility_Cart_01", "x": 2.7, "y": 0.0, "z": 2.2, "rotationY": 0.0},
-  {"action": "PlaceObject", "objectName": "Poster_04", "x": 2.8, "y": 1.7, "z": 1.0, "rotationY": 0.0}
-]
-2026-04-22 22:33:28 - Pipeline - INFO - ------------------------------------------------------
-2026-04-22 22:33:28 - Pipeline - INFO - [Phase 1] Appended 3 fill commands
-2026-04-22 22:33:31 - Pipeline - INFO - [Phase 1 Reflection] Step 2/14: place
-2026-04-22 22:33:31 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
-2026-04-22 22:33:31 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
-2026-04-22 22:33:31 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
-2026-04-22 22:33:31 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
-2026-04-22 22:33:31 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
-2026-04-22 22:33:31 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
-2026-04-22 22:33:31 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
-2026-04-22 22:33:31 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
-2026-04-22 22:33:34 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:33:34 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
-2026-04-22 22:33:34 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:33:34 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
-2026-04-22 22:33:35 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:33:35 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
-2026-04-22 22:33:36 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:33:36 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
-2026-04-22 22:33:36 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
-2026-04-22 22:33:36 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
-2026-04-22 22:33:36 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
-2026-04-22 22:33:36 - ReflectionModule - INFO - Logged reflection entry for step 'place'
-2026-04-22 22:33:36 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=True  objects=28
-2026-04-22 22:33:36 - Pipeline - INFO -   layout: The room layout is sparse with 17 non-Cube objects placed. The Treadmill_01 is correctly placed near the right wall. However, some objects like Caution_Sign_01 and Poster_03 are not in their optimal positions and need adjustments.
-2026-04-22 22:33:36 - Pipeline - INFO -   Step complete — advancing 2 → 3: place
-2026-04-22 22:33:39 - Pipeline - INFO - ----- GROQ RAW RESPONSE (loop attempt 1/3) -----
-2026-04-22 22:33:39 - Pipeline - INFO - [
-  {
-    "action": "PlaceObject",
-    "objectName": "Aid_Kit_01",
-    "x": -2.1,
-    "y": 0.8,
-    "z": 2.6,
-    "rotationY": 0
+    "z": 4.0,
+    "rotationY": 90
   },
   {
     "action": "PlaceObject",
     "objectName": "Crutch_01",
-    "x": 1.9,
+    "x": 2.0,
     "y": 0.0,
-    "z": 1.2,
+    "z": 2.0,
+    "rotationY": 45
+  }
+]
+2026-04-30 01:04:50 - Pipeline - INFO - ------------------------------------------------------
+2026-04-30 01:04:50 - Pipeline - WARNING - [fix_prefab_names] Dropping PlaceObject (prefab not found): Exercise_Ball_01
+2026-04-30 01:04:50 - Pipeline - INFO - [Phase 1] Appended 2 fill commands
+2026-04-30 01:04:53 - Pipeline - INFO - [Phase 1 Reflection] Step 1/6: Place the primary rehabilitation equipment in separated zones to create an active but uncluttered gym layout.
+2026-04-30 01:04:53 - ReflectionModule - INFO - [SceneState] Loaded 14 live objects from scene_state.json.
+2026-04-30 01:04:53 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread] [RosterThread]
+2026-04-30 01:04:53 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-30 01:04:53 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject WheelChair_01 x=3.23 y=0.00 z=1.50 rotationY=270  — reason: [bounds] right edge clips wall (x=3.50, half=0.52)
+2026-04-30 01:04:53 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Doctor_01 x=0.00 y=0.12 z=2.00 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.12, lifted by 0.12m)
+2026-04-30 01:04:53 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-30 01:04:53 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Patient_01 x=-2.50 y=0.10 z=4.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.10, lifted by 0.10m)
+2026-04-30 01:04:53 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Bench_01 x=3.44 y=0.03 z=4.00 rotationY=90  — reason: [bounds] right edge clips wall (x=3.50, half=0.31)
+2026-04-30 01:04:53 - ReflectionModule - INFO - [BoundsThread] 4 bound/doorway corrections generated.
+2026-04-30 01:04:55 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 1 line(s).
+2026-04-30 01:04:55 - ReflectionModule - INFO - [DispatcherThread] LLM visual check added 1 extra correction(s).
+2026-04-30 01:04:56 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-30 01:04:56 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-30 01:04:56 - ReflectionModule - INFO - [RosterThread] 0 corrections applied.
+2026-04-30 01:04:56 - ReflectionModule - INFO - [BoundsThread] 4 correction(s) applied:
+2026-04-30 01:04:56 - ReflectionModule - INFO -   [BoundsThread] MoveObject WheelChair_01 x=3.23 y=0.00 z=1.50 rotationY=270  — reason: [bounds] right edge clips wall (x=3.50, half=0.52)
+2026-04-30 01:04:56 - ReflectionModule - INFO -   [BoundsThread] MoveObject Doctor_01 x=0.00 y=0.12 z=2.00 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.12, lifted by 0.12m)
+2026-04-30 01:04:56 - ReflectionModule - INFO -   [BoundsThread] MoveObject Patient_01 x=-2.50 y=0.10 z=4.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.10, lifted by 0.10m)
+2026-04-30 01:04:56 - ReflectionModule - INFO -   [BoundsThread] MoveObject Bench_01 x=3.44 y=0.03 z=4.00 rotationY=90  — reason: [bounds] right edge clips wall (x=3.50, half=0.31)
+2026-04-30 01:04:56 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-30 01:04:56 - ReflectionModule - INFO - [DispatcherThread] 1 correction(s) applied:
+2026-04-30 01:04:56 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Crutch_01 x=2.0 y=0.03 z=2.0 rotationY=45.0  — reason: [dispatcher→surface] <issue>
+2026-04-30 01:04:56 - ReflectionModule - INFO - [SurfaceThread] 1 correction(s) applied:
+2026-04-30 01:04:56 - ReflectionModule - INFO -   [SurfaceThread] ['MoveObject Crutch_01 x=3.0 y=0.6 z=4.0 rotationY=90 — reason: Crutch_01 not on a surface, move to Bench_01', 'MoveObject Exam_Stool_01 x=-3.8 y=0.0 z=2.0 rotationY=90 — reason: near left wall', 'MoveObject WheelChair_01 x=3.8 y=0.0 z=1.5 rotationY=270 — reason: near right wall', 'MoveObject Patient_01 x=-2.5 y=0.0 z=4.5 rotationY=0 — reason: inside room, facing center', 'MoveObject Doctor_01 x=0.0 y=0.0 z=2.5 rotationY=0 — reason: in central area, good position']
+2026-04-30 01:04:56 - ReflectionModule - INFO - Logged reflection entry for step 'Place the primary rehabilitation equipment in separated zones to create an active but uncluttered gym layout.'
+2026-04-30 01:04:56 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=True  objects=7
+2026-04-30 01:04:56 - Pipeline - INFO -   layout: Current layout has Treadmill_01 in a good position. Exam_Stool_01, WheelChair_01, Doctor_01, and Patient_01 are in reasonable positions. Crutch_01 needs to be moved onto a surface.
+2026-04-30 01:04:56 - Pipeline - INFO -   suggestions: MoveObject WheelChair_01 x=3.23 y=0.00 z=1.50 rotationY=270  — reason: [bounds] right edge clips wall (x=3.50, half=0.52)
+MoveObject Doctor_01 x=0.00 y=0.12 z=2.00 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.12, lifted by 0.12m)
+MoveObject Patient_01 x=-2.50 y=0.10 z=4.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.10, lifted by 0.10m)
+MoveObject Bench_01 x=3.44 y=0.03 z=4.00 rotationY=90  — reason: [bounds] right edge clips wall (x=3.50, half=0.31)
+MoveObject Crutch_01 x=2.0 y=0.03 z=2.0 rotationY=45.0  — reason: [dispatcher→surface] <issue>
+['MoveObject Crutch_01 x=3.0 y=0.6 z=4.0 rotationY=90 — reason: Crutch_01 not on a surface, move to Bench_01', 'MoveObject Exam_Stool_01 x=-3.8 y=0.0 z=2.0 rotationY=90 — reason: near left wall', 'MoveObject WheelChair_01 x=3.8 y=0.0 z=1.5 rotationY=270 — reason: near right wall', 'MoveObject Patient_01 x=-2.5 y=0.0 z=4.5 rotationY=0 — reason: inside room, facing center', 'MoveObject Doctor_01 x=0.0 y=0.0 z=2.5 rotationY=0 — reason: in central area, good position']
+2026-04-30 01:04:56 - Pipeline - INFO -   Step complete — advancing 1 → 2: Add supportive medical furniture and standby mobility support around the perimeter.
+2026-04-30 01:04:56 - Pipeline - INFO -   [parse_alignment] MoveObject WheelChair_01 → x=3.23 y=0.0 z=1.5 rot=270.0
+2026-04-30 01:04:56 - Pipeline - INFO -   [parse_alignment] MoveObject Doctor_01 → x=0.0 y=0.12 z=2.0 rot=0.0
+2026-04-30 01:04:56 - Pipeline - INFO -   [parse_alignment] MoveObject Patient_01 → x=-2.5 y=0.1 z=4.5 rot=0.0
+2026-04-30 01:04:56 - Pipeline - INFO -   [parse_alignment] MoveObject Bench_01 → x=3.44 y=0.03 z=4.0 rot=90.0
+2026-04-30 01:04:56 - Pipeline - INFO -   [parse_alignment] MoveObject Crutch_01 → x=2.0 y=0.03 z=2.0 rot=45.0
+2026-04-30 01:04:56 - Pipeline - INFO -   [parse_alignment] MoveObject Crutch_01 → x=3.0 y=0.6 z=4.0 rot=90.0
+2026-04-30 01:04:56 - Pipeline - INFO -   [parse_alignment] MoveObject Exam_Stool_01 → x=-3.8 y=0.0 z=2.0 rot=90.0
+2026-04-30 01:04:56 - Pipeline - INFO -   [parse_alignment] MoveObject WheelChair_01 → x=3.8 y=0.0 z=1.5 rot=270.0
+2026-04-30 01:04:56 - Pipeline - INFO -   [parse_alignment] MoveObject Patient_01 → x=-2.5 y=0.0 z=4.5 rot=0.0
+2026-04-30 01:04:56 - Pipeline - INFO -   [parse_alignment] MoveObject Doctor_01 → x=0.0 y=0.0 z=2.5 rot=0.0
+2026-04-30 01:04:56 - Pipeline - INFO - [Phase 1] Applied 10 direct corrections (MoveObject/DeleteObject)
+2026-04-30 01:04:58 - Pipeline - INFO - ----- GROQ RAW RESPONSE (loop attempt 1/3) -----
+2026-04-30 01:04:58 - Pipeline - INFO - [
+  {
+    "action": "PlaceObject",
+    "objectName": "Crutch_01",
+    "x": -3.5,
+    "y": 0.8,
+    "z": 2.5,
+    "rotationY": 0
+  },
+  {
+    "action": "PlaceObject",
+    "objectName": "Aid_Kit_01",
+    "x": 1.5,
+    "y": 0.8,
+    "z": 5.5,
+    "rotationY": 0
+  },
+  {
+    "action": "PlaceObject",
+    "objectName": "Bench_02",
+    "x": -1.5,
+    "y": 0.0,
+    "z": 4.5,
+    "rotationY": 0
+  }
+]
+2026-04-30 01:04:58 - Pipeline - INFO - ------------------------------------------------------
+2026-04-30 01:04:58 - Pipeline - INFO - [Phase 1] Appended 3 fill commands
+2026-04-30 01:05:01 - Pipeline - INFO - [Phase 1 Reflection] Step 2/6: Add supportive medical furniture and standby mobility support around the perimeter.
+2026-04-30 01:05:01 - ReflectionModule - INFO - [SceneState] Loaded 16 live objects from scene_state.json.
+2026-04-30 01:05:01 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread] [RosterThread]
+2026-04-30 01:05:01 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-30 01:05:01 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Exam_Stool_01 x=-3.52 y=0.00 z=2.00 rotationY=90  — reason: [bounds] left edge clips wall (x=-3.80, half=0.23)
+2026-04-30 01:05:01 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Doctor_01 x=0.00 y=0.00 z=1.97 rotationY=0  — reason: overlaps Treadmill_01 (pen_x=0.69m pen_z=0.29m; exact bounds)
+2026-04-30 01:05:01 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject WheelChair_01 x=3.23 y=0.00 z=1.50 rotationY=270  — reason: [bounds] right edge clips wall (x=3.80, half=0.52)
+2026-04-30 01:05:01 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Doctor_01 x=0.00 y=0.12 z=2.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.12, lifted by 0.12m)
+2026-04-30 01:05:01 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Patient_01 x=-2.50 y=0.10 z=4.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.10, lifted by 0.10m)
+2026-04-30 01:05:01 - ReflectionModule - INFO - [BoundsThread] 4 bound/doorway corrections generated.
+2026-04-30 01:05:01 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Bench_02 x=-1.12 y=0.03 z=4.50 rotationY=0  — reason: overlaps Patient_01 (pen_x=0.13m pen_z=0.47m; exact bounds)
+2026-04-30 01:05:01 - ReflectionModule - INFO - [CollisionThread] math path: 2 collision(s) found.
+2026-04-30 01:05:03 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 1 line(s).
+2026-04-30 01:05:03 - ReflectionModule - INFO - [CollisionThread][image] MoveObject Crutch_01 x=-3.58 y=0.03 z=2.67 reason: visually overlaps Exam_Stool_01
+2026-04-30 01:05:03 - ReflectionModule - INFO - [CollisionThread] image path added 1 extra correction(s).
+2026-04-30 01:05:03 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 1 line(s).
+2026-04-30 01:05:03 - ReflectionModule - INFO - [DispatcherThread] LLM visual check added 1 extra correction(s).
+2026-04-30 01:05:05 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 2 line(s).
+2026-04-30 01:05:05 - ReflectionModule - INFO - [RosterThread] 0 corrections applied.
+2026-04-30 01:05:05 - ReflectionModule - INFO - [BoundsThread] 4 correction(s) applied:
+2026-04-30 01:05:05 - ReflectionModule - INFO -   [BoundsThread] MoveObject Exam_Stool_01 x=-3.52 y=0.00 z=2.00 rotationY=90  — reason: [bounds] left edge clips wall (x=-3.80, half=0.23)
+2026-04-30 01:05:05 - ReflectionModule - INFO -   [BoundsThread] MoveObject WheelChair_01 x=3.23 y=0.00 z=1.50 rotationY=270  — reason: [bounds] right edge clips wall (x=3.80, half=0.52)
+2026-04-30 01:05:05 - ReflectionModule - INFO -   [BoundsThread] MoveObject Doctor_01 x=0.00 y=0.12 z=2.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.12, lifted by 0.12m)
+2026-04-30 01:05:05 - ReflectionModule - INFO -   [BoundsThread] MoveObject Patient_01 x=-2.50 y=0.10 z=4.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.10, lifted by 0.10m)
+2026-04-30 01:05:05 - ReflectionModule - INFO - [CollisionThread] 3 correction(s) applied:
+2026-04-30 01:05:05 - ReflectionModule - INFO -   [CollisionThread] MoveObject Doctor_01 x=0.00 y=0.00 z=1.97 rotationY=0  — reason: overlaps Treadmill_01 (pen_x=0.69m pen_z=0.29m; exact bounds)
+2026-04-30 01:05:05 - ReflectionModule - INFO -   [CollisionThread] MoveObject Bench_02 x=-1.12 y=0.03 z=4.50 rotationY=0  — reason: overlaps Patient_01 (pen_x=0.13m pen_z=0.47m; exact bounds)
+2026-04-30 01:05:05 - ReflectionModule - INFO -   [CollisionThread] MoveObject Crutch_01 x=-3.58 y=0.03 z=2.67 reason: visually overlaps Exam_Stool_01
+2026-04-30 01:05:05 - ReflectionModule - INFO - [DispatcherThread] 1 correction(s) applied:
+2026-04-30 01:05:05 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Treadmill_01 x=0.00 y=0.0 z=3.50 rotationY=0.0  — reason: [dispatcher→surface] <issue>
+2026-04-30 01:05:05 - ReflectionModule - INFO - [SurfaceThread] 1 correction(s) applied:
+2026-04-30 01:05:05 - ReflectionModule - INFO -   [SurfaceThread] ['MoveObject WheelChair_01 x=3.23 y=0.00 z=1.50 rotationY=270  — reason: [bounds] right edge clips wall (x=3.50, half=0.52)', 'MoveObject Exam_Stool_01 x=-3.8 y=0.0 z=2.0 rotationY=90  — reason: near left wall', 'MoveObject Crutch_01 x=3.0 y=0.6 z=4.0 rotationY=90  — reason: Crutch_01 not on a surface, move to Bench_01', 'MoveObject Aid_Kit_01 x=1.5 y=0.6 z=4.5 rotationY=0  — reason: Aid_Kit_01 not on a surface, move to Bench_02', 'MoveObject Patient_01 x=-2.5 y=0.0 z=4.5 rotationY=0  — reason: inside room, facing center']
+2026-04-30 01:05:05 - ReflectionModule - INFO - Logged reflection entry for step 'Add supportive medical furniture and standby mobility support around the perimeter.'
+2026-04-30 01:05:05 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=True  objects=10
+2026-04-30 01:05:05 - Pipeline - INFO -   layout: Current layout has Treadmill_01 in a good position. Exam_Stool_01, WheelChair_01, Doctor_01, and Patient_01 are in reasonable positions. Crutch_01 and Aid_Kit_01 need to be moved onto a surface.
+2026-04-30 01:05:05 - Pipeline - INFO -   suggestions: MoveObject Exam_Stool_01 x=-3.52 y=0.00 z=2.00 rotationY=90  — reason: [bounds] left edge clips wall (x=-3.80, half=0.23)
+MoveObject WheelChair_01 x=3.23 y=0.00 z=1.50 rotationY=270  — reason: [bounds] right edge clips wall (x=3.80, half=0.52)
+MoveObject Doctor_01 x=0.00 y=0.12 z=2.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.12, lifted by 0.12m)
+MoveObject Patient_01 x=-2.50 y=0.10 z=4.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.10, lifted by 0.10m)
+MoveObject Doctor_01 x=0.00 y=0.00 z=1.97 rotationY=0  — reason: overlaps Treadmill_01 (pen_x=0.69m pen_z=0.29m; exact bounds)
+MoveObject Bench_02 x=-1.12 y=0.03 z=4.50 rotationY=0  — reason: overlaps Patient_01 (pen_x=0.13m pen_z=0.47m; exact bounds)
+MoveObject Crutch_01 x=-3.58 y=0.03 z=2.67 reason: visually overlaps Exam_Stool_01
+MoveObject Treadmill_01 x=0.00 y=0.0 z=3.50 rotationY=0.0  — reason: [dispatcher→surface] <issue>
+['MoveObject WheelChair_01 x=3.23 y=0.00 z=1.50 rotationY=270  — reason: [bounds] right edge clips wall (x=3.50, half=0.52)', 'MoveObject Exam_Stool_01 x=-3.8 y=0.0 z=2.0 rotationY=90  — reason: near left wall', 'MoveObject Crutch_01 x=3.0 y=0.6 z=4.0 rotationY=90  — reason: Crutch_01 not on a surface, move to Bench_01', 'MoveObject Aid_Kit_01 x=1.5 y=0.6 z=4.5 rotationY=0  — reason: Aid_Kit_01 not on a surface, move to Bench_02', 'MoveObject Patient_01 x=-2.5 y=0.0 z=4.5 rotationY=0  — reason: inside room, facing center']
+2026-04-30 01:05:05 - Pipeline - INFO -   Step complete — advancing 2 → 3: Place a small set of therapy and care props on available surfaces without creating clutter.
+2026-04-30 01:05:05 - Pipeline - INFO -   [parse_alignment] MoveObject Exam_Stool_01 → x=-3.52 y=0.0 z=2.0 rot=90.0
+2026-04-30 01:05:05 - Pipeline - INFO -   [parse_alignment] MoveObject WheelChair_01 → x=3.23 y=0.0 z=1.5 rot=270.0
+2026-04-30 01:05:05 - Pipeline - INFO -   [parse_alignment] MoveObject Doctor_01 → x=0.0 y=0.12 z=2.5 rot=0.0
+2026-04-30 01:05:05 - Pipeline - INFO -   [parse_alignment] MoveObject Patient_01 → x=-2.5 y=0.1 z=4.5 rot=0.0
+2026-04-30 01:05:05 - Pipeline - INFO -   [parse_alignment] MoveObject Doctor_01 → x=0.0 y=0.0 z=1.97 rot=0.0
+2026-04-30 01:05:05 - Pipeline - INFO -   [parse_alignment] MoveObject Bench_02 → x=-1.12 y=0.03 z=4.5 rot=0.0
+2026-04-30 01:05:05 - Pipeline - INFO -   [parse_alignment] MoveObject Crutch_01 → x=-3.58 y=0.03 z=2.67 rot=0.0
+2026-04-30 01:05:05 - Pipeline - INFO -   [parse_alignment] MoveObject Treadmill_01 → x=0.0 y=0.0 z=3.5 rot=0.0
+2026-04-30 01:05:05 - Pipeline - INFO -   [parse_alignment] MoveObject WheelChair_01 → x=3.23 y=0.0 z=1.5 rot=270.0
+2026-04-30 01:05:05 - Pipeline - INFO -   [parse_alignment] MoveObject Exam_Stool_01 → x=-3.8 y=0.0 z=2.0 rot=90.0
+2026-04-30 01:05:05 - Pipeline - INFO -   [parse_alignment] MoveObject Crutch_01 → x=3.0 y=0.6 z=4.0 rot=90.0
+2026-04-30 01:05:05 - Pipeline - INFO -   [parse_alignment] MoveObject Aid_Kit_01 → x=1.5 y=0.6 z=4.5 rot=0.0
+2026-04-30 01:05:05 - Pipeline - INFO -   [parse_alignment] MoveObject Patient_01 → x=-2.5 y=0.0 z=4.5 rot=0.0
+2026-04-30 01:05:05 - Pipeline - INFO - [Phase 1] Applied 13 direct corrections (MoveObject/DeleteObject)
+2026-04-30 01:05:06 - Pipeline - INFO - ----- GROQ RAW RESPONSE (loop attempt 1/3) -----
+2026-04-30 01:05:06 - Pipeline - INFO - [
+  {
+    "action": "PlaceObject",
+    "objectName": "Walker_01",
+    "x": -3.2,
+    "y": 0.8,
+    "z": 5.0,
     "rotationY": 0
   },
   {
     "action": "PlaceObject",
     "objectName": "Kinesotherapy_Apparatus_01",
-    "x": -2.8,
+    "x": 1.8,
     "y": 0.0,
+    "z": 5.3,
+    "rotationY": 0
+  },
+  {
+    "action": "PlaceObject",
+    "objectName": "Aid_Kit_01",
+    "x": -1.5,
+    "y": 0.8,
+    "z": 6.5,
+    "rotationY": 0
+  }
+]
+2026-04-30 01:05:06 - Pipeline - INFO - ------------------------------------------------------
+2026-04-30 01:05:06 - Pipeline - INFO - [Phase 1] Appended 3 fill commands
+2026-04-30 01:05:09 - Pipeline - INFO - [Phase 1 Reflection] Step 3/6: Place a small set of therapy and care props on available surfaces without creating clutter.
+2026-04-30 01:05:09 - ReflectionModule - INFO - [SceneState] Loaded 18 live objects from scene_state.json.
+2026-04-30 01:05:09 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread] [RosterThread]
+2026-04-30 01:05:09 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-30 01:05:09 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Treadmill_01 x=0.00 y=0.19 z=3.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.19, lifted by 0.19m)
+2026-04-30 01:05:09 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Walker_01 x=-3.42 y=0.03 z=5.00 rotationY=0  — reason: overlaps Patient_01 (pen_x=0.06m pen_z=0.67m; exact bounds)
+2026-04-30 01:05:09 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Exam_Stool_01 x=-3.52 y=0.00 z=2.00 rotationY=90  — reason: [bounds] left edge clips wall (x=-3.80, half=0.23)
+2026-04-30 01:05:09 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Doctor_01 x=0.00 y=0.12 z=1.97 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.12, lifted by 0.12m)
+2026-04-30 01:05:09 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Patient_01 x=-2.50 y=0.10 z=4.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.10, lifted by 0.10m)
+2026-04-30 01:05:09 - ReflectionModule - INFO - [BoundsThread] 4 bound/doorway corrections generated.
+2026-04-30 01:05:09 - ReflectionModule - INFO - [CollisionThread] math path: 1 collision(s) found.
+2026-04-30 01:05:12 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 1 line(s).
+2026-04-30 01:05:12 - ReflectionModule - INFO - [CollisionThread][image] MoveObject Crutch_01 x=3.1 y=0.6 z=4.2 rotationY=90 reason: visually overlaps Bench_01
+2026-04-30 01:05:12 - ReflectionModule - INFO - [CollisionThread] image path added 1 extra correction(s).
+2026-04-30 01:05:12 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 1 line(s).
+2026-04-30 01:05:12 - ReflectionModule - INFO - [DispatcherThread] LLM visual check added 1 extra correction(s).
+2026-04-30 01:05:13 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 2 line(s).
+2026-04-30 01:05:13 - ReflectionModule - INFO - [RosterThread] 0 corrections applied.
+2026-04-30 01:05:13 - ReflectionModule - INFO - [BoundsThread] 4 correction(s) applied:
+2026-04-30 01:05:13 - ReflectionModule - INFO -   [BoundsThread] MoveObject Treadmill_01 x=0.00 y=0.19 z=3.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.19, lifted by 0.19m)
+2026-04-30 01:05:13 - ReflectionModule - INFO -   [BoundsThread] MoveObject Exam_Stool_01 x=-3.52 y=0.00 z=2.00 rotationY=90  — reason: [bounds] left edge clips wall (x=-3.80, half=0.23)
+2026-04-30 01:05:13 - ReflectionModule - INFO -   [BoundsThread] MoveObject Doctor_01 x=0.00 y=0.12 z=1.97 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.12, lifted by 0.12m)
+2026-04-30 01:05:13 - ReflectionModule - INFO -   [BoundsThread] MoveObject Patient_01 x=-2.50 y=0.10 z=4.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.10, lifted by 0.10m)
+2026-04-30 01:05:13 - ReflectionModule - INFO - [CollisionThread] 2 correction(s) applied:
+2026-04-30 01:05:13 - ReflectionModule - INFO -   [CollisionThread] MoveObject Walker_01 x=-3.42 y=0.03 z=5.00 rotationY=0  — reason: overlaps Patient_01 (pen_x=0.06m pen_z=0.67m; exact bounds)
+2026-04-30 01:05:13 - ReflectionModule - INFO -   [CollisionThread] MoveObject Crutch_01 x=3.1 y=0.6 z=4.2 rotationY=90 reason: visually overlaps Bench_01
+2026-04-30 01:05:13 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied (skipped 1 already handled).
+2026-04-30 01:05:13 - ReflectionModule - INFO - [SurfaceThread] 1 correction(s) applied:
+2026-04-30 01:05:13 - ReflectionModule - INFO -   [SurfaceThread] ['MoveObject Exam_Stool_01 x=-3.5 y=0.0 z=2.0 rotationY=90.0 — reason: near left wall', 'MoveObject WheelChair_01 x=3.8 y=0.0 z=1.5 rotationY=270.0 — reason: near right wall', 'MoveObject Crutch_01 x=3.0 y=0.0 z=4.0 rotationY=90.0 — reason: Crutch_01 not on a surface, move to Bench_01', 'MoveObject Crutch_01 x=-3.5 y=0.8 z=2.5 rotationY=0.0 — reason: Crutch_01 not on a surface', 'MoveObject Aid_Kit_01 x=1.5 y=0.6 z=5.5 rotationY=0.0 — reason: Aid_Kit_01 not on a surface, move to Kinesotherapy_Apparatus_01', 'MoveObject Aid_Kit_01 x=-1.5 y=0.8 z=6.5 rotationY=0.0 — reason: Aid_Kit_01 on surface']
+2026-04-30 01:05:13 - ReflectionModule - INFO - Logged reflection entry for step 'Place a small set of therapy and care props on available surfaces without creating clutter.'
+2026-04-30 01:05:13 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=True  objects=13
+2026-04-30 01:05:13 - Pipeline - INFO -   layout: Current layout has Treadmill_01 in a good position. Exam_Stool_01, WheelChair_01, Doctor_01, and Patient_01 are in reasonable positions. Crutch_01 and Aid_Kit_01 need to be moved onto a surface.
+2026-04-30 01:05:13 - Pipeline - INFO -   suggestions: MoveObject Treadmill_01 x=0.00 y=0.19 z=3.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.19, lifted by 0.19m)
+MoveObject Exam_Stool_01 x=-3.52 y=0.00 z=2.00 rotationY=90  — reason: [bounds] left edge clips wall (x=-3.80, half=0.23)
+MoveObject Doctor_01 x=0.00 y=0.12 z=1.97 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.12, lifted by 0.12m)
+MoveObject Patient_01 x=-2.50 y=0.10 z=4.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.10, lifted by 0.10m)
+MoveObject Walker_01 x=-3.42 y=0.03 z=5.00 rotationY=0  — reason: overlaps Patient_01 (pen_x=0.06m pen_z=0.67m; exact bounds)
+MoveObject Crutch_01 x=3.1 y=0.6 z=4.2 rotationY=90 reason: visually overlaps Bench_01
+['MoveObject Exam_Stool_01 x=-3.5 y=0.0 z=2.0 rotationY=90.0 — reason: near left wall', 'MoveObject WheelChair_01 x=3.8 y=0.0 z=1.5 rotationY=270.0 — reason: near right wall', 'MoveObject Crutch_01 x=3.0 y=0.0 z=4.0 rotationY=90.0 — reason: Crutch_01 not on a surface, move to Bench_01', 'MoveObject Crutch_01 x=-3.5 y=0.8 z=2.5 rotationY=0.0 — reason: Crutch_01 not on a surface', 'MoveObject Aid_Kit_01 x=1.5 y=0.6 z=5.5 rotationY=0.0 — reason: Aid_Kit_01 not on a surface, move to Kinesotherapy_Apparatus_01', 'MoveObject Aid_Kit_01 x=-1.5 y=0.8 z=6.5 rotationY=0.0 — reason: Aid_Kit_01 on surface']
+2026-04-30 01:05:13 - Pipeline - INFO -   Step complete — advancing 3 → 4: Add simple clinical wall decor and orientation cues.
+2026-04-30 01:05:13 - Pipeline - INFO -   [parse_alignment] MoveObject Treadmill_01 → x=0.0 y=0.19 z=3.5 rot=0.0
+2026-04-30 01:05:13 - Pipeline - INFO -   [parse_alignment] MoveObject Exam_Stool_01 → x=-3.52 y=0.0 z=2.0 rot=90.0
+2026-04-30 01:05:13 - Pipeline - INFO -   [parse_alignment] MoveObject Doctor_01 → x=0.0 y=0.12 z=1.97 rot=0.0
+2026-04-30 01:05:13 - Pipeline - INFO -   [parse_alignment] MoveObject Patient_01 → x=-2.5 y=0.1 z=4.5 rot=0.0
+2026-04-30 01:05:13 - Pipeline - INFO -   [parse_alignment] MoveObject Walker_01 → x=-3.42 y=0.03 z=5.0 rot=0.0
+2026-04-30 01:05:13 - Pipeline - INFO -   [parse_alignment] MoveObject Crutch_01 → x=3.1 y=0.6 z=4.2 rot=90.0
+2026-04-30 01:05:13 - Pipeline - INFO -   [parse_alignment] MoveObject Exam_Stool_01 → x=-3.5 y=0.0 z=2.0 rot=90.0
+2026-04-30 01:05:13 - Pipeline - INFO -   [parse_alignment] MoveObject WheelChair_01 → x=3.8 y=0.0 z=1.5 rot=270.0
+2026-04-30 01:05:13 - Pipeline - INFO -   [parse_alignment] MoveObject Crutch_01 → x=3.0 y=0.0 z=4.0 rot=90.0
+2026-04-30 01:05:13 - Pipeline - INFO -   [parse_alignment] MoveObject Crutch_01 → x=-3.5 y=0.8 z=2.5 rot=0.0
+2026-04-30 01:05:13 - Pipeline - INFO -   [parse_alignment] MoveObject Aid_Kit_01 → x=1.5 y=0.6 z=5.5 rot=0.0
+2026-04-30 01:05:13 - Pipeline - INFO -   [parse_alignment] MoveObject Aid_Kit_01 → x=-1.5 y=0.8 z=6.5 rot=0.0
+2026-04-30 01:05:13 - Pipeline - INFO - [Phase 1] Applied 12 direct corrections (MoveObject/DeleteObject)
+2026-04-30 01:05:14 - Pipeline - INFO - ----- GROQ RAW RESPONSE (loop attempt 1/3) -----
+2026-04-30 01:05:14 - Pipeline - INFO - [
+  {
+    "action": "PlaceObject",
+    "objectName": "Exercise_Ball_01",
+    "x": -3.2,
+    "y": 0.8,
+    "z": 5.0,
+    "rotationY": 0
+  },
+  {
+    "action": "PlaceObject",
+    "objectName": "Towel_Dispenser_01",
+    "x": 3.0,
+    "y": 0.8,
+    "z": 5.5,
+    "rotationY": 0
+  },
+  {
+    "action": "PlaceObject",
+    "objectName": "Bottle_01",
+    "x": 2.2,
+    "y": 0.8,
+    "z": 2.5,
+    "rotationY": 0
+  }
+]
+2026-04-30 01:05:14 - Pipeline - INFO - ------------------------------------------------------
+2026-04-30 01:05:14 - Pipeline - WARNING - [fix_prefab_names] Dropping PlaceObject (prefab not found): Exercise_Ball_01
+2026-04-30 01:05:14 - Pipeline - INFO - [Phase 1] Appended 2 fill commands
+2026-04-30 01:05:17 - Pipeline - INFO - [Phase 1 Reflection] Step 4/6: Add simple clinical wall decor and orientation cues.
+2026-04-30 01:05:17 - ReflectionModule - INFO - [SceneState] Loaded 20 live objects from scene_state.json.
+2026-04-30 01:05:17 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread] [RosterThread]
+2026-04-30 01:05:17 - ReflectionModule - INFO - [DispatcherThread] 2 object(s) flagged: ['Crutch_01 → floating ([dispatcher→surface])', 'Aid_Kit_01 → floating ([dispatcher→surface])']
+2026-04-30 01:05:17 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject WheelChair_01 x=3.23 y=0.00 z=1.50 rotationY=270  — reason: [bounds] right edge clips wall (x=3.80, half=0.52)
+2026-04-30 01:05:17 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-30 01:05:17 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Walker_01 x=-3.37 y=0.03 z=5.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-3.42, half=0.38)
+2026-04-30 01:05:17 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Towel_Dispenser_01 x=3.00 y=0.07 z=5.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.04, lifted by 0.04m)
+2026-04-30 01:05:17 - ReflectionModule - INFO - [BoundsThread] 3 bound/doorway corrections generated.
+2026-04-30 01:05:20 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 2 line(s).
+2026-04-30 01:05:20 - ReflectionModule - INFO - [BoundsThread] LLM visual check added 1 extra correction(s).
+2026-04-30 01:05:20 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 1 line(s).
+2026-04-30 01:05:20 - ReflectionModule - INFO - [CollisionThread][image] MoveObject Walker_01 x=-3.8 y=0.03 z=5.0 rotationY=0.0  — reason: visually overlaps Crutch_01
+2026-04-30 01:05:20 - ReflectionModule - INFO - [CollisionThread] image path added 1 extra correction(s).
+2026-04-30 01:05:20 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 2 line(s).
+2026-04-30 01:05:20 - ReflectionModule - INFO - [RosterThread] 0 corrections applied.
+2026-04-30 01:05:20 - ReflectionModule - INFO - [BoundsThread] 4 correction(s) applied:
+2026-04-30 01:05:20 - ReflectionModule - INFO -   [BoundsThread] MoveObject WheelChair_01 x=3.23 y=0.00 z=1.50 rotationY=270  — reason: [bounds] right edge clips wall (x=3.80, half=0.52)
+2026-04-30 01:05:20 - ReflectionModule - INFO -   [BoundsThread] MoveObject Walker_01 x=-3.37 y=0.03 z=5.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-3.42, half=0.38)
+2026-04-30 01:05:20 - ReflectionModule - INFO -   [BoundsThread] MoveObject Towel_Dispenser_01 x=3.00 y=0.07 z=5.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.04, lifted by 0.04m)
+2026-04-30 01:05:20 - ReflectionModule - INFO -   [BoundsThread] MoveObject Exam_Stool_01 x=-3.7 y=0.0 z=2.0 rotationY=90.0  — reason: visually clipping wall
+2026-04-30 01:05:20 - ReflectionModule - INFO - [CollisionThread] 1 correction(s) applied:
+2026-04-30 01:05:20 - ReflectionModule - INFO -   [CollisionThread] MoveObject Walker_01 x=-3.8 y=0.03 z=5.0 rotationY=0.0  — reason: visually overlaps Crutch_01
+2026-04-30 01:05:20 - ReflectionModule - INFO - [DispatcherThread] 2 correction(s) applied:
+2026-04-30 01:05:20 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Crutch_01 x=-3.50 y=0.49 z=2.00 rotationY=0  — reason: [dispatcher→surface] floating at y=0.80, no surface below; nearest surface is Exam_Stool_01
+2026-04-30 01:05:20 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Aid_Kit_01 x=-1.12 y=0.97 z=4.50 rotationY=0  — reason: [dispatcher→surface] floating at y=0.80, no surface below; nearest surface is Bench_02
+2026-04-30 01:05:20 - ReflectionModule - INFO - [SurfaceThread] 1 correction(s) applied:
+2026-04-30 01:05:20 - ReflectionModule - INFO -   [SurfaceThread] ['MoveObject Exam_Stool_01 x=-3.5 y=0.0 z=2.0 rotationY=90.0 — reason: near left wall', 'MoveObject WheelChair_01 x=3.8 y=0.0 z=1.5 rotationY=270.0 — reason: near right wall', 'MoveObject Crutch_01 x=3.0 y=0.0 z=4.0 rotationY=90.0 — reason: Crutch_01 not on a surface, move to Bench_01', 'MoveObject Crutch_01 x=-3.5 y=0.8 z=2.5 rotationY=0.0 — reason: Crutch_01 not on a surface', 'MoveObject Aid_Kit_01 x=1.5 y=0.6 z=5.5 rotationY=0.0 — reason: Aid_Kit_01 not on a surface, move to Kinesotherapy_Apparatus_01', 'MoveObject Aid_Kit_01 x=-1.5 y=0.8 z=6.5 rotationY=0.0 — reason: Aid_Kit_01 on surface']
+2026-04-30 01:05:20 - ReflectionModule - INFO - Logged reflection entry for step 'Add simple clinical wall decor and orientation cues.'
+2026-04-30 01:05:21 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=True  objects=15
+2026-04-30 01:05:21 - Pipeline - INFO -   layout: Current layout has Treadmill_01 in a good position. Exam_Stool_01, WheelChair_01, Doctor_01, and Patient_01 are in reasonable positions. Crutch_01 and Aid_Kit_01 need to be moved onto a surface.
+2026-04-30 01:05:21 - Pipeline - INFO -   suggestions: MoveObject WheelChair_01 x=3.23 y=0.00 z=1.50 rotationY=270  — reason: [bounds] right edge clips wall (x=3.80, half=0.52)
+MoveObject Walker_01 x=-3.37 y=0.03 z=5.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-3.42, half=0.38)
+MoveObject Towel_Dispenser_01 x=3.00 y=0.07 z=5.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.04, lifted by 0.04m)
+MoveObject Exam_Stool_01 x=-3.7 y=0.0 z=2.0 rotationY=90.0  — reason: visually clipping wall
+MoveObject Walker_01 x=-3.8 y=0.03 z=5.0 rotationY=0.0  — reason: visually overlaps Crutch_01
+MoveObject Crutch_01 x=-3.50 y=0.49 z=2.00 rotationY=0  — reason: [dispatcher→surface] floating at y=0.80, no surface below; nearest surface is Exam_Stool_01
+MoveObject Aid_Kit_01 x=-1.12 y=0.97 z=4.50 rotationY=0  — reason: [dispatcher→surface] floating at y=0.80, no surface below; nearest surface is Bench_02
+['MoveObject Exam_Stool_01 x=-3.5 y=0.0 z=2.0 rotationY=90.0 — reason: near left wall', 'MoveObject WheelChair_01 x=3.8 y=0.0 z=1.5 rotationY=270.0 — reason: near right wall', 'MoveObject Crutch_01 x=3.0 y=0.0 z=4.0 rotationY=90.0 — reason: Crutch_01 not on a surface, move to Bench_01', 'MoveObject Crutch_01 x=-3.5 y=0.8 z=2.5 rotationY=0.0 — reason: Crutch_01 not on a surface', 'MoveObject Aid_Kit_01 x=1.5 y=0.6 z=5.5 rotationY=0.0 — reason: Aid_Kit_01 not on a surface, move to Kinesotherapy_Apparatus_01', 'MoveObject Aid_Kit_01 x=-1.5 y=0.8 z=6.5 rotationY=0.0 — reason: Aid_Kit_01 on surface']
+2026-04-30 01:05:21 - Pipeline - INFO -   Step complete — advancing 4 → 5: Position the therapist and patients for simultaneous supervised rehabilitation activities.
+2026-04-30 01:05:21 - Pipeline - INFO -   [parse_alignment] MoveObject WheelChair_01 → x=3.23 y=0.0 z=1.5 rot=270.0
+2026-04-30 01:05:21 - Pipeline - INFO -   [parse_alignment] MoveObject Walker_01 → x=-3.37 y=0.03 z=5.0 rot=0.0
+2026-04-30 01:05:21 - Pipeline - INFO -   [parse_alignment] MoveObject Towel_Dispenser_01 → x=3.0 y=0.07 z=5.5 rot=0.0
+2026-04-30 01:05:21 - Pipeline - INFO -   [parse_alignment] MoveObject Exam_Stool_01 → x=-3.7 y=0.0 z=2.0 rot=90.0
+2026-04-30 01:05:21 - Pipeline - INFO -   [parse_alignment] MoveObject Walker_01 → x=-3.8 y=0.03 z=5.0 rot=0.0
+2026-04-30 01:05:21 - Pipeline - INFO -   [parse_alignment] MoveObject Crutch_01 → x=-3.5 y=0.49 z=2.0 rot=0.0
+2026-04-30 01:05:21 - Pipeline - INFO -   [parse_alignment] MoveObject Aid_Kit_01 → x=-1.12 y=0.97 z=4.5 rot=0.0
+2026-04-30 01:05:21 - Pipeline - INFO -   [parse_alignment] MoveObject Exam_Stool_01 → x=-3.5 y=0.0 z=2.0 rot=90.0
+2026-04-30 01:05:21 - Pipeline - INFO -   [parse_alignment] MoveObject WheelChair_01 → x=3.8 y=0.0 z=1.5 rot=270.0
+2026-04-30 01:05:21 - Pipeline - INFO -   [parse_alignment] MoveObject Crutch_01 → x=3.0 y=0.0 z=4.0 rot=90.0
+2026-04-30 01:05:21 - Pipeline - INFO -   [parse_alignment] MoveObject Crutch_01 → x=-3.5 y=0.8 z=2.5 rot=0.0
+2026-04-30 01:05:21 - Pipeline - INFO -   [parse_alignment] MoveObject Aid_Kit_01 → x=1.5 y=0.6 z=5.5 rot=0.0
+2026-04-30 01:05:21 - Pipeline - INFO -   [parse_alignment] MoveObject Aid_Kit_01 → x=-1.5 y=0.8 z=6.5 rot=0.0
+2026-04-30 01:05:21 - Pipeline - INFO - [Phase 1] Applied 13 direct corrections (MoveObject/DeleteObject)
+2026-04-30 01:05:22 - Pipeline - INFO - ----- GROQ RAW RESPONSE (loop attempt 1/3) -----
+2026-04-30 01:05:22 - Pipeline - INFO - [
+  {
+    "action": "PlaceObject",
+    "objectName": "Bottle_01",
+    "x": -3.0,
+    "y": 0.8,
+    "z": 5.5,
+    "rotationY": 0
+  },
+  {
+    "action": "PlaceObject",
+    "objectName": "Crutch_01",
+    "x": 3.8,
+    "y": 0.8,
+    "z": 2.8,
+    "rotationY": 0
+  },
+  {
+    "action": "PlaceObject",
+    "objectName": "Towel_Dispenser_01",
+    "x": -3.5,
+    "y": 0.8,
     "z": 4.5,
     "rotationY": 0
   }
 ]
-2026-04-22 22:33:39 - Pipeline - INFO - ------------------------------------------------------
-2026-04-22 22:33:39 - Pipeline - INFO - [Phase 1] Appended 3 fill commands
-2026-04-22 22:33:42 - Pipeline - INFO - [Phase 1 Reflection] Step 3/14: place
-2026-04-22 22:33:42 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
-2026-04-22 22:33:42 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
-2026-04-22 22:33:42 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
-2026-04-22 22:33:42 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
-2026-04-22 22:33:42 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
-2026-04-22 22:33:42 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
-2026-04-22 22:33:42 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
-2026-04-22 22:33:42 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
-2026-04-22 22:33:45 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:33:45 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
-2026-04-22 22:33:46 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:33:46 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
-2026-04-22 22:33:46 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:33:46 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
-2026-04-22 22:33:47 - ReflectionModule - WARNING - [SurfaceThread] attempt 1/3 failed: Illegal trailing comma before end of array: line 15 column 79 (char 1664)
-2026-04-22 22:33:58 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:33:58 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
-2026-04-22 22:33:58 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
-2026-04-22 22:33:58 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
-2026-04-22 22:33:58 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
-2026-04-22 22:33:58 - ReflectionModule - INFO - Logged reflection entry for step 'place'
-2026-04-22 22:33:58 - Pipeline - INFO -   Object cap reached (31/30) — no additions
-2026-04-22 22:33:58 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=31
-2026-04-22 22:33:58 - Pipeline - INFO -   layout: The room layout is sparse with 17 non-Cube objects placed. The Treadmill_01 is correctly placed near the right wall. However, some objects like Caution_Sign_01 and Poster_03 are not in their optimal positions and need adjustments.
-2026-04-22 22:33:58 - Pipeline - INFO -   Step complete — advancing 3 → 4: place
-2026-04-22 22:33:58 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
-2026-04-22 22:34:01 - Pipeline - INFO - [Phase 1 Reflection] Step 4/14: place
-2026-04-22 22:34:01 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
-2026-04-22 22:34:01 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
-2026-04-22 22:34:01 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
-2026-04-22 22:34:01 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
-2026-04-22 22:34:01 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
-2026-04-22 22:34:01 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
-2026-04-22 22:34:01 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
-2026-04-22 22:34:01 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
-2026-04-22 22:34:04 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:34:04 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
-2026-04-22 22:34:04 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:34:04 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
-2026-04-22 22:34:04 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:34:04 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
-2026-04-22 22:34:05 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:34:05 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
-2026-04-22 22:34:05 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
-2026-04-22 22:34:05 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
-2026-04-22 22:34:05 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
-2026-04-22 22:34:05 - ReflectionModule - INFO - Logged reflection entry for step 'place'
-2026-04-22 22:34:05 - Pipeline - INFO -   Object cap reached (31/30) — no additions
-2026-04-22 22:34:05 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=31
-2026-04-22 22:34:05 - Pipeline - INFO -   layout: The room layout is sparse with 17 non-Cube objects placed. The Treadmill_01 is correctly placed near the right wall. However, some objects like Caution_Sign_01 and Poster_03 are not in their optimal positions and need adjustments.
-2026-04-22 22:34:05 - Pipeline - INFO -   Step complete — advancing 4 → 5: place
-2026-04-22 22:34:05 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
-2026-04-22 22:34:08 - Pipeline - INFO - [Phase 1 Reflection] Step 5/14: place
-2026-04-22 22:34:08 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
-2026-04-22 22:34:08 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
-2026-04-22 22:34:08 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
-2026-04-22 22:34:08 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
-2026-04-22 22:34:08 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
-2026-04-22 22:34:08 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
-2026-04-22 22:34:08 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
-2026-04-22 22:34:08 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
-2026-04-22 22:34:10 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:34:10 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
-2026-04-22 22:34:11 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:34:11 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
-2026-04-22 22:34:11 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:34:11 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
-2026-04-22 22:34:13 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:34:13 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
-2026-04-22 22:34:13 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
-2026-04-22 22:34:13 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
-2026-04-22 22:34:13 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
-2026-04-22 22:34:13 - ReflectionModule - INFO - Logged reflection entry for step 'place'
-2026-04-22 22:34:13 - Pipeline - INFO -   Object cap reached (31/30) — no additions
-2026-04-22 22:34:13 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=31
-2026-04-22 22:34:13 - Pipeline - INFO -   layout: The room layout is sparse with 16 non-Cube objects placed. The Treadmill_01 is correctly placed near the right wall. However, some objects like Caution_Sign_01, Poster_03 are not in their optimal positions and need adjustments.
-2026-04-22 22:34:13 - Pipeline - INFO -   Step complete — advancing 5 → 6: place
-2026-04-22 22:34:13 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
-2026-04-22 22:34:16 - Pipeline - INFO - [Phase 1 Reflection] Step 6/14: place
-2026-04-22 22:34:16 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
-2026-04-22 22:34:16 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
-2026-04-22 22:34:16 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
-2026-04-22 22:34:16 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
-2026-04-22 22:34:16 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
-2026-04-22 22:34:16 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
-2026-04-22 22:34:16 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
-2026-04-22 22:34:16 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
-2026-04-22 22:34:18 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:34:18 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
-2026-04-22 22:34:18 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:34:18 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
-2026-04-22 22:34:19 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:34:19 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
-2026-04-22 22:34:19 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:34:19 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
-2026-04-22 22:34:19 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
-2026-04-22 22:34:19 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
-2026-04-22 22:34:19 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
-2026-04-22 22:34:20 - ReflectionModule - INFO - Logged reflection entry for step 'place'
-2026-04-22 22:34:20 - Pipeline - INFO -   Object cap reached (31/30) — no additions
-2026-04-22 22:34:20 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=31
-2026-04-22 22:34:20 - Pipeline - INFO -   layout: The room layout is sparse with 17 non-Cube objects placed. The Treadmill_01 is correctly placed near the right wall. However, some objects still need adjustments for optimal placement.
-2026-04-22 22:34:20 - Pipeline - INFO -   Step complete — advancing 6 → 7: place
-2026-04-22 22:34:20 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
-2026-04-22 22:34:23 - Pipeline - INFO - [Phase 1 Reflection] Step 7/14: place
-2026-04-22 22:34:23 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
-2026-04-22 22:34:23 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
-2026-04-22 22:34:23 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
-2026-04-22 22:34:23 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
-2026-04-22 22:34:23 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
-2026-04-22 22:34:23 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
-2026-04-22 22:34:23 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
-2026-04-22 22:34:23 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
-2026-04-22 22:34:24 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:34:24 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
-2026-04-22 22:34:26 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:34:26 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
-2026-04-22 22:34:30 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:34:30 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
-2026-04-22 22:34:30 - ReflectionModule - ERROR - [SurfaceThread] unrecoverable error — falling back to empty result: Error code: 429 - {'error': {'message': 'Rate limit reached for model `meta-llama/llama-4-scout-17b-16e-instruct` in organization `org_01kbgb8q7jf1kvv7fe0h3h4za3` service tier `on_demand` on tokens per minute (TPM): Limit 300000, Used 284324, Requested 17129. Please try again in 290.599999ms. ', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
-2026-04-22 22:34:30 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:34:30 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
-2026-04-22 22:34:30 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
-2026-04-22 22:34:30 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
-2026-04-22 22:34:30 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
-2026-04-22 22:34:30 - ReflectionModule - INFO - Logged reflection entry for step 'place'
-2026-04-22 22:34:30 - Pipeline - INFO -   Object cap reached (31/30) — no additions
-2026-04-22 22:34:30 - Pipeline - INFO -   step_complete=no  room_status=good  suggest_additions=False  objects=31
-2026-04-22 22:34:30 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
-2026-04-22 22:34:34 - Pipeline - INFO - [Phase 1 Reflection] Step 7/14: place
-2026-04-22 22:34:34 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
-2026-04-22 22:34:34 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
-2026-04-22 22:34:34 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
-2026-04-22 22:34:34 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
-2026-04-22 22:34:34 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
-2026-04-22 22:34:34 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
-2026-04-22 22:34:34 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
-2026-04-22 22:34:34 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
-2026-04-22 22:34:35 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:34:35 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
-2026-04-22 22:34:37 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:34:37 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
-2026-04-22 22:34:42 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:34:42 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
-2026-04-22 22:34:42 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:34:42 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
-2026-04-22 22:34:42 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
-2026-04-22 22:34:42 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
-2026-04-22 22:34:42 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
-2026-04-22 22:34:42 - ReflectionModule - INFO - Logged reflection entry for step 'place'
-2026-04-22 22:34:42 - Pipeline - INFO -   Object cap reached (31/30) — no additions
-2026-04-22 22:34:42 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=31
-2026-04-22 22:34:42 - Pipeline - INFO -   layout: The room layout is sparse with 17 non-Cube objects placed. The Treadmill_01 is correctly placed near the right wall. However, some objects still need adjustments for optimal placement.
-2026-04-22 22:34:42 - Pipeline - INFO -   Step complete — advancing 7 → 8: place
-2026-04-22 22:34:42 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
-2026-04-22 22:34:45 - Pipeline - INFO - [Phase 1 Reflection] Step 8/14: place
-2026-04-22 22:34:45 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
-2026-04-22 22:34:45 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
-2026-04-22 22:34:45 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
-2026-04-22 22:34:45 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
-2026-04-22 22:34:45 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
-2026-04-22 22:34:45 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
-2026-04-22 22:34:45 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
-2026-04-22 22:34:45 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
-2026-04-22 22:34:48 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:34:48 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
-2026-04-22 22:34:48 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:34:48 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
-2026-04-22 22:34:48 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:34:48 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
-2026-04-22 22:34:55 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:34:55 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
-2026-04-22 22:34:55 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
-2026-04-22 22:34:55 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
-2026-04-22 22:34:55 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
-2026-04-22 22:34:55 - ReflectionModule - INFO - Logged reflection entry for step 'place'
-2026-04-22 22:34:55 - Pipeline - INFO -   Object cap reached (31/30) — no additions
-2026-04-22 22:34:55 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=31
-2026-04-22 22:34:55 - Pipeline - INFO -   layout: The room layout is sparse with 17 non-Cube objects placed. The Treadmill_01 is correctly placed near the right wall. However, some objects still need adjustments for optimal placement.
-2026-04-22 22:34:55 - Pipeline - INFO -   Step complete — advancing 8 → 9: place
-2026-04-22 22:34:55 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
-2026-04-22 22:34:58 - Pipeline - INFO - [Phase 1 Reflection] Step 9/14: place
-2026-04-22 22:34:58 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
-2026-04-22 22:34:58 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
-2026-04-22 22:34:58 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
-2026-04-22 22:34:58 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
-2026-04-22 22:34:58 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
-2026-04-22 22:34:58 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
-2026-04-22 22:34:58 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
-2026-04-22 22:34:58 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
-2026-04-22 22:35:00 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:35:00 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
-2026-04-22 22:35:01 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:35:01 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
-2026-04-22 22:35:01 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:35:01 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
-2026-04-22 22:35:09 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:35:09 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
-2026-04-22 22:35:09 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
-2026-04-22 22:35:09 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
-2026-04-22 22:35:09 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
-2026-04-22 22:35:10 - ReflectionModule - INFO - Logged reflection entry for step 'place'
-2026-04-22 22:35:10 - Pipeline - INFO -   Object cap reached (31/30) — no additions
-2026-04-22 22:35:10 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=31
-2026-04-22 22:35:10 - Pipeline - INFO -   layout: The room layout is sparse with 17 non-Cube objects placed. The Treadmill_01 is correctly placed near the right wall. However, some objects still need adjustments for optimal placement.
-2026-04-22 22:35:10 - Pipeline - INFO -   Step complete — advancing 9 → 10: place
-2026-04-22 22:35:10 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
-2026-04-22 22:35:13 - Pipeline - INFO - [Phase 1 Reflection] Step 10/14: place
-2026-04-22 22:35:13 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
-2026-04-22 22:35:13 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
-2026-04-22 22:35:13 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
-2026-04-22 22:35:13 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
-2026-04-22 22:35:13 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
-2026-04-22 22:35:13 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
-2026-04-22 22:35:13 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
-2026-04-22 22:35:13 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
-2026-04-22 22:35:15 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:35:15 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
-2026-04-22 22:35:16 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:35:16 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
-2026-04-22 22:35:16 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:35:16 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
-2026-04-22 22:35:16 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:35:16 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
-2026-04-22 22:35:16 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
-2026-04-22 22:35:16 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
-2026-04-22 22:35:16 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
-2026-04-22 22:35:17 - ReflectionModule - INFO - Logged reflection entry for step 'place'
-2026-04-22 22:35:17 - Pipeline - INFO -   Object cap reached (31/30) — no additions
-2026-04-22 22:35:17 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=31
-2026-04-22 22:35:17 - Pipeline - INFO -   layout: The room layout is sparse with 17 non-Cube objects placed. The Treadmill_01 is correctly placed near the right wall. However, some objects still need adjustments for optimal placement.
-2026-04-22 22:35:17 - Pipeline - INFO -   Step complete — advancing 10 → 11: place
-2026-04-22 22:35:17 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
-2026-04-22 22:35:20 - Pipeline - INFO - [Phase 1 Reflection] Step 11/14: place
-2026-04-22 22:35:20 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
-2026-04-22 22:35:20 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
-2026-04-22 22:35:20 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
-2026-04-22 22:35:20 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
-2026-04-22 22:35:20 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
-2026-04-22 22:35:20 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
-2026-04-22 22:35:20 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
-2026-04-22 22:35:20 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
-2026-04-22 22:35:22 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:35:22 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
-2026-04-22 22:35:22 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:35:22 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
-2026-04-22 22:35:23 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:35:23 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
-2026-04-22 22:35:29 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:35:29 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
-2026-04-22 22:35:29 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
-2026-04-22 22:35:29 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
-2026-04-22 22:35:29 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
-2026-04-22 22:35:29 - ReflectionModule - INFO - Logged reflection entry for step 'place'
-2026-04-22 22:35:29 - Pipeline - INFO -   Object cap reached (31/30) — no additions
-2026-04-22 22:35:29 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=31
-2026-04-22 22:35:29 - Pipeline - INFO -   layout: The room layout is sparse with 17 non-Cube objects placed. The Treadmill_01 is correctly placed near the right wall. However, some objects still need adjustments for optimal placement.
-2026-04-22 22:35:29 - Pipeline - INFO -   Step complete — advancing 11 → 12: place
-2026-04-22 22:35:29 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
-2026-04-22 22:35:32 - Pipeline - INFO - [Phase 1 Reflection] Step 12/14: place
-2026-04-22 22:35:32 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
-2026-04-22 22:35:32 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
-2026-04-22 22:35:32 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
-2026-04-22 22:35:32 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
-2026-04-22 22:35:32 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
-2026-04-22 22:35:32 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
-2026-04-22 22:35:32 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
-2026-04-22 22:35:32 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
-2026-04-22 22:35:34 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:35:34 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
-2026-04-22 22:35:40 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:35:40 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
-2026-04-22 22:35:41 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:35:41 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
-2026-04-22 22:35:41 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:35:41 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
-2026-04-22 22:35:41 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
-2026-04-22 22:35:41 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
-2026-04-22 22:35:41 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
-2026-04-22 22:35:41 - ReflectionModule - INFO - Logged reflection entry for step 'place'
-2026-04-22 22:35:41 - Pipeline - INFO -   Object cap reached (31/30) — no additions
-2026-04-22 22:35:41 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=31
-2026-04-22 22:35:41 - Pipeline - INFO -   layout: The room layout is sparse with 26 non-Cube objects placed. The Treadmill_01 is correctly placed near the right wall. However, some objects still need adjustments for optimal placement.
-2026-04-22 22:35:41 - Pipeline - INFO -   Step complete — advancing 12 → 13: place
-2026-04-22 22:35:41 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
-2026-04-22 22:35:44 - Pipeline - INFO - [Phase 1 Reflection] Step 13/14: place
-2026-04-22 22:35:44 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
-2026-04-22 22:35:44 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
-2026-04-22 22:35:44 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
-2026-04-22 22:35:44 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
-2026-04-22 22:35:44 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
-2026-04-22 22:35:44 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
-2026-04-22 22:35:44 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
-2026-04-22 22:35:44 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
-2026-04-22 22:35:46 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:35:46 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
-2026-04-22 22:35:48 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:35:48 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
-2026-04-22 22:35:51 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:35:51 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
-2026-04-22 22:35:51 - ReflectionModule - ERROR - [SurfaceThread] unrecoverable error — falling back to empty result: Error code: 429 - {'error': {'message': 'Rate limit reached for model `meta-llama/llama-4-scout-17b-16e-instruct` in organization `org_01kbgb8q7jf1kvv7fe0h3h4za3` service tier `on_demand` on tokens per minute (TPM): Limit 300000, Used 285804, Requested 17016. Please try again in 564ms. ', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
-2026-04-22 22:35:51 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:35:51 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
-2026-04-22 22:35:51 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
-2026-04-22 22:35:51 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
-2026-04-22 22:35:51 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
-2026-04-22 22:35:51 - ReflectionModule - INFO - Logged reflection entry for step 'place'
-2026-04-22 22:35:51 - Pipeline - INFO -   Object cap reached (31/30) — no additions
-2026-04-22 22:35:51 - Pipeline - INFO -   step_complete=no  room_status=good  suggest_additions=False  objects=31
-2026-04-22 22:35:51 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
-2026-04-22 22:35:54 - Pipeline - INFO - [Phase 1 Reflection] Step 13/14: place
-2026-04-22 22:35:55 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
-2026-04-22 22:35:55 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
-2026-04-22 22:35:55 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
-2026-04-22 22:35:55 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
-2026-04-22 22:35:55 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
-2026-04-22 22:35:55 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
-2026-04-22 22:35:55 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
-2026-04-22 22:35:55 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
-2026-04-22 22:35:57 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:35:57 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
-2026-04-22 22:35:58 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:35:58 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
-2026-04-22 22:35:59 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:35:59 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
-2026-04-22 22:36:02 - ReflectionModule - ERROR - [SurfaceThread] unrecoverable error — falling back to empty result: Error code: 429 - {'error': {'message': 'Rate limit reached for model `meta-llama/llama-4-scout-17b-16e-instruct` in organization `org_01kbgb8q7jf1kvv7fe0h3h4za3` service tier `on_demand` on tokens per minute (TPM): Limit 300000, Used 283130, Requested 16954. Please try again in 16.8ms. ', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
-2026-04-22 22:36:02 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:36:02 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
-2026-04-22 22:36:02 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
-2026-04-22 22:36:02 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
-2026-04-22 22:36:02 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
-2026-04-22 22:36:02 - ReflectionModule - INFO - Logged reflection entry for step 'place'
-2026-04-22 22:36:02 - Pipeline - INFO -   Object cap reached (31/30) — no additions
-2026-04-22 22:36:02 - Pipeline - INFO -   step_complete=no  room_status=good  suggest_additions=False  objects=31
-2026-04-22 22:36:02 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
-2026-04-22 22:36:05 - Pipeline - INFO - [Phase 1 Reflection] Step 13/14: place
-2026-04-22 22:36:05 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
-2026-04-22 22:36:05 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
-2026-04-22 22:36:05 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
-2026-04-22 22:36:05 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
-2026-04-22 22:36:05 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
-2026-04-22 22:36:05 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
-2026-04-22 22:36:05 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
-2026-04-22 22:36:06 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
-2026-04-22 22:36:09 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:36:09 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
-2026-04-22 22:36:09 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:36:09 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
-2026-04-22 22:36:14 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:36:14 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
-2026-04-22 22:36:14 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:36:14 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
-2026-04-22 22:36:14 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
-2026-04-22 22:36:14 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
-2026-04-22 22:36:14 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
-2026-04-22 22:36:14 - ReflectionModule - INFO - Logged reflection entry for step 'place'
-2026-04-22 22:36:14 - Pipeline - INFO -   Object cap reached (31/30) — no additions
-2026-04-22 22:36:14 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=31
-2026-04-22 22:36:14 - Pipeline - INFO -   layout: The room layout is sparse with 26 non-Cube objects placed. The Treadmill_01 is correctly placed near the right wall. However, some objects still need adjustments for optimal placement.
-2026-04-22 22:36:14 - Pipeline - INFO -   Step complete — advancing 13 → 14: place
-2026-04-22 22:36:14 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
-2026-04-22 22:36:17 - Pipeline - INFO - [Phase 1 Reflection] Step 14/14: place
-2026-04-22 22:36:17 - ReflectionModule - INFO - [SceneState] Loaded 0 live objects from scene_state.json.
-2026-04-22 22:36:17 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
-2026-04-22 22:36:17 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
-2026-04-22 22:36:17 - ReflectionModule - INFO - [DispatcherThread] scene state empty — using screenshots only.
-2026-04-22 22:36:17 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
-2026-04-22 22:36:17 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
-2026-04-22 22:36:17 - ReflectionModule - INFO - [BoundsThread] scene state empty — using screenshots only.
-2026-04-22 22:36:17 - ReflectionModule - INFO - [CollisionThread] scene state empty — using screenshots only.
-2026-04-22 22:36:19 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:36:19 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
-2026-04-22 22:36:20 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:36:20 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
-2026-04-22 22:36:21 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:36:21 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
-2026-04-22 22:36:27 - ReflectionModule - WARNING - [NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.
-2026-04-22 22:36:27 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
-2026-04-22 22:36:27 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
-2026-04-22 22:36:27 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
-2026-04-22 22:36:27 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
-2026-04-22 22:36:27 - ReflectionModule - INFO - Logged reflection entry for step 'place'
-2026-04-22 22:36:27 - Pipeline - INFO -   Object cap reached (31/30) — no additions
-2026-04-22 22:36:27 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=31
-2026-04-22 22:36:27 - Pipeline - INFO -   layout: The room layout is sparse with 26 non-Cube objects placed. The Treadmill_01 is correctly placed near the right wall. However, some objects still need adjustments for optimal placement.
-2026-04-22 22:36:27 - Pipeline - INFO -   Step complete — all 14 plan steps complete. Stopping environment generation.
-2026-04-22 22:36:30 - Pipeline - INFO - [InteractionMap] Generated map for 12 objects → interaction_map.json
-2026-04-22 22:36:30 - Pipeline - INFO - --phase1-only flag set. Skipping Phase 2.
-2026-04-22 22:36:30 - Pipeline - INFO - Total objects placed: 38
+2026-04-30 01:05:22 - Pipeline - INFO - ------------------------------------------------------
+2026-04-30 01:05:22 - Pipeline - INFO - [Phase 1] Appended 3 fill commands
+2026-04-30 01:05:25 - Pipeline - INFO - [Phase 1 Reflection] Step 5/6: Position the therapist and patients for simultaneous supervised rehabilitation activities.
+2026-04-30 01:05:25 - ReflectionModule - INFO - [SceneState] Loaded 20 live objects from scene_state.json.
+2026-04-30 01:05:25 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread] [RosterThread]
+2026-04-30 01:05:25 - ReflectionModule - INFO - [DispatcherThread] 2 object(s) flagged: ['Aid_Kit_01 → floating ([dispatcher→surface])', 'Towel_Dispenser_01 → floating ([dispatcher→surface])']
+2026-04-30 01:05:25 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject WheelChair_01 x=3.23 y=0.00 z=1.50 rotationY=270  — reason: [bounds] right edge clips wall (x=3.80, half=0.52)
+2026-04-30 01:05:25 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Towel_Dispenser_01 x=-3.50 y=1.10 z=3.92 rotationY=0  — reason: overlaps Walker_01 (pen_x=0.23m pen_z=0.18m; exact bounds)
+2026-04-30 01:05:25 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Crutch_01 x=3.67 y=0.03 z=2.80 rotationY=0  — reason: [bounds] right edge clips wall (x=3.80, half=0.08)
+2026-04-30 01:05:25 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Walker_01 x=-3.37 y=0.03 z=5.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-3.80, half=0.38)
+2026-04-30 01:05:25 - ReflectionModule - INFO - [BoundsThread] 3 bound/doorway corrections generated.
+2026-04-30 01:05:25 - ReflectionModule - INFO - [CollisionThread] math path: 1 collision(s) found.
+2026-04-30 01:05:28 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 2 line(s).
+2026-04-30 01:05:28 - ReflectionModule - INFO - [DispatcherThread] LLM visual check added 1 extra correction(s).
+2026-04-30 01:05:29 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 1 line(s).
+2026-04-30 01:05:29 - ReflectionModule - INFO - [BoundsThread] LLM visual check added 1 extra correction(s).
+2026-04-30 01:05:30 - ReflectionModule - WARNING - [CollisionThread] focused LLM call failed: Error code: 429 - {'error': {'message': 'Rate limit reached for model `meta-llama/llama-4-scout-17b-16e-instruct` in organization `org_01kbgb8q7jf1kvv7fe0h3h4za3` service tier `on_demand` on tokens per minute (TPM): Limit 300000, Used 296720, Requested 9953. Please try again in 1.3346s. ', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+2026-04-30 01:05:30 - ReflectionModule - INFO - [Merge] spliced Dispatcher Y into Collision for Towel_Dispenser_01: y 1.10 → 0.97
+2026-04-30 01:05:30 - ReflectionModule - INFO - [RosterThread] 0 corrections applied.
+2026-04-30 01:05:30 - ReflectionModule - INFO - [BoundsThread] 4 correction(s) applied:
+2026-04-30 01:05:30 - ReflectionModule - INFO -   [BoundsThread] MoveObject WheelChair_01 x=3.23 y=0.00 z=1.50 rotationY=270  — reason: [bounds] right edge clips wall (x=3.80, half=0.52)
+2026-04-30 01:05:30 - ReflectionModule - INFO -   [BoundsThread] MoveObject Crutch_01 x=3.67 y=0.03 z=2.80 rotationY=0  — reason: [bounds] right edge clips wall (x=3.80, half=0.08)
+2026-04-30 01:05:30 - ReflectionModule - INFO -   [BoundsThread] MoveObject Walker_01 x=-3.37 y=0.03 z=5.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-3.80, half=0.38)
+2026-04-30 01:05:30 - ReflectionModule - INFO -   [BoundsThread] MoveObject Exam_Stool_01 x=-3.79 y=0.0 z=2.0 rotationY=90.0  — reason: visually clipping wall
+2026-04-30 01:05:30 - ReflectionModule - INFO - [CollisionThread] 1 correction(s) applied:
+2026-04-30 01:05:30 - ReflectionModule - INFO -   [CollisionThread] MoveObject Towel_Dispenser_01 x=-3.50 y=0.97 z=3.92 rotationY=0  — reason: overlaps Walker_01 (pen_x=0.23m pen_z=0.18m; exact bounds) [+dispatcher Y=0.97]
+2026-04-30 01:05:30 - ReflectionModule - INFO - [DispatcherThread] 2 correction(s) applied (skipped 1 already handled):
+2026-04-30 01:05:30 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Aid_Kit_01 x=-1.12 y=0.97 z=4.50 rotationY=0  — reason: [dispatcher→surface] floating at y=0.80, no surface below; nearest surface is Bench_02
+2026-04-30 01:05:30 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Treadmill_01 x=0.0 y=0.0 z=3.5 rotationY=0.0 — reason: [dispatcher→surface] <issue>
+2026-04-30 01:05:30 - ReflectionModule - INFO - [SurfaceThread] 1 correction(s) applied:
+2026-04-30 01:05:30 - ReflectionModule - INFO -   [SurfaceThread] ['MoveObject Crutch_01 x=3.0 y=0.6 z=4.0 rotationY=90.0  — reason: Crutch_01 not on a surface, move to Bench_01', 'MoveObject Aid_Kit_01 x=-1.5 y=0.8 z=6.5 rotationY=0.0  — reason: Aid_Kit_01 on surface, no change', 'MoveObject Crutch_01 x=-3.5 y=0.8 z=2.5 rotationY=0.0  — reason: Crutch_01 not on a surface, move to Exam_Stool_01', 'MoveObject Aid_Kit_01 x=1.5 y=0.6 z=5.5 rotationY=0.0  — reason: Aid_Kit_01 not on a surface, move to Kinesotherapy_Apparatus_01']
+2026-04-30 01:05:30 - ReflectionModule - INFO - Logged reflection entry for step 'Position the therapist and patients for simultaneous supervised rehabilitation activities.'
+2026-04-30 01:05:30 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=True  objects=18
+2026-04-30 01:05:30 - Pipeline - INFO -   layout: Current layout has Treadmill_01 in a good position. Exam_Stool_01, WheelChair_01, Doctor_01, and Patient_01 are in reasonable positions. Crutch_01 and Aid_Kit_01 need to be moved onto a surface.
+2026-04-30 01:05:30 - Pipeline - INFO -   suggestions: MoveObject WheelChair_01 x=3.23 y=0.00 z=1.50 rotationY=270  — reason: [bounds] right edge clips wall (x=3.80, half=0.52)
+MoveObject Crutch_01 x=3.67 y=0.03 z=2.80 rotationY=0  — reason: [bounds] right edge clips wall (x=3.80, half=0.08)
+MoveObject Walker_01 x=-3.37 y=0.03 z=5.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-3.80, half=0.38)
+MoveObject Exam_Stool_01 x=-3.79 y=0.0 z=2.0 rotationY=90.0  — reason: visually clipping wall
+MoveObject Towel_Dispenser_01 x=-3.50 y=0.97 z=3.92 rotationY=0  — reason: overlaps Walker_01 (pen_x=0.23m pen_z=0.18m; exact bounds) [+dispatcher Y=0.97]
+MoveObject Aid_Kit_01 x=-1.12 y=0.97 z=4.50 rotationY=0  — reason: [dispatcher→surface] floating at y=0.80, no surface below; nearest surface is Bench_02
+MoveObject Treadmill_01 x=0.0 y=0.0 z=3.5 rotationY=0.0 — reason: [dispatcher→surface] <issue>
+['MoveObject Crutch_01 x=3.0 y=0.6 z=4.0 rotationY=90.0  — reason: Crutch_01 not on a surface, move to Bench_01', 'MoveObject Aid_Kit_01 x=-1.5 y=0.8 z=6.5 rotationY=0.0  — reason: Aid_Kit_01 on surface, no change', 'MoveObject Crutch_01 x=-3.5 y=0.8 z=2.5 rotationY=0.0  — reason: Crutch_01 not on a surface, move to Exam_Stool_01', 'MoveObject Aid_Kit_01 x=1.5 y=0.6 z=5.5 rotationY=0.0  — reason: Aid_Kit_01 not on a surface, move to Kinesotherapy_Apparatus_01']
+2026-04-30 01:05:30 - Pipeline - INFO -   Step complete — advancing 5 → 6: Configure interaction beats for the high-diversity test scenario and short story arc.
+2026-04-30 01:05:30 - Pipeline - INFO -   [parse_alignment] MoveObject WheelChair_01 → x=3.23 y=0.0 z=1.5 rot=270.0
+2026-04-30 01:05:30 - Pipeline - INFO -   [parse_alignment] MoveObject Crutch_01 → x=3.67 y=0.03 z=2.8 rot=0.0
+2026-04-30 01:05:30 - Pipeline - INFO -   [parse_alignment] MoveObject Walker_01 → x=-3.37 y=0.03 z=5.0 rot=0.0
+2026-04-30 01:05:30 - Pipeline - INFO -   [parse_alignment] MoveObject Exam_Stool_01 → x=-3.79 y=0.0 z=2.0 rot=90.0
+2026-04-30 01:05:30 - Pipeline - INFO -   [parse_alignment] MoveObject Towel_Dispenser_01 → x=-3.5 y=0.97 z=3.92 rot=0.0
+2026-04-30 01:05:30 - Pipeline - INFO -   [parse_alignment] MoveObject Aid_Kit_01 → x=-1.12 y=0.97 z=4.5 rot=0.0
+2026-04-30 01:05:30 - Pipeline - INFO -   [parse_alignment] MoveObject Treadmill_01 → x=0.0 y=0.0 z=3.5 rot=0.0
+2026-04-30 01:05:30 - Pipeline - INFO -   [parse_alignment] MoveObject Crutch_01 → x=3.0 y=0.6 z=4.0 rot=90.0
+2026-04-30 01:05:30 - Pipeline - INFO -   [parse_alignment] MoveObject Aid_Kit_01 → x=-1.5 y=0.8 z=6.5 rot=0.0
+2026-04-30 01:05:30 - Pipeline - INFO -   [parse_alignment] MoveObject Crutch_01 → x=-3.5 y=0.8 z=2.5 rot=0.0
+2026-04-30 01:05:30 - Pipeline - INFO -   [parse_alignment] MoveObject Aid_Kit_01 → x=1.5 y=0.6 z=5.5 rot=0.0
+2026-04-30 01:05:30 - Pipeline - INFO - [Phase 1] Applied 11 direct corrections (MoveObject/DeleteObject)
+2026-04-30 01:05:34 - Pipeline - INFO - ----- GROQ RAW RESPONSE (loop attempt 1/3) -----
+2026-04-30 01:05:34 - Pipeline - INFO - [
+  {
+    "action": "PlaceObject",
+    "objectName": "Bottle_01",
+    "x": -3.8,
+    "y": 0.8,
+    "z": 5.0,
+    "rotationY": 0
+  },
+  {
+    "action": "PlaceObject",
+    "objectName": "Crutch_01",
+    "x": 3.2,
+    "y": 0.8,
+    "z": 2.0,
+    "rotationY": 0
+  },
+  {
+    "action": "PlaceObject",
+    "objectName": "Aid_Kit_01",
+    "x": 1.8,
+    "y": 0.8,
+    "z": 6.0,
+    "rotationY": 0
+  }
+]
+2026-04-30 01:05:34 - Pipeline - INFO - ------------------------------------------------------
+2026-04-30 01:05:34 - Pipeline - INFO - [Phase 1] Appended 3 fill commands
+2026-04-30 01:05:37 - Pipeline - INFO - [Phase 1 Reflection] Step 6/6: Configure interaction beats for the high-diversity test scenario and short story arc.
+2026-04-30 01:05:37 - ReflectionModule - INFO - [SceneState] Loaded 20 live objects from scene_state.json.
+2026-04-30 01:05:37 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread] [RosterThread]
+2026-04-30 01:05:37 - ReflectionModule - INFO - [DispatcherThread] 2 object(s) flagged: ['Aid_Kit_01 → floating ([dispatcher→surface])', 'Towel_Dispenser_01 → floating ([dispatcher→surface])']
+2026-04-30 01:05:37 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Treadmill_01 x=0.00 y=0.19 z=3.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.19, lifted by 0.19m)
+2026-04-30 01:05:37 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Kinesotherapy_Apparatus_01 x=1.80 y=0.03 z=4.21 rotationY=0  — reason: overlaps Aid_Kit_01 (pen_x=0.20m pen_z=0.17m; exact bounds)
+2026-04-30 01:05:37 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Exam_Stool_01 x=-3.52 y=0.00 z=2.00 rotationY=90  — reason: [bounds] left edge clips wall (x=-3.79, half=0.23)
+2026-04-30 01:05:37 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Walker_01 x=-3.37 y=0.03 z=5.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-3.37, half=0.38)
+2026-04-30 01:05:37 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Bottle_01 x=-3.71 y=0.03 z=5.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-3.80, half=0.03)
+2026-04-30 01:05:37 - ReflectionModule - INFO - [BoundsThread] 4 bound/doorway corrections generated.
+2026-04-30 01:05:37 - ReflectionModule - INFO - [CollisionThread] math path: 1 collision(s) found.
+2026-04-30 01:05:39 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 1 line(s).
+2026-04-30 01:05:41 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 2 line(s).
+2026-04-30 01:05:41 - ReflectionModule - INFO - [CollisionThread][image] MoveObject Aid_Kit_01 x=1.8 y=1.224 z=3.0 rotationY=0.0  — reason: visually overlaps Kinesotherapy_Apparatus_01
+2026-04-30 01:05:41 - ReflectionModule - INFO - [CollisionThread][image] MoveObject Aid_Kit_01 x=1.8 y=1.224 z=3.0 rotationY=0.0
+2026-04-30 01:05:41 - ReflectionModule - INFO - [CollisionThread] image path added 2 extra correction(s).
+2026-04-30 01:05:42 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 2 line(s).
+2026-04-30 01:05:42 - ReflectionModule - INFO - [BoundsThread] LLM visual check added 1 extra correction(s).
+2026-04-30 01:05:43 - ReflectionModule - ERROR - [SurfaceThread] unrecoverable error — falling back to empty result: Error code: 429 - {'error': {'message': 'Rate limit reached for model `meta-llama/llama-4-scout-17b-16e-instruct` in organization `org_01kbgb8q7jf1kvv7fe0h3h4za3` service tier `on_demand` on tokens per minute (TPM): Limit 300000, Used 294737, Requested 21008. Please try again in 3.149s. ', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+2026-04-30 01:05:43 - ReflectionModule - INFO - [Merge] spliced Dispatcher Y into Collision for Aid_Kit_01: y 1.22 → 0.97
+2026-04-30 01:05:43 - ReflectionModule - INFO - [Merge] spliced Dispatcher Y into Collision for Aid_Kit_01: y 1.22 → 0.97
+2026-04-30 01:05:43 - ReflectionModule - INFO - [RosterThread] 0 corrections applied.
+2026-04-30 01:05:43 - ReflectionModule - INFO - [BoundsThread] 5 correction(s) applied:
+2026-04-30 01:05:43 - ReflectionModule - INFO -   [BoundsThread] MoveObject Treadmill_01 x=0.00 y=0.19 z=3.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.19, lifted by 0.19m)
+2026-04-30 01:05:43 - ReflectionModule - INFO -   [BoundsThread] MoveObject Exam_Stool_01 x=-3.52 y=0.00 z=2.00 rotationY=90  — reason: [bounds] left edge clips wall (x=-3.79, half=0.23)
+2026-04-30 01:05:43 - ReflectionModule - INFO -   [BoundsThread] MoveObject Walker_01 x=-3.37 y=0.03 z=5.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-3.37, half=0.38)
+2026-04-30 01:05:43 - ReflectionModule - INFO -   [BoundsThread] MoveObject Bottle_01 x=-3.71 y=0.03 z=5.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-3.80, half=0.03)
+2026-04-30 01:05:43 - ReflectionModule - INFO -   [BoundsThread] MoveObject Aid_Kit_01 x=1.8 y=1.224 z=5.9 rotationY=0.0  — reason: visually clipping wall
+2026-04-30 01:05:43 - ReflectionModule - INFO - [CollisionThread] 3 correction(s) applied:
+2026-04-30 01:05:43 - ReflectionModule - INFO -   [CollisionThread] MoveObject Kinesotherapy_Apparatus_01 x=1.80 y=0.03 z=4.21 rotationY=0  — reason: overlaps Aid_Kit_01 (pen_x=0.20m pen_z=0.17m; exact bounds)
+2026-04-30 01:05:43 - ReflectionModule - INFO -   [CollisionThread] MoveObject Aid_Kit_01 x=1.8 y=0.974 z=3.0 rotationY=0.0  — reason: visually overlaps Kinesotherapy_Apparatus_01 [+dispatcher Y=0.97]
+2026-04-30 01:05:43 - ReflectionModule - INFO -   [CollisionThread] MoveObject Aid_Kit_01 x=1.8 y=0.974 z=3.0 rotationY=0.0 [+dispatcher Y=0.97]
+2026-04-30 01:05:43 - ReflectionModule - INFO - [DispatcherThread] 1 correction(s) applied (skipped 1 already handled):
+2026-04-30 01:05:43 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Towel_Dispenser_01 x=-3.79 y=0.49 z=2.00 rotationY=0  — reason: [dispatcher→surface] floating at y=0.97, no surface below; nearest surface is Exam_Stool_01
+2026-04-30 01:05:43 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-30 01:05:43 - ReflectionModule - INFO - Logged reflection entry for step 'Configure interaction beats for the high-diversity test scenario and short story arc.'
+2026-04-30 01:05:43 - Pipeline - INFO -   step_complete=no  room_status=good  suggest_additions=False  objects=21
+2026-04-30 01:05:43 - Pipeline - INFO -   suggestions: MoveObject Treadmill_01 x=0.00 y=0.19 z=3.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.19, lifted by 0.19m)
+MoveObject Exam_Stool_01 x=-3.52 y=0.00 z=2.00 rotationY=90  — reason: [bounds] left edge clips wall (x=-3.79, half=0.23)
+MoveObject Walker_01 x=-3.37 y=0.03 z=5.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-3.37, half=0.38)
+MoveObject Bottle_01 x=-3.71 y=0.03 z=5.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-3.80, half=0.03)
+MoveObject Aid_Kit_01 x=1.8 y=1.224 z=5.9 rotationY=0.0  — reason: visually clipping wall
+MoveObject Kinesotherapy_Apparatus_01 x=1.80 y=0.03 z=4.21 rotationY=0  — reason: overlaps Aid_Kit_01 (pen_x=0.20m pen_z=0.17m; exact bounds)
+MoveObject Aid_Kit_01 x=1.8 y=0.974 z=3.0 rotationY=0.0  — reason: visually overlaps Kinesotherapy_Apparatus_01 [+dispatcher Y=0.97]
+MoveObject Aid_Kit_01 x=1.8 y=0.974 z=3.0 rotationY=0.0 [+dispatcher Y=0.97]
+MoveObject Towel_Dispenser_01 x=-3.79 y=0.49 z=2.00 rotationY=0  — reason: [dispatcher→surface] floating at y=0.97, no surface below; nearest surface is Exam_Stool_01
+2026-04-30 01:05:43 - Pipeline - INFO -   [parse_alignment] MoveObject Treadmill_01 → x=0.0 y=0.19 z=3.5 rot=0.0
+2026-04-30 01:05:43 - Pipeline - INFO -   [parse_alignment] MoveObject Exam_Stool_01 → x=-3.52 y=0.0 z=2.0 rot=90.0
+2026-04-30 01:05:43 - Pipeline - INFO -   [parse_alignment] MoveObject Walker_01 → x=-3.37 y=0.03 z=5.0 rot=0.0
+2026-04-30 01:05:43 - Pipeline - INFO -   [parse_alignment] MoveObject Bottle_01 → x=-3.71 y=0.03 z=5.0 rot=0.0
+2026-04-30 01:05:43 - Pipeline - INFO -   [parse_alignment] MoveObject Aid_Kit_01 → x=1.8 y=1.224 z=5.9 rot=0.0
+2026-04-30 01:05:43 - Pipeline - INFO -   [parse_alignment] MoveObject Kinesotherapy_Apparatus_01 → x=1.8 y=0.03 z=4.21 rot=0.0
+2026-04-30 01:05:43 - Pipeline - INFO -   [parse_alignment] MoveObject Aid_Kit_01 → x=1.8 y=0.974 z=3.0 rot=0.0
+2026-04-30 01:05:43 - Pipeline - INFO -   [parse_alignment] MoveObject Aid_Kit_01 → x=1.8 y=0.974 z=3.0 rot=0.0
+2026-04-30 01:05:43 - Pipeline - INFO -   [parse_alignment] MoveObject Towel_Dispenser_01 → x=-3.79 y=0.49 z=2.0 rot=0.0
+2026-04-30 01:05:43 - Pipeline - INFO - [Phase 1] Applied 9 direct corrections (MoveObject/DeleteObject)
+2026-04-30 01:05:43 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-30 01:05:46 - Pipeline - INFO - [Phase 1 Reflection] Step 6/6: Configure interaction beats for the high-diversity test scenario and short story arc.
+2026-04-30 01:05:46 - ReflectionModule - INFO - [SceneState] Loaded 20 live objects from scene_state.json.
+2026-04-30 01:05:46 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread] [RosterThread]
+2026-04-30 01:05:46 - ReflectionModule - INFO - [DispatcherThread] 1 object(s) flagged: ['Aid_Kit_01 → floating ([dispatcher→surface])']
+2026-04-30 01:05:46 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Walker_01 x=-3.37 y=0.03 z=5.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-3.37, half=0.38)
+2026-04-30 01:05:46 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Towel_Dispenser_01 x=-3.65 y=0.49 z=2.00 rotationY=0  — reason: overlaps Exam_Stool_01 (pen_x=0.12m pen_z=0.18m; exact bounds)
+2026-04-30 01:05:46 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Towel_Dispenser_01 x=-3.60 y=0.49 z=2.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-3.79, half=0.15)
+2026-04-30 01:05:46 - ReflectionModule - INFO - [BoundsThread] 2 bound/doorway corrections generated.
+2026-04-30 01:05:46 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Kinesotherapy_Apparatus_01 x=1.80 y=0.03 z=4.81 rotationY=0  — reason: overlaps Aid_Kit_01 (pen_x=0.20m pen_z=0.17m; exact bounds)
+2026-04-30 01:05:46 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Bottle_01 x=-3.76 y=0.03 z=5.00 rotationY=0  — reason: overlaps Walker_01 (pen_x=0.07m pen_z=0.07m; exact bounds)
+2026-04-30 01:05:46 - ReflectionModule - INFO - [CollisionThread] math path: 3 collision(s) found.
+2026-04-30 01:05:48 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 1 line(s).
+2026-04-30 01:05:49 - ReflectionModule - WARNING - [NameFix] 'Cube' is a structural cube (floor/wall/ceiling) — line dropped to protect room geometry: MoveObject Cube x=-2.50 y=0.10 z=4.80 rotationY=0.00  — reason: visually overlaps Patient_01
+2026-04-30 01:05:49 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-30 01:05:54 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-30 01:05:55 - ReflectionModule - ERROR - [SurfaceThread] unrecoverable error — falling back to empty result: Error code: 429 - {'error': {'message': 'Rate limit reached for model `meta-llama/llama-4-scout-17b-16e-instruct` in organization `org_01kbgb8q7jf1kvv7fe0h3h4za3` service tier `on_demand` on tokens per minute (TPM): Limit 300000, Used 287264, Requested 20969. Please try again in 1.6466s. ', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+2026-04-30 01:05:55 - ReflectionModule - INFO - [RosterThread] 0 corrections applied.
+2026-04-30 01:05:55 - ReflectionModule - INFO - [BoundsThread] 2 correction(s) applied:
+2026-04-30 01:05:55 - ReflectionModule - INFO -   [BoundsThread] MoveObject Walker_01 x=-3.37 y=0.03 z=5.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-3.37, half=0.38)
+2026-04-30 01:05:55 - ReflectionModule - INFO -   [BoundsThread] MoveObject Towel_Dispenser_01 x=-3.60 y=0.49 z=2.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-3.79, half=0.15)
+2026-04-30 01:05:55 - ReflectionModule - INFO - [CollisionThread] 3 correction(s) applied:
+2026-04-30 01:05:55 - ReflectionModule - INFO -   [CollisionThread] MoveObject Towel_Dispenser_01 x=-3.65 y=0.49 z=2.00 rotationY=0  — reason: overlaps Exam_Stool_01 (pen_x=0.12m pen_z=0.18m; exact bounds)
+2026-04-30 01:05:55 - ReflectionModule - INFO -   [CollisionThread] MoveObject Kinesotherapy_Apparatus_01 x=1.80 y=0.03 z=4.81 rotationY=0  — reason: overlaps Aid_Kit_01 (pen_x=0.20m pen_z=0.17m; exact bounds)
+2026-04-30 01:05:55 - ReflectionModule - INFO -   [CollisionThread] MoveObject Bottle_01 x=-3.76 y=0.03 z=5.00 rotationY=0  — reason: overlaps Walker_01 (pen_x=0.07m pen_z=0.07m; exact bounds)
+2026-04-30 01:05:55 - ReflectionModule - INFO - [DispatcherThread] 1 correction(s) applied:
+2026-04-30 01:05:55 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Aid_Kit_01 x=3.44 y=0.97 z=4.00 rotationY=0  — reason: [dispatcher→surface] floating at y=0.97, no surface below; nearest surface is Bench_01
+2026-04-30 01:05:55 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-30 01:05:55 - ReflectionModule - INFO - Logged reflection entry for step 'Configure interaction beats for the high-diversity test scenario and short story arc.'
+2026-04-30 01:05:55 - Pipeline - INFO -   step_complete=no  room_status=good  suggest_additions=False  objects=21
+2026-04-30 01:05:55 - Pipeline - INFO -   suggestions: MoveObject Walker_01 x=-3.37 y=0.03 z=5.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-3.37, half=0.38)
+MoveObject Towel_Dispenser_01 x=-3.60 y=0.49 z=2.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-3.79, half=0.15)
+MoveObject Towel_Dispenser_01 x=-3.65 y=0.49 z=2.00 rotationY=0  — reason: overlaps Exam_Stool_01 (pen_x=0.12m pen_z=0.18m; exact bounds)
+MoveObject Kinesotherapy_Apparatus_01 x=1.80 y=0.03 z=4.81 rotationY=0  — reason: overlaps Aid_Kit_01 (pen_x=0.20m pen_z=0.17m; exact bounds)
+MoveObject Bottle_01 x=-3.76 y=0.03 z=5.00 rotationY=0  — reason: overlaps Walker_01 (pen_x=0.07m pen_z=0.07m; exact bounds)
+MoveObject Aid_Kit_01 x=3.44 y=0.97 z=4.00 rotationY=0  — reason: [dispatcher→surface] floating at y=0.97, no surface below; nearest surface is Bench_01
+2026-04-30 01:05:55 - Pipeline - INFO -   [parse_alignment] MoveObject Walker_01 → x=-3.37 y=0.03 z=5.0 rot=0.0
+2026-04-30 01:05:55 - Pipeline - INFO -   [parse_alignment] MoveObject Towel_Dispenser_01 → x=-3.6 y=0.49 z=2.0 rot=0.0
+2026-04-30 01:05:55 - Pipeline - INFO -   [parse_alignment] MoveObject Towel_Dispenser_01 → x=-3.65 y=0.49 z=2.0 rot=0.0
+2026-04-30 01:05:55 - Pipeline - INFO -   [parse_alignment] MoveObject Kinesotherapy_Apparatus_01 → x=1.8 y=0.03 z=4.81 rot=0.0
+2026-04-30 01:05:55 - Pipeline - INFO -   [parse_alignment] MoveObject Bottle_01 → x=-3.76 y=0.03 z=5.0 rot=0.0
+2026-04-30 01:05:55 - Pipeline - INFO -   [parse_alignment] MoveObject Aid_Kit_01 → x=3.44 y=0.97 z=4.0 rot=0.0
+2026-04-30 01:05:55 - Pipeline - INFO - [Phase 1] Applied 6 direct corrections (MoveObject/DeleteObject)
+2026-04-30 01:05:55 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-30 01:05:58 - Pipeline - INFO - [Phase 1 Reflection] Step 6/6: Configure interaction beats for the high-diversity test scenario and short story arc.
+2026-04-30 01:05:58 - ReflectionModule - INFO - [SceneState] Loaded 20 live objects from scene_state.json.
+2026-04-30 01:05:58 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread] [RosterThread]
+2026-04-30 01:05:58 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-30 01:05:58 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Walker_01 x=-3.37 y=0.03 z=5.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-3.37, half=0.38)
+2026-04-30 01:05:58 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Towel_Dispenser_01 x=-3.65 y=0.49 z=2.58 rotationY=0  — reason: overlaps Exam_Stool_01 (pen_x=0.27m pen_z=0.18m; exact bounds)
+2026-04-30 01:05:58 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Towel_Dispenser_01 x=-3.60 y=0.49 z=2.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-3.65, half=0.15)
+2026-04-30 01:05:58 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Bottle_01 x=-3.71 y=0.03 z=5.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-3.76, half=0.03)
+2026-04-30 01:05:58 - ReflectionModule - INFO - [BoundsThread] 3 bound/doorway corrections generated.
+2026-04-30 01:05:58 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Aid_Kit_01 x=3.70 y=0.97 z=4.00 rotationY=0  — reason: overlaps Bench_01 (pen_x=0.12m pen_z=0.17m; exact bounds)
+2026-04-30 01:05:58 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Bottle_01 x=-3.76 y=0.03 z=5.00 rotationY=0  — reason: overlaps Walker_01 (pen_x=0.03m pen_z=0.07m; exact bounds)
+2026-04-30 01:05:58 - ReflectionModule - INFO - [CollisionThread] math path: 3 collision(s) found.
+2026-04-30 01:05:59 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-30 01:06:00 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 1 line(s).
+2026-04-30 01:06:00 - ReflectionModule - INFO - [DispatcherThread] LLM visual check added 1 extra correction(s).
+2026-04-30 01:06:00 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 2 line(s).
+2026-04-30 01:06:09 - ReflectionModule - INFO - [Merge] spliced Dispatcher Y into Collision for Aid_Kit_01: y 0.97 → 0.03
+2026-04-30 01:06:09 - ReflectionModule - INFO - [RosterThread] 0 corrections applied.
+2026-04-30 01:06:09 - ReflectionModule - INFO - [BoundsThread] 3 correction(s) applied:
+2026-04-30 01:06:09 - ReflectionModule - INFO -   [BoundsThread] MoveObject Walker_01 x=-3.37 y=0.03 z=5.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-3.37, half=0.38)
+2026-04-30 01:06:09 - ReflectionModule - INFO -   [BoundsThread] MoveObject Towel_Dispenser_01 x=-3.60 y=0.49 z=2.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-3.65, half=0.15)
+2026-04-30 01:06:09 - ReflectionModule - INFO -   [BoundsThread] MoveObject Bottle_01 x=-3.71 y=0.03 z=5.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-3.76, half=0.03)
+2026-04-30 01:06:09 - ReflectionModule - INFO - [CollisionThread] 3 correction(s) applied:
+2026-04-30 01:06:09 - ReflectionModule - INFO -   [CollisionThread] MoveObject Towel_Dispenser_01 x=-3.65 y=0.49 z=2.58 rotationY=0  — reason: overlaps Exam_Stool_01 (pen_x=0.27m pen_z=0.18m; exact bounds)
+2026-04-30 01:06:09 - ReflectionModule - INFO -   [CollisionThread] MoveObject Aid_Kit_01 x=3.70 y=0.03 z=4.00 rotationY=0  — reason: overlaps Bench_01 (pen_x=0.12m pen_z=0.17m; exact bounds) [+dispatcher Y=0.03]
+2026-04-30 01:06:09 - ReflectionModule - INFO -   [CollisionThread] MoveObject Bottle_01 x=-3.76 y=0.03 z=5.00 rotationY=0  — reason: overlaps Walker_01 (pen_x=0.03m pen_z=0.07m; exact bounds)
+2026-04-30 01:06:09 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied (skipped 1 already handled).
+2026-04-30 01:06:09 - ReflectionModule - INFO - [SurfaceThread] 1 correction(s) applied:
+2026-04-30 01:06:09 - ReflectionModule - INFO -   [SurfaceThread] ['MoveObject Treadmill_01 x=0.00 y=0.19 z=3.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.19, lifted by 0.19m)', 'MoveObject Exam_Stool_01 x=-3.52 y=0.00 z=2.00 rotationY=90  — reason: [bounds] left edge clips wall (x=-3.80, half=0.23)', 'MoveObject Doctor_01 x=0.00 y=0.12 z=1.97 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.12, lifted by 0.12m)', 'MoveObject Patient_01 x=-2.50 y=0.10 z=4.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.10, lifted by 0.10m)', 'MoveObject Walker_01 x=-3.42 y=0.03 z=5.00 rotationY=0  — reason: overlaps Patient_01 (pen_x=0.06m pen_z=0.67m; exact bounds)', 'MoveObject Crutch_01 x=3.1 y=0.6 z=4.2 rotationY=90 reason: visually overlaps Bench_01', 'MoveObject Crutch_01 x=3.0 y=0.0 z=4.0 rotationY=90.0  — reason: Crutch_01 not on a surface, move to Bench_01', 'MoveObject Crutch_01 x=-3.5 y=0.8 z=2.5 rotationY=0.0  — reason: Crutch_01 not on a surface', 'MoveObject Aid_Kit_01 x=1.5 y=0.6 z=5.5 rotationY=0.0  — reason: Aid_Kit_01 not on a surface, move to Kinesotherapy_Apparatus_01', 'MoveObject Aid_Kit_01 x=-1.5 y=0.8 z=6.5 rotationY=0.0  — reason: Aid_Kit_01 on surface']
+2026-04-30 01:06:09 - ReflectionModule - INFO - Logged reflection entry for step 'Configure interaction beats for the high-diversity test scenario and short story arc.'
+2026-04-30 01:06:09 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=True  objects=21
+2026-04-30 01:06:09 - Pipeline - INFO -   layout: Current layout has Treadmill_01 in a good position. Exam_Stool_01, WheelChair_01, Doctor_01, and Patient_01 are in reasonable positions. Crutch_01 and Aid_Kit_01 need to be moved onto a surface.
+2026-04-30 01:06:09 - Pipeline - INFO -   suggestions: MoveObject Walker_01 x=-3.37 y=0.03 z=5.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-3.37, half=0.38)
+MoveObject Towel_Dispenser_01 x=-3.60 y=0.49 z=2.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-3.65, half=0.15)
+MoveObject Bottle_01 x=-3.71 y=0.03 z=5.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-3.76, half=0.03)
+MoveObject Towel_Dispenser_01 x=-3.65 y=0.49 z=2.58 rotationY=0  — reason: overlaps Exam_Stool_01 (pen_x=0.27m pen_z=0.18m; exact bounds)
+MoveObject Aid_Kit_01 x=3.70 y=0.03 z=4.00 rotationY=0  — reason: overlaps Bench_01 (pen_x=0.12m pen_z=0.17m; exact bounds) [+dispatcher Y=0.03]
+MoveObject Bottle_01 x=-3.76 y=0.03 z=5.00 rotationY=0  — reason: overlaps Walker_01 (pen_x=0.03m pen_z=0.07m; exact bounds)
+['MoveObject Treadmill_01 x=0.00 y=0.19 z=3.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.19, lifted by 0.19m)', 'MoveObject Exam_Stool_01 x=-3.52 y=0.00 z=2.00 rotationY=90  — reason: [bounds] left edge clips wall (x=-3.80, half=0.23)', 'MoveObject Doctor_01 x=0.00 y=0.12 z=1.97 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.12, lifted by 0.12m)', 'MoveObject Patient_01 x=-2.50 y=0.10 z=4.50 rotationY=0  — reason: [bounds] bottom clips floor (boundsMinY=-0.10, lifted by 0.10m)', 'MoveObject Walker_01 x=-3.42 y=0.03 z=5.00 rotationY=0  — reason: overlaps Patient_01 (pen_x=0.06m pen_z=0.67m; exact bounds)', 'MoveObject Crutch_01 x=3.1 y=0.6 z=4.2 rotationY=90 reason: visually overlaps Bench_01', 'MoveObject Crutch_01 x=3.0 y=0.0 z=4.0 rotationY=90.0  — reason: Crutch_01 not on a surface, move to Bench_01', 'MoveObject Crutch_01 x=-3.5 y=0.8 z=2.5 rotationY=0.0  — reason: Crutch_01 not on a surface', 'MoveObject Aid_Kit_01 x=1.5 y=0.6 z=5.5 rotationY=0.0  — reason: Aid_Kit_01 not on a surface, move to Kinesotherapy_Apparatus_01', 'MoveObject Aid_Kit_01 x=-1.5 y=0.8 z=6.5 rotationY=0.0  — reason: Aid_Kit_01 on surface']
+2026-04-30 01:06:09 - Pipeline - INFO -   Step complete — all 6 plan steps complete. Stopping environment generation.
+2026-04-30 01:06:09 - Pipeline - INFO - [InteractionMap] Using frontier model: gpt-5.5
+2026-04-30 01:06:36 - Pipeline - INFO - [InteractionMap] Generated map for 13 objects → interaction_map.json
+2026-04-30 01:06:36 - Pipeline - INFO - [StoryChain] Using frontier model: gpt-5.5
+2026-04-30 01:06:54 - Pipeline - INFO - [StoryChain] Generated 5 beats → story_chain.json (title='Guided Rehab Circuit')
+2026-04-30 01:06:54 - Pipeline - INFO - --phase1-only flag set. Skipping Phase 2.
+2026-04-30 01:06:54 - Pipeline - INFO - Total objects placed: 28

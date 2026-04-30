@@ -1,0 +1,174 @@
+{
+  "title": "Rapid Triage",
+  "synopsis": "The player follows the EMT through a quick emergency assessment, checking vitals, hearing the patient’s pain report, and preparing examination tools.",
+  "beats": [
+    {
+      "id": "B1",
+      "trigger": {
+        "event": "touch",
+        "object": "EMT_01"
+      },
+      "actions": [
+        {
+          "action": "PlayHumanAnimationFromResources",
+          "targetModel": "EMT_01",
+          "controllerPathInResources": "AnimatorControllers/HumanM@Talking",
+          "stateName": "HumanM@Talking",
+          "crossFadeTime": 0.3
+        },
+        {
+          "action": "ShowSpeechBubble",
+          "objectName": "EMT_01",
+          "message": "Patient arrived with chest pain and shortness of breath. Check the monitor—vitals are updating now.",
+          "duration": 4.0
+        },
+        {
+          "action": "HighlightObject",
+          "objectName": "Monitor_01",
+          "r": 1.0,
+          "g": 0.9,
+          "b": 0.2,
+          "duration": 10.0
+        }
+      ]
+    },
+    {
+      "id": "B2",
+      "trigger": {
+        "event": "touch",
+        "object": "Monitor_01"
+      },
+      "actions": [
+        {
+          "action": "ClearHighlight",
+          "objectName": "Monitor_01"
+        },
+        {
+          "action": "WalkCharacterTo",
+          "objectName": "EMT_01",
+          "x": -0.6,
+          "y": 0.0,
+          "z": 4.8,
+          "rotationY": 145.0,
+          "duration": 1.5,
+          "controllerPathInResources": "AnimatorControllers/HumanM@Walk01_Forward",
+          "idleControllerPath": "AnimatorControllers/HumanM@Idles"
+        },
+        {
+          "action": "PlayHumanAnimationFromResources",
+          "targetModel": "EMT_01",
+          "controllerPathInResources": "AnimatorControllers/HumanM@Talking",
+          "stateName": "HumanM@Talking",
+          "crossFadeTime": 0.3
+        },
+        {
+          "action": "ShowSpeechBubble",
+          "objectName": "EMT_01",
+          "message": "Heart rate 124, blood pressure 88 over 56, oxygen saturation 91%. That pressure is dropping—we need to assess pain now.",
+          "duration": 5.0
+        },
+        {
+          "action": "HighlightObject",
+          "objectName": "Patient_01",
+          "r": 1.0,
+          "g": 0.9,
+          "b": 0.2,
+          "duration": 10.0
+        }
+      ]
+    },
+    {
+      "id": "B3",
+      "trigger": {
+        "event": "touch",
+        "object": "Patient_01"
+      },
+      "actions": [
+        {
+          "action": "ClearHighlight",
+          "objectName": "Patient_01"
+        },
+        {
+          "action": "SetLightIntensity",
+          "intensity": 3.2
+        },
+        {
+          "action": "SetLightColor",
+          "r": 0.85,
+          "g": 0.95,
+          "b": 1.0
+        },
+        {
+          "action": "PlayHumanAnimationFromResources",
+          "targetModel": "Patient_01",
+          "controllerPathInResources": "AnimatorControllers/HumanM@Talking",
+          "stateName": "HumanM@Talking",
+          "crossFadeTime": 0.3
+        },
+        {
+          "action": "ShowSpeechBubble",
+          "objectName": "Patient_01",
+          "message": "It hurts here... tight in my chest, and it spreads toward my left shoulder.",
+          "duration": 4.0
+        },
+        {
+          "action": "HighlightObject",
+          "objectName": "Trolley_01",
+          "r": 1.0,
+          "g": 0.9,
+          "b": 0.2,
+          "duration": 10.0
+        }
+      ]
+    },
+    {
+      "id": "B4",
+      "trigger": {
+        "event": "touch",
+        "object": "Trolley_01"
+      },
+      "actions": [
+        {
+          "action": "ClearHighlight",
+          "objectName": "Trolley_01"
+        },
+        {
+          "action": "HighlightObject",
+          "objectName": "Stethoscope_01",
+          "r": 0.3,
+          "g": 0.8,
+          "b": 1.0,
+          "duration": 5.0
+        },
+        {
+          "action": "HighlightObject",
+          "objectName": "Aid_Kit_01",
+          "r": 0.3,
+          "g": 0.8,
+          "b": 1.0,
+          "duration": 5.0
+        },
+        {
+          "action": "PlayHumanAnimationFromResources",
+          "targetModel": "EMT_01",
+          "controllerPathInResources": "AnimatorControllers/HumanM@Talking",
+          "stateName": "HumanM@Talking",
+          "crossFadeTime": 0.3
+        },
+        {
+          "action": "ShowSpeechBubble",
+          "objectName": "EMT_01",
+          "message": "Good. Tools are ready—start the focused exam while we keep monitoring the vitals.",
+          "duration": 4.0
+        },
+        {
+          "action": "PlayHumanAnimationFromResources",
+          "targetModel": "Patient_01",
+          "controllerPathInResources": "AnimatorControllers/HumanM@Idles",
+          "stateName": "HumanM@Idles",
+          "crossFadeTime": 0.3
+        }
+      ]
+    }
+  ]
+}

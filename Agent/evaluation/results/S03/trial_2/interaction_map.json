@@ -1,0 +1,216 @@
+{
+  "Treadmill_01": {
+    "touch": {
+      "bubble_message": "Treadmill — supports gait training and endurance rehabilitation.",
+      "bubble_on": "Treadmill_01",
+      "bubble_duration": 4.0
+    },
+    "grab": {
+      "controller": "AnimatorControllers/HumanM@Walk01_Forward",
+      "state": "HumanM@Walk01_Forward",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "I'll adjust the treadmill speed safely.",
+      "bubble_on": "Doctor_01",
+      "bubble_duration": 4.0
+    },
+    "release": {
+      "controller": "AnimatorControllers/HumanM@Walk01_Forward",
+      "state": "HumanM@Walk01_Forward",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "Treadmill secured for the next exercise.",
+      "bubble_on": "Doctor_01",
+      "bubble_duration": 4.0
+    }
+  },
+  "Exam_Stool_01": {
+    "touch": {
+      "bubble_message": "Exam stool — lets clinicians sit at patient level during assessment.",
+      "bubble_on": "Exam_Stool_01",
+      "bubble_duration": 4.0
+    }
+  },
+  "WheelChair_01": {
+    "touch": {
+      "bubble_message": "Wheelchair — provides safe mobility support between therapy tasks.",
+      "bubble_on": "WheelChair_01",
+      "bubble_duration": 4.0
+    },
+    "grab": {
+      "controller": "AnimatorControllers/HumanM@Walk01_Forward",
+      "state": "HumanM@Walk01_Forward",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "I'll bring the wheelchair closer.",
+      "bubble_on": "Doctor_01",
+      "bubble_duration": 4.0
+    },
+    "release": {
+      "controller": "AnimatorControllers/HumanM@Walk01_Forward",
+      "state": "HumanM@Walk01_Forward",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "Wheelchair parked with brakes checked.",
+      "bubble_on": "Doctor_01",
+      "bubble_duration": 4.0
+    }
+  },
+  "Doctor_01": {
+    "hover_enter": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "Let's keep your posture steady.",
+      "bubble_on": "Doctor_01",
+      "bubble_duration": 4.0
+    },
+    "touch": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "Ready for the next therapy activity?",
+      "bubble_on": "Doctor_01",
+      "bubble_duration": 4.0
+    }
+  },
+  "Patient_01": {
+    "hover_enter": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Patient_01",
+      "bubble_message": "I'm ready for the next exercise.",
+      "bubble_on": "Patient_01",
+      "bubble_duration": 4.0
+    },
+    "touch": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Patient_01",
+      "bubble_message": "My balance feels better today.",
+      "bubble_on": "Patient_01",
+      "bubble_duration": 4.0
+    }
+  },
+  "Bench_01": {
+    "touch": {
+      "bubble_message": "Therapy bench — supports seated exercises and rest breaks.",
+      "bubble_on": "Bench_01",
+      "bubble_duration": 4.0
+    }
+  },
+  "Crutch_01": {
+    "touch": {
+      "bubble_message": "Crutch — assists walking while reducing weight on an injured leg.",
+      "bubble_on": "Crutch_01",
+      "bubble_duration": 4.0
+    },
+    "grab": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "Check the height and rubber tip before use.",
+      "bubble_on": "Doctor_01",
+      "bubble_duration": 4.0
+    }
+  },
+  "Bench_02": {
+    "touch": {
+      "bubble_message": "Therapy bench — used for strengthening, transfers, and recovery.",
+      "bubble_on": "Bench_02",
+      "bubble_duration": 4.0
+    }
+  },
+  "Aid_Kit_01": {
+    "touch": {
+      "bubble_message": "Aid kit — contains supplies for minor injuries during therapy.",
+      "bubble_on": "Aid_Kit_01",
+      "bubble_duration": 4.0
+    },
+    "grab": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "Use clean supplies and report any injury.",
+      "bubble_on": "Doctor_01",
+      "bubble_duration": 4.0
+    }
+  },
+  "Walker_02": {
+    "touch": {
+      "bubble_message": "Walker — provides broad support for safer walking practice.",
+      "bubble_on": "Walker_02",
+      "bubble_duration": 4.0
+    },
+    "grab": {
+      "controller": "AnimatorControllers/HumanM@Walk01_Forward",
+      "state": "HumanM@Walk01_Forward",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "I'll position the walker for safe steps.",
+      "bubble_on": "Doctor_01",
+      "bubble_duration": 4.0
+    },
+    "release": {
+      "controller": "AnimatorControllers/HumanM@Walk01_Forward",
+      "state": "HumanM@Walk01_Forward",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "Walker is stable and ready.",
+      "bubble_on": "Doctor_01",
+      "bubble_duration": 4.0
+    }
+  },
+  "Walker_01": {
+    "touch": {
+      "bubble_message": "Walker — helps patients practice balance and protected gait.",
+      "bubble_on": "Walker_01",
+      "bubble_duration": 4.0
+    },
+    "grab": {
+      "controller": "AnimatorControllers/HumanM@Walk01_Forward",
+      "state": "HumanM@Walk01_Forward",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "I'll set the walker at the right height.",
+      "bubble_on": "Doctor_01",
+      "bubble_duration": 4.0
+    },
+    "release": {
+      "controller": "AnimatorControllers/HumanM@Walk01_Forward",
+      "state": "HumanM@Walk01_Forward",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "Walker placement looks safe.",
+      "bubble_on": "Doctor_01",
+      "bubble_duration": 4.0
+    }
+  },
+  "Kinesotherapy_Apparatus_01": {
+    "touch": {
+      "bubble_message": "Kinesotherapy apparatus — guides controlled rehab movements.",
+      "bubble_on": "Kinesotherapy_Apparatus_01",
+      "bubble_duration": 4.0
+    }
+  }
+}

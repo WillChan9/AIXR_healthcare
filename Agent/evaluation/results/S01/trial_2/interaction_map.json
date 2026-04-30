@@ -1,0 +1,162 @@
+{
+  "Exam_Table_01": {
+    "touch": {
+      "bubble_message": "Exam table — supports rapid assessment and treatment.",
+      "bubble_duration": 4.0
+    }
+  },
+  "Trolley_01": {
+    "touch": {
+      "bubble_message": "Supply trolley — keeps urgent tools and dressings nearby.",
+      "bubble_duration": 4.0
+    },
+    "grab": {
+      "controller": "AnimatorControllers/HumanM@Walk01_Forward",
+      "state": "HumanM@Walk01_Forward",
+      "fade": 0.3,
+      "idle_delay": 2.0,
+      "target_character": "EMT_01",
+      "bubble_message": "I'll move the supplies closer.",
+      "bubble_on": "EMT_01",
+      "bubble_duration": 3.0
+    },
+    "release": {
+      "controller": "AnimatorControllers/HumanM@Walk01_Forward",
+      "state": "HumanM@Walk01_Forward",
+      "fade": 0.3,
+      "idle_delay": 1.5,
+      "target_character": "EMT_01",
+      "bubble_message": "Trolley secured for quick access.",
+      "bubble_on": "EMT_01",
+      "bubble_duration": 3.0
+    }
+  },
+  "Stretchers_01": {
+    "touch": {
+      "bubble_message": "Stretcher — moves patients safely during emergency care.",
+      "bubble_duration": 4.0
+    }
+  },
+  "Monitor_01": {
+    "hover_enter": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "EMT_01",
+      "bubble_message": "BP 120/80, HR 72, SpO2 98%.",
+      "bubble_on": "EMT_01",
+      "bubble_duration": 4.0
+    },
+    "touch": {
+      "bubble_message": "Patient monitor — displays heart rate, BP, and oxygen levels.",
+      "bubble_duration": 4.0
+    }
+  },
+  "EMT_01": {
+    "hover_enter": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "EMT_01",
+      "bubble_message": "I'm checking airway, breathing, and circulation.",
+      "bubble_on": "EMT_01",
+      "bubble_duration": 4.0
+    },
+    "touch": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "EMT_01",
+      "bubble_message": "I'm checking airway, breathing, and circulation.",
+      "bubble_on": "EMT_01",
+      "bubble_duration": 4.0
+    }
+  },
+  "Patient_01": {
+    "hover_enter": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Patient_01",
+      "bubble_message": "My chest feels tight. Please help.",
+      "bubble_on": "Patient_01",
+      "bubble_duration": 4.0
+    },
+    "touch": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Patient_01",
+      "bubble_message": "My chest feels tight. Please help.",
+      "bubble_on": "Patient_01",
+      "bubble_duration": 4.0
+    }
+  },
+  "Aid_Kit_01": {
+    "touch": {
+      "bubble_message": "Aid kit — contains basic supplies for immediate first aid.",
+      "bubble_duration": 4.0
+    }
+  },
+  "IV_Drip_01": {
+    "touch": {
+      "bubble_message": "IV drip — delivers fluids or medicine directly into a vein.",
+      "bubble_duration": 4.0
+    }
+  },
+  "Defibrillator_01": {
+    "touch": {
+      "bubble_message": "Defibrillator — shocks the heart to restore rhythm.",
+      "bubble_duration": 4.0
+    }
+  },
+  "Oxygen_Tanks_01": {
+    "touch": {
+      "bubble_message": "Oxygen tanks — supply oxygen for patients in distress.",
+      "bubble_duration": 4.0
+    }
+  },
+  "Waste_Bucket_01": {
+    "touch": {
+      "bubble_message": "Waste bucket — holds used non-sharp clinical waste.",
+      "bubble_duration": 4.0
+    }
+  },
+  "Stethoscope_01": {
+    "touch": {
+      "bubble_message": "Stethoscope — listens to heart, lung, and bowel sounds.",
+      "bubble_duration": 4.0
+    },
+    "grab": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "EMT_01",
+      "bubble_message": "Use it to assess breath and heart sounds.",
+      "bubble_on": "EMT_01",
+      "bubble_duration": 4.0
+    }
+  },
+  "Bottle_01": {
+    "touch": {
+      "bubble_message": "Bottle — may contain antiseptic or sterile solution.",
+      "bubble_duration": 4.0
+    },
+    "grab": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "EMT_01",
+      "bubble_message": "Check the label before using any solution.",
+      "bubble_on": "EMT_01",
+      "bubble_duration": 4.0
+    }
+  }
+}

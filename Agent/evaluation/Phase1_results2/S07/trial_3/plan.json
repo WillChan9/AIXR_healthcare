@@ -1,0 +1,87 @@
+{
+  "room_type": "Medical Supply Closet",
+  "description": "Extreme density stress test in tiny room",
+  "layout_goals": {
+    "interior_bounds": "3m x 3m",
+    "minimum_objects": 12,
+    "focal_point": "center of the room"
+  },
+  "steps": [
+    {
+      "step": 1,
+      "action": "Place object against wall",
+      "objects": [
+        "Utility_Cart_01"
+      ],
+      "target_area": "left wall, x~-1.0, z~1.5",
+      "condition": "object is against wall and within bounds"
+    },
+    {
+      "step": 2,
+      "action": "Place object against wall",
+      "objects": [
+        "Utility_Cart_02"
+      ],
+      "target_area": "right wall, x~1.0, z~1.5",
+      "condition": "object is against wall and within bounds"
+    },
+    {
+      "step": 3,
+      "action": "Place objects on cart",
+      "objects": [
+        "Box_01",
+        "Box_02"
+      ],
+      "target_area": "on cart, y~0.8",
+      "condition": "objects are on cart and stacked"
+    },
+    {
+      "step": 4,
+      "action": "Place objects on surface",
+      "objects": [
+        "Bottle_01",
+        "Bottle_02",
+        "Bottle_03"
+      ],
+      "target_area": "on surface, y~0.8",
+      "condition": "objects are on surface and not overlapping"
+    },
+    {
+      "step": 5,
+      "action": "Place objects on surface",
+      "objects": [
+        "Mask_Box_01",
+        "Mask_Box_02"
+      ],
+      "target_area": "on surface, y~0.8",
+      "condition": "objects are on surface and not overlapping"
+    },
+    {
+      "step": 6,
+      "action": "Place object on surface",
+      "objects": [
+        "Bandage_01"
+      ],
+      "target_area": "on surface",
+      "condition": "object is on surface"
+    },
+    {
+      "step": 7,
+      "action": "Place object on surface",
+      "objects": [
+        "Aid_Kit_01"
+      ],
+      "target_area": "on surface",
+      "condition": "object is on surface"
+    },
+    {
+      "step": 8,
+      "action": "Place object on floor",
+      "objects": [
+        "Sterilizer_Drum_01"
+      ],
+      "target_area": "floor, back wall",
+      "condition": "object is on floor and against wall"
+    }
+  ]
+}

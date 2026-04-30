@@ -13,8 +13,9 @@ import json
 import math
 import re
 from collections import Counter
+from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 
 # ---------------------------------------------------------------------------
@@ -333,6 +334,53 @@ def compute_plan_metrics(reflection_data: List[Dict]) -> Dict[str, float]:
 # Efficiency Metrics
 # ---------------------------------------------------------------------------
 
+_LOG_TS_RE = re.compile(r'^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})')
+
+
+def _extract_phase1_duration(log_text: str) -> Tuple[Optional[float], Optional[str], Optional[str]]:
+    """Find Phase 1 start/end timestamps in agent.log and return (duration_seconds, start, end).
+
+    Start marker: line containing "PHASE 1: Static Environment Generation".
+    End markers (whichever appears last): "Step complete — all", "Total objects placed:",
+    "--phase1-only flag set", or the start of "PHASE 2".
+    Falls back to the last timestamped line if no end marker is found.
+    """
+    start_dt: Optional[datetime] = None
+    end_dt: Optional[datetime] = None
+    last_dt: Optional[datetime] = None
+
+    end_markers = (
+        "Step complete — all",
+        "Step complete - all",
+        "Total objects placed:",
+        "--phase1-only flag set",
+        "PHASE 2:",
+    )
+
+    for line in log_text.splitlines():
+        m = _LOG_TS_RE.match(line)
+        if not m:
+            continue
+        try:
+            dt = datetime.strptime(m.group(1), "%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            continue
+        last_dt = dt
+        if start_dt is None and "PHASE 1: Static Environment Generation" in line:
+            start_dt = dt
+            continue
+        if start_dt is not None and any(mk in line for mk in end_markers):
+            end_dt = dt  # keep updating to capture the last matching marker
+
+    if start_dt is None:
+        return None, None, None
+    final_end = end_dt or last_dt
+    if final_end is None or final_end < start_dt:
+        return None, start_dt.isoformat(sep=" "), None
+    duration = (final_end - start_dt).total_seconds()
+    return duration, start_dt.isoformat(sep=" "), final_end.isoformat(sep=" ")
+
+
 def compute_efficiency_metrics(
     log_path: Path,
     commands: List[Dict],
@@ -359,6 +407,15 @@ def compute_efficiency_metrics(
 
         # Count dropped prefabs
         metrics["dropped_prefabs"] = log_text.count("Dropping PlaceObject") + log_text.count("Dropping PlaceHuman")
+
+        # --- Phase 1 wall-clock duration (from log timestamps) ---
+        duration, start_ts, end_ts = _extract_phase1_duration(log_text)
+        if duration is not None:
+            metrics["phase1_duration_seconds"] = round(duration, 2)
+            metrics["phase1_start_time"] = start_ts
+            metrics["phase1_end_time"] = end_ts
+        else:
+            metrics["phase1_duration_seconds"] = 0.0
 
     metrics["llm_calls"] = llm_calls
     metrics["screenshot_wait_seconds"] = screenshot_wait_total

@@ -1,0 +1,1497 @@
+[
+  {
+    "id": "cmd_1777174633574_0",
+    "executed": true,
+    "done": true,
+    "action": "CreateObjectByName",
+    "objectName": "Cube",
+    "x": 0,
+    "y": -0.01,
+    "z": 4,
+    "rotationY": 0,
+    "scaleX": 8,
+    "scaleY": 0.02,
+    "scaleZ": 8
+  },
+  {
+    "id": "cmd_1777174633574_1",
+    "executed": true,
+    "done": true,
+    "action": "CreateObjectByName",
+    "objectName": "Cube",
+    "x": 0,
+    "y": 3.2,
+    "z": 4,
+    "rotationY": 0,
+    "scaleX": 8,
+    "scaleY": 0.2,
+    "scaleZ": 8
+  },
+  {
+    "id": "cmd_1777174633574_2",
+    "executed": true,
+    "done": true,
+    "action": "CreateObjectByName",
+    "objectName": "Cube",
+    "x": -4,
+    "y": 1.6,
+    "z": 4,
+    "rotationY": 0,
+    "scaleX": 0.2,
+    "scaleY": 3.2,
+    "scaleZ": 8
+  },
+  {
+    "id": "cmd_1777174633574_3",
+    "executed": true,
+    "done": true,
+    "action": "CreateObjectByName",
+    "objectName": "Cube",
+    "x": 4,
+    "y": 1.6,
+    "z": 4,
+    "rotationY": 0,
+    "scaleX": 0.2,
+    "scaleY": 3.2,
+    "scaleZ": 8
+  },
+  {
+    "id": "cmd_1777174633574_4",
+    "executed": true,
+    "done": true,
+    "action": "CreateObjectByName",
+    "objectName": "Cube",
+    "x": 0,
+    "y": 1.6,
+    "z": 8,
+    "rotationY": 0,
+    "scaleX": 8,
+    "scaleY": 3.2,
+    "scaleZ": 0.2
+  },
+  {
+    "id": "cmd_1777174633574_5",
+    "executed": true,
+    "done": true,
+    "action": "CreateObjectByName",
+    "objectName": "Cube",
+    "x": -2.4,
+    "y": 1.6,
+    "z": 0,
+    "rotationY": 0,
+    "scaleX": 3.2,
+    "scaleY": 3.2,
+    "scaleZ": 0.2
+  },
+  {
+    "id": "cmd_1777174633574_6",
+    "executed": true,
+    "done": true,
+    "action": "CreateObjectByName",
+    "objectName": "Cube",
+    "x": 2.4,
+    "y": 1.6,
+    "z": 0,
+    "rotationY": 0,
+    "scaleX": 3.2,
+    "scaleY": 3.2,
+    "scaleZ": 0.2
+  },
+  {
+    "id": "cmd_1777174633574_7",
+    "executed": true,
+    "done": true,
+    "action": "SetLightIntensity",
+    "scale": 1.5
+  },
+  {
+    "id": "cmd_1777174633574_8",
+    "executed": true,
+    "done": true,
+    "action": "SetAmbientColor",
+    "r": 0.94,
+    "g": 0.94,
+    "b": 0.94
+  },
+  {
+    "id": "cmd_1777174636441_0",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Reception_Desk_01",
+    "x": -2,
+    "y": 0,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174636441_1",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Reception_Desk_02",
+    "x": 2,
+    "y": 0,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174636441_2",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Reception_Desk_03",
+    "x": 0,
+    "y": 0,
+    "z": 6,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174636441_3",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "PC_Monitor_01",
+    "x": -2,
+    "y": 0.8,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174636441_4",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Computer_01",
+    "x": 2,
+    "y": 0.8,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174636441_5",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Keyboard_01",
+    "x": -2,
+    "y": 0.8,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174636441_6",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Chair_01",
+    "x": -2,
+    "y": 0,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174636441_7",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Chair_02",
+    "x": 2,
+    "y": 0,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174636441_8",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Utility_Cart_01",
+    "x": -3,
+    "y": 0,
+    "z": 4,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174636441_9",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Utility_Cart_02",
+    "x": 3,
+    "y": 0,
+    "z": 4,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174636441_10",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Trolley_01",
+    "x": 0,
+    "y": 0,
+    "z": 4,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174636441_11",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Trolley_02",
+    "x": 0,
+    "y": 0,
+    "z": 6.5,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174636441_12",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Folder_01",
+    "x": -2,
+    "y": 0,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174636441_13",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Folder_02",
+    "x": 2,
+    "y": 0,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174636441_14",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Folder_03",
+    "x": 0,
+    "y": 0,
+    "z": 6,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174636441_15",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Monitor_01",
+    "x": 0,
+    "y": 0,
+    "z": 0.1,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174636441_16",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Screen_01",
+    "x": 0,
+    "y": 0,
+    "z": 4,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174636441_17",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Poster_01",
+    "x": -3.5,
+    "y": 0,
+    "z": 3,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174636441_18",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Poster_02",
+    "x": 3.5,
+    "y": 0,
+    "z": 3,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174636441_19",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Clock_01",
+    "x": 0,
+    "y": 0,
+    "z": 7.5,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174636441_20",
+    "executed": true,
+    "done": true,
+    "action": "PlaceHuman",
+    "humanName": "Nurse_01",
+    "x": -2,
+    "y": 0,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174636441_21",
+    "executed": true,
+    "done": true,
+    "action": "PlaceHuman",
+    "humanName": "Nurse_02",
+    "x": 2,
+    "y": 0,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174636441_22",
+    "executed": true,
+    "done": true,
+    "action": "PlaceHuman",
+    "humanName": "Nurse_03",
+    "x": -3,
+    "y": 0,
+    "z": 4,
+    "rotationY": 0
+  },
+  {
+    "id": "c9481405-b4fc-46d8-9b79-cffb11dd30ca",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Reception_Desk_01 <-> PC_Monitor_01  pen_x=0.28m pen_z=0.05m  moving PC_Monitor_01 to (-2.00, 1.00, 3.12)"
+  },
+  {
+    "id": "7f6267b0-7980-4230-892a-15fdb4977b09",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Reception_Desk_01 <-> Keyboard_01  pen_x=0.19m pen_z=0.07m  moving Keyboard_01 to (-2.00, 1.49, 3.12)"
+  },
+  {
+    "id": "1cd90d2d-2bd6-4780-a2fd-781b62cdb6b5",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Reception_Desk_01 <-> Chair_01  pen_x=0.27m pen_z=0.27m  moving Chair_01 to (-0.68, 0.00, 2.00)"
+  },
+  {
+    "id": "92b771c9-fb73-458d-aa12-2725669c9cbc",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Reception_Desk_01 <-> Folder_01  pen_x=0.02m pen_z=0.13m  moving Folder_01 to (-0.93, 0.91, 2.00)"
+  },
+  {
+    "id": "7162dd5d-d68f-4cf1-a218-07a83a6b7471",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Reception_Desk_01 <-> Nurse_01  pen_x=0.74m pen_z=0.30m  moving Nurse_01 to (-2.00, 0.91, 3.36)"
+  },
+  {
+    "id": "7444a0f7-8345-45b9-85d8-7fe1fa393e1f",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Reception_Desk_02 <-> Computer_01  pen_x=0.21m pen_z=0.23m  moving Computer_01 to (2.66, 1.00, 2.00)"
+  },
+  {
+    "id": "8cbb26a1-40cd-49f9-943c-1931efd315b7",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Reception_Desk_02 <-> Chair_02  pen_x=0.60m pen_z=0.27m  moving Chair_02 to (2.00, 0.00, 3.34)"
+  },
+  {
+    "id": "e79c95f9-37f5-4763-a0b8-8f6d1b460331",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Reception_Desk_02 <-> Folder_02  pen_x=0.06m pen_z=0.13m  moving Folder_02 to (2.58, 0.90, 2.00)"
+  },
+  {
+    "id": "d7d31d15-42c7-4b59-8303-e654f80cf2dc",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Reception_Desk_02 <-> Nurse_02  pen_x=1.00m pen_z=0.36m  moving Nurse_02 to (2.00, 0.90, 3.42)"
+  },
+  {
+    "id": "82b84a14-3376-42b9-b411-7e6f86ea82b4",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Reception_Desk_03 <-> Trolley_02  pen_x=0.33m pen_z=0.60m  moving Trolley_02 to (1.39, 0.00, 6.50)"
+  },
+  {
+    "id": "1ddfa095-c467-400d-8fa8-82e84608dedb",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Reception_Desk_03 <-> Folder_03  pen_x=0.03m pen_z=0.25m  moving Folder_03 to (1.08, 0.84, 6.00)"
+  },
+  {
+    "id": "b2456647-c0f3-4012-970b-c2980087757d",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Utility_Cart_01 <-> Nurse_03  pen_x=0.67m pen_z=0.51m  moving Nurse_03 to (-3.00, 0.79, 4.79)"
+  },
+  {
+    "id": "a05e2598-7468-454d-a151-bf84b8057bae",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_01 <-> Screen_01  pen_x=0.76m pen_z=0.41m  moving Screen_01 to (0.00, 0.00, 5.45)"
+  },
+  {
+    "id": "cmd_1777174641790_0",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Monitor_01",
+    "x": 0,
+    "y": 0,
+    "z": 0.31,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174641790_1",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "PC_Monitor_01",
+    "x": -2,
+    "y": 1,
+    "z": 3.12,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174641790_2",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Keyboard_01",
+    "x": -2,
+    "y": 1.49,
+    "z": 3.12,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174641790_3",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Chair_01",
+    "x": -0.68,
+    "y": 0,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174641790_4",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Folder_01",
+    "x": -0.93,
+    "y": 0.91,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174641790_5",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Nurse_01",
+    "x": -2,
+    "y": 0.91,
+    "z": 3.36,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174641790_6",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Computer_01",
+    "x": 2.66,
+    "y": 1,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174641790_7",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Chair_02",
+    "x": 2,
+    "y": 0,
+    "z": 3.34,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174641790_8",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Folder_02",
+    "x": 2.58,
+    "y": 0.9,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174641790_9",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Nurse_02",
+    "x": 2,
+    "y": 0.9,
+    "z": 3.42,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174641790_10",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Trolley_02",
+    "x": 1.39,
+    "y": 0,
+    "z": 6.5,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174641790_11",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Folder_03",
+    "x": 1.08,
+    "y": 0.84,
+    "z": 6,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174641790_12",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Nurse_03",
+    "x": -3,
+    "y": 0.79,
+    "z": 4.79,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174641790_13",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Screen_01",
+    "x": 0,
+    "y": 0,
+    "z": 5.45,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174643583_0",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Utility_Cart_04",
+    "x": 2.5,
+    "y": 0,
+    "z": 5.5,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174643583_1",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Folder_05",
+    "x": 0.5,
+    "y": 0.8,
+    "z": 2.5,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174643583_2",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Poster_04",
+    "x": -3,
+    "y": 2.5,
+    "z": 6,
+    "rotationY": 0
+  },
+  {
+    "id": "bc970fc0-fc68-420e-a5bb-beb8c4d4bbb4",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) PC_Monitor_01 <-> Keyboard_01  pen_x=0.41m pen_z=0.12m  moving Keyboard_01 to (-2.00, 1.49, 3.49)"
+  },
+  {
+    "id": "212facbf-22ae-4355-b799-e781e5d9aa7d",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) PC_Monitor_01 <-> Nurse_01  pen_x=0.56m pen_z=0.13m  moving Nurse_01 to (-2.00, 0.91, 3.76)"
+  },
+  {
+    "id": "6b47ed40-3aa5-4eab-a3c3-4ab09955c251",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Computer_01 <-> Folder_02  pen_x=0.06m pen_z=0.25m  moving Folder_02 to (2.27, 0.90, 2.00)"
+  },
+  {
+    "id": "ac6d5d35-f76c-4f7b-b9ac-6b9592b07ac0",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Chair_01 <-> Folder_01  pen_x=0.05m pen_z=0.25m  moving Folder_01 to (-1.23, 0.91, 2.00)"
+  },
+  {
+    "id": "65436f3d-c6b4-4c08-a53a-701db21cf056",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Chair_02 <-> Nurse_02  pen_x=0.60m pen_z=0.55m  moving Nurse_02 to (2.00, 0.90, 4.25)"
+  },
+  {
+    "id": "c65855d4-54b3-4ed3-8783-c003115c0e6e",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_02 <-> Folder_03  pen_x=0.06m pen_z=0.25m  moving Folder_03 to (0.77, 0.84, 6.00)"
+  },
+  {
+    "id": "cmd_1777174650393_0",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Monitor_01",
+    "x": -1.15,
+    "y": 0,
+    "z": 0.31,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174650393_1",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Poster_01",
+    "x": -3.71,
+    "y": 0,
+    "z": 3,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174650393_2",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Poster_02",
+    "x": 3.71,
+    "y": 0,
+    "z": 3,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174650393_3",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Keyboard_01",
+    "x": -2,
+    "y": 1.49,
+    "z": 3.49,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174650393_4",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Nurse_01",
+    "x": -2,
+    "y": 0.91,
+    "z": 3.76,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174650393_5",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Folder_02",
+    "x": 2.27,
+    "y": 0.9,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174650393_6",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Folder_01",
+    "x": -1.23,
+    "y": 0.91,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174650393_7",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Nurse_02",
+    "x": 2,
+    "y": 0.9,
+    "z": 4.25,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174650393_8",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Folder_03",
+    "x": 0.77,
+    "y": 0.84,
+    "z": 6,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174650393_9",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Computer_01",
+    "x": 2,
+    "y": 0.1,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174650393_10",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Poster_04",
+    "x": -3,
+    "y": 0,
+    "z": 6,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174650393_11",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Poster_04",
+    "x": -3,
+    "y": 0,
+    "z": 6,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174652099_0",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Utility_Cart_03",
+    "x": 1.5,
+    "y": 0,
+    "z": 5,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174652099_1",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Copybook_02",
+    "x": -3,
+    "y": 0.8,
+    "z": 3.5,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174652099_2",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Poster_03",
+    "x": 2,
+    "y": 2,
+    "z": 7,
+    "rotationY": 0
+  },
+  {
+    "id": "281eabec-4735-43cf-bbaf-35e996b4560b",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Reception_Desk_01 <-> Folder_01  pen_x=0.05m pen_z=0.13m  moving Folder_01 to (-0.93, 0.91, 2.00)"
+  },
+  {
+    "id": "27ec1a43-39c0-4d8f-8e6f-03984fd19d86",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Reception_Desk_02 <-> Computer_01  pen_x=0.21m pen_z=0.23m  moving Computer_01 to (2.66, 0.10, 2.00)"
+  },
+  {
+    "id": "dfed371b-8f66-4c7c-b91a-6903d748779f",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Reception_Desk_02 <-> Folder_02  pen_x=0.06m pen_z=0.13m  moving Folder_02 to (2.58, 0.90, 2.00)"
+  },
+  {
+    "id": "38783903-90ec-49dd-9045-f3cba5dbe002",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Reception_Desk_03 <-> Folder_03  pen_x=0.06m pen_z=0.25m  moving Folder_03 to (1.08, 0.84, 6.00)"
+  },
+  {
+    "id": "f5cd4ed3-49b1-4518-b00e-8049df3a8015",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Keyboard_01 <-> Nurse_01  pen_x=0.41m pen_z=0.13m  moving Nurse_01 to (-2.00, 0.91, 4.15)"
+  },
+  {
+    "id": "5cd4a70a-bc6b-4598-a7b2-e91c8f3d085e",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (image) Utility_Cart_01: MoveObject Utility_Cart_01 x=-3.5 y=0.0 z=4.0 rotationY=0.0  — reason: visually overlaps Trolley_01"
+  },
+  {
+    "id": "cmd_1777174659014_0",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Poster_01",
+    "x": -3.54,
+    "y": 0,
+    "z": 3,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174659014_1",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Poster_02",
+    "x": 3.54,
+    "y": 0,
+    "z": 3,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174659014_2",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Folder_01",
+    "x": -0.93,
+    "y": 0.91,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174659014_3",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Computer_01",
+    "x": 2.66,
+    "y": 0.1,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174659014_4",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Folder_02",
+    "x": 2.58,
+    "y": 0.9,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174659014_5",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Folder_03",
+    "x": 1.08,
+    "y": 0.84,
+    "z": 6,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174659014_6",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Nurse_01",
+    "x": -2,
+    "y": 0.91,
+    "z": 4.15,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174659014_7",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Utility_Cart_01",
+    "x": -3.5,
+    "y": 0,
+    "z": 4,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174659014_8",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "PC_Monitor_01",
+    "x": -2,
+    "y": 0.1,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "308cc0f6-201b-483e-9d37-91d872432871",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Reception_Desk_01 <-> PC_Monitor_01  pen_x=0.28m pen_z=0.05m  moving PC_Monitor_01 to (-2.00, 0.10, 3.12)"
+  },
+  {
+    "id": "630bdb37-9e9d-4882-8bcf-cabe4bc4e173",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Computer_01 <-> Folder_02  pen_x=0.06m pen_z=0.25m  moving Folder_02 to (2.27, 0.90, 2.00)"
+  },
+  {
+    "id": "2b096f8a-c8a8-477d-b61c-841d6ec2ce6a",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Chair_01 <-> Folder_01  pen_x=0.05m pen_z=0.25m  moving Folder_01 to (-1.23, 0.91, 2.00)"
+  },
+  {
+    "id": "33b35741-08da-4a0c-8015-45f55df294a4",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_02 <-> Folder_03  pen_x=0.06m pen_z=0.25m  moving Folder_03 to (0.77, 0.84, 6.00)"
+  },
+  {
+    "id": "cmd_1777174668968_0",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Utility_Cart_01",
+    "x": -3.42,
+    "y": 0,
+    "z": 4,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174668968_1",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Poster_01",
+    "x": -3.54,
+    "y": 0,
+    "z": 3,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174668968_2",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Poster_02",
+    "x": 3.54,
+    "y": 0,
+    "z": 3,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174668968_3",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "PC_Monitor_01",
+    "x": -2,
+    "y": 0.1,
+    "z": 3.12,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174668968_4",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Folder_02",
+    "x": 2.27,
+    "y": 0.9,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174668968_5",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Folder_01",
+    "x": -1.23,
+    "y": 0.91,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174668968_6",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Folder_03",
+    "x": 0.77,
+    "y": 0.84,
+    "z": 6,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174668968_7",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Keyboard_01",
+    "x": -2,
+    "y": 0.1,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174668968_8",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Nurse_01",
+    "x": -2,
+    "y": 0,
+    "z": 4.15,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174668968_9",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Nurse_02",
+    "x": 2,
+    "y": 0,
+    "z": 4.25,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174668968_10",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Nurse_03",
+    "x": -3,
+    "y": 0,
+    "z": 4.79,
+    "rotationY": 0
+  },
+  {
+    "id": "276b8ac3-4c96-4d53-a7a8-e69840cc3b63",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Reception_Desk_01 <-> Keyboard_01  pen_x=0.19m pen_z=0.07m  moving Keyboard_01 to (-2.00, 0.10, 3.12)"
+  },
+  {
+    "id": "2c2efacc-8b79-466e-a862-1220d41fce0f",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Reception_Desk_01 <-> Folder_01  pen_x=0.05m pen_z=0.13m  moving Folder_01 to (-0.93, 0.91, 2.00)"
+  },
+  {
+    "id": "1adfa178-29c4-47f0-8b06-09ee40d76aa0",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Reception_Desk_02 <-> Folder_02  pen_x=0.06m pen_z=0.13m  moving Folder_02 to (2.58, 0.90, 2.00)"
+  },
+  {
+    "id": "8070abae-ecfe-4706-a57c-d60d0425c9a5",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Reception_Desk_03 <-> Folder_03  pen_x=0.06m pen_z=0.25m  moving Folder_03 to (1.08, 0.84, 6.00)"
+  },
+  {
+    "id": "e91b9c08-a0df-49ab-bda2-6ccb46f6d1dc",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (image) Utility_Cart_01: MoveObject Utility_Cart_01 x=-3.5 y=0.0 z=4.3 rotationY=0.0 reason: visually overlaps Nurse_01"
+  },
+  {
+    "id": "cmd_1777174675275_0",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Utility_Cart_01",
+    "x": -3.42,
+    "y": 0,
+    "z": 4,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174675275_1",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Poster_01",
+    "x": -3.54,
+    "y": 0,
+    "z": 3,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174675275_2",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Poster_02",
+    "x": 3.54,
+    "y": 0,
+    "z": 3,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174675275_3",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Monitor_01",
+    "x": -1.15,
+    "y": 0,
+    "z": 1.31,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174675275_4",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Monitor_01",
+    "x": -1.15,
+    "y": 0,
+    "z": 1.31,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174675275_5",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Keyboard_01",
+    "x": -2,
+    "y": 0.1,
+    "z": 3.12,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174675275_6",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Folder_01",
+    "x": -0.93,
+    "y": 0.91,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174675275_7",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Folder_02",
+    "x": 2.58,
+    "y": 0.9,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174675275_8",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Folder_03",
+    "x": 1.08,
+    "y": 0.84,
+    "z": 6,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174675275_9",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Utility_Cart_01",
+    "x": -3.5,
+    "y": 0,
+    "z": 4.3,
+    "rotationY": 0
+  },
+  {
+    "id": "29788a99-04c2-4321-8324-ba4c2880c365",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) PC_Monitor_01 <-> Keyboard_01  pen_x=0.41m pen_z=0.12m  moving Keyboard_01 to (-2.00, 0.10, 3.49)"
+  },
+  {
+    "id": "0340be60-6627-493e-9cc7-039f261daae2",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Computer_01 <-> Folder_02  pen_x=0.06m pen_z=0.25m  moving Folder_02 to (2.27, 0.90, 2.00)"
+  },
+  {
+    "id": "07f33745-11da-4ff5-bb69-7336b693dd62",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Chair_01 <-> Folder_01  pen_x=0.05m pen_z=0.25m  moving Folder_01 to (-1.23, 0.91, 2.00)"
+  },
+  {
+    "id": "d17f491d-7b70-413e-86cd-a24d141fd769",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Utility_Cart_01 <-> Nurse_03  pen_x=0.13m pen_z=0.10m  moving Nurse_03 to (-3.00, 0.00, 5.13)"
+  },
+  {
+    "id": "90e803df-9706-4313-b7ec-ad685cd39f95",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_02 <-> Folder_03  pen_x=0.06m pen_z=0.25m  moving Folder_03 to (0.77, 0.84, 6.00)"
+  },
+  {
+    "id": "cmd_1777174688571_0",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Utility_Cart_01",
+    "x": -3.42,
+    "y": 0,
+    "z": 4.3,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174688571_1",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Poster_01",
+    "x": -3.54,
+    "y": 0,
+    "z": 3,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174688571_2",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Poster_02",
+    "x": 3.54,
+    "y": 0,
+    "z": 3,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174688571_3",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Keyboard_01",
+    "x": -2,
+    "y": 0.1,
+    "z": 3.49,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174688571_4",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Folder_02",
+    "x": 2.27,
+    "y": 0.9,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174688571_5",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Folder_01",
+    "x": -1.23,
+    "y": 0.91,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174688571_6",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Nurse_03",
+    "x": -3,
+    "y": 0,
+    "z": 5.13,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174688571_7",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Folder_03",
+    "x": 0.77,
+    "y": 0.84,
+    "z": 6,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174688571_8",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Folder_05",
+    "x": 0.5,
+    "y": 0.01,
+    "z": 2.5,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777174688571_9",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Monitor_01",
+    "x": -1.15,
+    "y": 0.01,
+    "z": 1.31,
+    "rotationY": 0
+  },
+  {
+    "id": "3ad21f47-84fd-4c3f-aa81-a6dff55160a8",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Reception_Desk_01 <-> Folder_01  pen_x=0.05m pen_z=0.13m  moving Folder_01 to (-0.93, 0.91, 2.00)"
+  },
+  {
+    "id": "2b05c30e-56ac-4553-b8d6-d47b37d0d9ff",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Reception_Desk_02 <-> Folder_02  pen_x=0.06m pen_z=0.13m  moving Folder_02 to (2.58, 0.90, 2.00)"
+  },
+  {
+    "id": "158b4b60-39ba-4568-b07d-5b383070be7e",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Reception_Desk_03 <-> Folder_03  pen_x=0.06m pen_z=0.25m  moving Folder_03 to (1.08, 0.84, 6.00)"
+  },
+  {
+    "id": "1f2b9f3a-9d70-4035-ba0a-2330f75709ac",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (image) Utility_Cart_01: MoveObject Utility_Cart_01 x=-3.8 y=0.0 z=4.3 rotationY=0.0 reason: visually overlaps Nurse_01"
+  },
+  {
+    "id": "f8f7a7a7-90f3-46db-a89b-bc1994b63873",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (image) Utility_Cart_04: MoveObject Utility_Cart_04 x=2.8 y=0.0 z=5.5 rotationY=0.0 reason: visually overlaps Nurse_02"
+  },
+  {
+    "id": "ea4ebe7a-f7c0-4d7c-8477-dc8771dfe9dd",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (image) Utility_Cart_03: MoveObject Utility_Cart_03 x=1.2 y=0.0 z=5.0 rotationY=0.0 reason: visually overlaps Nurse_03"
+  },
+  {
+    "id": "85f7e140-0f01-4c22-982a-3cb5e29a305e",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (image) Utility_Cart_01: MoveObject Utility_Cart_01 x=-3.8 y=0.0 z=4.3 rotationY=0.0 reason: visually overlaps Nurse_01"
+  },
+  {
+    "id": "7f2d8987-7f5a-4bfe-a3a7-2b7686402511",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (image) Utility_Cart_04: MoveObject Utility_Cart_04 x=2.8 y=0.0 z=5.5 rotationY=0.0 reason: visually overlaps Nurse_02"
+  },
+  {
+    "id": "e420fd07-0792-4b79-9166-9e93caa68a0f",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (image) Utility_Cart_03: MoveObject Utility_Cart_03 x=1.2 y=0.0 z=5.0 rotationY=0.0 reason: visually overlaps Nurse_03"
+  }
+]

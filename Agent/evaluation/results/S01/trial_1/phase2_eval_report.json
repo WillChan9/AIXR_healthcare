@@ -1,0 +1,51 @@
+{
+  "results_dir": "S:\\Firefighter_project\\Agent\\evaluation\\results\\S01\\trial_1",
+  "experience_file": "S:\\Firefighter_project\\Agent\\evaluation\\scenarios\\experience_S01.txt",
+  "scene_type": "unknown",
+  "required_characters_count": 0,
+  "placed_characters_count": 2,
+  "coverage": {
+    "ambient_object_coverage": 1.0,
+    "map_entry_count": 11,
+    "placed_object_count": 11,
+    "multi_event_pct": 0.7272727272727273,
+    "total_event_entries": 21,
+    "entries_with_bubble": 21,
+    "bubble_density": 1.0,
+    "character_entry_count": 4,
+    "targeted_animation_pct": 1.0
+  },
+  "validity": {
+    "map_total_entries": 21,
+    "map_controller_validity_rate": 1.0,
+    "map_state_prefix_validity": 1.0,
+    "map_target_validity_rate": 1.0,
+    "map_bubble_on_validity": 1.0
+  },
+  "chain": {
+    "chain_length": 4,
+    "chain_beat_validity_rate": 1.0,
+    "chain_trigger_validity_rate": 1.0,
+    "chain_action_richness": 5.0,
+    "chain_unique_action_types": 7,
+    "chain_total_actions": 20,
+    "chain_walk_coord_validity": 1.0,
+    "chain_state_prefix_validity": 1.0,
+    "chain_char_coverage": 1.0
+  },
+  "runtime": {
+    "phase2_ran": 0,
+    "phase2_duration_seconds": 0.0,
+    "chain_beats_fired": 0,
+    "chain_progression": 0.0,
+    "time_to_first_beat_seconds": 0.0,
+    "time_to_complete_chain_seconds": 0.0,
+    "total_events_handled": 0,
+    "ambient_animations_fired": 0,
+    "story_chain_dispatches": 0,
+    "command_execution_rate": 0.0,
+    "dispatch_failure_rate": 0.0,
+    "unmapped_event_rate": 0.0
+  },
+  "composite_score": 98.77
+}

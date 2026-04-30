@@ -1,56 +1,48 @@
-Physical Therapy Gym — High-diversity interaction test room
+Surgery Prep Room — Precise surface placement and instrument layout
 
-This scene is a physical therapy gym designed to test broad object diversity. The room contains rehabilitation equipment, medical furniture, props, and characters spread across the space.
+A surgery preparation room with strict focus on sterile fields and
+precise instrument layout. Stainless-steel instrument trays rest on top
+of wheeled surgery carts; sterilizing equipment (an autoclave, a
+sterilizer drum) sits along the back wall. A surgeon and a scrub nurse
+are present, going through final pre-op checks. Lighting is bright
+surgical white. The room reads as meticulously organized — every tool
+has a place on a tray or cart surface, never the floor.
 
-Room 6m x 6m, open floor plan. Objects spread out so no two are within 0.8m of each other. Every object is floor-accessible (y=0) unless wall-mounted.
+[interactions]
+Touching any small instrument (scalpel, forceps, syringe) should
+highlight the instrument and make the surgeon comment on its specific
+use ("Forceps — for grasping tissue", "Scalpel — sharp, handle
+carefully"). Touching the autoclave or sterilizer should make the
+surgeon briefly explain the sterilization status of the load inside.
+Touching the surgeon should make him ask the scrub nurse to ready a
+specific instrument; that instrument briefly highlights yellow on its
+tray.
 
-REQUIRED OBJECTS:
-1. Treadmill_01 — right wall, z~4.0
-2. WheelChair_01 — entry zone, z~0.5, x~1.5
-3. Trolley_01 — center-left, z~2.5, x~-1.5
-4. Utility_Cart_01 — left wall, z~3.5
-5. Table_01 — left-center, z~2.0, x~-1.0
-6. Towel_Dispenser_01 — right wall, z~2.0
-7. Caution_Sign_01 — entry floor, z~0.6, x~0.5
-8. Clock_01 — back wall, z~5.8, y~2.5
-9. Poster_01 and Poster_02 — side walls, y~1.8
-10. Folder_01 and Folder_02 — on desk surface, y~0.8
-11. Screen_01 — on desk, z~5.0, x~-1.5
-12. Reception_Desk_01 — back-left corner, z~4.8, x~-1.8
-
-Staff and patients:
-- 1 Patient_01 near Treadmill_01
-- 1 Nurse_01 near center
-
-Room exterior:
-- 4 walls forming a 6m x 6m enclosure (wall height 3.2m).
-- Front wall with 1.4m doorway centered at x=0.
-- Ceiling covering the full room.
-- SetLightIntensity warm (scale 1.4), SetAmbientColor warm white.
+A short story arc: touching the surgeon → he asks for forceps and
+Forceps_01 highlights. Touching the highlighted forceps → the scrub
+nurse walks over to the central cart and acknowledges. Touching an
+instrument tray on the central cart afterward → the surgical lighting
+brightens and the surgeon nods "ready to begin".
 
 [room_config]
-scene_type = Physical Therapy Gym
-room_width = 6
-room_depth = 6
-room_height = 3.2
-lighting_intensity = 1.4
-ambient_r = 0.95
-ambient_g = 0.91
-ambient_b = 0.85
-doorway_width = 1.4
-doorway_x = 0
-x_min = -2.8
-x_max = 2.8
+scene_type = Surgery Prep Room
+room_width = 6.5
+room_depth = 6.0
+room_height = 3.3
+x_min = -3.05
+x_max = 3.05
 z_min = 0.1
 z_max = 5.9
-max_objects = 30
-min_objects = 15
-surface_keywords = Table,Desk,Rack,Cart,Trolley,Counter,Stand
-supply_keywords = Cart,Trolley,Rack,Dispenser,Stand
-character_prefixes = Doctor,Nurse,Patient
-small_prop_keywords = Folder,Tray,Band
-decor_keywords = Poster,Clock,Sign
-additions_furniture = Trolley_01,Utility_Cart_01,WheelChair_01,Towel_Dispenser_01
-additions_equipment = Treadmill_01,Table_01
-additions_props = Folder_01,Folder_02,Folder_03,Caution_Sign_01
-additions_decor = Poster_01,Poster_02,Poster_03,Clock_01
+doorway_width = 1.3
+doorway_x = 0.0
+lighting_intensity = 2.0
+ambient_r = 0.96
+ambient_g = 0.98
+ambient_b = 1.0
+min_objects = 24
+max_objects = 34
+surface_keywords = Surgery_Cart,Utility_Cart,Trolley,Table,Tray,Stand
+supply_keywords = Surgery_Cart,Utility_Cart,Trolley,Rack,Stand
+character_prefixes = Surgeon,Nurse
+small_prop_keywords = Forceps,Scalpel,Syringe,Scissors,Tray,Bottle,Bowl,Mask_Box,Sanitizer
+decor_keywords = Poster,Clock,Sign,Wall_Panel

@@ -1,0 +1,51 @@
+{
+  "results_dir": "S:\\Firefighter_project\\Agent\\evaluation\\results2\\S10\\trial_1",
+  "experience_file": "S:\\Firefighter_project\\Agent\\evaluation\\scenarios\\experience_S10.txt",
+  "scene_type": "Nurse Station Open",
+  "geometric": {
+    "object_count": 29,
+    "collision_count": 3,
+    "collision_rate": 0.007389162561576354,
+    "oob_count": 0,
+    "oob_rate": 0.0,
+    "mean_nn_distance": 0.7823151735752351,
+    "std_nn_distance": 0.31331410407870164,
+    "min_pairwise_distance": 0.27,
+    "floor_coverage": 0.14521215624999997,
+    "small_prop_count": 6,
+    "height_violation_count": 3,
+    "height_violation_rate": 0.5
+  },
+  "semantic": {
+    "required_object_count": 20,
+    "required_objects_placed": 20,
+    "prefab_hit_rate": 1.0,
+    "duplicate_count": 0,
+    "duplicate_rate": 0.0,
+    "character_count": 3
+  },
+  "plan": {
+    "total_plan_steps": 5,
+    "steps_completed": 5,
+    "step_completion_rate": 1.0,
+    "total_reflection_iterations": 8,
+    "avg_iterations_per_step": 1.6,
+    "total_corrections": 78,
+    "room_status_sparse_count": 2,
+    "room_status_good_count": 6,
+    "room_status_cluttered_count": 0
+  },
+  "efficiency": {
+    "fill_commands_total": 6,
+    "dropped_prefabs": 0,
+    "llm_calls": 3,
+    "screenshot_wait_seconds": 15,
+    "total_commands": 152,
+    "place_object_count": 26,
+    "place_human_count": 3,
+    "move_object_count": 66,
+    "delete_object_count": 0,
+    "create_object_count": 7
+  },
+  "composite_score": 93.15
+}

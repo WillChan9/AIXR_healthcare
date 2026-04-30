@@ -1,7 +1,18 @@
 {
-  "raw_response": "```json\n{\n  \"coherence_score\": 1,\n  \"spatial_score\": 1,\n  \"coherence_reasoning\": \"The scene is empty and does not contain any objects, let alone the required objects for a Physical Therapy Gym. This results in a completely wrong object selection for the intended scene type.\",\n  \"spatial_reasoning\": \"With no objects placed in the scene, the spatial arrangement is random and illogical by default, as there are no objects to arrange.\"\n}\n```",
-  "coherence_score": 1,
-  "spatial_score": 1,
-  "scene_type": "Physical Therapy Gym",
-  "results_dir": "C:\\Users\\Allison\\Programming\\GitHub\\AIXR_healthcare\\Agent\\evaluation\\results\\S03\\trial_2"
+  "raw_response": "{\"coherence_score\":5,\"spatial_score\":4,\"coherence_reasoning\":\"The object selection is highly appropriate for a physical therapy gym: treadmill, wheelchair, walker, crutch, benches, exam stool, rehab apparatus, therapist/doctor, patient, and aid kit all fit the rehabilitation setting well. The described mats, balls, and parallel bars are not present, but the placed set still strongly matches the intended use.\",\"spatial_reasoning\":\"Most objects are placed plausibly on the floor with therapy equipment distributed around the room. The therapist is near the central equipment, the patient is near seating/rehab items, and mobility aids are positioned along one side as standby equipment. Some placements are slightly imperfect, such as the aid kit being on the floor rather than on a wall or surface, and a few equipment clusters may be close together without known room dimensions, but the overall arrangement is logical.\"}",
+  "coherence_score": 5,
+  "spatial_score": 4,
+  "coherence_reasoning": "The object selection is highly appropriate for a physical therapy gym: treadmill, wheelchair, walker, crutch, benches, exam stool, rehab apparatus, therapist/doctor, patient, and aid kit all fit the rehabilitation setting well. The described mats, balls, and parallel bars are not present, but the placed set still strongly matches the intended use.",
+  "spatial_reasoning": "Most objects are placed plausibly on the floor with therapy equipment distributed around the room. The therapist is near the central equipment, the patient is near seating/rehab items, and mobility aids are positioned along one side as standby equipment. Some placements are slightly imperfect, such as the aid kit being on the floor rather than on a wall or surface, and a few equipment clusters may be close together without known room dimensions, but the overall arrangement is logical.",
+  "scene_type": "Unknown",
+  "results_dir": "S:\\Firefighter_project\\Agent\\evaluation\\results\\S03\\trial_2",
+  "judge_model": "gpt-5.5",
+  "phase2": {
+    "raw_response": "{\"bubble_informativeness\":4,\"narrative_coherence\":3,\"character_voice_consistency\":3,\"bubble_object_fit\":4,\"reasoning\":\"Object bubbles are concise and generally educational, naming each rehab item and its clinical purpose. The story chain is coherent as a guided PT gym walkthrough, moving from treadmill to gait support to patient confidence and wheelchair safety, but it feels more instructional than dramatic and has a notable mismatch where the kinesotherapy apparatus is described as parallel bars. Character voices fit broadly—clinician is instructional and patient is reassuring—but they are somewhat generic rather than strongly distinct. Object-function fit is mostly accurate and clinically appropriate, though the apparatus/parallel-bars confusion prevents a perfect score.\"}",
+    "bubble_informativeness": 4,
+    "narrative_coherence": 3,
+    "character_voice_consistency": 3,
+    "bubble_object_fit": 4,
+    "reasoning": "Object bubbles are concise and generally educational, naming each rehab item and its clinical purpose. The story chain is coherent as a guided PT gym walkthrough, moving from treadmill to gait support to patient confidence and wheelchair safety, but it feels more instructional than dramatic and has a notable mismatch where the kinesotherapy apparatus is described as parallel bars. Character voices fit broadly—clinician is instructional and patient is reassuring—but they are somewhat generic rather than strongly distinct. Object-function fit is mostly accurate and clinically appropriate, though the apparatus/parallel-bars confusion prevents a perfect score."
+  }
 }

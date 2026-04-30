@@ -17,7 +17,7 @@ from agent.Reflection_module import ReflectionModule
 from agent.logger import get_logger
 from interaction_animations import InteractionAnimationHandler
 from interaction_log import InteractionLog
-from agent.animation_planner import AnimationPlannerThread
+from story_chain import StoryChainHandler
 
 logger = get_logger("Pipeline")
 
@@ -43,7 +43,403 @@ def _parse_experience_config(txt: str) -> dict:
 def _clean_description(txt: str) -> str:
     """Strip the [room_config] section so only the human-readable description goes to the LLM."""
     idx = txt.find("[room_config]")
-    return txt[:idx].strip() if idx != -1 else txt.strip()
+    base = txt[:idx].strip() if idx != -1 else txt.strip()
+    # Also strip the [interactions] section if it ends up before [room_config]
+    iidx = base.find("[interactions]")
+    return base[:iidx].strip() if iidx != -1 else base
+
+
+# ---------------------------------------------------------------------------
+# Trial replay — restore a saved Phase 1 trial and skip straight to Phase 2
+# ---------------------------------------------------------------------------
+
+def _replay_trial(trial_dir: Path, agent_dir: Path, out_path: Path,
+                  unity_settle_timeout: float = 90.0) -> bool:
+    """Restore the Unity scene from a saved trial and prepare it for Phase 2.
+
+    Steps:
+      1. Copy the trial's interaction_map.json, story_chain.json, scene_state.json,
+         plan.json, and experience.txt back into Agent/api_files/.
+      2. Clear agent.log so the upcoming Phase 2 log is clean.
+      3. Send ClearScene to Unity and wait briefly for it to settle.
+      4. Re-stamp the trial's unity_commands.json (fresh IDs, executed=false)
+         and write it to the live commands file. Unity replays it in order.
+      5. Poll for Unity to finish executing all commands (or until timeout).
+
+    Returns True if replay succeeded (Unity executed all commands), False
+    otherwise. Phase 2 can be entered either way — partial replay is still
+    useful for collecting runtime metrics.
+    """
+    import shutil
+    import main as _unity
+
+    if not trial_dir.exists() or not trial_dir.is_dir():
+        logger.error(f"[Replay] Trial dir not found: {trial_dir}")
+        return False
+
+    api = agent_dir / "api_files"
+    api.mkdir(parents=True, exist_ok=True)
+
+    # 1. Restore artifacts
+    restored = []
+    for fname in ("interaction_map.json", "story_chain.json", "scene_state.json",
+                  "plan.json", "experience.txt"):
+        src = trial_dir / fname
+        if src.exists():
+            shutil.copy2(src, api / fname)
+            restored.append(fname)
+    # Fallback: older trials don't have experience.txt — recover it from scenarios/
+    # by inferring the scenario id from the trial dir's parent (e.g. "S01").
+    if "experience.txt" not in restored:
+        scenario_id = trial_dir.parent.name  # e.g. "S01"
+        scenario_file = agent_dir / "evaluation" / "scenarios" / f"experience_{scenario_id}.txt"
+        if scenario_file.exists():
+            shutil.copy2(scenario_file, api / "experience.txt")
+            restored.append("experience.txt (from scenarios/)")
+            logger.info(f"[Replay] experience.txt absent in trial — fell back to scenarios/{scenario_file.name}")
+    logger.info(f"[Replay] Restored {len(restored)} artifact(s) from {trial_dir.name}: {restored}")
+
+    # 2. Clear log + scene_state so Phase 2 + Unity start fresh
+    try:
+        (api / "agent.log").write_text("", encoding="utf-8")
+        (api / "actions.json").write_text("[]", encoding="utf-8")
+        (api / "reflection.json").write_text("[]", encoding="utf-8")
+    except Exception as exc:
+        logger.warning(f"[Replay] Could not clear scratch files: {exc}")
+
+    # 3. ClearScene to wipe whatever Unity currently has
+    try:
+        _unity.add_command("ClearScene")
+        logger.info("[Replay] Sent ClearScene; waiting 5s for Unity to settle…")
+        time.sleep(5)
+    except Exception as exc:
+        logger.warning(f"[Replay] ClearScene failed: {exc}")
+
+    # 4. Load + re-stamp the saved commands and write to the live commands file
+    saved_cmds_path = trial_dir / "unity_commands.json"
+    if not saved_cmds_path.exists():
+        logger.error(f"[Replay] Missing unity_commands.json in {trial_dir}")
+        return False
+    try:
+        saved = json.loads(saved_cmds_path.read_text(encoding="utf-8-sig"))
+    except Exception as exc:
+        logger.error(f"[Replay] Failed to parse {saved_cmds_path}: {exc}")
+        return False
+    if not isinstance(saved, list):
+        logger.error("[Replay] unity_commands.json is not a list")
+        return False
+
+    ts_ms = int(time.time() * 1000)
+    fresh: List[Dict] = []
+    for i, c in enumerate(saved):
+        # Skip the ClearScene we already sent and any DebugLog probes.
+        if c.get("action") in ("ClearScene", "DebugLog"):
+            continue
+        cmd = dict(c)
+        cmd["executed"] = False
+        cmd["done"] = False
+        cmd["id"] = f"cmd_replay_{ts_ms}_{i}"
+        fresh.append(cmd)
+
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(json.dumps(fresh, indent=2, ensure_ascii=False), encoding="utf-8")
+    logger.info(f"[Replay] Wrote {len(fresh)} commands to {out_path.name} for replay")
+
+    # 5. Poll until Unity has executed everything (or we hit the timeout).
+    deadline = time.time() + unity_settle_timeout
+    last_executed = -1
+    last_progress_ts = time.time()
+    while time.time() < deadline:
+        time.sleep(2.0)
+        try:
+            cur = json.loads(out_path.read_text(encoding="utf-8-sig"))
+            executed = sum(1 for c in cur if c.get("executed"))
+        except Exception:
+            continue
+        if executed != last_executed:
+            logger.info(f"[Replay] Unity executed {executed}/{len(fresh)} commands…")
+            last_executed = executed
+            last_progress_ts = time.time()
+        if executed >= len(fresh):
+            logger.info(f"[Replay] Replay complete: {executed}/{len(fresh)} commands.")
+            return True
+        # If no new executions for 15s and we're past 50%, accept partial replay.
+        if executed >= len(fresh) * 0.5 and (time.time() - last_progress_ts) > 15:
+            logger.warning(f"[Replay] No progress for 15s — accepting partial replay "
+                           f"({executed}/{len(fresh)}).")
+            return True
+    logger.warning(f"[Replay] Timeout after {unity_settle_timeout}s — proceeding to Phase 2 "
+                   f"with whatever Unity executed.")
+    return True
+
+
+# ---------------------------------------------------------------------------
+# Frontier LLM (OpenAI) — scene synthesis & high-quality artifact generation
+# ---------------------------------------------------------------------------
+
+def _call_frontier(messages: List[Dict], model: str = "gpt-5",
+                   max_tokens: int = 6000, temperature: float = 0.2) -> str:
+    """Call an OpenAI frontier model. Returns response text content.
+
+    Falls back to gpt-4o on errors that look model-not-available related so a
+    typo in --frontier-model doesn't kill the whole run.
+    """
+    from openai import OpenAI
+    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+    def _do_call(m: str) -> str:
+        kwargs: Dict = dict(model=m, messages=messages)
+        # GPT-5 / o1 / o3 style "reasoning" models reject custom temperature
+        # and use max_completion_tokens. Other models use max_tokens.
+        if any(m.startswith(p) for p in ("gpt-5", "o1", "o3")):
+            kwargs["max_completion_tokens"] = max_tokens
+        else:
+            kwargs["max_tokens"] = max_tokens
+            kwargs["temperature"] = temperature
+        completion = client.chat.completions.create(**kwargs)
+        return (completion.choices[0].message.content or "").strip()
+
+    try:
+        return _do_call(model)
+    except Exception as exc:
+        msg = str(exc).lower()
+        if "model" in msg and ("not found" in msg or "does not exist" in msg
+                                or "not have access" in msg or "unsupported" in msg):
+            logger.warning(f"[Frontier] '{model}' not available ({exc}). Falling back to gpt-4o.")
+            return _do_call("gpt-4o")
+        raise
+
+
+def _strip_json_fences(raw: str) -> str:
+    """Extract JSON object from a markdown-fenced or plain LLM response."""
+    raw = raw.strip()
+    if "```" in raw:
+        s = raw.find("```") + 3
+        e = raw.rfind("```")
+        inner = raw[s:e].strip() if e > s else raw[s:].strip()
+        if inner.lower().startswith("json"):
+            inner = inner[4:].strip()
+        raw = inner
+    s = raw.find("{")
+    e = raw.rfind("}") + 1
+    return raw[s:e] if s != -1 and e > s else raw
+
+
+def scene_synthesis(
+    raw_experience: str,
+    prefabs: List[str],
+    model: str = "gpt-5",
+) -> Tuple[Dict, Dict]:
+    """Frontier-LLM-driven scene synthesis. Reads the natural-language
+    experience.txt (description + [interactions]) and produces:
+
+      cfg : dict   — equivalent to a [room_config] section
+                     (room dimensions, bounds, keyword categories, …)
+      plan: dict   — equivalent to plan.json
+                     (steps[] with action + objects + target_area)
+
+    Returns (cfg, plan). Raises RuntimeError on parse failure.
+    """
+    description = _clean_description(raw_experience)
+    interactions = _parse_interactions_section(raw_experience)
+
+    # Pass the full prefab list — frontier models handle 350+ names easily, and
+    # alphabetic truncation drops critical prefabs (Ventilator, Walker, WheelChair,
+    # Closet, Chemical_Sterilizer, etc.) that some scenarios specifically need.
+    prefab_sample = prefabs
+
+    system = """\
+You are a senior VR scene designer. Read the natural-language description of
+a healthcare/medical scene and produce a STRUCTURED scene contract that a
+downstream pipeline will use to populate a Unity room.
+
+Output a SINGLE JSON object with exactly these top-level keys: "cfg", "plan".
+No markdown, no commentary — just the JSON.
+
+cfg (room_config equivalent):
+  scene_type             : short title from the description
+  room_width             : float meters, x-axis span
+  room_depth             : float meters, z-axis span
+  room_height            : float meters (typically 3.0–3.5)
+  x_min, x_max           : float floor x bounds (typically symmetric:
+                            -room_width/2 + 0.2, +room_width/2 - 0.2)
+  z_min, z_max           : float floor z bounds (0.1 to room_depth - 0.1)
+  doorway_width          : float (1.0–1.6 typical)
+  doorway_x              : float (where doorway is centered, usually 0)
+  lighting_intensity     : float (1.4 dim, 1.6 normal, 2.0 bright surgical)
+  ambient_r, ambient_g, ambient_b : floats 0.85–1.00 (cool clinical white)
+  min_objects, max_objects        : integer object count bounds
+  surface_keywords       : comma-separated tokens for objects you can rest
+                            small props on (e.g. "Table,Cart,Trolley,Stand")
+  supply_keywords        : tokens for movable supply furniture
+                            (e.g. "Cart,Trolley,Rack")
+  character_prefixes     : comma-separated character family prefixes that
+                            appear in the scene (e.g. "EMT,Doctor,Nurse,Patient")
+  small_prop_keywords    : tokens for small surface props
+                            (e.g. "Folder,Syringe,Stethoscope,Aid_Kit,Bottle,Tray")
+  decor_keywords         : tokens for wall decor (e.g. "Poster,Clock,Sign")
+
+plan (mirrors plan.json):
+  room_type, description, layout_goals (object {focal_point, minimum_objects,
+    interior_bounds}), and steps : [{step, action, objects[], target_area, condition}].
+  Each step's "objects" list must use names from `available_prefabs` verbatim
+  (preserving exact capitalization and digit suffixes). Pick exact prefab
+  names that fit the scene — do not invent.
+
+Rules:
+- Choose room dimensions from the description's mood: "tiny/cramped" → 3-4m,
+  "small" → 4-5m, "spacious/large" → 7-9m.
+- character_prefixes MUST list every character family that the description
+  references (Surgeon, Nurse, Doctor, EMT, Patient, …).
+- min_objects / max_objects bound how many non-structural items belong in the
+  scene. A "sparse" room has 6-10, "dense" 30-40, "extreme density" 40-50.
+- All numeric values must be JSON numbers (not strings).
+"""
+
+    user_payload = {
+        "narrative_description": description,
+        "interactions_text": interactions,
+        "available_prefabs": prefab_sample,
+    }
+
+    messages = [
+        {"role": "system", "content": system},
+        {"role": "user",   "content": json.dumps(user_payload, ensure_ascii=False)},
+    ]
+
+    raw = _call_frontier(messages, model=model, max_tokens=6000, temperature=0.2)
+    json_text = _strip_json_fences(raw)
+    try:
+        data = json.loads(json_text)
+    except json.JSONDecodeError as exc:
+        logger.error(f"[SceneSynthesis] LLM returned invalid JSON: {exc}\n--- raw ---\n{raw[:1000]}")
+        raise RuntimeError(f"scene_synthesis: invalid JSON from {model}: {exc}")
+
+    cfg = data.get("cfg") or {}
+    plan = data.get("plan") or {}
+    if not cfg or not plan:
+        raise RuntimeError(f"scene_synthesis: missing cfg or plan in response. Got keys: {list(data.keys())}")
+
+    # Normalize cfg values — Reflection module expects strings for keyword fields
+    # and parses numeric fields with float() / int() so accept both.
+    for key in ("surface_keywords", "supply_keywords", "character_prefixes",
+                "small_prop_keywords", "decor_keywords"):
+        if isinstance(cfg.get(key), list):
+            cfg[key] = ",".join(str(x) for x in cfg[key])
+
+    logger.info(f"[SceneSynthesis] cfg: scene_type={cfg.get('scene_type')!r} "
+                f"size={cfg.get('room_width')}×{cfg.get('room_depth')} "
+                f"chars={cfg.get('character_prefixes')!r} "
+                f"objects={cfg.get('min_objects')}–{cfg.get('max_objects')}")
+    logger.info(f"[SceneSynthesis] plan: {len(plan.get('steps', []))} steps "
+                f"focal={plan.get('layout_goals', {}).get('focal_point', '?')}")
+
+    return cfg, plan
+
+
+def _write_room_config_to_experience(experience_path: Path, cfg: Dict) -> None:
+    """Append the synthesized cfg as a [room_config] section to experience.txt
+    so the Reflection module (which parses experience.txt directly) picks it up.
+
+    Strips any prior [room_config] section first to avoid duplicates.
+    """
+    text = experience_path.read_text(encoding="utf-8")
+    idx = text.find("[room_config]")
+    if idx != -1:
+        text = text[:idx].rstrip() + "\n"
+
+    lines = ["", "[room_config]"]
+    for key, val in cfg.items():
+        # Skip nested objects / lists (kept for downstream code via the
+        # Python-level cfg dict, not via the file-level [room_config]).
+        if isinstance(val, (dict, list)):
+            continue
+        lines.append(f"{key} = {val}")
+    new_text = text.rstrip() + "\n" + "\n".join(lines) + "\n"
+    experience_path.write_text(new_text, encoding="utf-8")
+    logger.info(f"[SceneSynthesis] Wrote {len(cfg)} cfg fields to [room_config] in {experience_path.name}")
+
+
+# ---------------------------------------------------------------------------
+# Required-staff fallback (Phase 1 end)
+# ---------------------------------------------------------------------------
+
+def _ensure_required_staff(raw_experience: str, all_placed: List[Dict], out_path: Path,
+                           cfg: dict) -> List[Dict]:
+    """Phase 1 LLM sometimes truncates output and drops PlaceHuman commands
+    for required staff. Parse names + positions from experience.txt and append
+    missing PlaceHuman commands to unity_commands.json + all_placed.
+
+    Required characters are detected by matching the configured character
+    prefixes (e.g. Doctor, Nurse, Surgeon, Patient, EMT) against tokens of
+    the form `Name_NN`, then extracting nearby `x~...` and `z~...` literals.
+    """
+    prefixes_raw = cfg.get("character_prefixes", "Doctor,Nurse,Patient,Surgeon,EMT")
+    prefixes = [p.strip() for p in prefixes_raw.split(",") if p.strip()]
+    if not prefixes:
+        return []
+
+    name_re = re.compile(r'\b((?:' + '|'.join(prefixes) + r')_\d+)\b')
+    required: Dict[str, tuple] = {}
+    for line in raw_experience.splitlines():
+        if line.strip().startswith("[interactions]"):
+            break  # don't parse positions out of narrative interaction text
+        for m in name_re.finditer(line):
+            name = m.group(1)
+            if name in required:
+                continue
+            xm = re.search(r'x\s*[~=]\s*(-?\d+\.?\d*)', line)
+            ym = re.search(r'y\s*[~=]\s*(-?\d+\.?\d*)', line)
+            zm = re.search(r'z\s*[~=]\s*(-?\d+\.?\d*)', line)
+            if xm and zm:
+                required[name] = (float(xm.group(1)),
+                                  float(ym.group(1)) if ym else 0.0,
+                                  float(zm.group(1)))
+
+    if not required:
+        return []
+
+    placed_names = {(c.get("humanName") or c.get("objectName"))
+                    for c in all_placed if c.get("action") == "PlaceHuman"}
+    missing = [(n, p) for n, p in required.items() if n not in placed_names]
+
+    if not missing:
+        logger.info(f"[Phase 1] Required-staff check OK ({len(required)} characters all placed).")
+        return []
+
+    logger.warning(f"[Phase 1] Required-staff fallback: {len(missing)} missing — "
+                   + ", ".join(n for n, _ in missing))
+
+    new_cmds: List[Dict] = []
+    for name, (x, y, z) in missing:
+        new_cmds.append({
+            "action": "PlaceHuman",
+            "humanName": name,
+            "x": x, "y": y, "z": z,
+            "rotationY": 0,
+        })
+    _stamp_commands(new_cmds)
+    all_placed.extend(new_cmds)
+
+    existing = _load_existing_commands(out_path)
+    _write_commands_safe(out_path, existing + new_cmds)
+    logger.info(f"[Phase 1] Appended {len(new_cmds)} fallback PlaceHuman commands.")
+    return new_cmds
+
+
+def _parse_interactions_section(txt: str) -> str:
+    """Extract the free-text body of the [interactions] section from experience.txt.
+
+    The block ends at the next [section] header or end-of-file. Returns an empty
+    string if no [interactions] section exists.
+    """
+    idx = txt.find("[interactions]")
+    if idx == -1:
+        return ""
+    rest = txt[idx + len("[interactions]"):]
+    next_sec = re.search(r'\n\[[A-Za-z_]+\]', rest)
+    body = rest[:next_sec.start()] if next_sec else rest
+    return body.strip()
 
 
 # Regex matching sub-part suffixes: _Part_01, _Body, _Coat, _Wheel_01, etc.
@@ -961,8 +1357,14 @@ def phase1_generate_environment(
         "2. PlaceObject objectName: exact name from available_prefabs only. "
         "3. PlaceHuman humanName: exact name from available_prefabs only. "
         "4. Never invent names. If a name is not in available_prefabs, skip it. "
-        "5. Place at most 1-2 humans. "
-        "6. Do NOT output any PlayHumanAnimationFromResources or animation commands. "
+        "5. When the scene needs MULTIPLE instances of the same object type "
+        "   (e.g. 4 beds, 3 chairs, 2 nurses), prefer DISTINCT prefab variants "
+        "   if they exist (Bed_01, Bed_02, Bed_03, Bed_04 — NOT four Bed_01). "
+        "   Same for Nurse_01..Nurse_06, Doctor_01..Doctor_06, Patient_01..Patient_06, "
+        "   Chair_01..Chair_02, etc. Re-use the same name only if no further variant exists. "
+        "6. Match the human count to the scene description — use as many humans as the "
+        "   description explicitly calls for (e.g. 'two nurses' → 2 PlaceHuman). "
+        "7. Do NOT output any PlayHumanAnimationFromResources or animation commands. "
         "   Characters should remain in their default idle pose. "
     )
 
@@ -1232,11 +1634,15 @@ def phase1_generate_environment(
 # ---------------------------------------------------------------------------
 
 def generate_interaction_map(
-    client, all_placed: List[Dict], description: str, animators: List[str], out_path: Path
+    client, all_placed: List[Dict], description: str, animators: List[str], out_path: Path,
+    frontier_model: Optional[str] = None,
 ) -> Dict:
     """Ask the LLM to generate a scene-specific object→animation map based on the
     objects that were actually placed in Phase 1.  Saves to out_path and returns
-    the dict so phase2_interaction_loop can pass it to InteractionAnimationHandler."""
+    the dict so phase2_interaction_loop can pass it to InteractionAnimationHandler.
+
+    frontier_model: if provided, use OpenAI frontier model (e.g. "gpt-5") instead
+    of Groq's Llama-4-Scout. Higher quality, slower, more expensive."""
 
     placed_objects = []
     for cmd in all_placed:
@@ -1255,67 +1661,92 @@ def generate_interaction_map(
 
     system = """\
 You are an interaction design agent for a VR healthcare training simulation.
-Given the list of objects placed in the scene and the available animation controllers,
-generate a contextually appropriate interaction animation map.
+Given the list of objects placed in the scene, generate an ambient interaction map:
+when the player touches/grabs/looks at any object, what should happen.
 
-For each object decide which player interaction types should trigger an NPC animation
-and which animation fits the clinical/spatial context best.
+THE GOAL: every object in the scene should "respond" when the player touches it.
+For non-character objects, the response is an informative speech bubble explaining
+what the object is. For characters, the response is a brief animation + speech bubble
+where the character itself speaks.
+
+Schema for each entry. ALL FIELDS ARE OPTIONAL except for the response itself.
+Animation-only, bubble-only, or both are all valid.
+
+  "ObjectName_01": {
+    "<event_type>": {
+      "controller": "<full Resources path, e.g. AnimatorControllers/HumanM@Talking>",  // optional
+      "state":      "<MUST equal the controller leaf, e.g. HumanM@Talking — keep the HumanM@/HumanF@ prefix>",
+      "fade":       0.3,
+      "idle_delay": 4.0,                   // seconds before auto-return to idle (0 = no auto-return)
+      "target_character": "<NPC name>",     // optional — which character plays the animation; default = auto NPC
+      "bubble_message":   "<short text>",   // optional — fires ShowSpeechBubble
+      "bubble_on":        "<object name>",  // optional — defaults to the triggered object
+      "bubble_duration":  4.0
+    }
+  }
+
+Event types: hover_enter | touch | grab | release | activate
 
 Rules:
+- Cover EVERY placed object. No object should be missing from the map.
+- For CHARACTERS (doctor/nurse/patient/emt/surgeon):
+    - touch event: target_character = self, animation = HumanX@Talking, idle_delay = 4.0,
+                   bubble_message = something the character might say (e.g. "Yes, doctor?",
+                   "I'm prepping the saline", "Vitals are stable").
+    - hover_enter: same shape as touch.
+    - Use HumanF@ controllers for Nurse_*; HumanM@ otherwise.
+- For NON-CHARACTER OBJECTS:
+    - touch event: bubble_message = a 1-sentence educational description
+                   (e.g. "Defibrillator — delivers an electric shock to restore heart rhythm.").
+    - For movable equipment (Cart, Trolley, Wheelchair, Treadmill): also add grab + release with
+      a Walk animation on a relevant character (target_character = nearest staff).
+    - For monitors/screens: also add hover_enter with a relevant Doctor reading vitals
+      ("BP 120/80, HR 72").
+    - For small props (Forceps, Scalpel, Syringe, etc.): touch bubble describes the tool,
+      grab triggers a brief Surgeon Talking ("Sharp — handle carefully").
+    - For decor (Poster, Clock): touch with bubble only, no animation.
+- stateName MUST be IDENTICAL to the controllerPathInResources leaf — never strip the
+  HumanM@ / HumanF@ prefix.
 - Only use controller names that appear verbatim in available_controllers.
-- stateName must equal the controller stem (e.g. "HumanM@Talking").
-- fade: crossfade duration in seconds (0.1–0.5).
-- idle_delay: seconds before auto-return to idle (0 = no auto-return). Use 0 for release events.
-- Characters (doctor/nurse/patient/emt/surgeon): always include "touch" and "hover_enter".
-- Equipment with movement (treadmill/wheelchair/trolley): include "grab" and "release".
-- Stationary props/furniture: include "hover_enter" only when clinically relevant; "grab" when the player would pick it up.
-- Omit objects with no meaningful interaction value (walls, floor, decorative cubes).
-- Tailor choices to the scene description — a surgery prep room should feel different from a gym.
+- Bubble messages: short, informative, in-world. Max 80 characters.
+- Omit walls/floor/ceiling/structural Cubes only.
 
-Return ONLY a valid JSON object (no markdown, no explanation):
-{
-  "ObjectName_01": {
-    "hover_enter": {"controller": "<name>", "state": "<name>", "fade": 0.3, "idle_delay": 4.0},
-    "grab":        {"controller": "<name>", "state": "<name>", "fade": 0.3, "idle_delay": 3.0}
-  }
-}
+Return ONLY a valid JSON object (no markdown, no explanation).
 """
 
     user_payload = {
-        "scene_description": description[:400],
+        "scene_description": description[:1200] if frontier_model else description[:400],
         "placed_objects": placed_objects,
         "available_controllers": animators,
     }
 
+    messages = [
+        {"role": "system", "content": system},
+        {"role": "user",   "content": json.dumps(user_payload)},
+    ]
+
     try:
-        resp = client.chat.completions.create(
-            model="meta-llama/llama-4-scout-17b-16e-instruct",
-            messages=[
-                {"role": "system", "content": system},
-                {"role": "user",   "content": json.dumps(user_payload)},
-            ],
-            temperature=0.2,
-            max_completion_tokens=2000,
-        )
-        raw = (resp.choices[0].message.content or "").strip()
+        if frontier_model:
+            logger.info(f"[InteractionMap] Using frontier model: {frontier_model}")
+            raw = _call_frontier(messages, model=frontier_model, max_tokens=8000, temperature=0.2)
+        else:
+            resp = client.chat.completions.create(
+                model="meta-llama/llama-4-scout-17b-16e-instruct",
+                messages=messages,
+                temperature=0.2,
+                max_completion_tokens=6000,
+            )
+            raw = (resp.choices[0].message.content or "").strip()
 
-        # Strip code fences if present
-        if "```" in raw:
-            start = raw.find("```") + 3
-            end   = raw.rfind("```")
-            inner = raw[start:end].strip()
-            raw   = inner[4:].strip() if inner.startswith("json") else inner
-
-        s = raw.find("{")
-        e = raw.rfind("}") + 1
-        if s == -1 or e <= s:
+        json_text = _strip_json_fences(raw)
+        if not json_text or not json_text.startswith("{"):
             logger.warning("[InteractionMap] LLM returned no JSON object.")
             return {}
 
-        interaction_map = json.loads(raw[s:e])
+        interaction_map = json.loads(json_text)
 
         out_path.parent.mkdir(parents=True, exist_ok=True)
-        out_path.write_text(json.dumps(interaction_map, indent=2), encoding="utf-8")
+        out_path.write_text(json.dumps(interaction_map, indent=2, ensure_ascii=False), encoding="utf-8")
         logger.info(
             "[InteractionMap] Generated map for %d objects → %s",
             len(interaction_map), out_path.name,
@@ -1328,11 +1759,202 @@ Return ONLY a valid JSON object (no markdown, no explanation):
 
 
 # ---------------------------------------------------------------------------
+# Story chain generation (end of Phase 1) — Layer 2: scripted interactions
+# ---------------------------------------------------------------------------
+
+def generate_story_chain(
+    client,
+    interactions_text: str,
+    all_placed: List[Dict],
+    description: str,
+    animators: List[str],
+    out_path: Path,
+    frontier_model: Optional[str] = None,
+) -> Dict:
+    """Compile the natural-language [interactions] block into a linear story chain.
+
+    Output schema (story_chain.json):
+        {
+          "title": "<short title>",
+          "synopsis": "<one-sentence summary>",
+          "beats": [
+            {
+              "id": "B1",
+              "trigger": {"event": "<hover_enter|grab|release|activate|touch>",
+                          "object": "<exact objectName>"},
+              "actions": [ {<AgentNetworkBridge command>}, ... ]
+            },
+            ...
+          ]
+        }
+
+    Returns the dict (or {} on failure / no [interactions] block).
+    """
+    if not interactions_text:
+        logger.info("[StoryChain] No [interactions] section in experience.txt — skipping.")
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(json.dumps({"title": "", "synopsis": "", "beats": []}, indent=2), encoding="utf-8")
+        return {}
+
+    placed_objects = []
+    for cmd in all_placed:
+        action = cmd.get("action", "")
+        if action in ("PlaceObject", "PlaceHuman"):
+            name = cmd.get("objectName") or cmd.get("humanName", "")
+            if name:
+                placed_objects.append({
+                    "name": name,
+                    "type": "character" if action == "PlaceHuman" else "object",
+                })
+
+    if not placed_objects:
+        logger.warning("[StoryChain] No placed objects — skipping.")
+        return {}
+
+    system = """\
+You are a VR narrative designer. Compile the natural-language [interactions]
+description into a LINEAR story chain that fires beat-by-beat as the player
+satisfies each trigger.
+
+Output a single JSON object with this exact shape (no markdown):
+{
+  "title": "<short title>",
+  "synopsis": "<one sentence>",
+  "beats": [
+    {
+      "id": "B1",
+      "trigger": {"event": "<event_type>", "object": "<exact placed objectName>"},
+      "actions": [ <command1>, <command2>, ... ]
+    }
+  ]
+}
+
+Trigger event types (pick one per beat):
+  touch        ← STRONGLY PREFERRED. Fires when the player walks within proximity of the
+                  object's collider. Reliable in both XR Device Simulator (keyboard/mouse)
+                  and real VR. Use this for ALL beat triggers unless you have a specific
+                  reason not to.
+  grab         ← Only when the beat narratively requires the player to pick up an object
+                  (e.g. picking up a tool to hand off). Note: grab requires functioning XR
+                  controller grip input which may be unreliable in simulators.
+  release      ← Only as the immediate follow-up to a grab beat (player puts the object
+                  back down). Same simulator-reliability caveat as grab.
+  hover_enter  ← AVOID. Requires precise XR controller ray aim which is unreliable in
+                  the keyboard/mouse simulator. Use touch instead.
+  activate     ← Rarely used; requires XR trigger button.
+
+DEFAULT POLICY: use "touch" for every beat. Only deviate to grab/release when the user's
+[interactions] description explicitly says the player must pick up / hand off an object.
+Never use hover_enter unless the user's description says "look at" or "gaze at".
+
+Available action commands (pick zero or more per beat):
+  {"action":"PlayHumanAnimationFromResources","targetModel":"<characterName>",
+   "controllerPathInResources":"AnimatorControllers/<name>","stateName":"<name>","crossFadeTime":0.3}
+  {"action":"WalkCharacterTo","objectName":"<characterName>","x":..,"y":..,"z":..,"rotationY":..,
+   "duration":2.5,"controllerPathInResources":"AnimatorControllers/<gender>@Walk01_Forward",
+   "idleControllerPath":"AnimatorControllers/<gender>@Idles"}
+  {"action":"MoveCharacter","objectName":"<characterName>","x":..,"y":..,"z":..,"rotationY":..}
+  {"action":"ShowSpeechBubble","objectName":"<name>","message":"<text>","duration":4.0}
+  {"action":"HighlightObject","objectName":"<name>","r":1.0,"g":0.9,"b":0.2,"duration":5.0}
+  {"action":"ClearHighlight","objectName":"<name>"}
+  {"action":"SetLightIntensity","intensity":2.5}
+  {"action":"SetLightColor","r":1.0,"g":1.0,"b":1.0}
+  {"action":"SetAmbientColor","r":..,"g":..,"b":..}
+  {"action":"SetFogEnabled","enabled":true}
+  {"action":"SetFogDensity","density":0.05}
+
+Rules:
+- Every trigger.object MUST be a name in placed_objects (verbatim, including the _NN suffix).
+- Every targetModel / objectName for character commands MUST be a placed character (type=character).
+- Use only controller names that appear in available_controllers.
+- stateName MUST be IDENTICAL to the controllerPathInResources leaf — e.g. controller
+  "AnimatorControllers/HumanM@Talking" requires stateName "HumanM@Talking" (with the
+  "HumanM@" / "HumanF@" prefix preserved). Never strip the prefix.
+- Match controller gender to the character: HumanF@... for Nurse_*, Female_*; HumanM@... for everyone else.
+- For character motion, PREFER WalkCharacterTo over MoveCharacter — it auto-plays a walk
+  animation and crossfades to idle on arrival, so the character doesn't teleport.
+  Use MoveCharacter only when you need an instant snap (rare).
+- WalkCharacterTo target coordinates MUST be inside the room: x in [-3.5, 3.5], z in [0.5, 7.5],
+  y normally 0 (floor) — never put a character at z<=0 (outside the room).
+- 3–7 beats total. Linear chain — no branching. Beat N+1 fires after Beat N's trigger has been satisfied.
+- Each beat's actions should reinforce the narrative moment (talk, walk, highlight, light change).
+- The beat that ends the story can include a finale (light change, all characters back to idle).
+- Use ShowSpeechBubble sparingly (~2–4 beats) for diegetic dialogue.
+- Pick a HighlightObject in beat N to telegraph what the player should interact with in beat N+1.
+- HighlightObject duration for chain guidance MUST be 10.0 (player takes 10-15s to
+  cross the room — 5s expires too fast). Beat N+1 (whose trigger is the highlighted
+  object) MUST include a matching ClearHighlight so the glow ends when the player
+  arrives. Never use 1-5s for chain guidance highlights.
+"""
+
+    user_payload = {
+        "scene_description": description[:1200] if frontier_model else description[:400],
+        "story_intent": interactions_text,
+        "placed_objects": placed_objects,
+        "available_controllers": animators,
+    }
+
+    messages = [
+        {"role": "system", "content": system},
+        {"role": "user",   "content": json.dumps(user_payload)},
+    ]
+
+    try:
+        if frontier_model:
+            logger.info(f"[StoryChain] Using frontier model: {frontier_model}")
+            raw = _call_frontier(messages, model=frontier_model, max_tokens=4000, temperature=0.3)
+        else:
+            resp = client.chat.completions.create(
+                model="meta-llama/llama-4-scout-17b-16e-instruct",
+                messages=messages,
+                temperature=0.3,
+                max_completion_tokens=2500,
+            )
+            raw = (resp.choices[0].message.content or "").strip()
+
+        json_text = _strip_json_fences(raw)
+        if not json_text or not json_text.startswith("{"):
+            logger.warning("[StoryChain] LLM returned no JSON object.")
+            return {}
+
+        chain = json.loads(json_text)
+
+        # Sanity-check beats against placed objects
+        placed_names = {p["name"] for p in placed_objects}
+        valid_beats = []
+        for beat in chain.get("beats", []):
+            trig_obj = (beat.get("trigger") or {}).get("object")
+            if trig_obj and trig_obj not in placed_names:
+                logger.warning("[StoryChain] Dropping beat %s — trigger object '%s' not in scene.",
+                               beat.get("id", "?"), trig_obj)
+                continue
+            valid_beats.append(beat)
+        chain["beats"] = valid_beats
+
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(json.dumps(chain, indent=2, ensure_ascii=False), encoding="utf-8")
+        logger.info(
+            "[StoryChain] Generated %d beats → %s (title='%s')",
+            len(valid_beats), out_path.name, chain.get("title", "")
+        )
+        return chain
+
+    except Exception as exc:
+        logger.error("[StoryChain] Generation failed: %s", exc)
+        return {}
+
+
+# ---------------------------------------------------------------------------
 # Phase 2: User interaction loop
 # ---------------------------------------------------------------------------
 
-def _load_interaction_events(events_path: Path) -> List[Dict]:
-    """Read unprocessed interaction events from the JSON file written by Unity."""
+def _load_interaction_events(events_path: Path, min_timestamp: float = 0.0) -> List[Dict]:
+    """Read unprocessed interaction events from the JSON file written by Unity.
+
+    min_timestamp: Unix-seconds floor — events with `timestamp` strictly less than
+    this are dropped. Set to Phase 2 start time to discard stale events from
+    previous sessions or events fired during Phase 1.
+    """
     if not events_path.exists():
         return []
     try:
@@ -1340,7 +1962,11 @@ def _load_interaction_events(events_path: Path) -> List[Dict]:
         if not raw or raw == "[]":
             return []
         events = json.loads(raw)
-        return [e for e in events if not e.get("processed", False)]
+        return [
+            e for e in events
+            if not e.get("processed", False)
+            and float(e.get("timestamp", 0)) >= min_timestamp
+        ]
     except Exception as exc:
         logger.warning(f"[Phase 2] Failed to read interaction events: {exc}")
         return []
@@ -1368,38 +1994,23 @@ def phase2_interaction_loop(
     client, description, prefabs, animators, all_placed, out_path,
     reflector, xz_path, xy_path, yz_path, interval, max_iterations, cfg: dict = None,
 ):
-    """After the static environment is stable, enter an interaction loop that
-    responds to user actions (interaction events + screenshot changes)."""
+    """Deterministic Phase 2: dispatch player events through the story chain
+    (Layer 2) and the ambient interaction map (Layer 1). No runtime LLM —
+    all responses are pre-compiled at the end of Phase 1 into
+    story_chain.json + interaction_map.json.
+
+    Most parameters (client, description, prefabs, animators, reflector,
+    screenshot paths, interval) are kept for signature compatibility with
+    callers but are unused at runtime — Phase 2 no longer calls Groq, takes
+    screenshots, or generates commands on the fly.
+    """
+    del client, description, prefabs, animators, all_placed, reflector  # unused in deterministic Phase 2
+    del xz_path, xy_path, yz_path, interval, cfg                          # ditto
 
     logger.info("=" * 60)
-    logger.info("  PHASE 2: User Interaction")
+    logger.info("  PHASE 2: User Interaction (deterministic)")
     logger.info("  Environment is ready. Monitoring for user activity...")
     logger.info("=" * 60)
-
-    interaction_system = (
-        f"You are a VR {description[:60]} assistant. The room environment has been fully set up. "
-        "Return ONLY a valid JSON array. No markdown, no explanations. "
-        "You observe the scene through screenshots AND receive real-time interaction events "
-        "from the user's VR headset (grab, release, hover, activate). "
-
-        "CORE RULES: "
-        "1. Do NOT re-create the room or add furniture — the room is complete. "
-        "2. When the user interacts with an object (grab/activate), respond helpfully: "
-        "   - Highlight related objects to guide the workflow. "
-        "   - Trigger NPC animations if the user is near the patient or staff. "
-        "   - Adjust environment (lights, fog) if contextually appropriate. "
-        "3. You may use MoveObject/DeleteObject to tidy up if something looks wrong. "
-        "4. If no interaction events are pending and the scene looks fine, return []. "
-        "5. Prefer small, focused responses — 1-3 commands max per turn. "
-
-        "AVAILABLE ACTIONS: "
-        "MoveObject: {\"action\":\"MoveObject\",\"objectName\":\"...\",\"x\":...,\"y\":...,\"z\":...,\"rotationY\":...} "
-        "DeleteObject: {\"action\":\"DeleteObject\",\"objectName\":\"...\"} "
-        "HighlightObject: {\"action\":\"HighlightObject\",\"objectName\":\"...\",\"r\":1,\"g\":1,\"b\":0,\"duration\":3.0} "
-        "ClearHighlight: {\"action\":\"ClearHighlight\",\"objectName\":\"...\"} "
-        "SetTimeOfDay, SetLightIntensity, SetLightColor, SetAmbientColor, SetFogEnabled, SetFogDensity "
-        "PlayHumanAnimationFromResources: trigger character animations "
-    )
 
     # Enable Phase 2 interaction system in Unity (PlayerTouchHighlighter + Player tag)
     import main as _unity
@@ -1409,151 +2020,66 @@ def phase2_interaction_loop(
     # Derive interaction_events.json path (next to unity_commands.json)
     events_path = out_path.parent / "interaction_events.json"
 
-    last_mtime = 0.0
-    last_idle_llm_call = 0.0
-    IDLE_LLM_INTERVAL = 60.0  # Only call LLM on screenshot-only changes every 60s
+    # Wipe any events accumulated before Phase 2 started, then ALSO record a
+    # timestamp floor — Unity's InteractionEventReporter keeps an in-memory
+    # event list and will rewrite stale events to disk the next time anything
+    # fires, so file-clearing alone isn't enough. Filter by timestamp instead.
+    phase2_start_ts = time.time()
+    try:
+        events_path.parent.mkdir(parents=True, exist_ok=True)
+        events_path.write_text("[]", encoding="utf-8")
+        logger.info(f"[Phase 2] Cleared stale events at: {events_path} "
+                    f"(min_timestamp={phase2_start_ts:.0f})")
+    except Exception as exc:
+        logger.warning(f"[Phase 2] Could not clear interaction_events.json: {exc}")
+
     iterations = 0
-
     logger.info(f"[Phase 2] Watching for events at: {events_path}")
-    if not events_path.exists():
-        logger.warning(f"[Phase 2] interaction_events.json does not exist yet. "
-                       "Make sure InteractionEventReporter is attached to AI_Manager in Unity.")
 
-    # Persistent interaction log — tracks every event, animation chosen, and reasoning.
-    # Accumulates across runs (capped at 200 entries). Not cleared on restart so
-    # the history is visible even when the agent is not running.
+    # Persistent interaction log — tracks every event and the animation chosen.
+    # Accumulates across runs (capped at 200 entries).
     interaction_log = InteractionLog()
 
-    # Deterministic animation handler: fires character animations immediately
-    # for every interaction without waiting for the LLM.
-    # Shares the same interaction_log so all events are logged at the source.
-    anim_handler = InteractionAnimationHandler(events_file=events_path, interaction_log=interaction_log)
+    # Layer 1 — ambient: per-object reactions from interaction_map.json.
+    anim_handler = InteractionAnimationHandler(events_file=events_path,
+                                               interaction_log=interaction_log)
 
-    # LLM animation planner — separate thread, picks context-aware animations.
-    anim_planner = AnimationPlannerThread(
-        groq_client=client,
-        animators=animators,
-        all_placed=all_placed,
-        interaction_log=interaction_log,
-    )
-    anim_planner.start()
-    logger.info("[Phase 2] AnimationPlannerThread started.")
+    # Layer 2 — scripted story chain. Events it consumes are skipped by Layer 1
+    # so a beat's targeted character animation is not overwritten by the
+    # ambient Talking response on the same event.
+    story_chain_path = out_path.parent.parent / "story_chain.json"
+    if not story_chain_path.exists():
+        story_chain_path = Path(__file__).parent / "api_files" / "story_chain.json"
+    story_handler = StoryChainHandler(chain_file=story_chain_path)
 
     while True:
         if max_iterations and iterations >= max_iterations:
             logger.info("[Phase 2] Max iterations reached. Stopping.")
             break
 
-        # --- Check for new data: interaction events drive the loop. ---
-        # Screenshots alone trigger LLM only at IDLE_LLM_INTERVAL cadence
-        # to avoid wasting tokens on a constantly-refreshing screenshot stream.
-        pending_events = _load_interaction_events(events_path)
+        pending_events = _load_interaction_events(events_path, min_timestamp=phase2_start_ts)
 
-        # Fire deterministic animations immediately (no LLM cost).
-        # process_events_list() does NOT mark events in the file — the
-        # existing _mark_events_processed() call below handles that so the
-        # LLM still receives the same events for contextual responses.
         if pending_events:
-            n_anims = anim_handler.process_events_list(pending_events)
+            # Layer 2 first — scripted chain. Events it consumes are excluded
+            # from Layer 1 to prevent the ambient response from overwriting
+            # the beat's targeted character animation.
+            consumed_ids = set(story_handler.process_events_list(pending_events))
+            ambient_events = [e for e in pending_events if e.get("id") not in consumed_ids]
+
+            n_anims = anim_handler.process_events_list(ambient_events)
             if n_anims:
-                logger.info(f"[Phase 2] Animation handler fired {n_anims} animation(s)")
-            # Submit each event to the LLM planner for a contextual second response.
-            # Logging is handled inside anim_handler._handle_event (at the source).
-            for ev in pending_events:
-                anim_planner.submit_event(ev)
-        latest_mtime = max(
-            (p.stat().st_mtime if p.exists() else 0.0) for p in [xz_path, xy_path, yz_path]
-        )
-        has_new_screenshots = latest_mtime > last_mtime
-        has_events = len(pending_events) > 0
-        now = time.time()
-        idle_check_due = (now - last_idle_llm_call) >= IDLE_LLM_INTERVAL
+                logger.info(f"[Phase 2] Ambient handler fired {n_anims} animation(s)")
 
-        # Always tick idle returns even when skipping the LLM call.
-        anim_handler._fire_pending_idles()
-
-        # Skip if: no events AND (no screenshots OR idle cooldown not elapsed)
-        if not has_events and (not has_new_screenshots or not idle_check_due):
-            time.sleep(0.2)   # poll frequently so touch events are picked up quickly
-            continue
-
-        if has_new_screenshots:
-            last_mtime = latest_mtime
-        if not has_events:
-            last_idle_llm_call = now
-
-        view_images = _load_screenshots(xz_path, xy_path, yz_path)
-        placed_summary = _build_placed_summary(all_placed)
-
-        # --- Build user message with events + scene state ---
-        interaction_user: Dict = {
-            "objects_in_scene": [
-                {"objectName": c["objectName"], "x": c.get("x"), "y": c.get("y"), "z": c.get("z")}
-                for c in placed_summary
-            ],
-            "total_objects": len(placed_summary),
-        }
-
-        if pending_events:
-            interaction_user["interaction_events"] = [
-                {
-                    "type": e.get("type"),
-                    "objectName": e.get("objectName"),
-                    "playerPosition": e.get("playerPosition"),
-                    "playerLookDir": e.get("playerLookDir"),
-                }
-                for e in pending_events
-            ]
-            interaction_user["instruction"] = (
-                f"The user just performed {len(pending_events)} interaction(s) in VR. "
-                "Analyze the events and screenshots, then respond with appropriate commands. "
-                "For example: if the user grabbed the IV drip, highlight the patient table to guide placement. "
-                "If the user is near the CT scanner and activated it, trigger a scan animation."
-            )
-            logger.info(f"[Phase 2] Processing {len(pending_events)} interaction event(s): "
-                        + ", ".join(f"{e.get('type')}→{e.get('objectName')}" for e in pending_events))
-        else:
-            interaction_user["instruction"] = (
-                "No new user interactions. Observe the screenshots. "
-                "If something looks wrong, generate commands. Otherwise return []."
-            )
-
-        messages = [
-            {"role": "system", "content": interaction_system},
-            {"role": "user", "content": json.dumps(interaction_user)},
-        ]
-
-        # Attach screenshots
-        if any(view_images.values()):
-            image_content = [{"type": "text", "text": "Current scene (XZ=top-down, XY=front, YZ=side):"}]
-            for data in view_images.values():
-                if data:
-                    image_content.append({"type": "image_url", "image_url": {"url": f"data:image/png;base64,{data}"}})
-            messages.append({"role": "user", "content": image_content})
-
-        new_commands = _call_groq_and_parse(client, messages, prefabs, is_loop=True, cfg=cfg)
-        if new_commands:
-            _stamp_commands(new_commands)
-            all_placed.extend(new_commands)
-            existing = _load_existing_commands(out_path)
-            _write_commands_safe(out_path, existing + new_commands)
-            logger.info(f"[Phase 2] Generated {len(new_commands)} interaction commands")
-        else:
-            logger.debug("[Phase 2] No action needed.")
-
-        # Mark events as processed so we don't re-handle them
-        if pending_events:
+            # Mark events as processed so they aren't re-dispatched.
             processed_ids = [e.get("id") for e in pending_events if e.get("id")]
             _mark_events_processed(events_path, processed_ids)
+            iterations += 1
 
-        iterations += 1
-        # After processing events don't impose the full interval delay —
-        # loop back quickly to catch follow-up interactions.
-        if not has_events:
-            time.sleep(interval)
+        # Tick idle returns even when no new events.
+        anim_handler._fire_pending_idles()
 
-    anim_planner.stop()
-    logger.info("[Phase 2] AnimationPlannerThread stopped.")
+        # Poll fast so touch events are picked up promptly.
+        time.sleep(0.2)
 
 
 # ---------------------------------------------------------------------------
@@ -1574,6 +2100,15 @@ def main():
                         help="Override max number of plan steps to run in Phase 1 (0 = no cap)")
     parser.add_argument("--phase1-max-iters", type=int, default=0,
                         help="Override max reflection iterations per plan step (0 = default 4)")
+    parser.add_argument("--frontier-model", type=str, default="gpt-5.5",
+                        help="OpenAI frontier model used for scene_synthesis + interaction_map + story_chain "
+                             "(default 'gpt-5.5'; alternatives: 'gpt-5.5-pro', 'gpt-5.2', 'gpt-5.4-mini' for cheaper, 'gpt-4o' for legacy). "
+                             "Set to '' to disable frontier LLM and use Llama-4-Scout for everything.")
+    parser.add_argument("--replay-trial", type=str, default=None,
+                        help="Restore a saved trial directory (Phase 1 already done) and jump straight "
+                             "to Phase 2. The directory should contain unity_commands.json, "
+                             "interaction_map.json, story_chain.json, and experience.txt — "
+                             "as produced by run_experiment.py. Skips Phase 1 entirely.")
     args = parser.parse_args()
 
     load_dotenv()
@@ -1596,6 +2131,77 @@ def main():
     if not screenshot_path.is_absolute():
         screenshot_path = agent_dir / screenshot_path
 
+    # ===== REPLAY MODE: skip Phase 1 entirely, jump straight to Phase 2 =====
+    if args.replay_trial:
+        trial_dir = Path(args.replay_trial)
+        if not trial_dir.is_absolute():
+            trial_dir = (Path.cwd() / trial_dir).resolve()
+        logger.info("=" * 60)
+        logger.info(f"  REPLAY MODE: restoring trial → {trial_dir}")
+        logger.info("=" * 60)
+        if not _replay_trial(trial_dir, agent_dir, out_path):
+            logger.error("[Replay] Failed to restore trial. Aborting.")
+            return
+
+        # Reload experience.txt from the restored copy and parse
+        replayed_exp_path = agent_dir / "api_files" / "experience.txt"
+        raw_experience = replayed_exp_path.read_text(encoding="utf-8")
+        cfg = _parse_experience_config(raw_experience)
+        description = _clean_description(raw_experience)
+
+        # Screenshot paths for Phase 2 signature compatibility
+        screenshot_base = screenshot_path.with_suffix("")
+        xz_path = screenshot_base.parent / (screenshot_base.name + "_xz.png")
+        xy_path = screenshot_base.parent / (screenshot_base.name + "_xy.png")
+        yz_path = screenshot_base.parent / (screenshot_base.name + "_yz.png")
+
+        try:
+            phase2_interaction_loop(
+                None, description, [], [], [], out_path,
+                None, xz_path, xy_path, yz_path, args.interval, args.max_iterations, cfg=cfg,
+            )
+        except KeyboardInterrupt:
+            logger.info("[Replay] Phase 2 interrupted by user (Ctrl+C).")
+        finally:
+            # Copy fresh runtime artifacts back to the trial dir so the next
+            # evaluate_phase2.py run picks up the new agent.log + scene_state.
+            import shutil
+            for fname in ("agent.log", "scene_state.json"):
+                src = agent_dir / "api_files" / fname
+                if src.exists():
+                    try:
+                        shutil.copy2(src, trial_dir / fname)
+                        logger.info(f"[Replay] Updated {fname} in trial dir.")
+                    except Exception as exc:
+                        logger.warning(f"[Replay] Could not copy {fname}: {exc}")
+            # unity_commands.json is the live one (out_path) — copy it too.
+            if out_path.exists():
+                try:
+                    shutil.copy2(out_path, trial_dir / "unity_commands.json")
+                except Exception:
+                    pass
+
+            # Re-run evaluate_phase2 to refresh runtime metrics in the report.
+            try:
+                import importlib.util
+                ep2_path = agent_dir / "evaluation" / "evaluate_phase2.py"
+                spec = importlib.util.spec_from_file_location("evaluate_phase2", ep2_path)
+                ep2_mod = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(ep2_mod)
+                exp_for_eval = trial_dir / "experience.txt"
+                if not exp_for_eval.exists():
+                    exp_for_eval = replayed_exp_path
+                report = ep2_mod.evaluate(trial_dir, exp_for_eval)
+                report_path = trial_dir / "phase2_eval_report.json"
+                report_path.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
+                rt = report.get("runtime", {})
+                logger.info(f"[Replay] Re-evaluated Phase 2 — composite={report.get('composite_score', 0)}, "
+                            f"chain_progression={rt.get('chain_progression', 0):.2f} "
+                            f"({rt.get('chain_beats_fired', 0)} beats fired)")
+            except Exception as exc:
+                logger.warning(f"[Replay] Re-evaluation failed: {exc}")
+        return
+
     if not prompt_path.exists():
         raise FileNotFoundError(f"Experience file not found: {prompt_path}")
 
@@ -1603,9 +2209,13 @@ def main():
     if not raw_experience:
         raise ValueError("Experience file is empty.")
 
-    # Parse [room_config] section — all scene params come from here
+    # Parse any pre-existing [room_config] section. If experience.txt is in the
+    # new "narrative-only" format (no [room_config]) and a frontier model is
+    # configured, scene_synthesis will produce one and we append it back below.
     cfg = _parse_experience_config(raw_experience)
     description = _clean_description(raw_experience)
+    use_frontier = bool(args.frontier_model)
+    frontier_model = args.frontier_model if use_frontier else None
 
     # Phase 1 speed overrides (CLI flags take precedence over config)
     if args.fast_phase1:
@@ -1641,9 +2251,45 @@ def main():
 
     client = Groq(api_key=api_key)
 
-    # Generate plan.json (passes cfg so fallback plan is also scene-agnostic)
-    logger.info("Generating room layout plan...")
-    plan = _generate_plan(description, client, agent_dir, cfg=cfg)
+    # ===== SCENE SYNTHESIS (frontier LLM) =====
+    # If --frontier-model is set, run a single high-quality LLM call that
+    # produces both the [room_config] cfg and plan.json from the narrative.
+    # The cfg is appended back to api_files/experience.txt so Reflection
+    # (which reads experience.txt directly) picks it up unchanged.
+    plan: Optional[Dict] = None
+    if use_frontier and not cfg:
+        logger.info(f"[Frontier] Running scene_synthesis with {frontier_model} …")
+        try:
+            cfg, plan = scene_synthesis(raw_experience, prefabs, model=frontier_model)
+            _write_room_config_to_experience(prompt_path, cfg)
+            # Re-read so raw_experience reflects the appended [room_config].
+            raw_experience = prompt_path.read_text(encoding="utf-8").strip()
+            # Persist the synthesized plan to api_files/plan.json so the rest
+            # of the pipeline (and the Reflection module) sees it.
+            (agent_dir / "api_files" / "plan.json").write_text(
+                json.dumps(plan, indent=2, ensure_ascii=False), encoding="utf-8"
+            )
+            logger.info(f"[Frontier] Synthesis complete. Plan has {len(plan.get('steps', []))} steps.")
+        except Exception as exc:
+            logger.error(f"[Frontier] scene_synthesis failed: {exc} — falling back to Groq plan generation.")
+            plan = None
+
+    # Re-apply CLI overrides if synthesis just replaced cfg from scratch
+    # (the earlier override block ran on the empty pre-synthesis cfg).
+    if plan is not None:
+        if args.fast_phase1:
+            cfg["phase1_max_steps"] = args.phase1_max_steps or 3
+            cfg["phase1_max_iters"] = args.phase1_max_iters or 1
+        else:
+            if args.phase1_max_steps:
+                cfg["phase1_max_steps"] = args.phase1_max_steps
+            if args.phase1_max_iters:
+                cfg["phase1_max_iters"] = args.phase1_max_iters
+
+    # Fallback: synthesis off OR synthesis failed — use Groq's plan generator.
+    if plan is None:
+        logger.info("Generating room layout plan...")
+        plan = _generate_plan(description, client, agent_dir, cfg=cfg)
 
     # Screenshot paths
     xz_path = screenshot_base.parent / (screenshot_base.name + "_xz.png")
@@ -1662,9 +2308,22 @@ def main():
         logger.error("Phase 1 produced no commands. Exiting.")
         return
 
+    # ===== REQUIRED-STAFF FALLBACK =====
+    # Phase 1 LLM occasionally truncates output and drops PlaceHuman commands.
+    # Parse character names+positions from experience.txt and back-fill anything
+    # missing so downstream interaction_map / story_chain references resolve.
+    _ensure_required_staff(raw_experience, all_placed, out_path, cfg)
+
     # ===== INTERACTION MAP: Agent-generated per-object animation mapping =====
     interaction_map_path = agent_dir / "api_files" / "interaction_map.json"
-    generate_interaction_map(client, all_placed, description, animators, interaction_map_path)
+    generate_interaction_map(client, all_placed, description, animators, interaction_map_path,
+                             frontier_model=frontier_model)
+
+    # ===== STORY CHAIN: Layer 2 — scripted, conditional interaction sequence =====
+    story_chain_path = agent_dir / "api_files" / "story_chain.json"
+    interactions_text = _parse_interactions_section(raw_experience)
+    generate_story_chain(client, interactions_text, all_placed, description, animators, story_chain_path,
+                         frontier_model=frontier_model)
 
     if args.phase1_only:
         logger.info("--phase1-only flag set. Skipping Phase 2.")

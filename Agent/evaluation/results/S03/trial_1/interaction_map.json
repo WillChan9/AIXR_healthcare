@@ -1,0 +1,212 @@
+{
+  "Treadmill_01": {
+    "touch": {
+      "bubble_message": "Treadmill — supports gait training and walking endurance.",
+      "bubble_duration": 4.0
+    },
+    "grab": {
+      "controller": "AnimatorControllers/HumanM@Walk01_Forward",
+      "state": "HumanM@Walk01_Forward",
+      "fade": 0.3,
+      "idle_delay": 2.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "Let's position the treadmill safely.",
+      "bubble_on": "Doctor_01",
+      "bubble_duration": 3.0
+    },
+    "release": {
+      "controller": "AnimatorControllers/HumanM@Walk01_Forward",
+      "state": "HumanM@Walk01_Forward",
+      "fade": 0.3,
+      "idle_delay": 2.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "Treadmill is set; check the stop key.",
+      "bubble_on": "Doctor_01",
+      "bubble_duration": 3.0
+    }
+  },
+  "Exam_Stool_01": {
+    "touch": {
+      "bubble_message": "Exam stool — adjustable seat for therapist assessments.",
+      "bubble_duration": 4.0
+    }
+  },
+  "WheelChair_01": {
+    "touch": {
+      "bubble_message": "Wheelchair — provides seated mobility and safe transfers.",
+      "bubble_duration": 4.0
+    },
+    "grab": {
+      "controller": "AnimatorControllers/HumanM@Walk01_Forward",
+      "state": "HumanM@Walk01_Forward",
+      "fade": 0.3,
+      "idle_delay": 2.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "I'll guide the chair with brakes ready.",
+      "bubble_on": "Doctor_01",
+      "bubble_duration": 3.0
+    },
+    "release": {
+      "controller": "AnimatorControllers/HumanM@Walk01_Forward",
+      "state": "HumanM@Walk01_Forward",
+      "fade": 0.3,
+      "idle_delay": 2.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "Lock the brakes before transfer.",
+      "bubble_on": "Doctor_01",
+      "bubble_duration": 3.0
+    }
+  },
+  "Doctor_01": {
+    "hover_enter": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "Keep posture tall and move at a safe pace.",
+      "bubble_on": "Doctor_01",
+      "bubble_duration": 4.0
+    },
+    "touch": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "I'm supervising today's therapy session.",
+      "bubble_on": "Doctor_01",
+      "bubble_duration": 4.0
+    }
+  },
+  "Patient_01": {
+    "hover_enter": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Patient_01",
+      "bubble_message": "I'm working on balance and strength.",
+      "bubble_on": "Patient_01",
+      "bubble_duration": 4.0
+    },
+    "touch": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Patient_01",
+      "bubble_message": "This exercise feels steady so far.",
+      "bubble_on": "Patient_01",
+      "bubble_duration": 4.0
+    }
+  },
+  "Bench_01": {
+    "touch": {
+      "bubble_message": "Therapy bench — supports seated and lying exercises.",
+      "bubble_duration": 4.0
+    }
+  },
+  "Crutch_01": {
+    "touch": {
+      "bubble_message": "Crutch — supports partial weight-bearing during walking.",
+      "bubble_duration": 4.0
+    },
+    "grab": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 3.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "Adjust the crutch height before walking.",
+      "bubble_on": "Doctor_01",
+      "bubble_duration": 3.0
+    }
+  },
+  "Aid_Kit_01": {
+    "touch": {
+      "bubble_message": "Aid kit — stores basic supplies for minor therapy injuries.",
+      "bubble_duration": 4.0
+    },
+    "grab": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 3.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "Use supplies only for minor first aid.",
+      "bubble_on": "Doctor_01",
+      "bubble_duration": 3.0
+    }
+  },
+  "Bench_02": {
+    "touch": {
+      "bubble_message": "Therapy bench — used for rest, stretching, and transfers.",
+      "bubble_duration": 4.0
+    }
+  },
+  "Walker_01": {
+    "touch": {
+      "bubble_message": "Walker — provides stable support for gait practice.",
+      "bubble_duration": 4.0
+    },
+    "grab": {
+      "controller": "AnimatorControllers/HumanM@Walk01_Forward",
+      "state": "HumanM@Walk01_Forward",
+      "fade": 0.3,
+      "idle_delay": 2.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "Move the walker one step at a time.",
+      "bubble_on": "Doctor_01",
+      "bubble_duration": 3.0
+    },
+    "release": {
+      "controller": "AnimatorControllers/HumanM@Walk01_Forward",
+      "state": "HumanM@Walk01_Forward",
+      "fade": 0.3,
+      "idle_delay": 2.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "Keep it close before standing upright.",
+      "bubble_on": "Doctor_01",
+      "bubble_duration": 3.0
+    }
+  },
+  "Kinesotherapy_Apparatus_01": {
+    "touch": {
+      "bubble_message": "Kinesotherapy unit — guides assisted therapeutic motion.",
+      "bubble_duration": 4.0
+    },
+    "activate": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "Set range and resistance to the care plan.",
+      "bubble_on": "Doctor_01",
+      "bubble_duration": 4.0
+    }
+  },
+  "Towel_Dispenser_01": {
+    "touch": {
+      "bubble_message": "Towel dispenser — provides towels for hygiene and cleanup.",
+      "bubble_duration": 4.0
+    }
+  },
+  "Bottle_01": {
+    "touch": {
+      "bubble_message": "Water bottle — helps patients hydrate during therapy.",
+      "bubble_duration": 4.0
+    },
+    "grab": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 3.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "Hydration supports safe exercise tolerance.",
+      "bubble_on": "Doctor_01",
+      "bubble_duration": 3.0
+    }
+  }
+}

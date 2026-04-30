@@ -234,7 +234,8 @@ def move_character(
     z: float = 0.0,
     rotation_y: float = 0.0,
 ) -> Dict[str, Any]:
-    """Move a named character (previously placed with place_human) to a new position."""
+    """Move a named character (previously placed with place_human) to a new position.
+    Teleports instantly. For smooth walking with animation, use walk_character_to()."""
     return _add_command(
         action="MoveCharacter",
         objectName=character_name,
@@ -242,6 +243,36 @@ def move_character(
         y=y,
         z=z,
         rotationY=rotation_y,
+    )
+
+
+def walk_character_to(
+    character_name: str,
+    x: float = 0.0,
+    y: float = 0.0,
+    z: float = 0.0,
+    rotation_y: float = 0.0,
+    duration: float = 2.0,
+    walk_controller: str = "AnimatorControllers/HumanM@Walk01_Forward",
+    idle_controller: str = "AnimatorControllers/HumanM@Idles",
+) -> Dict[str, Any]:
+    """Make a named character walk to a target: plays walk animation, smoothly
+    interpolates position + rotation over `duration` seconds, then crossfades
+    back to the idle animation when arrived.
+
+    For female characters (Nurse_*), pass walk_controller='AnimatorControllers/HumanF@Walk01_Forward'
+    and idle_controller='AnimatorControllers/HumanF@Idles'.
+    """
+    return _add_command(
+        action="WalkCharacterTo",
+        objectName=character_name,
+        x=x,
+        y=y,
+        z=z,
+        rotationY=rotation_y,
+        duration=duration,
+        controllerPathInResources=walk_controller,
+        idleControllerPath=idle_controller,
     )
 
 

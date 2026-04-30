@@ -1,0 +1,47 @@
+Emergency Triage Room — Small cramped space for rapid patient assessment
+
+A small, cramped emergency triage room used for rapid patient assessment
+under time pressure. The space is tightly packed with essential emergency
+equipment: a stretcher against the back wall, an exam table flanked by a
+wheeled supply trolley, and a wall-mounted patient monitor. One EMT works
+urgently near the stretcher; one patient lies on the exam table being
+assessed. Lighting should be bright and cool — the atmosphere reads as
+functional, urgent, and minimal-empty-space.
+
+[interactions]
+When the player approaches and touches the EMT, the EMT briefly explains
+the patient's symptoms and gestures toward the monitor. When the player
+touches the patient monitor, the EMT reads out the patient's vitals
+(heart rate, blood pressure, oxygen saturation). When the player walks
+up to the patient, the patient softly describes where the pain is.
+Touching the supply trolley should briefly highlight the small props
+(syringe, stethoscope) on top of it.
+
+A short story arc: when the player first touches the EMT, the monitor
+briefly highlights to show vitals. When the player then touches the
+monitor, the EMT walks one step toward the patient and states an urgent
+observation. When the player finally touches the patient, the lighting
+brightens slightly to signal "examination underway".
+
+[room_config]
+scene_type = Emergency Triage Room
+room_width = 4.4
+room_depth = 4.8
+room_height = 3.1
+x_min = -2.0
+x_max = 2.0
+z_min = 0.1
+z_max = 4.7
+doorway_width = 1.2
+doorway_x = 0.0
+lighting_intensity = 2.0
+ambient_r = 0.92
+ambient_g = 0.96
+ambient_b = 1.0
+min_objects = 12
+max_objects = 18
+surface_keywords = Exam_Table,Trolley,Table,Cart,Stand
+supply_keywords = Trolley,Utility_Cart,Surgery_Cart,Cart
+character_prefixes = EMT,Patient
+small_prop_keywords = Syringe,Stethoscope,Aid_Kit,Bottle,Tray,Thermometer,Bandage
+decor_keywords = Poster,Clock,Sign

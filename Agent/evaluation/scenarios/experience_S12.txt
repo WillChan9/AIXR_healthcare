@@ -1,0 +1,32 @@
+Maternity / Neonatal Ward — Multi-bassinette nursery with infant care
+
+A warm, well-lit neonatal ward dedicated to newborn care. Three
+bassinettes are arranged in a gentle row along one wall, with a
+shared changing table at one end and an infant warmer with
+phototherapy lamp at the other. A pediatric exam table sits in the
+center of the room for routine checks, with a small infant scale
+beside it. The walls are decorated with soft posters; lighting is
+warm and indirect to avoid disturbing the newborns. Two nurses
+attend the ward — one is checking on the bassinettes, the other is
+weighing a baby on the scale. The atmosphere should feel calm and
+nurturing, with multiple small pieces of furniture rather than a
+few big ones.
+
+[interactions]
+When the player touches either nurse, the nurse softly explains what
+she is doing ("checking temperatures", "weighing for the morning
+record"). Touching any bassinette should briefly highlight it and
+make the nearer nurse say a short comforting line ("baby's sleeping
+peacefully", "feeding time soon"). Touching the infant warmer should
+display its function ("Infant warmer with phototherapy — used to
+treat jaundice"). Touching the changing table or pediatric exam table
+should make a nurse comment that it's prepared for the next infant
+check.
+
+A short story arc: when the player first touches one of the nurses,
+the infant warmer at the end of the row briefly highlights to indicate
+it's currently in use. When the player then touches the highlighted
+warmer, the second nurse walks one step toward it to adjust a setting.
+When the player finally touches a bassinette, the lighting brightens
+slightly to signal "morning rounds underway" and both nurses play a
+brief Talking animation acknowledging the routine has begun.

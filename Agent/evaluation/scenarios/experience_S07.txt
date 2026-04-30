@@ -1,50 +1,18 @@
 Medical Supply Closet — Extreme density stress test in tiny room
 
-A tiny 3m x 3m supply closet packed with shelves, cabinets, boxes, and bottles. This scenario stress-tests the collision detection system under extreme density with very tight placement bounds. Objects should be arranged along walls with minimal floor space remaining.
+A tiny medical supply closet packed wall-to-wall with shelves, cabinets,
+storage boxes, supply bottles, mask boxes, and stacks of folders.
+Almost no floor space is left — a person can barely turn around inside
+the cramped storage room. There are no characters in the closet itself;
+this is a pure storage environment. The lighting is fluorescent and
+even, the atmosphere is functional — every surface is occupied by
+supplies arranged along the walls.
 
-REQUIRED OBJECTS:
-1. Utility_Cart_01 — left wall, x~-1.0, z~1.5
-2. Utility_Cart_02 — right wall, x~1.0, z~1.5
-3. Box_01 — on cart, y~0.8
-4. Box_02 — on cart, y~0.8
-5. Bottle_01 — on surface, y~0.8
-6. Bottle_02 — on surface, y~0.8
-7. Bottle_03 — on surface, y~0.8
-8. Mask_Box_01 — on surface, y~0.8
-9. Mask_Box_02 — on surface, y~0.8
-10. Bandage_01 — on surface
-11. Aid_Kit_01 — on surface
-12. Sterilizer_Drum_01 — floor, back wall
-
-Room exterior:
-- 4 walls forming a 3m x 3m enclosure (wall height 2.8m).
-- Front wall with 0.8m doorway centered at x=0.
-- Ceiling covering the full room.
-- SetLightIntensity bright (scale 1.5), SetAmbientColor cool.
-
-[room_config]
-scene_type = Medical Supply Closet
-room_width = 3
-room_depth = 3
-room_height = 2.8
-lighting_intensity = 1.5
-ambient_r = 0.92
-ambient_g = 0.92
-ambient_b = 0.95
-doorway_width = 0.8
-doorway_x = 0
-x_min = -1.3
-x_max = 1.3
-z_min = 0.1
-z_max = 2.9
-max_objects = 20
-min_objects = 10
-surface_keywords = Cart,Trolley,Table,Stand
-supply_keywords = Cart,Trolley
-character_prefixes = Nurse
-small_prop_keywords = Box,Bottle,Mask_Box,Bandage,Aid_Kit,Syringe
-decor_keywords = Sign
-additions_furniture = Utility_Cart_03,Trolley_01
-additions_equipment = Sterilizer_01
-additions_props = Box_03,Box_04,Box_05,Bottle_04,Bottle_05,Syringe_01,Syringe_02
-additions_decor = Caution_Sign_01
+[interactions]
+Touching any supply item (mask box, bottle, aid kit, folder, instrument
+tray) should display a short description of its contents (e.g.,
+"Sterile masks — N95 respirators", "Saline solution — 0.9% sodium
+chloride for IV use"). Touching a shelf or cabinet should briefly
+highlight all small items resting on or in it. There are no characters
+and no scripted story arc — this scene is a pure educational tour of
+medical supplies.

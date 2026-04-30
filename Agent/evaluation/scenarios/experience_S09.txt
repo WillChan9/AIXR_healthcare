@@ -1,54 +1,25 @@
 Doctor's Office — Functional zone testing (desk zone + exam zone)
 
-A 5m x 5m doctor's office divided into two functional zones: a desk/office zone in one half (with computer, folders, chair) and an examination zone in the other half (with exam table, stool, basic equipment). The LLM should demonstrate logical spatial grouping.
+A doctor's office cleanly divided into two functional zones: a desk
+and office area on one side (with a computer, paper folders for patient
+records, and an office chair) and an examination area on the other side
+(with an exam table, a small adjustable stool, and basic medical
+equipment like a stethoscope and folder for taking notes). A doctor
+sits at the desk reviewing a patient's chart. The two zones should read
+as visually separate but in the same continuous room — desk for
+paperwork on one side, exam table for clinical work on the other.
 
-REQUIRED OBJECTS:
-Desk Zone (back-left):
-1. Reception_Desk_01 — x~-1.5, z~4.0
-2. Chair_01 — behind desk, x~-1.5, z~4.5
-3. Computer_01 — ON desk, y~0.8
-4. Keyboard_01 — ON desk, y~0.8
-5. Folder_01 — ON desk, y~0.8
-6. Folder_02 — ON desk, y~0.8
+[interactions]
+Touching the doctor at his desk should make him greet the player and
+gesture toward the exam table ("please have a seat, I'll be right
+over"). Touching the computer should briefly display "patient records
+— Mr. Johnson, 42 yrs". Touching any folder on the desk should show
+what kind of records are inside (lab results, history, imaging
+reports). Touching the exam table should make the doctor stand up from
+the desk.
 
-Exam Zone (right side):
-7. Exam_Table_01 — x~1.5, z~3.0
-8. Exam_Stool_01 — near exam table, x~0.8, z~3.0
-9. Scale_01 — near wall, x~2.0, z~1.5
-10. Stethoscope_01 — near exam area
-
-Staff:
-- 1 Doctor_01 — near desk
-
-Room exterior:
-- 4 walls forming a 5m x 5m enclosure (wall height 3.0m).
-- Front wall with 1.0m doorway centered at x=0.
-- Ceiling covering the full room.
-- SetLightIntensity warm (scale 1.3), SetAmbientColor warm.
-
-[room_config]
-scene_type = Doctor Office
-room_width = 5
-room_depth = 5
-room_height = 3.0
-lighting_intensity = 1.3
-ambient_r = 0.95
-ambient_g = 0.93
-ambient_b = 0.88
-doorway_width = 1.0
-doorway_x = 0
-x_min = -2.3
-x_max = 2.3
-z_min = 0.1
-z_max = 4.9
-max_objects = 15
-min_objects = 10
-surface_keywords = Table,Desk,Cart,Stand
-supply_keywords = Cart,Trolley
-character_prefixes = Doctor,Nurse,Patient
-small_prop_keywords = Folder,Stethoscope,Keyboard,Computer,Copybook
-decor_keywords = Poster,Clock
-additions_furniture = Chair_02,Trolley_01
-additions_equipment = Monitor_01
-additions_props = Folder_03,Copybook_01,Glasses_01
-additions_decor = Poster_01,Clock_01,Wall_Panel_01
+A short story arc: touching the doctor → he stays seated and points
+toward the exam table (which highlights briefly). Touching the
+highlighted exam table → the doctor walks from his desk over to the
+exam table. Touching a small piece of medical equipment on the exam
+side afterward → the doctor explains the next step of the examination.

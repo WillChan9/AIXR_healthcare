@@ -1,53 +1,25 @@
 Surgery Prep Room — Precise surface placement and instrument layout
 
-A 5m x 5m surgery preparation room with a focus on instruments and supplies placed ON surfaces (tables, carts). The room should have surgery carts, instrument trays, an autoclave for sterilization, and sterile supply containers. Small props (scalpels, forceps, bottles) should rest on table/cart surfaces at y>0.7, not on the floor.
+A surgery preparation room with strict focus on sterile fields and
+precise instrument layout. Stainless-steel instrument trays rest on top
+of wheeled surgery carts; sterilizing equipment (an autoclave, a
+sterilizer drum) sits along the back wall. A surgeon and a scrub nurse
+are present, going through final pre-op checks. Lighting is bright
+surgical white. The room reads as meticulously organized — every tool
+has a place on a tray or cart surface, never the floor.
 
-REQUIRED OBJECTS:
-1. Surgery_Cart_01 — center, z~2.5
-2. Surgical_Table_01 — back wall, z~4.0
-3. Autoclave_01 — right wall, x~2.0, z~3.0
-4. Trolley_01 — left side, x~-1.8, z~2.0
-5. Utility_Cart_01 — near door, z~1.0
-6. Tray_01 — ON Surgery_Cart_01 surface, y~0.8
-7. Scalpel_01 — ON surface, y~0.8
-8. Forceps_01 — ON surface, y~0.8
-9. Bottle_01 — ON Trolley_01, y~0.8
-10. Mask_Box_01 — ON Utility_Cart_01, y~0.8
-11. Syringe_01 — ON surface, y~0.8
-12. Sterilizer_Drum_01 — near Autoclave_01
+[interactions]
+Touching any small instrument (scalpel, forceps, syringe) should
+highlight the instrument and make the surgeon comment on its specific
+use ("Forceps — for grasping tissue", "Scalpel — sharp, handle
+carefully"). Touching the autoclave or sterilizer should make the
+surgeon briefly explain the sterilization status of the load inside.
+Touching the surgeon should make him ask the scrub nurse to ready a
+specific instrument; that instrument briefly highlights yellow on its
+tray.
 
-Staff:
-- 1 Doctor_01 near Surgical_Table_01
-
-Room exterior:
-- 4 walls forming a 5m x 5m enclosure (wall height 3.0m).
-- Front wall with 1.2m doorway centered at x=0.
-- Ceiling covering the full room.
-- SetLightIntensity bright (scale 1.8), SetAmbientColor cool white.
-
-[room_config]
-scene_type = Surgery Prep Room
-room_width = 5
-room_depth = 5
-room_height = 3.0
-lighting_intensity = 1.8
-ambient_r = 0.92
-ambient_g = 0.94
-ambient_b = 0.96
-doorway_width = 1.2
-doorway_x = 0
-x_min = -2.3
-x_max = 2.3
-z_min = 0.1
-z_max = 4.9
-max_objects = 20
-min_objects = 12
-surface_keywords = Table,Cart,Trolley,Stand,Tray
-supply_keywords = Cart,Trolley
-character_prefixes = Doctor,Surgeon,Nurse
-small_prop_keywords = Scalpel,Forceps,Syringe,Bottle,Tray,Mask_Box
-decor_keywords = Poster,Clock
-additions_furniture = Trolley_02,Utility_Cart_02
-additions_equipment = Sterilizer_01
-additions_props = Scalpel_02,Forceps_02,Bottle_02,Syringe_02,Bowl_01,Scissors_01
-additions_decor = Clock_01
+A short story arc: touching the surgeon → he asks for forceps and
+Forceps_01 highlights. Touching the highlighted forceps → the scrub
+nurse walks over to the central cart and acknowledges. Touching an
+instrument tray on the central cart afterward → the surgical lighting
+brightens and the surgeon nods "ready to begin".

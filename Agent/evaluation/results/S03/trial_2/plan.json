@@ -1,139 +1,90 @@
 {
   "room_type": "Physical Therapy Gym",
-  "description": "High-diversity interaction test room",
+  "description": "A bright, open physical therapy rehabilitation gym with well-spaced exercise stations, clear walkways, a supervising physical therapist, and one or two patients actively using therapy equipment. The room emphasizes movement, recovery, and interactive demonstrations without clutter.",
   "layout_goals": {
-    "interior_bounds": "6m x 6m",
-    "minimum_objects": 12,
-    "focal_point": "open floor plan with diverse rehabilitation equipment and medical furniture"
+    "focal_point": "central rehabilitation zone with parallel bars and therapist-patient interaction",
+    "minimum_objects": 16,
+    "interior_bounds": {
+      "x_min": -3.8,
+      "x_max": 3.8,
+      "z_min": 0.1,
+      "z_max": 6.9
+    }
   },
   "steps": [
     {
       "step": 1,
-      "action": "place",
+      "action": "Establish the main therapy equipment zones with generous spacing and visible walk paths between them.",
       "objects": [
-        "Treadmill_01"
+        "Treadmill_01",
+        "Kinesotherapy_Apparatus_01",
+        "Handrail_01",
+        "Handrail_02",
+        "Bench_01"
       ],
-      "target_area": "right wall",
-      "condition": "z~4.0, distance from other objects >= 0.8m"
+      "target_area": "treadmill along one side wall, kinesotherapy apparatus toward rear, paired handrails centered as parallel bars, bench near an open exercise area",
+      "condition": "Keep the middle walkway navigable and avoid clustering large equipment near the doorway."
     },
     {
       "step": 2,
-      "action": "place",
+      "action": "Add supportive seating and standby mobility support for rest breaks and supervised exercises.",
       "objects": [
-        "WheelChair_01"
+        "Exam_Stool_01",
+        "Chair_01",
+        "Ambulance_01_Chair_01",
+        "Crutch_01"
       ],
-      "target_area": "entry zone",
-      "condition": "z~0.5, x~1.5, distance from other objects >= 0.8m"
+      "target_area": "near the central therapy zone but offset from the active path",
+      "condition": "Place the exam stool where the therapist can observe both treadmill and parallel bars; place the standby chair and crutch near a wall."
     },
     {
       "step": 3,
-      "action": "place",
+      "action": "Place the physical therapist and exercising patients to create active rehabilitation interactions.",
       "objects": [
-        "Trolley_01"
+        "Doctor_03",
+        "Patient_01",
+        "Patient_02"
       ],
-      "target_area": "center-left",
-      "condition": "z~2.5, x~-1.5, distance from other objects >= 0.8m"
+      "target_area": "therapist near the parallel bars, one patient at the treadmill, one patient near the handrails",
+      "condition": "Doctor_03 represents the physical therapist; patients should face equipment and be reachable for touch interactions."
     },
     {
       "step": 4,
-      "action": "place",
+      "action": "Add a compact therapy supply station for small exercise and care props without cluttering the gym floor.",
       "objects": [
-        "Utility_Cart_01"
+        "Utility_Cart_02",
+        "Tray_01",
+        "Bandage_01",
+        "Bottle_01",
+        "Aid_Kit_01"
       ],
-      "target_area": "left wall",
-      "condition": "z~3.5, distance from other objects >= 0.8m"
+      "target_area": "side wall beside the bench or near the therapist observation area",
+      "condition": "Small props should rest on or near the cart and tray, leaving exercise zones clear."
     },
     {
       "step": 5,
-      "action": "place",
+      "action": "Add clinical context and orientation decor appropriate for a rehabilitation gym.",
       "objects": [
-        "Table_01"
+        "Poster_01",
+        "Poster_02",
+        "Clock_01",
+        "Caution_Sign_01"
       ],
-      "target_area": "left-center",
-      "condition": "z~2.0, x~-1.0, distance from other objects >= 0.8m"
+      "target_area": "walls and entrance-adjacent area",
+      "condition": "Posters should suggest exercise guidance or wellness education; caution sign should not block any route."
     },
     {
       "step": 6,
-      "action": "place",
+      "action": "Configure interaction story targets for the therapy arc.",
       "objects": [
-        "Towel_Dispenser_01"
-      ],
-      "target_area": "right wall",
-      "condition": "z~2.0, distance from other objects >= 0.8m"
-    },
-    {
-      "step": 7,
-      "action": "place",
-      "objects": [
-        "Caution_Sign_01"
-      ],
-      "target_area": "entry floor",
-      "condition": "z~0.6, x~0.5, distance from other objects >= 0.8m"
-    },
-    {
-      "step": 8,
-      "action": "place",
-      "objects": [
-        "Clock_01"
-      ],
-      "target_area": "back wall",
-      "condition": "z~5.8, y~2.5"
-    },
-    {
-      "step": 9,
-      "action": "place",
-      "objects": [
-        "Poster_01",
-        "Poster_02"
-      ],
-      "target_area": "side walls",
-      "condition": "y~1.8, distance from other objects >= 0.8m"
-    },
-    {
-      "step": 10,
-      "action": "place",
-      "objects": [
-        "Folder_01",
-        "Folder_02"
-      ],
-      "target_area": "on desk surface",
-      "condition": "y~0.8"
-    },
-    {
-      "step": 11,
-      "action": "place",
-      "objects": [
-        "Screen_01"
-      ],
-      "target_area": "on desk",
-      "condition": "z~5.0, x~-1.5"
-    },
-    {
-      "step": 12,
-      "action": "place",
-      "objects": [
-        "Reception_Desk_01"
-      ],
-      "target_area": "back-left corner",
-      "condition": "z~4.8, x~-1.8"
-    },
-    {
-      "step": 13,
-      "action": "place",
-      "objects": [
+        "Doctor_03",
+        "Treadmill_01",
+        "Handrail_01",
+        "Handrail_02",
         "Patient_01"
       ],
-      "target_area": "near Treadmill_01",
-      "condition": "distance from Treadmill_01 <= 1.0m"
-    },
-    {
-      "step": 14,
-      "action": "place",
-      "objects": [
-        "Nurse_01"
-      ],
-      "target_area": "near center",
-      "condition": "distance from center <= 1.5m"
+      "target_area": "therapist, treadmill station, and parallel bars",
+      "condition": "First touch on Doctor_03 triggers a general equipment explanation and highlights Treadmill_01; subsequent touch on Treadmill_01 moves Doctor_03 to demonstrate proper form; later touch on the handrails triggers Patient_01 walking between Handrail_01 and Handrail_02 while Doctor_03 watches."
     }
   ]
 }

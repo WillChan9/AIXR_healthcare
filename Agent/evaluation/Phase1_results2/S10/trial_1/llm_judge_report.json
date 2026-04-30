@@ -1,0 +1,7 @@
+{
+  "raw_response": "```json\n{\n  \"coherence_score\": 4,\n  \"spatial_score\": 3,\n  \"coherence_reasoning\": \"The scene contains appropriate objects for a nurse station, including reception desks, computer equipment, chairs, utility carts, trolleys, folders, monitors, posters, a clock, and nurse characters. These objects align well with the functions expected in such a setting. However, the presence of some objects like 'Copybook_02' seems less typical for a nurse station open area, but it doesn't significantly detract from the overall coherence.\",\n  \"spatial_reasoning\": \"The placement of objects generally appears logical. Reception desks are positioned appropriately at the front and back of the room. Desks have associated chairs and computer equipment. Utility carts and trolleys are placed on the floor (y=0), which is correct. However, some objects like 'Folder_05' are placed directly on the floor (y=0.01), which seems unusual as small props should typically be on surfaces (y>0.7). The nurse characters are scattered throughout the room, which is reasonable. Wall-mounted items are not explicitly listed, but posters are placed at various heights, though some seem low (on the floor, y=0). Overall, while there are mostly logical placements, there are a few instances that could be improved for better spatial semantics.\"\n}\n```",
+  "coherence_score": 4,
+  "spatial_score": 3,
+  "scene_type": "Nurse Station Open",
+  "results_dir": "S:\\Firefighter_project\\Agent\\evaluation\\results2\\S10\\trial_1"
+}

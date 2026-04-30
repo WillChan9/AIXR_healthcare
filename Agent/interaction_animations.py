@@ -225,6 +225,12 @@ class InteractionAnimationHandler:
         obj_name   = event.get("objectName", "")
         category   = _object_category(obj_name)
 
+        # Skip events targeting the player rig itself — the camera collider
+        # frequently triggers touch/hover against its own GameObject and floods
+        # the log with self-interactions that have no narrative meaning.
+        if obj_name.startswith("XR Origin") or obj_name.startswith("XR ") or obj_name == "Main Camera":
+            return False
+
         # Skip event types that are universally silent
         if event_type in _SILENT_TYPES:
             self._log.append(
@@ -269,13 +275,30 @@ class InteractionAnimationHandler:
             )
             return False
 
-        anim_state = config["state"]
-        logger.info("[%s] %s (%s) → %s", event_type, obj_name, category, anim_state)
+        anim_state = config.get("state", "")
+        target_char = config.get("target_character") or config.get("target")  # optional NPC name; null = defaultHumanModel
+        bubble_msg = config.get("bubble_message")  # optional string — fires ShowSpeechBubble alongside
+        bubble_on = config.get("bubble_on") or obj_name  # which object the bubble attaches to
+        bubble_dur = float(config.get("bubble_duration", 4.0))
+
+        logger.info("[%s] %s (%s) → anim=%s target=%s bubble=%s",
+                    event_type, obj_name, category, anim_state or "-", target_char or "default", bool(bubble_msg))
 
         # Cancel any previously queued idle return — new interaction takes over
         self._pending_idles.clear()
 
-        self._play(config["controller"], anim_state, config.get("fade", 0.25))
+        # Animation: only play if controller+state are present (entries can be bubble-only).
+        if config.get("controller") and anim_state:
+            self._play(config["controller"], anim_state, config.get("fade", 0.25), target_char)
+
+        # Speech bubble: independent of animation; fires when bubble_message is set.
+        if bubble_msg:
+            unity.add_command(
+                "ShowSpeechBubble",
+                objectName=bubble_on,
+                message=bubble_msg,
+                duration=bubble_dur,
+            )
 
         idle_delay = config.get("idle_delay", 0.0)
         if idle_delay > 0:
@@ -301,9 +324,10 @@ class InteractionAnimationHandler:
 
     # ── animation helpers ─────────────────────────────────────────────────
 
-    def _play(self, controller: str, state: str, fade: float = 0.25):
-        """Send PlayHumanAnimationFromResources command (targets NPC/defaultHumanModel)."""
-        unity.play_human_animation(controller, state, fade)
+    def _play(self, controller: str, state: str, fade: float = 0.25, target: Optional[str] = None):
+        """Send PlayHumanAnimationFromResources. target = NPC name (e.g. "Nurse_01")
+        or None for defaultHumanModel (the auto-bound character)."""
+        unity.play_human_animation(controller, state, fade, target_model=target)
 
     def _schedule_idle(self, delay: float):
         """Queue a return-to-idle N seconds from now."""

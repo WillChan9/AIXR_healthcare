@@ -1,0 +1,454 @@
+2026-04-25 17:28:42 - Pipeline - INFO - [Init] Cleared log agent.log
+2026-04-25 17:28:42 - Pipeline - INFO - [Init] Cleared log reflection_log.log
+2026-04-25 17:28:42 - Pipeline - INFO - Generating room layout plan...
+2026-04-25 17:28:43 - Pipeline - INFO - Plan generated and saved to S:\Firefighter_project\Agent\api_files\plan.json
+2026-04-25 17:28:44 - Pipeline - INFO - ============================================================
+2026-04-25 17:28:44 - Pipeline - INFO -   PHASE 1: Static Environment Generation
+2026-04-25 17:28:44 - Pipeline - INFO - ============================================================
+2026-04-25 17:28:44 - Pipeline - INFO - [Phase 1] Room shell written: 9 structural commands
+2026-04-25 17:28:45 - Pipeline - INFO - ----- GROQ RAW RESPONSE (attempt 1/3) -----
+2026-04-25 17:28:45 - Pipeline - INFO - [
+  {"action": "PlaceObject", "objectName": "Handrail_01", "x": -1.2, "y": 0, "z": 3.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Handrail_02", "x": 1.2, "y": 0, "z": 3.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Handrail_01", "x": -1.2, "y": 0, "z": 6.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Handrail_02", "x": 1.2, "y": 0, "z": 6.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "WheelChair_01", "x": 0, "y": 0, "z": 1.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Walker_01", "x": 1.0, "y": 0, "z": 1.5, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Bench_01", "x": 0, "y": 0, "z": 5.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Caution_Sign_01", "x": 0, "y": 0, "z": 0.5, "rotationY": 0},
+  {"action": "PlaceHuman", "humanName": "Patient_01", "x": 0, "y": 0, "z": 4.0, "rotationY": 0},
+  {"action": "PlaceHuman", "humanName": "Nurse_01", "x": 0, "y": 0, "z": 4.5, "rotationY": 0}
+]
+2026-04-25 17:28:45 - Pipeline - INFO - ------------------------------------------------------
+2026-04-25 17:28:45 - Pipeline - INFO - [Phase 1] Interior objects: wrote 10 commands
+2026-04-25 17:28:45 - Pipeline - INFO - [Phase 1] Waiting up to 15s for Unity to refresh screenshots...
+2026-04-25 17:28:55 - Pipeline - INFO - [Phase 1] Fresh screenshots detected (3/3). Starting reflection loop.
+2026-04-25 17:28:55 - Pipeline - INFO - [Phase 1 Reflection] Step 1/6: Install handrails
+2026-04-25 17:28:55 - ReflectionModule - INFO - [SceneState] Loaded 15 live objects from scene_state.json.
+2026-04-25 17:28:55 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-25 17:28:55 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-25 17:28:55 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Handrail_01 x=-1.19 y=0.00 z=6.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.20, half=0.06)
+2026-04-25 17:28:55 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Nurse_01 x=0.00 y=0.00 z=4.93 rotationY=0  — reason: overlaps Patient_01 (pen_x=1.47m pen_z=0.20m; exact bounds)
+2026-04-25 17:28:55 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Handrail_02 x=1.17 y=0.00 z=6.00 rotationY=0  — reason: [bounds] right edge clips wall (x=1.20, half=0.08)
+2026-04-25 17:28:55 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject WheelChair_01 x=-1.12 y=0.00 z=1.00 rotationY=0  — reason: [bounds] blocking/partially covering doorway (door x=[-0.60,0.60], object bx=[-0.37,0.37], bz_min=0.71)
+2026-04-25 17:28:55 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Walker_01 x=0.87 y=0.00 z=1.50 rotationY=0  — reason: [bounds] right edge clips wall (x=1.00, half=0.38)
+2026-04-25 17:28:55 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Caution_Sign_01 x=-0.90 y=0.00 z=0.50 rotationY=0  — reason: [bounds] blocking/partially covering doorway (door x=[-0.60,0.60], object bx=[-0.15,0.15], bz_min=0.41)
+2026-04-25 17:28:55 - ReflectionModule - INFO - [BoundsThread] 5 bound/doorway corrections generated.
+2026-04-25 17:28:55 - ReflectionModule - INFO - [CollisionThread] math path: 1 collision(s) found.
+2026-04-25 17:28:57 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 2 line(s).
+2026-04-25 17:28:57 - ReflectionModule - INFO - [CollisionThread][image] MoveObject Walker_01 x=1.0 y=0.0 z=2.0 rotationY=0.0 — reason: visually overlaps WheelChair_01
+2026-04-25 17:28:57 - ReflectionModule - INFO - [CollisionThread][image] MoveObject Walker_01 x=1.0 y=0.0 z=2.0 rotationY=0.0 — reason: visually overlaps WheelChair_01
+2026-04-25 17:28:57 - ReflectionModule - INFO - [CollisionThread] image path added 2 extra correction(s).
+2026-04-25 17:28:57 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-25 17:28:58 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 1 line(s).
+2026-04-25 17:28:58 - ReflectionModule - INFO - [BoundsThread] 5 correction(s) applied:
+2026-04-25 17:28:58 - ReflectionModule - INFO -   [BoundsThread] MoveObject Handrail_01 x=-1.19 y=0.00 z=6.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.20, half=0.06)
+2026-04-25 17:28:58 - ReflectionModule - INFO -   [BoundsThread] MoveObject Handrail_02 x=1.17 y=0.00 z=6.00 rotationY=0  — reason: [bounds] right edge clips wall (x=1.20, half=0.08)
+2026-04-25 17:28:58 - ReflectionModule - INFO -   [BoundsThread] MoveObject WheelChair_01 x=-1.12 y=0.00 z=1.00 rotationY=0  — reason: [bounds] blocking/partially covering doorway (door x=[-0.60,0.60], object bx=[-0.37,0.37], bz_min=0.71)
+2026-04-25 17:28:58 - ReflectionModule - INFO -   [BoundsThread] MoveObject Walker_01 x=0.87 y=0.00 z=1.50 rotationY=0  — reason: [bounds] right edge clips wall (x=1.00, half=0.38)
+2026-04-25 17:28:58 - ReflectionModule - INFO -   [BoundsThread] MoveObject Caution_Sign_01 x=-0.90 y=0.00 z=0.50 rotationY=0  — reason: [bounds] blocking/partially covering doorway (door x=[-0.60,0.60], object bx=[-0.15,0.15], bz_min=0.41)
+2026-04-25 17:28:58 - ReflectionModule - INFO - [CollisionThread] 3 correction(s) applied:
+2026-04-25 17:28:58 - ReflectionModule - INFO -   [CollisionThread] MoveObject Nurse_01 x=0.00 y=0.00 z=4.93 rotationY=0  — reason: overlaps Patient_01 (pen_x=1.47m pen_z=0.20m; exact bounds)
+2026-04-25 17:28:58 - ReflectionModule - INFO -   [CollisionThread] MoveObject Walker_01 x=1.0 y=0.0 z=2.0 rotationY=0.0 — reason: visually overlaps WheelChair_01
+2026-04-25 17:28:58 - ReflectionModule - INFO -   [CollisionThread] MoveObject Walker_01 x=1.0 y=0.0 z=2.0 rotationY=0.0 — reason: visually overlaps WheelChair_01
+2026-04-25 17:28:58 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-25 17:28:58 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied (skipped 1 already handled).
+2026-04-25 17:28:58 - ReflectionModule - INFO - Logged reflection entry for step 'Install handrails'
+2026-04-25 17:28:58 - Pipeline - INFO -   step_complete=no  room_status=sparse  suggest_additions=True  objects=12
+2026-04-25 17:28:58 - Pipeline - INFO -   layout: The room has several objects placed in suboptimal locations. The walker and wheelchair are obstructing the walkway. The caution sign is too low. The patient and nurse are too close to each other.
+2026-04-25 17:28:58 - Pipeline - INFO -   suggestions: MoveObject Handrail_01 x=-1.19 y=0.00 z=6.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.20, half=0.06)
+MoveObject Handrail_02 x=1.17 y=0.00 z=6.00 rotationY=0  — reason: [bounds] right edge clips wall (x=1.20, half=0.08)
+MoveObject WheelChair_01 x=-1.12 y=0.00 z=1.00 rotationY=0  — reason: [bounds] blocking/partially covering doorway (door x=[-0.60,0.60], object bx=[-0.37,0.37], bz_min=0.71)
+MoveObject Walker_01 x=0.87 y=0.00 z=1.50 rotationY=0  — reason: [bounds] right edge clips wall (x=1.00, half=0.38)
+MoveObject Caution_Sign_01 x=-0.90 y=0.00 z=0.50 rotationY=0  — reason: [bounds] blocking/partially covering doorway (door x=[-0.60,0.60], object bx=[-0.15,0.15], bz_min=0.41)
+MoveObject Nurse_01 x=0.00 y=0.00 z=4.93 rotationY=0  — reason: overlaps Patient_01 (pen_x=1.47m pen_z=0.20m; exact bounds)
+MoveObject Walker_01 x=1.0 y=0.0 z=2.0 rotationY=0.0 — reason: visually overlaps WheelChair_01
+MoveObject Walker_01 x=1.0 y=0.0 z=2.0 rotationY=0.0 — reason: visually overlaps WheelChair_01
+2026-04-25 17:28:58 - Pipeline - INFO -   [parse_alignment] MoveObject Handrail_01 → x=-1.19 y=0.0 z=6.0 rot=0.0
+2026-04-25 17:28:58 - Pipeline - INFO -   [parse_alignment] MoveObject Handrail_02 → x=1.17 y=0.0 z=6.0 rot=0.0
+2026-04-25 17:28:58 - Pipeline - INFO -   [parse_alignment] MoveObject WheelChair_01 → x=-1.12 y=0.0 z=1.0 rot=0.0
+2026-04-25 17:28:58 - Pipeline - INFO -   [parse_alignment] MoveObject Walker_01 → x=0.87 y=0.0 z=1.5 rot=0.0
+2026-04-25 17:28:58 - Pipeline - INFO -   [parse_alignment] MoveObject Caution_Sign_01 → x=-0.9 y=0.0 z=0.5 rot=0.0
+2026-04-25 17:28:58 - Pipeline - INFO -   [parse_alignment] MoveObject Nurse_01 → x=0.0 y=0.0 z=4.93 rot=0.0
+2026-04-25 17:28:58 - Pipeline - INFO -   [parse_alignment] MoveObject Walker_01 → x=1.0 y=0.0 z=2.0 rot=0.0
+2026-04-25 17:28:58 - Pipeline - INFO -   [parse_alignment] MoveObject Walker_01 → x=1.0 y=0.0 z=2.0 rot=0.0
+2026-04-25 17:28:58 - Pipeline - INFO - [Phase 1] Applied 8 direct corrections (MoveObject/DeleteObject)
+2026-04-25 17:28:59 - Pipeline - INFO - ----- GROQ RAW RESPONSE (loop attempt 1/3) -----
+2026-04-25 17:28:59 - Pipeline - INFO - [
+  {
+    "action": "PlaceObject",
+    "objectName": "Bench_02",
+    "x": 0,
+    "y": 0,
+    "z": 7.0,
+    "rotationY": 0
+  },
+  {
+    "action": "PlaceObject",
+    "objectName": "Clock_01",
+    "x": -1.1,
+    "y": 0.8,
+    "z": 0.5,
+    "rotationY": 0
+  },
+  {
+    "action": "PlaceObject",
+    "objectName": "Folder_01",
+    "x": 1.1,
+    "y": 0.8,
+    "z": 5.5,
+    "rotationY": 0
+  }
+]
+2026-04-25 17:28:59 - Pipeline - INFO - ------------------------------------------------------
+2026-04-25 17:28:59 - Pipeline - INFO - [Phase 1] Appended 3 fill commands
+2026-04-25 17:29:02 - Pipeline - INFO - [Phase 1 Reflection] Step 1/6: Install handrails
+2026-04-25 17:29:02 - ReflectionModule - INFO - [SceneState] Loaded 18 live objects from scene_state.json.
+2026-04-25 17:29:02 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-25 17:29:02 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-25 17:29:02 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Handrail_02 x=1.17 y=0.00 z=6.00 rotationY=0  — reason: [bounds] right edge clips wall (x=1.17, half=0.08)
+2026-04-25 17:29:02 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Nurse_01 x=0.00 y=0.00 z=4.39 rotationY=0  — reason: overlaps Bench_01 (pen_x=0.67m pen_z=0.29m; exact bounds)
+2026-04-25 17:29:02 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject WheelChair_01 x=-0.88 y=0.00 z=1.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.12, half=0.37)
+2026-04-25 17:29:02 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Walker_01 x=0.87 y=0.00 z=2.00 rotationY=0  — reason: [bounds] right edge clips wall (x=1.00, half=0.38)
+2026-04-25 17:29:02 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Clock_01 x=-1.07 y=0.00 z=0.50 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.10, half=0.18)
+2026-04-25 17:29:02 - ReflectionModule - INFO - [BoundsThread] 4 bound/doorway corrections generated.
+2026-04-25 17:29:02 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Clock_01 x=-1.10 y=0.00 z=0.87 rotationY=0  — reason: overlaps Caution_Sign_01 (pen_x=0.14m pen_z=0.05m; exact bounds)
+2026-04-25 17:29:02 - ReflectionModule - INFO - [CollisionThread] math path: 2 collision(s) found.
+2026-04-25 17:29:03 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 2 line(s).
+2026-04-25 17:29:03 - ReflectionModule - INFO - [DispatcherThread] LLM visual check added 2 extra correction(s).
+2026-04-25 17:29:04 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 1 line(s).
+2026-04-25 17:29:04 - ReflectionModule - INFO - [CollisionThread][image] MoveObject Cube x=0.0 y=0.0 z=6.0 rotationY=0.0 reason: visually overlaps Bench_01
+2026-04-25 17:29:04 - ReflectionModule - INFO - [CollisionThread] image path added 1 extra correction(s).
+2026-04-25 17:29:04 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-25 17:29:05 - ReflectionModule - INFO - [BoundsThread] 4 correction(s) applied:
+2026-04-25 17:29:05 - ReflectionModule - INFO -   [BoundsThread] MoveObject Handrail_02 x=1.17 y=0.00 z=6.00 rotationY=0  — reason: [bounds] right edge clips wall (x=1.17, half=0.08)
+2026-04-25 17:29:05 - ReflectionModule - INFO -   [BoundsThread] MoveObject WheelChair_01 x=-0.88 y=0.00 z=1.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.12, half=0.37)
+2026-04-25 17:29:05 - ReflectionModule - INFO -   [BoundsThread] MoveObject Walker_01 x=0.87 y=0.00 z=2.00 rotationY=0  — reason: [bounds] right edge clips wall (x=1.00, half=0.38)
+2026-04-25 17:29:05 - ReflectionModule - INFO -   [BoundsThread] MoveObject Clock_01 x=-1.07 y=0.00 z=0.50 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.10, half=0.18)
+2026-04-25 17:29:05 - ReflectionModule - INFO - [CollisionThread] 3 correction(s) applied:
+2026-04-25 17:29:05 - ReflectionModule - INFO -   [CollisionThread] MoveObject Nurse_01 x=0.00 y=0.00 z=4.39 rotationY=0  — reason: overlaps Bench_01 (pen_x=0.67m pen_z=0.29m; exact bounds)
+2026-04-25 17:29:05 - ReflectionModule - INFO -   [CollisionThread] MoveObject Clock_01 x=-1.10 y=0.00 z=0.87 rotationY=0  — reason: overlaps Caution_Sign_01 (pen_x=0.14m pen_z=0.05m; exact bounds)
+2026-04-25 17:29:05 - ReflectionModule - INFO -   [CollisionThread] MoveObject Cube x=0.0 y=0.0 z=6.0 rotationY=0.0 reason: visually overlaps Bench_01
+2026-04-25 17:29:05 - ReflectionModule - INFO - [DispatcherThread] 1 correction(s) applied (skipped 1 already handled):
+2026-04-25 17:29:05 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Caution_Sign_01 x=-0.9 y=0.0 z=0.5 rotationY=0.0 — reason: [dispatcher→surface] <issue: 0.603>
+2026-04-25 17:29:05 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied (skipped 1 already handled).
+2026-04-25 17:29:05 - ReflectionModule - INFO - Logged reflection entry for step 'Install handrails'
+2026-04-25 17:29:05 - Pipeline - INFO -   Object cap reached (15/15) — no additions
+2026-04-25 17:29:05 - Pipeline - INFO -   step_complete=no  room_status=sparse  suggest_additions=False  objects=15
+2026-04-25 17:29:05 - Pipeline - INFO -   layout: The room has several objects placed in suboptimal locations. The walker and wheelchair are obstructing the walkway. The caution sign is too low. The patient and nurse are too close to each other.
+2026-04-25 17:29:05 - Pipeline - INFO -   suggestions: MoveObject Handrail_02 x=1.17 y=0.00 z=6.00 rotationY=0  — reason: [bounds] right edge clips wall (x=1.17, half=0.08)
+MoveObject WheelChair_01 x=-0.88 y=0.00 z=1.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.12, half=0.37)
+MoveObject Walker_01 x=0.87 y=0.00 z=2.00 rotationY=0  — reason: [bounds] right edge clips wall (x=1.00, half=0.38)
+MoveObject Clock_01 x=-1.07 y=0.00 z=0.50 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.10, half=0.18)
+MoveObject Nurse_01 x=0.00 y=0.00 z=4.39 rotationY=0  — reason: overlaps Bench_01 (pen_x=0.67m pen_z=0.29m; exact bounds)
+MoveObject Clock_01 x=-1.10 y=0.00 z=0.87 rotationY=0  — reason: overlaps Caution_Sign_01 (pen_x=0.14m pen_z=0.05m; exact bounds)
+MoveObject Cube x=0.0 y=0.0 z=6.0 rotationY=0.0 reason: visually overlaps Bench_01
+MoveObject Caution_Sign_01 x=-0.9 y=0.0 z=0.5 rotationY=0.0 — reason: [dispatcher→surface] <issue: 0.603>
+2026-04-25 17:29:05 - Pipeline - INFO -   [parse_alignment] MoveObject Handrail_02 → x=1.17 y=0.0 z=6.0 rot=0.0
+2026-04-25 17:29:05 - Pipeline - INFO -   [parse_alignment] MoveObject WheelChair_01 → x=-0.88 y=0.0 z=1.0 rot=0.0
+2026-04-25 17:29:05 - Pipeline - INFO -   [parse_alignment] MoveObject Walker_01 → x=0.87 y=0.0 z=2.0 rot=0.0
+2026-04-25 17:29:05 - Pipeline - INFO -   [parse_alignment] MoveObject Clock_01 → x=-1.07 y=0.0 z=0.5 rot=0.0
+2026-04-25 17:29:05 - Pipeline - INFO -   [parse_alignment] MoveObject Nurse_01 → x=0.0 y=0.0 z=4.39 rot=0.0
+2026-04-25 17:29:05 - Pipeline - INFO -   [parse_alignment] MoveObject Clock_01 → x=-1.1 y=0.0 z=0.87 rot=0.0
+2026-04-25 17:29:05 - Pipeline - INFO -   [parse_alignment] MoveObject Cube → x=0.0 y=0.0 z=6.0 rot=0.0
+2026-04-25 17:29:05 - Pipeline - INFO -   [parse_alignment] MoveObject Caution_Sign_01 → x=-0.9 y=0.0 z=0.5 rot=0.0
+2026-04-25 17:29:05 - Pipeline - INFO - [Phase 1] Applied 8 direct corrections (MoveObject/DeleteObject)
+2026-04-25 17:29:05 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-25 17:29:08 - Pipeline - INFO - [Phase 1 Reflection] Step 1/6: Install handrails
+2026-04-25 17:29:08 - ReflectionModule - INFO - [SceneState] Loaded 18 live objects from scene_state.json.
+2026-04-25 17:29:08 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-25 17:29:08 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-25 17:29:08 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Handrail_02 x=1.17 y=0.00 z=6.00 rotationY=0  — reason: [bounds] right edge clips wall (x=1.17, half=0.08)
+2026-04-25 17:29:08 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Clock_01 x=-1.10 y=0.00 z=0.44 rotationY=0  — reason: overlaps WheelChair_01 (pen_x=0.34m pen_z=0.05m; exact bounds)
+2026-04-25 17:29:08 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject WheelChair_01 x=-0.88 y=0.00 z=1.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-0.88, half=0.37)
+2026-04-25 17:29:08 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Walker_01 x=0.87 y=0.00 z=2.00 rotationY=0  — reason: [bounds] right edge clips wall (x=0.87, half=0.38)
+2026-04-25 17:29:08 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Clock_01 x=-1.07 y=0.00 z=0.87 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.10, half=0.18)
+2026-04-25 17:29:08 - ReflectionModule - INFO - [BoundsThread] 4 bound/doorway corrections generated.
+2026-04-25 17:29:08 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Nurse_01 x=0.00 y=0.00 z=4.99 rotationY=0  — reason: overlaps Patient_01 (pen_x=0.67m pen_z=0.33m; exact bounds)
+2026-04-25 17:29:08 - ReflectionModule - INFO - [CollisionThread] math path: 2 collision(s) found.
+2026-04-25 17:29:10 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 2 line(s).
+2026-04-25 17:29:10 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 1 line(s).
+2026-04-25 17:29:10 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 7 line(s).
+2026-04-25 17:29:10 - ReflectionModule - INFO - [DispatcherThread] LLM visual check added 7 extra correction(s).
+2026-04-25 17:29:11 - ReflectionModule - INFO - [BoundsThread] 4 correction(s) applied:
+2026-04-25 17:29:11 - ReflectionModule - INFO -   [BoundsThread] MoveObject Handrail_02 x=1.17 y=0.00 z=6.00 rotationY=0  — reason: [bounds] right edge clips wall (x=1.17, half=0.08)
+2026-04-25 17:29:11 - ReflectionModule - INFO -   [BoundsThread] MoveObject WheelChair_01 x=-0.88 y=0.00 z=1.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-0.88, half=0.37)
+2026-04-25 17:29:11 - ReflectionModule - INFO -   [BoundsThread] MoveObject Walker_01 x=0.87 y=0.00 z=2.00 rotationY=0  — reason: [bounds] right edge clips wall (x=0.87, half=0.38)
+2026-04-25 17:29:11 - ReflectionModule - INFO -   [BoundsThread] MoveObject Clock_01 x=-1.07 y=0.00 z=0.87 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.10, half=0.18)
+2026-04-25 17:29:11 - ReflectionModule - INFO - [CollisionThread] 2 correction(s) applied:
+2026-04-25 17:29:11 - ReflectionModule - INFO -   [CollisionThread] MoveObject Clock_01 x=-1.10 y=0.00 z=0.44 rotationY=0  — reason: overlaps WheelChair_01 (pen_x=0.34m pen_z=0.05m; exact bounds)
+2026-04-25 17:29:11 - ReflectionModule - INFO -   [CollisionThread] MoveObject Nurse_01 x=0.00 y=0.00 z=4.99 rotationY=0  — reason: overlaps Patient_01 (pen_x=0.67m pen_z=0.33m; exact bounds)
+2026-04-25 17:29:11 - ReflectionModule - INFO - [DispatcherThread] 7 correction(s) applied:
+2026-04-25 17:29:11 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Cube x=0.00 y=0.00 z=0.00 rotationY=0.00 — reason: [dispatcher→surface] <issue>
+2026-04-25 17:29:11 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Cube x=0.00 y=0.00 z=0.00 rotationY=0.00 — reason: [dispatcher→surface] <issue>
+2026-04-25 17:29:11 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Cube x=0.00 y=0.00 z=0.00 rotationY=0.00 — reason: [dispatcher→surface] <issue>
+2026-04-25 17:29:11 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Cube x=0.00 y=0.00 z=0.00 rotationY=0.00 — reason: [dispatcher→surface] <issue>
+2026-04-25 17:29:11 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Cube x=0.00 y=0.00 z=0.00 rotationY=0.00 — reason: [dispatcher→surface] <issue>
+2026-04-25 17:29:11 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Cube x=0.00 y=0.00 z=0.00 rotationY=0.00 — reason: [dispatcher→surface] <issue>
+2026-04-25 17:29:11 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Cube x=0.00 y=0.00 z=0.00 rotationY=0.00 — reason: [dispatcher→surface] <issue>
+2026-04-25 17:29:11 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied (skipped 1 already handled).
+2026-04-25 17:29:11 - ReflectionModule - INFO - Logged reflection entry for step 'Install handrails'
+2026-04-25 17:29:11 - Pipeline - INFO -   Object cap reached (15/15) — no additions
+2026-04-25 17:29:11 - Pipeline - INFO -   step_complete=no  room_status=sparse  suggest_additions=False  objects=15
+2026-04-25 17:29:11 - Pipeline - INFO -   layout: The room has several objects placed in suboptimal locations. The walker and wheelchair are obstructing the walkway. The caution sign is too low. The patient and nurse are too close to each other.
+2026-04-25 17:29:11 - Pipeline - INFO -   suggestions: MoveObject Handrail_02 x=1.17 y=0.00 z=6.00 rotationY=0  — reason: [bounds] right edge clips wall (x=1.17, half=0.08)
+MoveObject WheelChair_01 x=-0.88 y=0.00 z=1.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-0.88, half=0.37)
+MoveObject Walker_01 x=0.87 y=0.00 z=2.00 rotationY=0  — reason: [bounds] right edge clips wall (x=0.87, half=0.38)
+MoveObject Clock_01 x=-1.07 y=0.00 z=0.87 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.10, half=0.18)
+MoveObject Clock_01 x=-1.10 y=0.00 z=0.44 rotationY=0  — reason: overlaps WheelChair_01 (pen_x=0.34m pen_z=0.05m; exact bounds)
+MoveObject Nurse_01 x=0.00 y=0.00 z=4.99 rotationY=0  — reason: overlaps Patient_01 (pen_x=0.67m pen_z=0.33m; exact bounds)
+MoveObject Cube x=0.00 y=0.00 z=0.00 rotationY=0.00 — reason: [dispatcher→surface] <issue>
+MoveObject Cube x=0.00 y=0.00 z=0.00 rotationY=0.00 — reason: [dispatcher→surface] <issue>
+MoveObject Cube x=0.00 y=0.00 z=0.00 rotationY=0.00 — reason: [dispatcher→surface] <issue>
+MoveObject Cube x=0.00 y=0.00 z=0.00 rotationY=0.00 — reason: [dispatcher→surface] <issue>
+MoveObject Cube x=0.00 y=0.00 z=0.00 rotationY=0.00 — reason: [dispatcher→surface] <issue>
+MoveObject Cube x=0.00 y=0.00 z=0.00 rotationY=0.00 — reason: [dispatcher→surface] <issue>
+MoveObject Cube x=0.00 y=0.00 z=0.00 rotationY=0.00 — reason: [dispatcher→surface] <issue>
+2026-04-25 17:29:11 - Pipeline - INFO -   [parse_alignment] MoveObject Handrail_02 → x=1.17 y=0.0 z=6.0 rot=0.0
+2026-04-25 17:29:11 - Pipeline - INFO -   [parse_alignment] MoveObject WheelChair_01 → x=-0.88 y=0.0 z=1.0 rot=0.0
+2026-04-25 17:29:11 - Pipeline - INFO -   [parse_alignment] MoveObject Walker_01 → x=0.87 y=0.0 z=2.0 rot=0.0
+2026-04-25 17:29:11 - Pipeline - INFO -   [parse_alignment] MoveObject Clock_01 → x=-1.07 y=0.0 z=0.87 rot=0.0
+2026-04-25 17:29:11 - Pipeline - INFO -   [parse_alignment] MoveObject Clock_01 → x=-1.1 y=0.0 z=0.44 rot=0.0
+2026-04-25 17:29:11 - Pipeline - INFO -   [parse_alignment] MoveObject Nurse_01 → x=0.0 y=0.0 z=4.99 rot=0.0
+2026-04-25 17:29:11 - Pipeline - INFO -   [parse_alignment] MoveObject Cube → x=0.0 y=0.0 z=0.1 rot=0.0
+2026-04-25 17:29:11 - Pipeline - INFO -   [parse_alignment] MoveObject Cube → x=0.0 y=0.0 z=0.1 rot=0.0
+2026-04-25 17:29:11 - Pipeline - INFO -   [parse_alignment] MoveObject Cube → x=0.0 y=0.0 z=0.1 rot=0.0
+2026-04-25 17:29:11 - Pipeline - INFO -   [parse_alignment] MoveObject Cube → x=0.0 y=0.0 z=0.1 rot=0.0
+2026-04-25 17:29:11 - Pipeline - INFO -   [parse_alignment] MoveObject Cube → x=0.0 y=0.0 z=0.1 rot=0.0
+2026-04-25 17:29:11 - Pipeline - INFO -   [parse_alignment] MoveObject Cube → x=0.0 y=0.0 z=0.1 rot=0.0
+2026-04-25 17:29:11 - Pipeline - INFO -   [parse_alignment] MoveObject Cube → x=0.0 y=0.0 z=0.1 rot=0.0
+2026-04-25 17:29:11 - Pipeline - INFO - [Phase 1] Applied 13 direct corrections (MoveObject/DeleteObject)
+2026-04-25 17:29:11 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-25 17:29:14 - Pipeline - INFO - [Phase 1 Reflection] Step 1/6: Install handrails
+2026-04-25 17:29:14 - ReflectionModule - INFO - Step '1' reached max reflections (3). Forcing step_complete=yes to avoid infinite correction loop.
+2026-04-25 17:29:14 - ReflectionModule - INFO - Logged reflection entry for step 'Install handrails'
+2026-04-25 17:29:14 - Pipeline - INFO -   Object cap reached (15/15) — no additions
+2026-04-25 17:29:14 - Pipeline - INFO -   step_complete=yes  room_status=good  suggest_additions=False  objects=15
+2026-04-25 17:29:14 - Pipeline - INFO -   layout: Layout accepted after maximum correction iterations.
+2026-04-25 17:29:14 - Pipeline - INFO -   Step complete — advancing 1 → 2: Install additional handrails
+2026-04-25 17:29:14 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-25 17:29:17 - Pipeline - INFO - [Phase 1 Reflection] Step 2/6: Install additional handrails
+2026-04-25 17:29:17 - ReflectionModule - INFO - [SceneState] Loaded 18 live objects from scene_state.json.
+2026-04-25 17:29:17 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-25 17:29:17 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-25 17:29:17 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Handrail_02 x=1.17 y=0.00 z=6.00 rotationY=0  — reason: [bounds] right edge clips wall (x=1.17, half=0.08)
+2026-04-25 17:29:17 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Nurse_01 x=0.00 y=0.00 z=4.39 rotationY=0  — reason: overlaps Bench_01 (pen_x=0.70m pen_z=0.36m; exact bounds)
+2026-04-25 17:29:17 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject WheelChair_01 x=-0.88 y=0.00 z=1.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-0.88, half=0.37)
+2026-04-25 17:29:17 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Walker_01 x=0.87 y=0.00 z=2.00 rotationY=0  — reason: [bounds] right edge clips wall (x=0.87, half=0.38)
+2026-04-25 17:29:17 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Clock_01 x=-1.07 y=0.00 z=0.44 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.10, half=0.18)
+2026-04-25 17:29:17 - ReflectionModule - INFO - [BoundsThread] 4 bound/doorway corrections generated.
+2026-04-25 17:29:17 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Clock_01 x=-1.10 y=0.00 z=0.13 rotationY=0  — reason: overlaps Caution_Sign_01 (pen_x=0.14m pen_z=0.05m; exact bounds)
+2026-04-25 17:29:17 - ReflectionModule - INFO - [CollisionThread] math path: 2 collision(s) found.
+2026-04-25 17:29:19 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 0 line(s).
+2026-04-25 17:29:19 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 1 line(s).
+2026-04-25 17:29:19 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-25 17:29:19 - ReflectionModule - INFO - [BoundsThread] 4 correction(s) applied:
+2026-04-25 17:29:19 - ReflectionModule - INFO -   [BoundsThread] MoveObject Handrail_02 x=1.17 y=0.00 z=6.00 rotationY=0  — reason: [bounds] right edge clips wall (x=1.17, half=0.08)
+2026-04-25 17:29:19 - ReflectionModule - INFO -   [BoundsThread] MoveObject WheelChair_01 x=-0.88 y=0.00 z=1.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-0.88, half=0.37)
+2026-04-25 17:29:19 - ReflectionModule - INFO -   [BoundsThread] MoveObject Walker_01 x=0.87 y=0.00 z=2.00 rotationY=0  — reason: [bounds] right edge clips wall (x=0.87, half=0.38)
+2026-04-25 17:29:19 - ReflectionModule - INFO -   [BoundsThread] MoveObject Clock_01 x=-1.07 y=0.00 z=0.44 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.10, half=0.18)
+2026-04-25 17:29:19 - ReflectionModule - INFO - [CollisionThread] 2 correction(s) applied:
+2026-04-25 17:29:19 - ReflectionModule - INFO -   [CollisionThread] MoveObject Nurse_01 x=0.00 y=0.00 z=4.39 rotationY=0  — reason: overlaps Bench_01 (pen_x=0.70m pen_z=0.36m; exact bounds)
+2026-04-25 17:29:19 - ReflectionModule - INFO -   [CollisionThread] MoveObject Clock_01 x=-1.10 y=0.00 z=0.13 rotationY=0  — reason: overlaps Caution_Sign_01 (pen_x=0.14m pen_z=0.05m; exact bounds)
+2026-04-25 17:29:19 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-25 17:29:19 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied (skipped 1 already handled).
+2026-04-25 17:29:19 - ReflectionModule - INFO - Logged reflection entry for step 'Install additional handrails'
+2026-04-25 17:29:19 - Pipeline - INFO -   Object cap reached (15/15) — no additions
+2026-04-25 17:29:19 - Pipeline - INFO -   step_complete=yes  room_status=good  suggest_additions=False  objects=15
+2026-04-25 17:29:19 - Pipeline - INFO -   layout: The room has several objects placed in suboptimal locations. The walker and wheelchair are obstructing the walkway. The caution sign is too low. The patient and nurse are too close to each other.
+2026-04-25 17:29:19 - Pipeline - INFO -   suggestions: MoveObject Handrail_02 x=1.17 y=0.00 z=6.00 rotationY=0  — reason: [bounds] right edge clips wall (x=1.17, half=0.08)
+MoveObject WheelChair_01 x=-0.88 y=0.00 z=1.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-0.88, half=0.37)
+MoveObject Walker_01 x=0.87 y=0.00 z=2.00 rotationY=0  — reason: [bounds] right edge clips wall (x=0.87, half=0.38)
+MoveObject Clock_01 x=-1.07 y=0.00 z=0.44 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.10, half=0.18)
+MoveObject Nurse_01 x=0.00 y=0.00 z=4.39 rotationY=0  — reason: overlaps Bench_01 (pen_x=0.70m pen_z=0.36m; exact bounds)
+MoveObject Clock_01 x=-1.10 y=0.00 z=0.13 rotationY=0  — reason: overlaps Caution_Sign_01 (pen_x=0.14m pen_z=0.05m; exact bounds)
+2026-04-25 17:29:19 - Pipeline - INFO -   Step complete — advancing 2 → 3: Place wheelchair and walker
+2026-04-25 17:29:19 - Pipeline - INFO -   [parse_alignment] MoveObject Handrail_02 → x=1.17 y=0.0 z=6.0 rot=0.0
+2026-04-25 17:29:19 - Pipeline - INFO -   [parse_alignment] MoveObject WheelChair_01 → x=-0.88 y=0.0 z=1.0 rot=0.0
+2026-04-25 17:29:19 - Pipeline - INFO -   [parse_alignment] MoveObject Walker_01 → x=0.87 y=0.0 z=2.0 rot=0.0
+2026-04-25 17:29:19 - Pipeline - INFO -   [parse_alignment] MoveObject Clock_01 → x=-1.07 y=0.0 z=0.44 rot=0.0
+2026-04-25 17:29:19 - Pipeline - INFO -   [parse_alignment] MoveObject Nurse_01 → x=0.0 y=0.0 z=4.39 rot=0.0
+2026-04-25 17:29:19 - Pipeline - INFO -   [parse_alignment] MoveObject Clock_01 → x=-1.1 y=0.0 z=0.13 rot=0.0
+2026-04-25 17:29:19 - Pipeline - INFO - [Phase 1] Applied 6 direct corrections (MoveObject/DeleteObject)
+2026-04-25 17:29:19 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-25 17:29:22 - Pipeline - INFO - [Phase 1 Reflection] Step 3/6: Place wheelchair and walker
+2026-04-25 17:29:22 - ReflectionModule - INFO - [SceneState] Loaded 18 live objects from scene_state.json.
+2026-04-25 17:29:22 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-25 17:29:22 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-25 17:29:22 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Handrail_02 x=1.17 y=0.00 z=6.00 rotationY=0  — reason: [bounds] right edge clips wall (x=1.17, half=0.08)
+2026-04-25 17:29:22 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Nurse_01 x=0.00 y=0.00 z=5.01 rotationY=0  — reason: overlaps Patient_01 (pen_x=0.65m pen_z=0.35m; exact bounds)
+2026-04-25 17:29:23 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject WheelChair_01 x=-0.88 y=0.00 z=1.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-0.88, half=0.37)
+2026-04-25 17:29:23 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Walker_01 x=0.87 y=0.00 z=2.00 rotationY=0  — reason: [bounds] right edge clips wall (x=0.87, half=0.38)
+2026-04-25 17:29:23 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Clock_01 x=-1.07 y=0.00 z=0.17 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.10, half=0.18); front edge clips wall (z=0.13, half=0.02)
+2026-04-25 17:29:23 - ReflectionModule - INFO - [BoundsThread] 4 bound/doorway corrections generated.
+2026-04-25 17:29:23 - ReflectionModule - INFO - [CollisionThread] math path: 1 collision(s) found.
+2026-04-25 17:29:24 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-25 17:29:25 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-25 17:29:25 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 1 line(s).
+2026-04-25 17:29:25 - ReflectionModule - INFO - [DispatcherThread] LLM visual check added 1 extra correction(s).
+2026-04-25 17:29:25 - ReflectionModule - INFO - [BoundsThread] 4 correction(s) applied:
+2026-04-25 17:29:25 - ReflectionModule - INFO -   [BoundsThread] MoveObject Handrail_02 x=1.17 y=0.00 z=6.00 rotationY=0  — reason: [bounds] right edge clips wall (x=1.17, half=0.08)
+2026-04-25 17:29:25 - ReflectionModule - INFO -   [BoundsThread] MoveObject WheelChair_01 x=-0.88 y=0.00 z=1.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-0.88, half=0.37)
+2026-04-25 17:29:25 - ReflectionModule - INFO -   [BoundsThread] MoveObject Walker_01 x=0.87 y=0.00 z=2.00 rotationY=0  — reason: [bounds] right edge clips wall (x=0.87, half=0.38)
+2026-04-25 17:29:25 - ReflectionModule - INFO -   [BoundsThread] MoveObject Clock_01 x=-1.07 y=0.00 z=0.17 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.10, half=0.18); front edge clips wall (z=0.13, half=0.02)
+2026-04-25 17:29:25 - ReflectionModule - INFO - [CollisionThread] 1 correction(s) applied:
+2026-04-25 17:29:25 - ReflectionModule - INFO -   [CollisionThread] MoveObject Nurse_01 x=0.00 y=0.00 z=5.01 rotationY=0  — reason: overlaps Patient_01 (pen_x=0.65m pen_z=0.35m; exact bounds)
+2026-04-25 17:29:25 - ReflectionModule - INFO - [DispatcherThread] 1 correction(s) applied:
+2026-04-25 17:29:25 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Caution_Sign_01 y=0.0 z=0.5 — reason: [dispatcher→surface] <issue>
+2026-04-25 17:29:25 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied (skipped 1 already handled).
+2026-04-25 17:29:25 - ReflectionModule - INFO - Logged reflection entry for step 'Place wheelchair and walker'
+2026-04-25 17:29:25 - Pipeline - INFO -   Object cap reached (15/15) — no additions
+2026-04-25 17:29:25 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=15
+2026-04-25 17:29:25 - Pipeline - INFO -   layout: The room has several objects placed in suboptimal locations. The walker and wheelchair are obstructing the walkway. The caution sign is too low. The patient and nurse are too close to each other.
+2026-04-25 17:29:25 - Pipeline - INFO -   suggestions: MoveObject Handrail_02 x=1.17 y=0.00 z=6.00 rotationY=0  — reason: [bounds] right edge clips wall (x=1.17, half=0.08)
+MoveObject WheelChair_01 x=-0.88 y=0.00 z=1.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-0.88, half=0.37)
+MoveObject Walker_01 x=0.87 y=0.00 z=2.00 rotationY=0  — reason: [bounds] right edge clips wall (x=0.87, half=0.38)
+MoveObject Clock_01 x=-1.07 y=0.00 z=0.17 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.10, half=0.18); front edge clips wall (z=0.13, half=0.02)
+MoveObject Nurse_01 x=0.00 y=0.00 z=5.01 rotationY=0  — reason: overlaps Patient_01 (pen_x=0.65m pen_z=0.35m; exact bounds)
+MoveObject Caution_Sign_01 y=0.0 z=0.5 — reason: [dispatcher→surface] <issue>
+2026-04-25 17:29:25 - Pipeline - INFO -   Step complete — advancing 3 → 4: Position bench
+2026-04-25 17:29:25 - Pipeline - INFO -   [parse_alignment] MoveObject Handrail_02 → x=1.17 y=0.0 z=6.0 rot=0.0
+2026-04-25 17:29:25 - Pipeline - INFO -   [parse_alignment] MoveObject WheelChair_01 → x=-0.88 y=0.0 z=1.0 rot=0.0
+2026-04-25 17:29:25 - Pipeline - INFO -   [parse_alignment] MoveObject Walker_01 → x=0.87 y=0.0 z=2.0 rot=0.0
+2026-04-25 17:29:25 - Pipeline - INFO -   [parse_alignment] MoveObject Clock_01 → x=-1.07 y=0.0 z=0.17 rot=0.0
+2026-04-25 17:29:25 - Pipeline - INFO -   [parse_alignment] MoveObject Nurse_01 → x=0.0 y=0.0 z=5.01 rot=0.0
+2026-04-25 17:29:25 - Pipeline - INFO - [Phase 1] Applied 5 direct corrections (MoveObject/DeleteObject)
+2026-04-25 17:29:25 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-25 17:29:28 - Pipeline - INFO - [Phase 1 Reflection] Step 4/6: Position bench
+2026-04-25 17:29:28 - ReflectionModule - INFO - [SceneState] Loaded 18 live objects from scene_state.json.
+2026-04-25 17:29:28 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-25 17:29:28 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-25 17:29:28 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Handrail_02 x=1.17 y=0.00 z=6.00 rotationY=0  — reason: [bounds] right edge clips wall (x=1.17, half=0.08)
+2026-04-25 17:29:28 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject WheelChair_01 x=-0.88 y=0.00 z=1.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-0.88, half=0.37)
+2026-04-25 17:29:28 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Nurse_01 x=0.00 y=0.00 z=5.01 rotationY=0  — reason: overlaps Patient_01 (pen_x=0.65m pen_z=0.35m; exact bounds)
+2026-04-25 17:29:28 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Walker_01 x=0.87 y=0.00 z=2.00 rotationY=0  — reason: [bounds] right edge clips wall (x=0.87, half=0.38)
+2026-04-25 17:29:28 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Clock_01 x=-1.07 y=0.00 z=0.17 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.10, half=0.18); front edge clips wall (z=0.13, half=0.02)
+2026-04-25 17:29:28 - ReflectionModule - INFO - [BoundsThread] 4 bound/doorway corrections generated.
+2026-04-25 17:29:28 - ReflectionModule - INFO - [CollisionThread] math path: 1 collision(s) found.
+2026-04-25 17:29:31 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-25 17:29:31 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 1 line(s).
+2026-04-25 17:29:31 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 2 line(s).
+2026-04-25 17:29:31 - ReflectionModule - INFO - [DispatcherThread] LLM visual check added 2 extra correction(s).
+2026-04-25 17:29:31 - ReflectionModule - INFO - [BoundsThread] 4 correction(s) applied:
+2026-04-25 17:29:31 - ReflectionModule - INFO -   [BoundsThread] MoveObject Handrail_02 x=1.17 y=0.00 z=6.00 rotationY=0  — reason: [bounds] right edge clips wall (x=1.17, half=0.08)
+2026-04-25 17:29:31 - ReflectionModule - INFO -   [BoundsThread] MoveObject WheelChair_01 x=-0.88 y=0.00 z=1.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-0.88, half=0.37)
+2026-04-25 17:29:31 - ReflectionModule - INFO -   [BoundsThread] MoveObject Walker_01 x=0.87 y=0.00 z=2.00 rotationY=0  — reason: [bounds] right edge clips wall (x=0.87, half=0.38)
+2026-04-25 17:29:31 - ReflectionModule - INFO -   [BoundsThread] MoveObject Clock_01 x=-1.07 y=0.00 z=0.17 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.10, half=0.18); front edge clips wall (z=0.13, half=0.02)
+2026-04-25 17:29:31 - ReflectionModule - INFO - [CollisionThread] 1 correction(s) applied:
+2026-04-25 17:29:31 - ReflectionModule - INFO -   [CollisionThread] MoveObject Nurse_01 x=0.00 y=0.00 z=5.01 rotationY=0  — reason: overlaps Patient_01 (pen_x=0.65m pen_z=0.35m; exact bounds)
+2026-04-25 17:29:31 - ReflectionModule - INFO - [DispatcherThread] 1 correction(s) applied (skipped 1 already handled):
+2026-04-25 17:29:31 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Caution_Sign_01 y=0.5 — reason: [dispatcher→surface] <issue>
+2026-04-25 17:29:31 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied (skipped 1 already handled).
+2026-04-25 17:29:31 - ReflectionModule - INFO - Logged reflection entry for step 'Position bench'
+2026-04-25 17:29:31 - Pipeline - INFO -   Object cap reached (15/15) — no additions
+2026-04-25 17:29:31 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=15
+2026-04-25 17:29:31 - Pipeline - INFO -   layout: Current room layout has several suboptimal object placements. Walker and wheelchair obstruct the walkway. Caution sign is too low. Patient and nurse are too close.
+2026-04-25 17:29:31 - Pipeline - INFO -   suggestions: MoveObject Handrail_02 x=1.17 y=0.00 z=6.00 rotationY=0  — reason: [bounds] right edge clips wall (x=1.17, half=0.08)
+MoveObject WheelChair_01 x=-0.88 y=0.00 z=1.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-0.88, half=0.37)
+MoveObject Walker_01 x=0.87 y=0.00 z=2.00 rotationY=0  — reason: [bounds] right edge clips wall (x=0.87, half=0.38)
+MoveObject Clock_01 x=-1.07 y=0.00 z=0.17 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.10, half=0.18); front edge clips wall (z=0.13, half=0.02)
+MoveObject Nurse_01 x=0.00 y=0.00 z=5.01 rotationY=0  — reason: overlaps Patient_01 (pen_x=0.65m pen_z=0.35m; exact bounds)
+MoveObject Caution_Sign_01 y=0.5 — reason: [dispatcher→surface] <issue>
+2026-04-25 17:29:31 - Pipeline - INFO -   Step complete — advancing 4 → 5: Install caution sign
+2026-04-25 17:29:31 - Pipeline - INFO -   [parse_alignment] MoveObject Handrail_02 → x=1.17 y=0.0 z=6.0 rot=0.0
+2026-04-25 17:29:31 - Pipeline - INFO -   [parse_alignment] MoveObject WheelChair_01 → x=-0.88 y=0.0 z=1.0 rot=0.0
+2026-04-25 17:29:31 - Pipeline - INFO -   [parse_alignment] MoveObject Walker_01 → x=0.87 y=0.0 z=2.0 rot=0.0
+2026-04-25 17:29:31 - Pipeline - INFO -   [parse_alignment] MoveObject Clock_01 → x=-1.07 y=0.0 z=0.17 rot=0.0
+2026-04-25 17:29:31 - Pipeline - INFO -   [parse_alignment] MoveObject Nurse_01 → x=0.0 y=0.0 z=5.01 rot=0.0
+2026-04-25 17:29:31 - Pipeline - INFO - [Phase 1] Applied 5 direct corrections (MoveObject/DeleteObject)
+2026-04-25 17:29:31 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-25 17:29:37 - Pipeline - INFO - [Phase 1 Reflection] Step 5/6: Install caution sign
+2026-04-25 17:29:37 - ReflectionModule - INFO - [SceneState] Loaded 18 live objects from scene_state.json.
+2026-04-25 17:29:37 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-25 17:29:37 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-25 17:29:37 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Handrail_02 x=1.17 y=0.00 z=6.00 rotationY=0  — reason: [bounds] right edge clips wall (x=1.17, half=0.08)
+2026-04-25 17:29:37 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject WheelChair_01 x=-0.88 y=0.00 z=1.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-0.88, half=0.37)
+2026-04-25 17:29:37 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Nurse_01 x=0.00 y=0.00 z=5.01 rotationY=0  — reason: overlaps Patient_01 (pen_x=0.65m pen_z=0.35m; exact bounds)
+2026-04-25 17:29:37 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Walker_01 x=0.87 y=0.00 z=2.00 rotationY=0  — reason: [bounds] right edge clips wall (x=0.87, half=0.38)
+2026-04-25 17:29:37 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Clock_01 x=-1.07 y=0.00 z=0.17 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.10, half=0.18); front edge clips wall (z=0.13, half=0.02)
+2026-04-25 17:29:37 - ReflectionModule - INFO - [BoundsThread] 4 bound/doorway corrections generated.
+2026-04-25 17:29:37 - ReflectionModule - INFO - [CollisionThread] math path: 1 collision(s) found.
+2026-04-25 17:29:39 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 2 line(s).
+2026-04-25 17:29:39 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 3 line(s).
+2026-04-25 17:29:39 - ReflectionModule - INFO - [DispatcherThread] LLM visual check added 3 extra correction(s).
+2026-04-25 17:29:39 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 2 line(s).
+2026-04-25 17:29:39 - ReflectionModule - INFO - [CollisionThread][image] MoveObject Caution_Sign_01 x=-1.20 y=0.0 z=0.60 rotationY=0.0  — reason: visually overlaps WheelChair_01
+2026-04-25 17:29:39 - ReflectionModule - INFO - [CollisionThread][image] MoveObject Caution_Sign_01 x=-1.20 y=0.0 z=0.60 rotationY=0.0
+2026-04-25 17:29:39 - ReflectionModule - INFO - [CollisionThread] image path added 2 extra correction(s).
+2026-04-25 17:29:39 - ReflectionModule - INFO - [BoundsThread] 4 correction(s) applied:
+2026-04-25 17:29:39 - ReflectionModule - INFO -   [BoundsThread] MoveObject Handrail_02 x=1.17 y=0.00 z=6.00 rotationY=0  — reason: [bounds] right edge clips wall (x=1.17, half=0.08)
+2026-04-25 17:29:39 - ReflectionModule - INFO -   [BoundsThread] MoveObject WheelChair_01 x=-0.88 y=0.00 z=1.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-0.88, half=0.37)
+2026-04-25 17:29:39 - ReflectionModule - INFO -   [BoundsThread] MoveObject Walker_01 x=0.87 y=0.00 z=2.00 rotationY=0  — reason: [bounds] right edge clips wall (x=0.87, half=0.38)
+2026-04-25 17:29:39 - ReflectionModule - INFO -   [BoundsThread] MoveObject Clock_01 x=-1.07 y=0.00 z=0.17 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.10, half=0.18); front edge clips wall (z=0.13, half=0.02)
+2026-04-25 17:29:39 - ReflectionModule - INFO - [CollisionThread] 3 correction(s) applied:
+2026-04-25 17:29:39 - ReflectionModule - INFO -   [CollisionThread] MoveObject Nurse_01 x=0.00 y=0.00 z=5.01 rotationY=0  — reason: overlaps Patient_01 (pen_x=0.65m pen_z=0.35m; exact bounds)
+2026-04-25 17:29:39 - ReflectionModule - INFO -   [CollisionThread] MoveObject Caution_Sign_01 x=-1.20 y=0.0 z=0.60 rotationY=0.0  — reason: visually overlaps WheelChair_01
+2026-04-25 17:29:39 - ReflectionModule - INFO -   [CollisionThread] MoveObject Caution_Sign_01 x=-1.20 y=0.0 z=0.60 rotationY=0.0
+2026-04-25 17:29:39 - ReflectionModule - INFO - [DispatcherThread] 1 correction(s) applied (skipped 2 already handled):
+2026-04-25 17:29:39 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Folder_01 y=0.33
+2026-04-25 17:29:39 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied (skipped 1 already handled).
+2026-04-25 17:29:39 - ReflectionModule - INFO - Logged reflection entry for step 'Install caution sign'
+2026-04-25 17:29:39 - Pipeline - INFO -   Object cap reached (15/15) — no additions
+2026-04-25 17:29:39 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=15
+2026-04-25 17:29:39 - Pipeline - INFO -   layout: The room has several objects placed in suboptimal locations. The walker and wheelchair obstruct the walkway. The caution sign is too low. The patient and nurse are too close to each other.
+2026-04-25 17:29:39 - Pipeline - INFO -   suggestions: MoveObject Handrail_02 x=1.17 y=0.00 z=6.00 rotationY=0  — reason: [bounds] right edge clips wall (x=1.17, half=0.08)
+MoveObject WheelChair_01 x=-0.88 y=0.00 z=1.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-0.88, half=0.37)
+MoveObject Walker_01 x=0.87 y=0.00 z=2.00 rotationY=0  — reason: [bounds] right edge clips wall (x=0.87, half=0.38)
+MoveObject Clock_01 x=-1.07 y=0.00 z=0.17 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.10, half=0.18); front edge clips wall (z=0.13, half=0.02)
+MoveObject Nurse_01 x=0.00 y=0.00 z=5.01 rotationY=0  — reason: overlaps Patient_01 (pen_x=0.65m pen_z=0.35m; exact bounds)
+MoveObject Caution_Sign_01 x=-1.20 y=0.0 z=0.60 rotationY=0.0  — reason: visually overlaps WheelChair_01
+MoveObject Caution_Sign_01 x=-1.20 y=0.0 z=0.60 rotationY=0.0
+MoveObject Folder_01 y=0.33
+2026-04-25 17:29:39 - Pipeline - INFO -   Step complete — advancing 5 → 6: Place patient and nurse
+2026-04-25 17:29:39 - Pipeline - INFO -   [parse_alignment] MoveObject Handrail_02 → x=1.17 y=0.0 z=6.0 rot=0.0
+2026-04-25 17:29:39 - Pipeline - INFO -   [parse_alignment] MoveObject WheelChair_01 → x=-0.88 y=0.0 z=1.0 rot=0.0
+2026-04-25 17:29:39 - Pipeline - INFO -   [parse_alignment] MoveObject Walker_01 → x=0.87 y=0.0 z=2.0 rot=0.0
+2026-04-25 17:29:39 - Pipeline - INFO -   [parse_alignment] MoveObject Clock_01 → x=-1.07 y=0.0 z=0.17 rot=0.0
+2026-04-25 17:29:39 - Pipeline - INFO -   [parse_alignment] MoveObject Nurse_01 → x=0.0 y=0.0 z=5.01 rot=0.0
+2026-04-25 17:29:39 - Pipeline - INFO -   [parse_alignment] MoveObject Caution_Sign_01 → x=-1.2 y=0.0 z=0.6 rot=0.0
+2026-04-25 17:29:39 - Pipeline - INFO -   [parse_alignment] MoveObject Caution_Sign_01 → x=-1.2 y=0.0 z=0.6 rot=0.0
+2026-04-25 17:29:39 - Pipeline - INFO - [Phase 1] Applied 7 direct corrections (MoveObject/DeleteObject)
+2026-04-25 17:29:39 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-25 17:29:45 - Pipeline - INFO - [Phase 1 Reflection] Step 6/6: Place patient and nurse
+2026-04-25 17:29:45 - ReflectionModule - INFO - [SceneState] Loaded 18 live objects from scene_state.json.
+2026-04-25 17:29:45 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-25 17:29:45 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-25 17:29:45 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Handrail_02 x=1.17 y=0.00 z=6.00 rotationY=0  — reason: [bounds] right edge clips wall (x=1.17, half=0.08)
+2026-04-25 17:29:45 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Nurse_01 x=0.00 y=0.00 z=6.18 rotationY=0  — reason: overlaps Bench_01 (pen_x=0.67m pen_z=0.37m; exact bounds)
+2026-04-25 17:29:45 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject WheelChair_01 x=-0.88 y=0.00 z=1.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-0.88, half=0.37)
+2026-04-25 17:29:45 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Walker_01 x=0.87 y=0.00 z=2.00 rotationY=0  — reason: [bounds] right edge clips wall (x=0.87, half=0.38)
+2026-04-25 17:29:45 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Caution_Sign_01 x=-1.10 y=0.00 z=0.60 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.20, half=0.15)
+2026-04-25 17:29:45 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Clock_01 x=-1.07 y=0.00 z=0.17 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.07, half=0.18); front edge clips wall (z=0.17, half=0.02)
+2026-04-25 17:29:45 - ReflectionModule - INFO - [BoundsThread] 5 bound/doorway corrections generated.
+2026-04-25 17:29:45 - ReflectionModule - INFO - [CollisionThread] math path: 1 collision(s) found.
+2026-04-25 17:29:48 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-25 17:29:49 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 1 line(s).
+2026-04-25 17:29:49 - ReflectionModule - INFO - [CollisionThread][image] MoveObject WheelChair_01 x=-0.8 y=0.0 z=1.3  rotationY=0.0  — reason: visually overlaps Walker_01
+2026-04-25 17:29:49 - ReflectionModule - INFO - [CollisionThread] image path added 1 extra correction(s).
+2026-04-25 17:29:49 - ReflectionModule - WARNING - [DispatcherThread] focused LLM call failed: Error code: 429 - {'error': {'message': 'Rate limit reached for model `meta-llama/llama-4-scout-17b-16e-instruct` in organization `org_01kbgb8q7jf1kvv7fe0h3h4za3` service tier `on_demand` on tokens per minute (TPM): Limit 300000, Used 298075, Requested 9255. Please try again in 1.466s. ', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+2026-04-25 17:29:49 - ReflectionModule - INFO - [BoundsThread] 5 correction(s) applied:
+2026-04-25 17:29:49 - ReflectionModule - INFO -   [BoundsThread] MoveObject Handrail_02 x=1.17 y=0.00 z=6.00 rotationY=0  — reason: [bounds] right edge clips wall (x=1.17, half=0.08)
+2026-04-25 17:29:49 - ReflectionModule - INFO -   [BoundsThread] MoveObject WheelChair_01 x=-0.88 y=0.00 z=1.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-0.88, half=0.37)
+2026-04-25 17:29:49 - ReflectionModule - INFO -   [BoundsThread] MoveObject Walker_01 x=0.87 y=0.00 z=2.00 rotationY=0  — reason: [bounds] right edge clips wall (x=0.87, half=0.38)
+2026-04-25 17:29:49 - ReflectionModule - INFO -   [BoundsThread] MoveObject Caution_Sign_01 x=-1.10 y=0.00 z=0.60 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.20, half=0.15)
+2026-04-25 17:29:49 - ReflectionModule - INFO -   [BoundsThread] MoveObject Clock_01 x=-1.07 y=0.00 z=0.17 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.07, half=0.18); front edge clips wall (z=0.17, half=0.02)
+2026-04-25 17:29:49 - ReflectionModule - INFO - [CollisionThread] 2 correction(s) applied:
+2026-04-25 17:29:49 - ReflectionModule - INFO -   [CollisionThread] MoveObject Nurse_01 x=0.00 y=0.00 z=6.18 rotationY=0  — reason: overlaps Bench_01 (pen_x=0.67m pen_z=0.37m; exact bounds)
+2026-04-25 17:29:49 - ReflectionModule - INFO -   [CollisionThread] MoveObject WheelChair_01 x=-0.8 y=0.0 z=1.3  rotationY=0.0  — reason: visually overlaps Walker_01
+2026-04-25 17:29:49 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied.
+2026-04-25 17:29:49 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied (skipped 1 already handled).
+2026-04-25 17:29:49 - ReflectionModule - INFO - Logged reflection entry for step 'Place patient and nurse'
+2026-04-25 17:29:49 - Pipeline - INFO -   Object cap reached (15/15) — no additions
+2026-04-25 17:29:49 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=15
+2026-04-25 17:29:49 - Pipeline - INFO -   layout: The room requires adjustments to object placements to improve walkway flow and surface alignment.
+2026-04-25 17:29:49 - Pipeline - INFO -   suggestions: MoveObject Handrail_02 x=1.17 y=0.00 z=6.00 rotationY=0  — reason: [bounds] right edge clips wall (x=1.17, half=0.08)
+MoveObject WheelChair_01 x=-0.88 y=0.00 z=1.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-0.88, half=0.37)
+MoveObject Walker_01 x=0.87 y=0.00 z=2.00 rotationY=0  — reason: [bounds] right edge clips wall (x=0.87, half=0.38)
+MoveObject Caution_Sign_01 x=-1.10 y=0.00 z=0.60 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.20, half=0.15)
+MoveObject Clock_01 x=-1.07 y=0.00 z=0.17 rotationY=0  — reason: [bounds] left edge clips wall (x=-1.07, half=0.18); front edge clips wall (z=0.17, half=0.02)
+MoveObject Nurse_01 x=0.00 y=0.00 z=6.18 rotationY=0  — reason: overlaps Bench_01 (pen_x=0.67m pen_z=0.37m; exact bounds)
+MoveObject WheelChair_01 x=-0.8 y=0.0 z=1.3  rotationY=0.0  — reason: visually overlaps Walker_01
+2026-04-25 17:29:49 - Pipeline - INFO -   Step complete — all 6 plan steps complete. Stopping environment generation.
+2026-04-25 17:29:51 - Pipeline - INFO - [InteractionMap] Generated map for 9 objects → interaction_map.json
+2026-04-25 17:29:51 - Pipeline - INFO - --phase1-only flag set. Skipping Phase 2.
+2026-04-25 17:29:51 - Pipeline - INFO - Total objects placed: 20

@@ -1,0 +1,7 @@
+{
+  "raw_response": "```json\n{\n  \"coherence_score\": 1,\n  \"spatial_score\": 1,\n  \"coherence_reasoning\": \"The scene is empty and lacks any objects, including the required handrails, wheelchair, and walker, which are essential for a rehabilitation corridor. Therefore, the object selection is completely wrong for the intended scene type.\",\n  \"spatial_reasoning\": \"With no objects placed in the scene, the spatial arrangement and logical placement of objects are non-existent. This results in a completely illogical and random placement of objects, as there are none to evaluate.\"\n}\n```",
+  "coherence_score": 1,
+  "spatial_score": 1,
+  "scene_type": "Rehabilitation Corridor",
+  "results_dir": "S:\\Firefighter_project\\Agent\\evaluation\\results2\\S08\\trial_3"
+}

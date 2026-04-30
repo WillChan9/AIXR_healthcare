@@ -13,7 +13,7 @@ import argparse
 import json
 import os
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from dotenv import load_dotenv
 
@@ -68,29 +68,34 @@ def _call_groq(messages: list, model: str = "meta-llama/llama-4-scout-17b-16e-in
         model=model,
         messages=messages,
         temperature=0.1,
-        max_completion_tokens=512,
+        max_completion_tokens=2048,
     )
     return completion.choices[0].message.content.strip()
 
 
-def _call_openai(messages: list, model: str = "gpt-4o") -> str:
-    """Call OpenAI API."""
+def _call_openai(messages: list, model: str = "gpt-5.5") -> str:
+    """Call OpenAI API. GPT-5 / o1 / o3 family use max_completion_tokens and
+    reject custom temperature; everything else uses max_tokens + temperature."""
     from openai import OpenAI
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-    completion = client.chat.completions.create(
-        model=model,
-        messages=messages,
-        temperature=0.1,
-        max_tokens=512,
-    )
+    kwargs: Dict[str, Any] = dict(model=model, messages=messages)
+    if any(model.startswith(p) for p in ("gpt-5", "o1", "o3")):
+        kwargs["max_completion_tokens"] = 2048
+    else:
+        kwargs["max_tokens"] = 2048
+        kwargs["temperature"] = 0.1
+    completion = client.chat.completions.create(**kwargs)
     return completion.choices[0].message.content.strip()
 
 
-def _call_llm(messages: list, provider: str = "groq") -> str:
+def _call_llm(messages: list, provider: str = "groq", model: Optional[str] = None) -> str:
+    """Dispatch a chat-completion call to either Groq (Llama-4-Scout) or
+    OpenAI (frontier). `model` overrides the provider default — pass e.g.
+    'gpt-5.5' to use the latest frontier model regardless of provider."""
     if provider == "openai":
-        return _call_openai(messages)
+        return _call_openai(messages, model=model or "gpt-5.5")
     else:
-        return _call_groq(messages)
+        return _call_groq(messages, model=model or "meta-llama/llama-4-scout-17b-16e-instruct")
 
 
 def _parse_rating(response: str) -> Dict[str, Any]:
@@ -127,6 +132,7 @@ def judge_scene(
     description: str,
     room_config: dict,
     provider: str = "groq",
+    model: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Ask LLM to rate scene quality on coherence and spatial semantics."""
 
@@ -160,7 +166,79 @@ def judge_scene(
         {"role": "user", "content": user_prompt},
     ]
 
-    response = _call_llm(messages, provider=provider)
+    response = _call_llm(messages, provider=provider, model=model)
+    return _parse_rating(response)
+
+
+def judge_phase2(
+    interaction_map: Dict[str, Any],
+    chain: Dict[str, Any],
+    scene_type: str,
+    description: str,
+    provider: str = "groq",
+    model: Optional[str] = None,
+) -> Dict[str, Any]:
+    """Rate Phase 2 artifacts (interaction_map.json + story_chain.json) on
+    semantic quality: bubble informativeness, narrative coherence, character
+    voice consistency, and bubble-object fit. Each on a 1–5 scale."""
+
+    # Compact summaries — keep token cost predictable.
+    map_objects = interaction_map or {}
+    sample_bubbles = []
+    for obj_name, ev_map in list(map_objects.items())[:30]:
+        if not isinstance(ev_map, dict):
+            continue
+        for ev_type, cfg in ev_map.items():
+            if isinstance(cfg, dict) and cfg.get("bubble_message"):
+                sample_bubbles.append(f"  {obj_name} [{ev_type}]: \"{cfg['bubble_message']}\"")
+                break
+    bubbles_text = "\n".join(sample_bubbles) if sample_bubbles else "  (no bubbles)"
+
+    beats_summary = []
+    for b in (chain or {}).get("beats", [])[:8]:
+        trig = b.get("trigger") or {}
+        msgs = []
+        for a in b.get("actions") or []:
+            if a.get("action") == "ShowSpeechBubble":
+                msgs.append(f"{a.get('objectName')}:\"{a.get('message')}\"")
+            elif a.get("action") == "PlayHumanAnimationFromResources":
+                msgs.append(f"{a.get('targetModel')} {a.get('stateName','')}")
+            elif a.get("action") == "WalkCharacterTo":
+                msgs.append(f"{a.get('objectName')} walks to ({a.get('x'):.1f},{a.get('z'):.1f})")
+            elif a.get("action") == "HighlightObject":
+                msgs.append(f"highlight {a.get('objectName')}")
+        beats_summary.append(f"  {b.get('id', '?')}: {trig.get('event','?')}→{trig.get('object','?')} | "
+                             + " | ".join(msgs[:5]))
+    chain_text = "\n".join(beats_summary) if beats_summary else "  (no chain)"
+
+    system_prompt = (
+        "You are an expert evaluator for VR healthcare training scene interactions. "
+        "Rate the Phase 2 artifacts on FOUR criteria, each 1-5:\n\n"
+        "1. **bubble_informativeness**: Are object speech bubbles informative and educational? "
+        "   1=generic/empty, 3=adequate, 5=specific medical insight per object.\n\n"
+        "2. **narrative_coherence**: Does the story chain form a coherent dramatic arc? "
+        "   1=disjointed beats, 3=connected but flat, 5=clear setup→action→payoff.\n\n"
+        "3. **character_voice_consistency**: Are character lines consistent with their roles? "
+        "   1=anyone could say it, 3=mostly fitting, 5=each character has a distinct voice.\n\n"
+        "4. **bubble_object_fit**: Do object bubbles accurately describe their function? "
+        "   1=wrong/generic, 3=mostly accurate, 5=precisely on-target.\n\n"
+        "Return ONLY a JSON object: "
+        '{"bubble_informativeness": N, "narrative_coherence": N, '
+        '"character_voice_consistency": N, "bubble_object_fit": N, "reasoning": "..."}'
+    )
+
+    user_prompt = (
+        f"Scene Type: {scene_type}\n\n"
+        f"Description (first 400 chars):\n{description[:400]}\n\n"
+        f"=== Object speech bubbles (sample of up to 30) ===\n{bubbles_text}\n\n"
+        f"=== Story chain beats ===\n{chain_text}\n"
+    )
+
+    messages = [
+        {"role": "system", "content": system_prompt},
+        {"role": "user",   "content": user_prompt},
+    ]
+    response = _call_llm(messages, provider=provider, model=model)
     return _parse_rating(response)
 
 
@@ -168,8 +246,13 @@ def run_judge(
     results_dir: Path,
     experience_path: Path,
     provider: str = "groq",
+    model: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """Run LLM judge on a single experiment run."""
+    """Run LLM judge on a single experiment run.
+    Includes both Phase 1 scene scoring and Phase 2 artifact scoring.
+
+    `model` overrides the provider default (e.g. "gpt-5.5" for OpenAI,
+    "meta-llama/llama-4-scout-17b-16e-instruct" for Groq)."""
 
     scene_state = _load_json(results_dir / "scene_state.json") or []
     exp_text = experience_path.read_text(encoding="utf-8")
@@ -177,9 +260,24 @@ def run_judge(
     description = exp_text[:exp_text.find("[room_config]")].strip() if "[room_config]" in exp_text else exp_text.strip()
     scene_type = cfg.get("scene_type", "Unknown")
 
-    ratings = judge_scene(scene_state, scene_type, description, cfg, provider=provider)
-    ratings["scene_type"] = scene_type
+    # Phase 1 ratings
+    ratings = judge_scene(scene_state, scene_type, description, cfg,
+                          provider=provider, model=model)
+    ratings["scene_type"]  = scene_type
     ratings["results_dir"] = str(results_dir)
+    ratings["judge_model"] = model or ("gpt-5.5" if provider == "openai" else "llama-4-scout")
+
+    # Phase 2 ratings (only if both artifacts exist)
+    interaction_map = _load_json(results_dir / "interaction_map.json")
+    chain           = _load_json(results_dir / "story_chain.json")
+    if interaction_map or chain:
+        try:
+            phase2_ratings = judge_phase2(interaction_map or {}, chain or {},
+                                          scene_type, description,
+                                          provider=provider, model=model)
+            ratings["phase2"] = phase2_ratings
+        except Exception as exc:
+            ratings["phase2"] = {"error": str(exc)}
 
     return ratings
 
@@ -189,10 +287,14 @@ def main():
     parser.add_argument("--results-dir", type=Path, required=True)
     parser.add_argument("--experience", type=Path, required=True)
     parser.add_argument("--provider", choices=["groq", "openai"], default="groq")
+    parser.add_argument("--model", type=str, default=None,
+                        help="Override the model (e.g. 'gpt-5.5', 'gpt-5.2'). "
+                             "Defaults to the provider's standard model.")
     parser.add_argument("--output", type=Path, default=None)
     args = parser.parse_args()
 
-    ratings = run_judge(args.results_dir, args.experience, provider=args.provider)
+    ratings = run_judge(args.results_dir, args.experience,
+                        provider=args.provider, model=args.model)
 
     print(f"\n{'=' * 50}")
     print(f"  LLM Judge: {ratings.get('scene_type', '?')}")

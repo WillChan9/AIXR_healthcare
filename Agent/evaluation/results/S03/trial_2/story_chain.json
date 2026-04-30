@@ -1,0 +1,200 @@
+{
+  "title": "Guided Rehab Circuit",
+  "synopsis": "The therapist introduces the gym, demonstrates treadmill form, then supervises a patient practicing gait training before reviewing progress and wheelchair support.",
+  "beats": [
+    {
+      "id": "B1",
+      "trigger": {
+        "event": "touch",
+        "object": "Doctor_01"
+      },
+      "actions": [
+        {
+          "action": "PlayHumanAnimationFromResources",
+          "targetModel": "Doctor_01",
+          "controllerPathInResources": "AnimatorControllers/HumanM@Talking",
+          "stateName": "HumanM@Talking",
+          "crossFadeTime": 0.3
+        },
+        {
+          "action": "ShowSpeechBubble",
+          "objectName": "Doctor_01",
+          "message": "Welcome to the therapy gym. We use each station to rebuild strength, balance, and safe movement. Let's start with the treadmill.",
+          "duration": 4.0
+        },
+        {
+          "action": "HighlightObject",
+          "objectName": "Treadmill_01",
+          "r": 1.0,
+          "g": 0.9,
+          "b": 0.2,
+          "duration": 10.0
+        }
+      ]
+    },
+    {
+      "id": "B2",
+      "trigger": {
+        "event": "touch",
+        "object": "Treadmill_01"
+      },
+      "actions": [
+        {
+          "action": "ClearHighlight",
+          "objectName": "Treadmill_01"
+        },
+        {
+          "action": "WalkCharacterTo",
+          "objectName": "Doctor_01",
+          "x": -1.6,
+          "y": 0,
+          "z": 2.2,
+          "rotationY": 35,
+          "duration": 2.5,
+          "controllerPathInResources": "AnimatorControllers/HumanM@Walk01_Forward",
+          "idleControllerPath": "AnimatorControllers/HumanM@Idles"
+        },
+        {
+          "action": "PlayHumanAnimationFromResources",
+          "targetModel": "Doctor_01",
+          "controllerPathInResources": "AnimatorControllers/HumanM@Talking",
+          "stateName": "HumanM@Talking",
+          "crossFadeTime": 0.3
+        },
+        {
+          "action": "ShowSpeechBubble",
+          "objectName": "Doctor_01",
+          "message": "The treadmill helps patients practice steady walking pace, posture, and endurance while we monitor their form.",
+          "duration": 4.0
+        },
+        {
+          "action": "HighlightObject",
+          "objectName": "Kinesotherapy_Apparatus_01",
+          "r": 1.0,
+          "g": 0.9,
+          "b": 0.2,
+          "duration": 10.0
+        }
+      ]
+    },
+    {
+      "id": "B3",
+      "trigger": {
+        "event": "touch",
+        "object": "Kinesotherapy_Apparatus_01"
+      },
+      "actions": [
+        {
+          "action": "ClearHighlight",
+          "objectName": "Kinesotherapy_Apparatus_01"
+        },
+        {
+          "action": "WalkCharacterTo",
+          "objectName": "Patient_01",
+          "x": 0.4,
+          "y": 0,
+          "z": 4.1,
+          "rotationY": 0,
+          "duration": 2.5,
+          "controllerPathInResources": "AnimatorControllers/HumanM@Walk01_Forward",
+          "idleControllerPath": "AnimatorControllers/HumanM@Idles"
+        },
+        {
+          "action": "WalkCharacterTo",
+          "objectName": "Doctor_01",
+          "x": -0.8,
+          "y": 0,
+          "z": 4.4,
+          "rotationY": 90,
+          "duration": 2.5,
+          "controllerPathInResources": "AnimatorControllers/HumanM@Walk01_Forward",
+          "idleControllerPath": "AnimatorControllers/HumanM@Idles"
+        },
+        {
+          "action": "ShowSpeechBubble",
+          "objectName": "Doctor_01",
+          "message": "These parallel bars support gait training. The patient can practice balance and step control with a safe handhold.",
+          "duration": 4.0
+        },
+        {
+          "action": "HighlightObject",
+          "objectName": "Patient_01",
+          "r": 1.0,
+          "g": 0.9,
+          "b": 0.2,
+          "duration": 10.0
+        }
+      ]
+    },
+    {
+      "id": "B4",
+      "trigger": {
+        "event": "touch",
+        "object": "Patient_01"
+      },
+      "actions": [
+        {
+          "action": "ClearHighlight",
+          "objectName": "Patient_01"
+        },
+        {
+          "action": "PlayHumanAnimationFromResources",
+          "targetModel": "Patient_01",
+          "controllerPathInResources": "AnimatorControllers/HumanM@Talking",
+          "stateName": "HumanM@Talking",
+          "crossFadeTime": 0.3
+        },
+        {
+          "action": "ShowSpeechBubble",
+          "objectName": "Patient_01",
+          "message": "I'm getting steadier each session. The bars make it feel safe to take longer, more even steps.",
+          "duration": 4.0
+        },
+        {
+          "action": "HighlightObject",
+          "objectName": "WheelChair_01",
+          "r": 1.0,
+          "g": 0.9,
+          "b": 0.2,
+          "duration": 10.0
+        }
+      ]
+    },
+    {
+      "id": "B5",
+      "trigger": {
+        "event": "touch",
+        "object": "WheelChair_01"
+      },
+      "actions": [
+        {
+          "action": "ClearHighlight",
+          "objectName": "WheelChair_01"
+        },
+        {
+          "action": "PlayHumanAnimationFromResources",
+          "targetModel": "Doctor_01",
+          "controllerPathInResources": "AnimatorControllers/HumanM@Talking",
+          "stateName": "HumanM@Talking",
+          "crossFadeTime": 0.3
+        },
+        {
+          "action": "ShowSpeechBubble",
+          "objectName": "Doctor_01",
+          "message": "The wheelchair stays ready for rest breaks, safe transfers, or patients who need support between exercises.",
+          "duration": 4.0
+        },
+        {
+          "action": "SetLightIntensity",
+          "intensity": 2.5
+        },
+        {
+          "action": "SetAmbientColor",
+          "r": 0.85,
+          "g": 0.9,
+          "b": 1.0
+        }
+      ]
+    }
+  ]
+}

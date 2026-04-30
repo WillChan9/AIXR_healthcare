@@ -1,0 +1,51 @@
+{
+  "results_dir": "S:\\Firefighter_project\\Agent\\evaluation\\results2\\S09\\trial_1",
+  "experience_file": "S:\\Firefighter_project\\Agent\\evaluation\\scenarios\\experience_S09.txt",
+  "scene_type": "Doctor Office",
+  "geometric": {
+    "object_count": 14,
+    "collision_count": 5,
+    "collision_rate": 0.054945054945054944,
+    "oob_count": 0,
+    "oob_rate": 0.0,
+    "mean_nn_distance": 0.5137045730898466,
+    "std_nn_distance": 0.3736696939250052,
+    "min_pairwise_distance": 0.0,
+    "floor_coverage": 0.1766124,
+    "small_prop_count": 5,
+    "height_violation_count": 2,
+    "height_violation_rate": 0.4
+  },
+  "semantic": {
+    "required_object_count": 6,
+    "required_objects_placed": 6,
+    "prefab_hit_rate": 1.0,
+    "duplicate_count": 0,
+    "duplicate_rate": 0.0,
+    "character_count": 1
+  },
+  "plan": {
+    "total_plan_steps": 5,
+    "steps_completed": 5,
+    "step_completion_rate": 1.0,
+    "total_reflection_iterations": 6,
+    "avg_iterations_per_step": 1.2,
+    "total_corrections": 68,
+    "room_status_sparse_count": 6,
+    "room_status_good_count": 0,
+    "room_status_cluttered_count": 0
+  },
+  "efficiency": {
+    "fill_commands_total": 3,
+    "dropped_prefabs": 0,
+    "llm_calls": 2,
+    "screenshot_wait_seconds": 15,
+    "total_commands": 114,
+    "place_object_count": 13,
+    "place_human_count": 1,
+    "move_object_count": 54,
+    "delete_object_count": 0,
+    "create_object_count": 7
+  },
+  "composite_score": 82.26
+}

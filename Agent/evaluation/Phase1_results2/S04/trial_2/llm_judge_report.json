@@ -1,0 +1,7 @@
+{
+  "raw_response": "```json\n{\n  \"coherence_score\": 3,\n  \"spatial_score\": 3,\n  \"coherence_reasoning\": \"The scene contains mostly appropriate objects for a surgery prep room, including a surgery cart, surgical table, autoclave, and small props like scalpels and forceps. However, there are also objects that seem out of place, such as a treadmill, wheelchair, and patient, which are not typically found in a surgery preparation room.\",\n  \"spatial_reasoning\": \"The objects are mostly placed at appropriate heights, with small props resting on surfaces (y>0.7) and not on the floor. The surgery cart and tray are positioned near the center of the room, and the surgical table is against the back wall. However, some objects like the treadmill and wheelchair are placed on the floor (y=0.01), which seems logical for floor items, but their presence in the room is questionable. Additionally, some objects like the clock and posters are placed at varying heights, which seems appropriate. Overall, the placement seems mostly logical but could be improved with more precise adherence to typical surgery prep room layouts.\"\n}\n```",
+  "coherence_score": 3,
+  "spatial_score": 3,
+  "scene_type": "Surgery Prep Room",
+  "results_dir": "S:\\Firefighter_project\\Agent\\evaluation\\results2\\S04\\trial_2"
+}

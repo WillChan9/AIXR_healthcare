@@ -1,0 +1,139 @@
+{
+  "room_type": "Physical Therapy Gym",
+  "description": "High-diversity interaction test room with rehabilitation equipment, medical furniture, props, and characters spread across the space.",
+  "layout_goals": {
+    "interior_bounds": "6m x 6m",
+    "minimum_objects": 12,
+    "focal_point": "open floor plan with diverse objects and characters"
+  },
+  "steps": [
+    {
+      "step": 1,
+      "action": "Place Treadmill_01",
+      "objects": [
+        "Treadmill_01"
+      ],
+      "target_area": "right wall, z~4.0",
+      "condition": "distance from other objects >= 0.8m"
+    },
+    {
+      "step": 2,
+      "action": "Place WheelChair_01",
+      "objects": [
+        "WheelChair_01"
+      ],
+      "target_area": "entry zone, z~0.5, x~1.5",
+      "condition": "distance from other objects >= 0.8m"
+    },
+    {
+      "step": 3,
+      "action": "Place Trolley_01",
+      "objects": [
+        "Trolley_01"
+      ],
+      "target_area": "center-left, z~2.5, x~-1.5",
+      "condition": "distance from other objects >= 0.8m"
+    },
+    {
+      "step": 4,
+      "action": "Place Utility_Cart_01",
+      "objects": [
+        "Utility_Cart_01"
+      ],
+      "target_area": "left wall, z~3.5",
+      "condition": "distance from other objects >= 0.8m"
+    },
+    {
+      "step": 5,
+      "action": "Place Table_01",
+      "objects": [
+        "Table_01"
+      ],
+      "target_area": "left-center, z~2.0, x~-1.0",
+      "condition": "distance from other objects >= 0.8m"
+    },
+    {
+      "step": 6,
+      "action": "Place Towel_Dispenser_01",
+      "objects": [
+        "Towel_Dispenser_01"
+      ],
+      "target_area": "right wall, z~2.0",
+      "condition": "distance from other objects >= 0.8m"
+    },
+    {
+      "step": 7,
+      "action": "Place Caution_Sign_01",
+      "objects": [
+        "Caution_Sign_01"
+      ],
+      "target_area": "entry floor, z~0.6, x~0.5",
+      "condition": "distance from other objects >= 0.8m"
+    },
+    {
+      "step": 8,
+      "action": "Place Clock_01",
+      "objects": [
+        "Clock_01"
+      ],
+      "target_area": "back wall, z~5.8, y~2.5",
+      "condition": "distance from other objects >= 0.8m"
+    },
+    {
+      "step": 9,
+      "action": "Place Posters",
+      "objects": [
+        "Poster_01",
+        "Poster_02"
+      ],
+      "target_area": "side walls, y~1.8",
+      "condition": "distance from other objects >= 0.8m"
+    },
+    {
+      "step": 10,
+      "action": "Place Folders",
+      "objects": [
+        "Folder_01",
+        "Folder_02"
+      ],
+      "target_area": "on desk surface, y~0.8",
+      "condition": "on Table_01"
+    },
+    {
+      "step": 11,
+      "action": "Place Screen_01",
+      "objects": [
+        "Screen_01"
+      ],
+      "target_area": "on desk, z~5.0, x~-1.5",
+      "condition": "on Table_01"
+    },
+    {
+      "step": 12,
+      "action": "Place Reception_Desk_01",
+      "objects": [
+        "Reception_Desk_01"
+      ],
+      "target_area": "back-left corner, z~4.8, x~-1.8",
+      "condition": "distance from other objects >= 0.8m"
+    },
+    {
+      "step": 13,
+      "action": "Place Patient_01",
+      "objects": [
+        "Patient_01"
+      ],
+      "target_area": "near Treadmill_01",
+      "condition": "y=0"
+    },
+    {
+      "step": 14,
+      "action": "Place Nurse_01",
+      "objects": [
+        "Nurse_01"
+      ],
+      "target_area": "near center",
+      "condition": "y=0"
+    }
+  ]
+}

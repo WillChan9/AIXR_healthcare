@@ -1,139 +1,114 @@
 {
-  "room_type": "Physical Therapy Gym",
-  "description": "High-diversity interaction test room with rehabilitation equipment, medical furniture, props, and characters spread across the space.",
+  "room_type": "surgery preparation room",
+  "description": "A bright surgical-white preparation room organized around sterile instrument layout. Stainless-steel trays and small instruments are arranged only on cart and tray surfaces, with sterilizing equipment along the back wall. A surgeon and scrub nurse perform final pre-op checks beside a central wheeled surgery cart.",
   "layout_goals": {
-    "interior_bounds": "6m x 6m",
-    "minimum_objects": 12,
-    "focal_point": "open floor plan with diverse objects"
+    "focal_point": "central sterile surgery cart with instrument tray and highlighted Forceps_01 interaction target",
+    "minimum_objects": 24,
+    "interior_bounds": {
+      "x_min": -3.05,
+      "x_max": 3.05,
+      "z_min": 0.1,
+      "z_max": 5.9
+    }
   },
   "steps": [
     {
       "step": 1,
-      "action": "Place Treadmill_01",
+      "action": "Establish the sterile room shell, clear central circulation, and bright surgical lighting zone.",
       "objects": [
-        "Treadmill_01"
+        "Surgericlal_Light_01",
+        "Surgericlal_Light_02",
+        "Clock_01",
+        "Poster_01"
       ],
-      "target_area": "right wall, z~4.0",
-      "condition": "distance from other objects >= 0.8m"
+      "target_area": "ceiling center and upper side walls",
+      "condition": "Keep the floor open around the central prep cart; lighting should read bright, cool, and clinical."
     },
     {
       "step": 2,
-      "action": "Place WheelChair_01",
+      "action": "Place sterilizing equipment in an organized back-wall line for autoclave and sterilizer interactions.",
       "objects": [
-        "WheelChair_01"
+        "Autoclave_01",
+        "Sterilizer_01",
+        "Sterilizer_Drum_01",
+        "Chemical_Sterilizer_01"
       ],
-      "target_area": "entry zone, z~0.5, x~1.5",
-      "condition": "distance from other objects >= 0.8m"
+      "target_area": "back wall, z near maximum, evenly spaced left to right",
+      "condition": "All sterilizing equipment must sit against the wall with front access facing the room and no instruments placed on the floor nearby."
     },
     {
       "step": 3,
-      "action": "Place Trolley_01",
+      "action": "Create the central sterile field with a wheeled surgery cart and tray surface for story-critical instruments.",
       "objects": [
-        "Trolley_01"
+        "Surgery_Cart_01",
+        "Tray_01",
+        "Forceps_01",
+        "Scalpel_01",
+        "Syringe_01",
+        "Scissors_01"
       ],
-      "target_area": "center-left, z~2.5, x~-1.5",
-      "condition": "distance from other objects >= 0.8m"
+      "target_area": "center of room, slightly forward of back-wall sterilizers",
+      "condition": "Tray_01 rests on top of Surgery_Cart_01; Forceps_01, Scalpel_01, Syringe_01, and Scissors_01 are precisely aligned on Tray_01, never on the floor."
     },
     {
       "step": 4,
-      "action": "Place Utility_Cart_01",
+      "action": "Add secondary supply carts with additional sterile trays and backup instruments to reinforce meticulous organization.",
       "objects": [
-        "Utility_Cart_01"
+        "Utility_Cart_03",
+        "Utility_Cart_04",
+        "Trolley_01",
+        "Tray_01",
+        "Forceps_02",
+        "Scalpel_02",
+        "Scalpel_03",
+        "Syringe_02",
+        "Scissors_02",
+        "Scissors_03"
       ],
-      "target_area": "left wall, z~3.5",
-      "condition": "distance from other objects >= 0.8m"
+      "target_area": "left and right side walls with carts angled toward the central sterile field",
+      "condition": "All small instruments must be placed on cart tops or tray surfaces; preserve clear walking space between carts and the central cart."
     },
     {
       "step": 5,
-      "action": "Place Table_01",
+      "action": "Add scrub-prep and sanitation support items near the entry side without cluttering the sterile instrument field.",
       "objects": [
-        "Table_01"
+        "Sink_01",
+        "Sanitizer_01",
+        "Mask_Box_01",
+        "Mask_Box_02",
+        "Bottle_01",
+        "Bottle_02",
+        "Trash_Biohazard_01"
       ],
-      "target_area": "left-center, z~2.0, x~-1.0",
-      "condition": "distance from other objects >= 0.8m"
+      "target_area": "front-left and front-right wall zones near doorway",
+      "condition": "Sanitation props may rest on Sink_01 or cart surfaces; Trash_Biohazard_01 stays tucked against a wall and away from the central sterile tray."
     },
     {
       "step": 6,
-      "action": "Place Towel_Dispenser_01",
+      "action": "Place the surgeon and scrub nurse in final pre-op check positions oriented toward the central cart.",
       "objects": [
-        "Towel_Dispenser_01"
+        "Surgeon_01",
+        "Nurse_01"
       ],
-      "target_area": "right wall, z~2.0",
-      "condition": "distance from other objects >= 0.8m"
+      "target_area": "around central Surgery_Cart_01, surgeon on one side and nurse on the opposite side",
+      "condition": "Characters should face the central instrument tray; keep enough space for the nurse to walk toward Forceps_01 during the interaction arc."
     },
     {
       "step": 7,
-      "action": "Place Caution_Sign_01",
+      "action": "Define interaction targets and highlight sequence for the short story arc.",
       "objects": [
-        "Caution_Sign_01"
+        "Surgeon_01",
+        "Nurse_01",
+        "Forceps_01",
+        "Tray_01",
+        "Surgery_Cart_01",
+        "Autoclave_01",
+        "Sterilizer_Drum_01",
+        "Scalpel_01",
+        "Syringe_01"
       ],
-      "target_area": "entry floor, z~0.6, x~0.5",
-      "condition": "distance from other objects >= 0.8m"
-    },
-    {
-      "step": 8,
-      "action": "Place Clock_01",
-      "objects": [
-        "Clock_01"
-      ],
-      "target_area": "back wall, z~5.8, y~2.5",
-      "condition": "distance from other objects >= 0.8m"
-    },
-    {
-      "step": 9,
-      "action": "Place Posters",
-      "objects": [
-        "Poster_01",
-        "Poster_02"
-      ],
-      "target_area": "side walls, y~1.8",
-      "condition": "distance from other objects >= 0.8m"
-    },
-    {
-      "step": 10,
-      "action": "Place Folders",
-      "objects": [
-        "Folder_01",
-        "Folder_02"
-      ],
-      "target_area": "on desk surface, y~0.8",
-      "condition": "on Table_01"
-    },
-    {
-      "step": 11,
-      "action": "Place Screen_01",
-      "objects": [
-        "Screen_01"
-      ],
-      "target_area": "on desk, z~5.0, x~-1.5",
-      "condition": "on Table_01"
-    },
-    {
-      "step": 12,
-      "action": "Place Reception_Desk_01",
-      "objects": [
-        "Reception_Desk_01"
-      ],
-      "target_area": "back-left corner, z~4.8, x~-1.8",
-      "condition": "distance from other objects >= 0.8m"
-    },
-    {
-      "step": 13,
-      "action": "Place Patient_01",
-      "objects": [
-        "Patient_01"
-      ],
-      "target_area": "near Treadmill_01",
-      "condition": "visible from Treadmill_01"
-    },
-    {
-      "step": 14,
-      "action": "Place Nurse_01",
-      "objects": [
-        "Nurse_01"
-      ],
-      "target_area": "near center",
-      "condition": "visible from Treadmill_01 and WheelChair_01"
+      "target_area": "central cart and back-wall sterilizer line",
+      "condition": "Touching Surgeon_01 triggers a request for Forceps_01 and highlights Forceps_01 yellow; touching Forceps_01 makes Nurse_01 walk to the central cart and acknowledge; touching Tray_01 afterward brightens surgical lighting and makes the surgeon nod ready to begin. Touching Autoclave_01 or Sterilizer_Drum_01 triggers sterilization-status dialogue."
     }
   ]
 }

@@ -1,0 +1,51 @@
+{
+  "results_dir": "S:\\Firefighter_project\\Agent\\evaluation\\results2\\S08\\trial_2",
+  "experience_file": "S:\\Firefighter_project\\Agent\\evaluation\\scenarios\\experience_S08.txt",
+  "scene_type": "Rehabilitation Corridor",
+  "geometric": {
+    "object_count": 8,
+    "collision_count": 1,
+    "collision_rate": 0.03571428571428571,
+    "oob_count": 0,
+    "oob_rate": 0.0,
+    "mean_nn_distance": 0.8427667323890695,
+    "std_nn_distance": 0.46069972300648326,
+    "min_pairwise_distance": 0.5,
+    "floor_coverage": 0.16144536666666667,
+    "small_prop_count": 0,
+    "height_violation_count": 0,
+    "height_violation_rate": 0.0
+  },
+  "semantic": {
+    "required_object_count": 8,
+    "required_objects_placed": 6,
+    "prefab_hit_rate": 0.75,
+    "duplicate_count": 0,
+    "duplicate_rate": 0.0,
+    "character_count": 2
+  },
+  "plan": {
+    "total_plan_steps": 7,
+    "steps_completed": 7,
+    "step_completion_rate": 1.0,
+    "total_reflection_iterations": 12,
+    "avg_iterations_per_step": 1.7142857142857142,
+    "total_corrections": 84,
+    "room_status_sparse_count": 0,
+    "room_status_good_count": 7,
+    "room_status_cluttered_count": 5
+  },
+  "efficiency": {
+    "fill_commands_total": 0,
+    "dropped_prefabs": 0,
+    "llm_calls": 1,
+    "screenshot_wait_seconds": 15,
+    "total_commands": 111,
+    "place_object_count": 8,
+    "place_human_count": 2,
+    "move_object_count": 71,
+    "delete_object_count": 0,
+    "create_object_count": 7
+  },
+  "composite_score": 83.57
+}

@@ -1,0 +1,823 @@
+[
+  {
+    "id": "cmd_1776910928207_0",
+    "executed": true,
+    "done": true,
+    "action": "CreateObjectByName",
+    "objectName": "Cube",
+    "x": 0,
+    "y": -0.01,
+    "z": 2,
+    "rotationY": 0,
+    "scaleX": 4,
+    "scaleY": 0.02,
+    "scaleZ": 4
+  },
+  {
+    "id": "cmd_1776910928207_1",
+    "executed": true,
+    "done": true,
+    "action": "CreateObjectByName",
+    "objectName": "Cube",
+    "x": 0,
+    "y": 3,
+    "z": 2,
+    "rotationY": 0,
+    "scaleX": 4,
+    "scaleY": 0.2,
+    "scaleZ": 4
+  },
+  {
+    "id": "cmd_1776910928207_2",
+    "executed": true,
+    "done": true,
+    "action": "CreateObjectByName",
+    "objectName": "Cube",
+    "x": -2,
+    "y": 1.5,
+    "z": 2,
+    "rotationY": 0,
+    "scaleX": 0.2,
+    "scaleY": 3,
+    "scaleZ": 4
+  },
+  {
+    "id": "cmd_1776910928207_3",
+    "executed": true,
+    "done": true,
+    "action": "CreateObjectByName",
+    "objectName": "Cube",
+    "x": 2,
+    "y": 1.5,
+    "z": 2,
+    "rotationY": 0,
+    "scaleX": 0.2,
+    "scaleY": 3,
+    "scaleZ": 4
+  },
+  {
+    "id": "cmd_1776910928207_4",
+    "executed": true,
+    "done": true,
+    "action": "CreateObjectByName",
+    "objectName": "Cube",
+    "x": 0,
+    "y": 1.5,
+    "z": 4,
+    "rotationY": 0,
+    "scaleX": 4,
+    "scaleY": 3,
+    "scaleZ": 0.2
+  },
+  {
+    "id": "cmd_1776910928207_5",
+    "executed": true,
+    "done": true,
+    "action": "CreateObjectByName",
+    "objectName": "Cube",
+    "x": -1.25,
+    "y": 1.5,
+    "z": 0,
+    "rotationY": 0,
+    "scaleX": 1.5,
+    "scaleY": 3,
+    "scaleZ": 0.2
+  },
+  {
+    "id": "cmd_1776910928207_6",
+    "executed": true,
+    "done": true,
+    "action": "CreateObjectByName",
+    "objectName": "Cube",
+    "x": 1.25,
+    "y": 1.5,
+    "z": 0,
+    "rotationY": 0,
+    "scaleX": 1.5,
+    "scaleY": 3,
+    "scaleZ": 0.2
+  },
+  {
+    "id": "cmd_1776910928207_7",
+    "executed": true,
+    "done": true,
+    "action": "SetLightIntensity",
+    "scale": 1.6
+  },
+  {
+    "id": "cmd_1776910928207_8",
+    "executed": true,
+    "done": true,
+    "action": "SetAmbientColor",
+    "r": 0.9,
+    "g": 0.92,
+    "b": 0.95
+  },
+  {
+    "id": "cmd_1776910929864_0",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Stretchers_01",
+    "x": 0,
+    "y": 0,
+    "z": 3.5,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1776910929864_1",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Exam_Table_01",
+    "x": -1.5,
+    "y": 0,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1776910929864_2",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Trolley_01",
+    "x": -1,
+    "y": 0,
+    "z": 3,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1776910929864_3",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Monitor_01",
+    "x": 1.5,
+    "y": 0,
+    "z": 2.5,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1776910929864_4",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Aid_Kit_01",
+    "x": -1,
+    "y": 0.8,
+    "z": 3,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1776910929864_5",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Syringe_01",
+    "x": -1.5,
+    "y": 0,
+    "z": 1.5,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1776910929864_6",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Stethoscope_01",
+    "x": -1.5,
+    "y": 0,
+    "z": 1.8,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1776910929864_7",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Folder_01",
+    "x": -1,
+    "y": 0.8,
+    "z": 3,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1776910929864_8",
+    "executed": true,
+    "done": true,
+    "action": "PlaceHuman",
+    "humanName": "EMT_01",
+    "x": 0,
+    "y": 0,
+    "z": 3.3,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1776910929864_9",
+    "executed": true,
+    "done": true,
+    "action": "PlaceHuman",
+    "humanName": "Patient_01",
+    "x": -1.5,
+    "y": 0,
+    "z": 1,
+    "rotationY": 0
+  },
+  {
+    "id": "6d81b4f3-40a1-4be7-b72d-8ca910e4b1ed",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Stretchers_01 <-> EMT_01  pen_x=0.75m pen_z=0.59m  moving EMT_01 to (0.00, 0.08, 2.00)"
+  },
+  {
+    "id": "cc549d5f-5c59-4a4b-bd44-c8a847d13788",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Exam_Table_01 <-> Trolley_01  pen_x=0.12m pen_z=0.55m  moving Trolley_01 to (-0.62, 0.01, 3.00)"
+  },
+  {
+    "id": "6f5c0a5c-d769-4de6-8114-87580ca5bbb0",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Exam_Table_01 <-> Syringe_01  pen_x=0.03m pen_z=0.09m  moving Syringe_01 to (-0.99, 0.76, 1.50)"
+  },
+  {
+    "id": "f416596c-383b-4bcf-9bf0-a60b2714a7d9",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Exam_Table_01 <-> Stethoscope_01  pen_x=0.30m pen_z=0.50m  moving Stethoscope_01 to (-0.81, 0.76, 1.80)"
+  },
+  {
+    "id": "4a01c78b-2548-4e33-a077-0336f67ea766",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Exam_Table_01 <-> Patient_01  pen_x=0.49m pen_z=0.02m  moving Patient_01 to (-1.50, 0.01, 0.73)"
+  },
+  {
+    "id": "223a9de9-82b8-48eb-8ab8-cdf60dbbe3d9",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_01 <-> Aid_Kit_01  pen_x=0.20m pen_z=0.17m  moving Aid_Kit_01 to (-1.00, 1.56, 3.81)"
+  },
+  {
+    "id": "31e8ae6b-e131-41c6-af75-6847ecc4a06f",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_01 <-> Folder_01  pen_x=0.05m pen_z=0.25m  moving Folder_01 to (-0.35, 1.59, 3.00)"
+  },
+  {
+    "id": "cmd_1776910967879_0",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Stretchers_01",
+    "x": 0,
+    "y": 0.04,
+    "z": 2.9,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1776910967879_1",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Trolley_01",
+    "x": -1,
+    "y": 0.01,
+    "z": 2.85,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1776910967879_2",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Patient_01",
+    "x": -1.02,
+    "y": 0.01,
+    "z": 1,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1776910967879_3",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Exam_Table_01",
+    "x": -1.7,
+    "y": 0.76,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1776910967879_4",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Exam_Table_01",
+    "x": -1.7,
+    "y": 0.76,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1776910967879_5",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "EMT_01",
+    "x": 0,
+    "y": 0.08,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1776910967879_6",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Trolley_01",
+    "x": -0.62,
+    "y": 0.01,
+    "z": 3,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1776910967879_7",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Syringe_01",
+    "x": -0.99,
+    "y": 0.76,
+    "z": 1.5,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1776910967879_8",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Stethoscope_01",
+    "x": -0.81,
+    "y": 0.76,
+    "z": 1.8,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1776910967879_9",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Patient_01",
+    "x": -1.5,
+    "y": 0.01,
+    "z": 0.73,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1776910967879_10",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Aid_Kit_01",
+    "x": -1,
+    "y": 1.56,
+    "z": 3.81,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1776910967879_11",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Folder_01",
+    "x": -0.35,
+    "y": 1.59,
+    "z": 3,
+    "rotationY": 0
+  },
+  {
+    "id": "86f87547-6893-4fa5-a131-c8aaa236a7c8",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Stretchers_01 <-> EMT_01  pen_x=0.75m pen_z=0.59m  moving EMT_01 to (0.00, 0.08, 2.00)"
+  },
+  {
+    "id": "7728d9bf-d8cc-43a6-b843-cd7c14197a9f",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Exam_Table_01 <-> Trolley_01  pen_x=0.12m pen_z=0.55m  moving Trolley_01 to (-0.62, 0.01, 3.00)"
+  },
+  {
+    "id": "5ce33e57-3bca-45dd-8f61-d022e3fbc73a",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Exam_Table_01 <-> Syringe_01  pen_x=0.03m pen_z=0.09m  moving Syringe_01 to (-0.99, 0.76, 1.50)"
+  },
+  {
+    "id": "f30fdb2a-2938-4afd-9ecc-95d12944d53a",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Exam_Table_01 <-> Stethoscope_01  pen_x=0.30m pen_z=0.50m  moving Stethoscope_01 to (-0.81, 0.76, 1.80)"
+  },
+  {
+    "id": "c81d2b4a-c66f-4f30-8529-5669f60627c2",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Exam_Table_01 <-> Patient_01  pen_x=0.49m pen_z=0.02m  moving Patient_01 to (-1.50, 0.01, 0.73)"
+  },
+  {
+    "id": "72000c94-dcf5-41e9-a110-6f0b7d5d8034",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_01 <-> Aid_Kit_01  pen_x=0.20m pen_z=0.17m  moving Aid_Kit_01 to (-1.00, 1.56, 3.81)"
+  },
+  {
+    "id": "8289575a-3474-46c0-a51f-d75291c92141",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_01 <-> Folder_01  pen_x=0.05m pen_z=0.25m  moving Folder_01 to (-0.35, 1.59, 3.00)"
+  },
+  {
+    "id": "cmd_1776910974835_0",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Stretchers_01",
+    "x": 0,
+    "y": 0.04,
+    "z": 2.9,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1776910974835_1",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Trolley_01",
+    "x": -1,
+    "y": 0.01,
+    "z": 2.85,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1776910974835_2",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Patient_01",
+    "x": -1.02,
+    "y": 0.01,
+    "z": 1,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1776910974835_3",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "EMT_01",
+    "x": 0,
+    "y": 0.08,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1776910974835_4",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Trolley_01",
+    "x": -0.62,
+    "y": 0.01,
+    "z": 3,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1776910974835_5",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Syringe_01",
+    "x": -0.99,
+    "y": 0.76,
+    "z": 1.5,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1776910974835_6",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Stethoscope_01",
+    "x": -0.81,
+    "y": 0.76,
+    "z": 1.8,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1776910974835_7",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Patient_01",
+    "x": -1.5,
+    "y": 0.01,
+    "z": 0.73,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1776910974835_8",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Aid_Kit_01",
+    "x": -1,
+    "y": 1.56,
+    "z": 3.81,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1776910974835_9",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Folder_01",
+    "x": -0.35,
+    "y": 1.59,
+    "z": 3,
+    "rotationY": 0
+  },
+  {
+    "id": "ab7d78fd-1d3f-4890-8731-0b21eab846fc",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Stretchers_01 <-> EMT_01  pen_x=0.67m pen_z=0.62m  moving EMT_01 to (0.00, 0.08, 1.99)"
+  },
+  {
+    "id": "f783689a-ef73-4842-ae5d-50d0b279f881",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Exam_Table_01 <-> Trolley_01  pen_x=0.12m pen_z=0.55m  moving Trolley_01 to (-0.62, 0.01, 3.00)"
+  },
+  {
+    "id": "4bdf94e6-ee02-474d-b065-bfe2323f5a7b",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Exam_Table_01 <-> Syringe_01  pen_x=0.03m pen_z=0.09m  moving Syringe_01 to (-0.99, 0.76, 1.50)"
+  },
+  {
+    "id": "4fddf624-8ae7-4521-86be-bb3e3e159aec",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Exam_Table_01 <-> Stethoscope_01  pen_x=0.30m pen_z=0.50m  moving Stethoscope_01 to (-0.81, 0.76, 1.80)"
+  },
+  {
+    "id": "96bd0887-bf84-432a-9357-366fa695b5eb",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Exam_Table_01 <-> Patient_01  pen_x=0.49m pen_z=0.06m  moving Patient_01 to (-1.50, 0.01, 0.72)"
+  },
+  {
+    "id": "1daadf99-0a4d-435d-8fc6-ae6694731d2f",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_01 <-> Aid_Kit_01  pen_x=0.20m pen_z=0.17m  moving Aid_Kit_01 to (-1.00, 1.56, 3.81)"
+  },
+  {
+    "id": "8a12d287-0a5c-44f7-93b8-d3795dbe023a",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_01 <-> Folder_01  pen_x=0.05m pen_z=0.25m  moving Folder_01 to (-0.35, 1.59, 3.00)"
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Stretchers_01",
+    "x": 0.0,
+    "y": 0.04,
+    "z": 2.9,
+    "rotationY": 0.0,
+    "id": "cmd_1776910986526_0",
+    "timestamp": 1776910986.5264235,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Trolley_01",
+    "x": -1.0,
+    "y": 0.01,
+    "z": 2.85,
+    "rotationY": 0.0,
+    "id": "cmd_1776910986526_1",
+    "timestamp": 1776910986.5264266,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Patient_01",
+    "x": -1.39,
+    "y": 0.01,
+    "z": 1.0,
+    "rotationY": 0.0,
+    "id": "cmd_1776910986526_2",
+    "timestamp": 1776910986.5264285,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "EMT_01",
+    "x": 0.0,
+    "y": 0.08,
+    "z": 1.99,
+    "rotationY": 0.0,
+    "id": "cmd_1776910986526_3",
+    "timestamp": 1776910986.52643,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Trolley_01",
+    "x": -0.62,
+    "y": 0.01,
+    "z": 3.0,
+    "rotationY": 0.0,
+    "id": "cmd_1776910986526_4",
+    "timestamp": 1776910986.526431,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Syringe_01",
+    "x": -0.99,
+    "y": 0.76,
+    "z": 1.5,
+    "rotationY": 0.0,
+    "id": "cmd_1776910986526_5",
+    "timestamp": 1776910986.5264323,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Stethoscope_01",
+    "x": -0.81,
+    "y": 0.76,
+    "z": 1.8,
+    "rotationY": 0.0,
+    "id": "cmd_1776910986526_6",
+    "timestamp": 1776910986.5264332,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Patient_01",
+    "x": -1.5,
+    "y": 0.01,
+    "z": 0.72,
+    "rotationY": 0.0,
+    "id": "cmd_1776910986526_7",
+    "timestamp": 1776910986.5264344,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Aid_Kit_01",
+    "x": -1.0,
+    "y": 1.56,
+    "z": 3.81,
+    "rotationY": 0.0,
+    "id": "cmd_1776910986526_8",
+    "timestamp": 1776910986.5264356,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Folder_01",
+    "x": -0.35,
+    "y": 1.59,
+    "z": 3.0,
+    "rotationY": 0.0,
+    "id": "cmd_1776910986526_9",
+    "timestamp": 1776910986.5264368,
+    "executed": false
+  },
+  {
+    "id": "3492bf59-5fa8-4654-a589-a539e42a2e41",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Stretchers_01 <-> EMT_01  pen_x=0.67m pen_z=0.62m  moving EMT_01 to (0.00, 0.08, 1.99)"
+  },
+  {
+    "id": "520a3f8d-9036-48a8-9628-932d382536c0",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Exam_Table_01 <-> Trolley_01  pen_x=0.12m pen_z=0.55m  moving Trolley_01 to (-0.62, 0.01, 3.00)"
+  },
+  {
+    "id": "a0ffed8a-f813-445c-b1a2-3d9184fae096",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Exam_Table_01 <-> Syringe_01  pen_x=0.03m pen_z=0.09m  moving Syringe_01 to (-0.99, 0.76, 1.50)"
+  },
+  {
+    "id": "89680e7e-87f5-41c3-85f9-36ca59c0b628",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Exam_Table_01 <-> Stethoscope_01  pen_x=0.30m pen_z=0.50m  moving Stethoscope_01 to (-0.81, 0.76, 1.80)"
+  },
+  {
+    "id": "4e4b276d-a1c2-43c5-831d-59799246ac7e",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Exam_Table_01 <-> Patient_01  pen_x=0.49m pen_z=0.06m  moving Patient_01 to (-1.50, 0.01, 0.72)"
+  },
+  {
+    "id": "274b421b-c033-4407-9e7f-0c7ac092c237",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_01 <-> Aid_Kit_01  pen_x=0.20m pen_z=0.17m  moving Aid_Kit_01 to (-1.00, 1.56, 3.81)"
+  },
+  {
+    "id": "d1ee1ada-998f-440d-9552-6fd0aa182f0f",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_01 <-> Folder_01  pen_x=0.05m pen_z=0.25m  moving Folder_01 to (-0.35, 1.59, 3.00)"
+  },
+  {
+    "id": "5af884f6-f92a-4d61-864a-ee1dc2c0e533",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Stretchers_01 <-> EMT_01  pen_x=0.67m pen_z=0.62m  moving EMT_01 to (0.00, 0.08, 1.99)"
+  },
+  {
+    "id": "cbf00711-e28a-48a7-82fa-84d2915421fe",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Exam_Table_01 <-> Trolley_01  pen_x=0.12m pen_z=0.55m  moving Trolley_01 to (-0.62, 0.01, 3.00)"
+  },
+  {
+    "id": "9012853d-75aa-4dd8-93d5-3c1e2459fd11",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Exam_Table_01 <-> Syringe_01  pen_x=0.03m pen_z=0.09m  moving Syringe_01 to (-0.99, 0.76, 1.50)"
+  },
+  {
+    "id": "6815a692-feb3-463a-93c1-911d4c94c8a5",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Exam_Table_01 <-> Stethoscope_01  pen_x=0.30m pen_z=0.50m  moving Stethoscope_01 to (-0.81, 0.76, 1.80)"
+  },
+  {
+    "id": "f027775f-1fae-437d-a237-f6c4f70f5456",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Exam_Table_01 <-> Patient_01  pen_x=0.49m pen_z=0.06m  moving Patient_01 to (-1.50, 0.01, 0.72)"
+  },
+  {
+    "id": "9661e231-b4e8-4dd5-b11e-98a2275ae2cf",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_01 <-> Aid_Kit_01  pen_x=0.20m pen_z=0.17m  moving Aid_Kit_01 to (-1.00, 1.56, 3.81)"
+  },
+  {
+    "id": "4be6f48e-75a9-4616-bd0f-0d2e2cc2817b",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_01 <-> Folder_01  pen_x=0.05m pen_z=0.25m  moving Folder_01 to (-0.35, 1.59, 3.00)"
+  }
+]

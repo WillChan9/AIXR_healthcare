@@ -1,0 +1,66 @@
+{
+  "room_type": "Nurse Station (Open)",
+  "description": "Maximum scale and density stress test",
+  "layout_goals": {
+    "interior_bounds": "8m x 8m",
+    "minimum_objects": 20,
+    "focal_point": "central hub of a hospital floor"
+  },
+  "steps": [
+    {
+      "step": 1,
+      "action": "Place furniture",
+      "objects": [
+        "Reception_Desk_01",
+        "Reception_Desk_02",
+        "Reception_Desk_03",
+        "Utility_Cart_01",
+        "Utility_Cart_02",
+        "Trolley_01",
+        "Trolley_02"
+      ],
+      "target_area": "front-center and back areas",
+      "condition": "all furniture placed within room bounds"
+    },
+    {
+      "step": 2,
+      "action": "Add computer equipment",
+      "objects": [
+        "PC_Monitor_01",
+        "Computer_01",
+        "Keyboard_01",
+        "Monitor_01"
+      ],
+      "target_area": "on desks",
+      "condition": "all computer equipment placed on desks"
+    },
+    {
+      "step": 3,
+      "action": "Place chairs and staff",
+      "objects": [
+        "Chair_01",
+        "Chair_02",
+        "Nurse_01",
+        "Nurse_02",
+        "Nurse_03"
+      ],
+      "target_area": "at desks and near supply cart",
+      "condition": "all chairs and staff placed in designated areas"
+    },
+    {
+      "step": 4,
+      "action": "Add office supplies and decorations",
+      "objects": [
+        "Folder_01",
+        "Folder_02",
+        "Folder_03",
+        "Screen_01",
+        "Poster_01",
+        "Poster_02",
+        "Clock_01"
+      ],
+      "target_area": "on desks, walls, and divider",
+      "condition": "all office supplies and decorations placed in designated areas"
+    }
+  ]
+}

@@ -1,0 +1,371 @@
+2026-04-24 22:13:26 - Pipeline - INFO - [Init] Cleared log agent.log
+2026-04-24 22:13:26 - Pipeline - INFO - [Init] Cleared log reflection_log.log
+2026-04-24 22:13:26 - Pipeline - INFO - Generating room layout plan...
+2026-04-24 22:13:28 - Pipeline - INFO - Plan generated and saved to S:\Firefighter_project\Agent\api_files\plan.json
+2026-04-24 22:13:28 - Pipeline - INFO - ============================================================
+2026-04-24 22:13:28 - Pipeline - INFO -   PHASE 1: Static Environment Generation
+2026-04-24 22:13:28 - Pipeline - INFO - ============================================================
+2026-04-24 22:13:28 - Pipeline - INFO - [Phase 1] Room shell written: 9 structural commands
+2026-04-24 22:13:29 - Pipeline - INFO - ----- GROQ RAW RESPONSE (attempt 1/3) -----
+2026-04-24 22:13:29 - Pipeline - INFO - [
+  {"action": "PlaceObject", "objectName": "Chair_01", "x": -2.5, "y": 0, "z": 2.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Chair_02", "x": -2.5, "y": 0, "z": 4.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Reception_Desk_01", "x": 0, "y": 0, "z": 7.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Folder_01", "x": 0, "y": 0.8, "z": 7.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Poster_01", "x": -2.5, "y": 0, "z": 1.0, "rotationY": 0},
+  {"action": "PlaceHuman", "humanName": "Nurse_01", "x": 0, "y": 0, "z": 6.5, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Clock_01", "x": 2.5, "y": 0, "z": 3.5, "rotationY": 0}
+]
+2026-04-24 22:13:29 - Pipeline - INFO - ------------------------------------------------------
+2026-04-24 22:13:29 - Pipeline - INFO - [Phase 1] Interior objects: wrote 7 commands
+2026-04-24 22:13:29 - Pipeline - INFO - [Phase 1] Waiting up to 15s for Unity to refresh screenshots...
+2026-04-24 22:13:45 - Pipeline - INFO - [Phase 1] Using existing screenshots (may be stale). Starting reflection loop.
+2026-04-24 22:13:45 - Pipeline - INFO - [Phase 1 Reflection] Step 1/7: Place object
+2026-04-24 22:13:45 - ReflectionModule - INFO - [SceneState] Loaded 15 live objects from scene_state.json.
+2026-04-24 22:13:45 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-24 22:13:45 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-24 22:13:45 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Chair_01 x=-2.48 y=0.02 z=2.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-2.50, half=0.27)
+2026-04-24 22:13:45 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Folder_01 x=1.08 y=1.02 z=7.00 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.03m pen_z=0.13m; exact bounds)
+2026-04-24 22:13:45 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Chair_02 x=-2.45 y=0.02 z=4.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-2.50, half=0.30)
+2026-04-24 22:13:45 - ReflectionModule - INFO - [BoundsThread] 2 bound/doorway corrections generated.
+2026-04-24 22:13:45 - ReflectionModule - INFO - [CollisionThread] math path: 1 collision(s) found.
+2026-04-24 22:13:46 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 8 line(s).
+2026-04-24 22:13:46 - ReflectionModule - INFO - [DispatcherThread] LLM visual check added 8 extra correction(s).
+2026-04-24 22:13:47 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-24 22:13:47 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-24 22:13:47 - ReflectionModule - INFO - [BoundsThread] 2 correction(s) applied:
+2026-04-24 22:13:47 - ReflectionModule - INFO -   [BoundsThread] MoveObject Chair_01 x=-2.48 y=0.02 z=2.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-2.50, half=0.27)
+2026-04-24 22:13:47 - ReflectionModule - INFO -   [BoundsThread] MoveObject Chair_02 x=-2.45 y=0.02 z=4.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-2.50, half=0.30)
+2026-04-24 22:13:47 - ReflectionModule - INFO - [CollisionThread] 1 correction(s) applied:
+2026-04-24 22:13:47 - ReflectionModule - INFO -   [CollisionThread] MoveObject Folder_01 x=1.08 y=1.02 z=7.00 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.03m pen_z=0.13m; exact bounds)
+2026-04-24 22:13:47 - ReflectionModule - INFO - [DispatcherThread] 8 correction(s) applied:
+2026-04-24 22:13:47 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Cube x=-2.8 y=0.5 z=2.8 rotationY=0 — reason: [dispatcher→surface] <issue>
+2026-04-24 22:13:47 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Cube x=-2.1 y=0.5 z=2.8 rotationY=0 — reason: [dispatcher→surface] <issue>
+2026-04-24 22:13:47 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Cube x=-2.1 y=0.5 z=6.4 rotationY=0 — reason: [dispatcher→surface] <issue>
+2026-04-24 22:13:47 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Cube x=-1.4 y=0.5 z=6.4 rotationY=0 — reason: [dispatcher→surface] <issue>
+2026-04-24 22:13:47 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Cube x=-1.4 y=0.5 z=2.8 rotationY=0 — reason: [dispatcher→surface] <issue>
+2026-04-24 22:13:47 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Cube x=-0.7 y=0.5 z=6.4 rotationY=0 — reason: [dispatcher→surface] <issue>
+2026-04-24 22:13:47 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Cube x=-0.7 y=0.5 z=2.8 rotationY=0 — reason: [dispatcher→surface] <issue>
+2026-04-24 22:13:47 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Cube x=0.0 y=0.5 z=6.4 rotationY=0 — reason: [dispatcher→surface] <issue>
+2026-04-24 22:13:47 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied (skipped 1 already handled).
+2026-04-24 22:13:47 - ReflectionModule - INFO - Logged reflection entry for step 'Place object'
+2026-04-24 22:13:47 - Pipeline - INFO -   step_complete=no  room_status=sparse  suggest_additions=True  objects=7
+2026-04-24 22:13:47 - Pipeline - INFO -   layout: The room layout seems mostly correct. The Nurse is behind the desk, and the chairs are against the wall. The Poster and Clock are in good positions.
+2026-04-24 22:13:47 - Pipeline - INFO -   suggestions: MoveObject Chair_01 x=-2.48 y=0.02 z=2.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-2.50, half=0.27)
+MoveObject Chair_02 x=-2.45 y=0.02 z=4.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-2.50, half=0.30)
+MoveObject Folder_01 x=1.08 y=1.02 z=7.00 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.03m pen_z=0.13m; exact bounds)
+MoveObject Cube x=-2.8 y=0.5 z=2.8 rotationY=0 — reason: [dispatcher→surface] <issue>
+MoveObject Cube x=-2.1 y=0.5 z=2.8 rotationY=0 — reason: [dispatcher→surface] <issue>
+MoveObject Cube x=-2.1 y=0.5 z=6.4 rotationY=0 — reason: [dispatcher→surface] <issue>
+MoveObject Cube x=-1.4 y=0.5 z=6.4 rotationY=0 — reason: [dispatcher→surface] <issue>
+MoveObject Cube x=-1.4 y=0.5 z=2.8 rotationY=0 — reason: [dispatcher→surface] <issue>
+MoveObject Cube x=-0.7 y=0.5 z=6.4 rotationY=0 — reason: [dispatcher→surface] <issue>
+MoveObject Cube x=-0.7 y=0.5 z=2.8 rotationY=0 — reason: [dispatcher→surface] <issue>
+MoveObject Cube x=0.0 y=0.5 z=6.4 rotationY=0 — reason: [dispatcher→surface] <issue>
+2026-04-24 22:13:47 - Pipeline - INFO -   [parse_alignment] MoveObject Chair_01 → x=-2.48 y=0.02 z=2.0 rot=0.0
+2026-04-24 22:13:47 - Pipeline - INFO -   [parse_alignment] MoveObject Chair_02 → x=-2.45 y=0.02 z=4.0 rot=0.0
+2026-04-24 22:13:47 - Pipeline - INFO -   [parse_alignment] MoveObject Folder_01 → x=1.08 y=1.02 z=7.0 rot=0.0
+2026-04-24 22:13:47 - Pipeline - INFO -   [parse_alignment] MoveObject Cube → x=-2.8 y=0.5 z=2.8 rot=0.0
+2026-04-24 22:13:47 - Pipeline - INFO -   [parse_alignment] MoveObject Cube → x=-2.1 y=0.5 z=2.8 rot=0.0
+2026-04-24 22:13:47 - Pipeline - INFO -   [parse_alignment] MoveObject Cube → x=-2.1 y=0.5 z=6.4 rot=0.0
+2026-04-24 22:13:47 - Pipeline - INFO -   [parse_alignment] MoveObject Cube → x=-1.4 y=0.5 z=6.4 rot=0.0
+2026-04-24 22:13:47 - Pipeline - INFO -   [parse_alignment] MoveObject Cube → x=-1.4 y=0.5 z=2.8 rot=0.0
+2026-04-24 22:13:47 - Pipeline - INFO -   [parse_alignment] MoveObject Cube → x=-0.7 y=0.5 z=6.4 rot=0.0
+2026-04-24 22:13:47 - Pipeline - INFO -   [parse_alignment] MoveObject Cube → x=-0.7 y=0.5 z=2.8 rot=0.0
+2026-04-24 22:13:47 - Pipeline - INFO -   [parse_alignment] MoveObject Cube → x=0.0 y=0.5 z=6.4 rot=0.0
+2026-04-24 22:13:47 - Pipeline - INFO - [Phase 1] Applied 11 direct corrections (MoveObject/DeleteObject)
+2026-04-24 22:13:48 - Pipeline - INFO - ----- GROQ RAW RESPONSE (loop attempt 1/3) -----
+2026-04-24 22:13:48 - Pipeline - INFO - [
+  {"action": "PlaceObject", "objectName": "Bench_01", "x": -2.8, "y": 0.0, "z": 2.5, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Poster_02", "x": 2.3, "y": 0.0, "z": 6.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Screen_01", "x": 0.0, "y": 0.0, "z": 3.0, "rotationY": 0}
+]
+2026-04-24 22:13:48 - Pipeline - INFO - ------------------------------------------------------
+2026-04-24 22:13:48 - Pipeline - INFO - [Phase 1] Appended 3 fill commands
+2026-04-24 22:13:51 - Pipeline - INFO - [Phase 1 Reflection] Step 1/7: Place object
+2026-04-24 22:13:51 - ReflectionModule - INFO - [SceneState] Loaded 18 live objects from scene_state.json.
+2026-04-24 22:13:51 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-24 22:13:51 - ReflectionModule - INFO - [DispatcherThread] 1 object(s) flagged: ['Folder_01 → floating ([dispatcher→surface])']
+2026-04-24 22:13:51 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Chair_01 x=-2.48 y=0.02 z=2.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-2.48, half=0.27)
+2026-04-24 22:13:51 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-24 22:13:51 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Bench_01 x=-1.87 y=0.51 z=2.50 rotationY=0  — reason: [bounds] left edge clips wall (x=-2.80, half=0.87)
+2026-04-24 22:13:51 - ReflectionModule - INFO - [BoundsThread] 2 bound/doorway corrections generated.
+2026-04-24 22:13:53 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 1 line(s).
+2026-04-24 22:13:54 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 1 line(s).
+2026-04-24 22:13:54 - ReflectionModule - INFO - [CollisionThread][image] MoveObject Chair_01 x=-2.50 y=0.02 z=2.50 rotationY=0.0  — reason: visually overlaps Bench_01
+2026-04-24 22:13:54 - ReflectionModule - INFO - [CollisionThread] image path added 1 extra correction(s).
+2026-04-24 22:13:55 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-24 22:13:55 - ReflectionModule - INFO - [BoundsThread] 2 correction(s) applied:
+2026-04-24 22:13:55 - ReflectionModule - INFO -   [BoundsThread] MoveObject Chair_01 x=-2.48 y=0.02 z=2.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-2.48, half=0.27)
+2026-04-24 22:13:55 - ReflectionModule - INFO -   [BoundsThread] MoveObject Bench_01 x=-1.87 y=0.51 z=2.50 rotationY=0  — reason: [bounds] left edge clips wall (x=-2.80, half=0.87)
+2026-04-24 22:13:55 - ReflectionModule - INFO - [CollisionThread] 1 correction(s) applied:
+2026-04-24 22:13:55 - ReflectionModule - INFO -   [CollisionThread] MoveObject Chair_01 x=-2.50 y=0.02 z=2.50 rotationY=0.0  — reason: visually overlaps Bench_01
+2026-04-24 22:13:55 - ReflectionModule - INFO - [DispatcherThread] 1 correction(s) applied:
+2026-04-24 22:13:55 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Folder_01 x=0.00 y=0.12 z=7.00 rotationY=0  — reason: [dispatcher→surface] floating at y=1.02, no surface below; nearest surface is Reception_Desk_01
+2026-04-24 22:13:55 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied (skipped 1 already handled).
+2026-04-24 22:13:55 - ReflectionModule - INFO - Logged reflection entry for step 'Place object'
+2026-04-24 22:13:55 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=True  objects=10
+2026-04-24 22:13:55 - Pipeline - INFO -   layout: The room layout seems mostly correct. The Nurse is behind the desk, and the chairs are against the wall. The Poster and Clock are in good positions.
+2026-04-24 22:13:55 - Pipeline - INFO -   suggestions: MoveObject Chair_01 x=-2.48 y=0.02 z=2.00 rotationY=0  — reason: [bounds] left edge clips wall (x=-2.48, half=0.27)
+MoveObject Bench_01 x=-1.87 y=0.51 z=2.50 rotationY=0  — reason: [bounds] left edge clips wall (x=-2.80, half=0.87)
+MoveObject Chair_01 x=-2.50 y=0.02 z=2.50 rotationY=0.0  — reason: visually overlaps Bench_01
+MoveObject Folder_01 x=0.00 y=0.12 z=7.00 rotationY=0  — reason: [dispatcher→surface] floating at y=1.02, no surface below; nearest surface is Reception_Desk_01
+2026-04-24 22:13:55 - Pipeline - INFO -   Step complete — advancing 1 → 2: Place object
+2026-04-24 22:13:55 - Pipeline - INFO -   [parse_alignment] MoveObject Chair_01 → x=-2.48 y=0.02 z=2.0 rot=0.0
+2026-04-24 22:13:55 - Pipeline - INFO -   [parse_alignment] MoveObject Bench_01 → x=-1.87 y=0.51 z=2.5 rot=0.0
+2026-04-24 22:13:55 - Pipeline - INFO -   [parse_alignment] MoveObject Chair_01 → x=-2.5 y=0.02 z=2.5 rot=0.0
+2026-04-24 22:13:55 - Pipeline - INFO -   [parse_alignment] MoveObject Folder_01 → x=0.0 y=0.12 z=7.0 rot=0.0
+2026-04-24 22:13:55 - Pipeline - INFO - [Phase 1] Applied 4 direct corrections (MoveObject/DeleteObject)
+2026-04-24 22:13:56 - Pipeline - INFO - ----- GROQ RAW RESPONSE (loop attempt 1/3) -----
+2026-04-24 22:13:56 - Pipeline - INFO - [
+  {"action": "PlaceObject", "objectName": "Table_01", "x": -2.1, "y": 0.0, "z": 5.5, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Chair_01", "x": 2.2, "y": 0.0, "z": 6.5, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Folder_03", "x": -0.5, "y": 0.8, "z": 7.0, "rotationY": 0}
+]
+2026-04-24 22:13:56 - Pipeline - INFO - ------------------------------------------------------
+2026-04-24 22:13:56 - Pipeline - INFO - [Phase 1] Appended 3 fill commands
+2026-04-24 22:13:59 - Pipeline - INFO - [Phase 1 Reflection] Step 2/7: Place object
+2026-04-24 22:13:59 - ReflectionModule - INFO - [SceneState] Loaded 20 live objects from scene_state.json.
+2026-04-24 22:13:59 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-24 22:13:59 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-24 22:13:59 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Table_01 x=-2.08 y=0.51 z=5.50 rotationY=0  — reason: [bounds] left edge clips wall (x=-2.10, half=0.67)
+2026-04-24 22:13:59 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Folder_01 x=1.08 y=0.12 z=7.00 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.03m pen_z=0.13m; exact bounds)
+2026-04-24 22:13:59 - ReflectionModule - INFO - [BoundsThread] 1 bound/doorway corrections generated.
+2026-04-24 22:13:59 - ReflectionModule - INFO - [CollisionThread] math path: 1 collision(s) found.
+2026-04-24 22:14:02 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 1 line(s).
+2026-04-24 22:14:02 - ReflectionModule - INFO - [CollisionThread][image] MoveObject Chair_01 x=2.0 y=0.51 z=6.8 rotationY=0.0  — reason: visually overlaps Nurse_01
+2026-04-24 22:14:02 - ReflectionModule - INFO - [CollisionThread] image path added 1 extra correction(s).
+2026-04-24 22:14:02 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 1 line(s).
+2026-04-24 22:14:02 - ReflectionModule - INFO - [DispatcherThread] LLM visual check added 1 extra correction(s).
+2026-04-24 22:14:02 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-24 22:14:02 - ReflectionModule - INFO - [BoundsThread] 1 correction(s) applied:
+2026-04-24 22:14:02 - ReflectionModule - INFO -   [BoundsThread] MoveObject Table_01 x=-2.08 y=0.51 z=5.50 rotationY=0  — reason: [bounds] left edge clips wall (x=-2.10, half=0.67)
+2026-04-24 22:14:02 - ReflectionModule - INFO - [CollisionThread] 2 correction(s) applied:
+2026-04-24 22:14:02 - ReflectionModule - INFO -   [CollisionThread] MoveObject Folder_01 x=1.08 y=0.12 z=7.00 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.03m pen_z=0.13m; exact bounds)
+2026-04-24 22:14:02 - ReflectionModule - INFO -   [CollisionThread] MoveObject Chair_01 x=2.0 y=0.51 z=6.8 rotationY=0.0  — reason: visually overlaps Nurse_01
+2026-04-24 22:14:02 - ReflectionModule - INFO - [DispatcherThread] 1 correction(s) applied:
+2026-04-24 22:14:02 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Nurse_01 x=0.00 y=0.0 z=6.5 rotationY=0 — reason: [dispatcher→surface] <issue>
+2026-04-24 22:14:02 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied (skipped 1 already handled).
+2026-04-24 22:14:02 - ReflectionModule - INFO - Logged reflection entry for step 'Place object'
+2026-04-24 22:14:02 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=True  objects=13
+2026-04-24 22:14:02 - Pipeline - INFO -   layout: The room layout seems mostly correct. The Nurse is behind the desk, and the chairs are against the wall. The Poster and Clock are in good positions.
+2026-04-24 22:14:02 - Pipeline - INFO -   suggestions: MoveObject Table_01 x=-2.08 y=0.51 z=5.50 rotationY=0  — reason: [bounds] left edge clips wall (x=-2.10, half=0.67)
+MoveObject Folder_01 x=1.08 y=0.12 z=7.00 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.03m pen_z=0.13m; exact bounds)
+MoveObject Chair_01 x=2.0 y=0.51 z=6.8 rotationY=0.0  — reason: visually overlaps Nurse_01
+MoveObject Nurse_01 x=0.00 y=0.0 z=6.5 rotationY=0 — reason: [dispatcher→surface] <issue>
+2026-04-24 22:14:02 - Pipeline - INFO -   Step complete — advancing 2 → 3: Place object
+2026-04-24 22:14:02 - Pipeline - INFO -   [parse_alignment] MoveObject Table_01 → x=-2.08 y=0.51 z=5.5 rot=0.0
+2026-04-24 22:14:02 - Pipeline - INFO -   [parse_alignment] MoveObject Folder_01 → x=1.08 y=0.12 z=7.0 rot=0.0
+2026-04-24 22:14:02 - Pipeline - INFO -   [parse_alignment] MoveObject Chair_01 → x=2.0 y=0.51 z=6.8 rot=0.0
+2026-04-24 22:14:02 - Pipeline - INFO -   [parse_alignment] MoveObject Nurse_01 → x=0.0 y=0.0 z=6.5 rot=0.0
+2026-04-24 22:14:02 - Pipeline - INFO - [Phase 1] Applied 4 direct corrections (MoveObject/DeleteObject)
+2026-04-24 22:14:04 - Pipeline - INFO - ----- GROQ RAW RESPONSE (loop attempt 1/3) -----
+2026-04-24 22:14:04 - Pipeline - INFO - [
+  {"action": "PlaceObject", "objectName": "Wall_Panel_01", "x": 2.7, "y": 1.6, "z": 2.0, "rotationY": 0.0},
+  {"action": "PlaceObject", "objectName": "Chair_02", "x": 2.5, "y": 0.0, "z": 5.0, "rotationY": 0.0},
+  {"action": "PlaceObject", "objectName": "Copybook_01", "x": -0.2, "y": 0.8, "z": 7.0, "rotationY": 0.0}
+]
+2026-04-24 22:14:04 - Pipeline - INFO - ------------------------------------------------------
+2026-04-24 22:14:04 - Pipeline - INFO - [Phase 1] Appended 3 fill commands
+2026-04-24 22:14:07 - Pipeline - INFO - [Phase 1 Reflection] Step 3/7: Place object
+2026-04-24 22:14:07 - ReflectionModule - INFO - [SceneState] Loaded 22 live objects from scene_state.json.
+2026-04-24 22:14:07 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-24 22:14:07 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-24 22:14:07 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Chair_02 x=2.45 y=0.51 z=5.00 rotationY=0  — reason: [bounds] right edge clips wall (x=2.50, half=0.30)
+2026-04-24 22:14:07 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-24 22:14:07 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Wall_Panel_01 x=2.20 y=0.02 z=2.00 rotationY=0  — reason: [bounds] right edge clips wall (x=2.70, half=0.55)
+2026-04-24 22:14:07 - ReflectionModule - INFO - [BoundsThread] 2 bound/doorway corrections generated.
+2026-04-24 22:14:09 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 1 line(s).
+2026-04-24 22:14:09 - ReflectionModule - INFO - [DispatcherThread] LLM visual check added 1 extra correction(s).
+2026-04-24 22:14:09 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 1 line(s).
+2026-04-24 22:14:09 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-24 22:14:09 - ReflectionModule - INFO - [BoundsThread] 2 correction(s) applied:
+2026-04-24 22:14:09 - ReflectionModule - INFO -   [BoundsThread] MoveObject Chair_02 x=2.45 y=0.51 z=5.00 rotationY=0  — reason: [bounds] right edge clips wall (x=2.50, half=0.30)
+2026-04-24 22:14:09 - ReflectionModule - INFO -   [BoundsThread] MoveObject Wall_Panel_01 x=2.20 y=0.02 z=2.00 rotationY=0  — reason: [bounds] right edge clips wall (x=2.70, half=0.55)
+2026-04-24 22:14:09 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-24 22:14:09 - ReflectionModule - INFO - [DispatcherThread] 1 correction(s) applied:
+2026-04-24 22:14:09 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Nurse_01 x=0.00 y=0.51 z=6.50 rotationY=0.0 — reason: [dispatcher→surface] <issue>
+2026-04-24 22:14:09 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied (skipped 1 already handled).
+2026-04-24 22:14:09 - ReflectionModule - INFO - Logged reflection entry for step 'Place object'
+2026-04-24 22:14:09 - Pipeline - INFO -   Object cap reached (16/15) — no additions
+2026-04-24 22:14:09 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=16
+2026-04-24 22:14:09 - Pipeline - INFO -   layout: The room layout seems mostly correct. The Nurse is behind the desk, chairs are against the wall, and Posters/Clock are in good positions. Some minor adjustments needed for optimal placement and alignment.
+2026-04-24 22:14:09 - Pipeline - INFO -   suggestions: MoveObject Chair_02 x=2.45 y=0.51 z=5.00 rotationY=0  — reason: [bounds] right edge clips wall (x=2.50, half=0.30)
+MoveObject Wall_Panel_01 x=2.20 y=0.02 z=2.00 rotationY=0  — reason: [bounds] right edge clips wall (x=2.70, half=0.55)
+MoveObject Nurse_01 x=0.00 y=0.51 z=6.50 rotationY=0.0 — reason: [dispatcher→surface] <issue>
+2026-04-24 22:14:09 - Pipeline - INFO -   Step complete — advancing 3 → 4: Place object
+2026-04-24 22:14:09 - Pipeline - INFO -   [parse_alignment] MoveObject Chair_02 → x=2.45 y=0.51 z=5.0 rot=0.0
+2026-04-24 22:14:09 - Pipeline - INFO -   [parse_alignment] MoveObject Wall_Panel_01 → x=2.2 y=0.02 z=2.0 rot=0.0
+2026-04-24 22:14:09 - Pipeline - INFO -   [parse_alignment] MoveObject Nurse_01 → x=0.0 y=0.51 z=6.5 rot=0.0
+2026-04-24 22:14:09 - Pipeline - INFO - [Phase 1] Applied 3 direct corrections (MoveObject/DeleteObject)
+2026-04-24 22:14:09 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-24 22:14:15 - Pipeline - INFO - [Phase 1 Reflection] Step 4/7: Place object
+2026-04-24 22:14:15 - ReflectionModule - INFO - [SceneState] Loaded 22 live objects from scene_state.json.
+2026-04-24 22:14:15 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-24 22:14:15 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-24 22:14:15 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-24 22:14:15 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-24 22:14:17 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 1 line(s).
+2026-04-24 22:14:17 - ReflectionModule - INFO - [DispatcherThread] LLM visual check added 1 extra correction(s).
+2026-04-24 22:14:18 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-24 22:14:19 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-24 22:14:19 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-24 22:14:19 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-24 22:14:19 - ReflectionModule - INFO - [DispatcherThread] 1 correction(s) applied:
+2026-04-24 22:14:19 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Nurse_01 x=0.0 y=0.0 z=6.5 rotationY=0.0 — reason: [dispatcher→surface] <issue>
+2026-04-24 22:14:19 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied (skipped 1 already handled).
+2026-04-24 22:14:19 - ReflectionModule - INFO - Logged reflection entry for step 'Place object'
+2026-04-24 22:14:19 - Pipeline - INFO -   Object cap reached (16/15) — no additions
+2026-04-24 22:14:19 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=16
+2026-04-24 22:14:19 - Pipeline - INFO -   layout: The room layout seems mostly correct. The Nurse is behind the desk, chairs are against the wall, and Posters/Clock are in good positions. Some minor adjustments needed for optimal placement and alignment.
+2026-04-24 22:14:19 - Pipeline - INFO -   suggestions: MoveObject Nurse_01 x=0.0 y=0.0 z=6.5 rotationY=0.0 — reason: [dispatcher→surface] <issue>
+2026-04-24 22:14:19 - Pipeline - INFO -   Step complete — advancing 4 → 5: Place object
+2026-04-24 22:14:19 - Pipeline - INFO -   [parse_alignment] MoveObject Nurse_01 → x=0.0 y=0.0 z=6.5 rot=0.0
+2026-04-24 22:14:19 - Pipeline - INFO - [Phase 1] Applied 1 direct corrections (MoveObject/DeleteObject)
+2026-04-24 22:14:19 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-24 22:14:22 - Pipeline - INFO - [Phase 1 Reflection] Step 5/7: Place object
+2026-04-24 22:14:22 - ReflectionModule - INFO - [SceneState] Loaded 22 live objects from scene_state.json.
+2026-04-24 22:14:22 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-24 22:14:22 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-24 22:14:22 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-24 22:14:22 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-24 22:14:24 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 2 line(s).
+2026-04-24 22:14:24 - ReflectionModule - INFO - [CollisionThread][image] MoveObject Nurse_01 x=0.0 y=0.0 z=6.9 rotationY=0.0  — reason: visually overlaps Reception_Desk_01
+2026-04-24 22:14:24 - ReflectionModule - INFO - [CollisionThread][image] MoveObject Nurse_01 x=0.0 y=0.0 z=
+2026-04-24 22:14:24 - ReflectionModule - INFO - [CollisionThread] image path added 2 extra correction(s).
+2026-04-24 22:14:25 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 1 line(s).
+2026-04-24 22:14:25 - ReflectionModule - INFO - [DispatcherThread] LLM visual check added 1 extra correction(s).
+2026-04-24 22:14:27 - ReflectionModule - WARNING - [BoundsThread] focused LLM call failed: Error code: 429 - {'error': {'message': 'Rate limit reached for model `meta-llama/llama-4-scout-17b-16e-instruct` in organization `org_01kbgb8q7jf1kvv7fe0h3h4za3` service tier `on_demand` on tokens per minute (TPM): Limit 300000, Used 290110, Requested 10100. Please try again in 42ms. ', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+2026-04-24 22:14:32 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-24 22:14:32 - ReflectionModule - INFO - [CollisionThread] 2 correction(s) applied:
+2026-04-24 22:14:32 - ReflectionModule - INFO -   [CollisionThread] MoveObject Nurse_01 x=0.0 y=0.0 z=6.9 rotationY=0.0  — reason: visually overlaps Reception_Desk_01
+2026-04-24 22:14:32 - ReflectionModule - INFO -   [CollisionThread] MoveObject Nurse_01 x=0.0 y=0.0 z=
+2026-04-24 22:14:32 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied (skipped 1 already handled).
+2026-04-24 22:14:32 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied (skipped 1 already handled).
+2026-04-24 22:14:32 - ReflectionModule - INFO - Logged reflection entry for step 'Place object'
+2026-04-24 22:14:32 - Pipeline - INFO -   Object cap reached (16/15) — no additions
+2026-04-24 22:14:32 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=16
+2026-04-24 22:14:32 - Pipeline - INFO -   layout: The room layout seems mostly correct. The Nurse is behind the desk, chairs are against the wall, and Posters/Clock are in good positions. Some minor adjustments needed for optimal placement and alignment.
+2026-04-24 22:14:32 - Pipeline - INFO -   suggestions: MoveObject Nurse_01 x=0.0 y=0.0 z=6.9 rotationY=0.0  — reason: visually overlaps Reception_Desk_01
+MoveObject Nurse_01 x=0.0 y=0.0 z=
+2026-04-24 22:14:32 - Pipeline - INFO -   Step complete — advancing 5 → 6: Place staff
+2026-04-24 22:14:32 - Pipeline - INFO -   [parse_alignment] MoveObject Nurse_01 → x=0.0 y=0.0 z=6.9 rot=0.0
+2026-04-24 22:14:32 - Pipeline - INFO - [Phase 1] Applied 1 direct corrections (MoveObject/DeleteObject)
+2026-04-24 22:14:32 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-24 22:14:35 - Pipeline - INFO - [Phase 1 Reflection] Step 6/7: Place staff
+2026-04-24 22:14:35 - ReflectionModule - INFO - [SceneState] Loaded 22 live objects from scene_state.json.
+2026-04-24 22:14:35 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-24 22:14:35 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-24 22:14:35 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-24 22:14:35 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Nurse_01 x=0.00 y=0.00 z=6.40 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.38m pen_z=0.22m; exact bounds)
+2026-04-24 22:14:35 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Copybook_01 x=-0.57 y=0.51 z=7.00 rotationY=0  — reason: overlaps Nurse_01 (pen_x=0.03m pen_z=0.21m; exact bounds)
+2026-04-24 22:14:35 - ReflectionModule - INFO - [CollisionThread] math path: 2 collision(s) found.
+2026-04-24 22:14:37 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 1 line(s).
+2026-04-24 22:14:37 - ReflectionModule - INFO - [DispatcherThread] LLM visual check added 1 extra correction(s).
+2026-04-24 22:14:37 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-24 22:14:38 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-24 22:14:41 - ReflectionModule - ERROR - [SurfaceThread] unrecoverable error — falling back to empty result: Error code: 429 - {'error': {'message': 'Rate limit reached for model `meta-llama/llama-4-scout-17b-16e-instruct` in organization `org_01kbgb8q7jf1kvv7fe0h3h4za3` service tier `on_demand` on tokens per minute (TPM): Limit 300000, Used 283735, Requested 17199. Please try again in 186.8ms. ', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+2026-04-24 22:14:41 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-24 22:14:41 - ReflectionModule - INFO - [CollisionThread] 2 correction(s) applied:
+2026-04-24 22:14:41 - ReflectionModule - INFO -   [CollisionThread] MoveObject Nurse_01 x=0.00 y=0.00 z=6.40 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.38m pen_z=0.22m; exact bounds)
+2026-04-24 22:14:41 - ReflectionModule - INFO -   [CollisionThread] MoveObject Copybook_01 x=-0.57 y=0.51 z=7.00 rotationY=0  — reason: overlaps Nurse_01 (pen_x=0.03m pen_z=0.21m; exact bounds)
+2026-04-24 22:14:41 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied (skipped 1 already handled).
+2026-04-24 22:14:41 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-24 22:14:41 - ReflectionModule - INFO - Logged reflection entry for step 'Place staff'
+2026-04-24 22:14:41 - Pipeline - INFO -   Object cap reached (16/15) — no additions
+2026-04-24 22:14:41 - Pipeline - INFO -   step_complete=no  room_status=good  suggest_additions=False  objects=16
+2026-04-24 22:14:41 - Pipeline - INFO -   suggestions: MoveObject Nurse_01 x=0.00 y=0.00 z=6.40 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.38m pen_z=0.22m; exact bounds)
+MoveObject Copybook_01 x=-0.57 y=0.51 z=7.00 rotationY=0  — reason: overlaps Nurse_01 (pen_x=0.03m pen_z=0.21m; exact bounds)
+2026-04-24 22:14:41 - Pipeline - INFO -   [parse_alignment] MoveObject Nurse_01 → x=0.0 y=0.0 z=6.4 rot=0.0
+2026-04-24 22:14:41 - Pipeline - INFO -   [parse_alignment] MoveObject Copybook_01 → x=-0.57 y=0.51 z=7.0 rot=0.0
+2026-04-24 22:14:41 - Pipeline - INFO - [Phase 1] Applied 2 direct corrections (MoveObject/DeleteObject)
+2026-04-24 22:14:41 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-24 22:14:44 - Pipeline - INFO - [Phase 1 Reflection] Step 6/7: Place staff
+2026-04-24 22:14:44 - ReflectionModule - INFO - [SceneState] Loaded 22 live objects from scene_state.json.
+2026-04-24 22:14:44 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-24 22:14:44 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-24 22:14:44 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-24 22:14:44 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-24 22:14:46 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 1 line(s).
+2026-04-24 22:14:46 - ReflectionModule - INFO - [DispatcherThread] LLM visual check added 1 extra correction(s).
+2026-04-24 22:14:47 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 1 line(s).
+2026-04-24 22:14:47 - ReflectionModule - INFO - [BoundsThread] LLM visual check added 1 extra correction(s).
+2026-04-24 22:14:47 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 1 line(s).
+2026-04-24 22:14:47 - ReflectionModule - INFO - [CollisionThread][image] MoveObject Nurse_01 x=0.0 y=0.0 z=6.75
+2026-04-24 22:14:47 - ReflectionModule - INFO - [CollisionThread] image path added 1 extra correction(s).
+2026-04-24 22:14:48 - ReflectionModule - ERROR - [SurfaceThread] unrecoverable error — falling back to empty result: Error code: 429 - {'error': {'message': 'Rate limit reached for model `meta-llama/llama-4-scout-17b-16e-instruct` in organization `org_01kbgb8q7jf1kvv7fe0h3h4za3` service tier `on_demand` on tokens per minute (TPM): Limit 300000, Used 294345, Requested 17653. Please try again in 2.3996s. ', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+2026-04-24 22:14:48 - ReflectionModule - INFO - [BoundsThread] 1 correction(s) applied:
+2026-04-24 22:14:48 - ReflectionModule - INFO -   [BoundsThread] MoveObject Wall_Panel_01 x=2.7 y=0.02 z=2.0 rotationY=0.0  — reason: visually clipping wall
+2026-04-24 22:14:48 - ReflectionModule - INFO - [CollisionThread] 1 correction(s) applied:
+2026-04-24 22:14:48 - ReflectionModule - INFO -   [CollisionThread] MoveObject Nurse_01 x=0.0 y=0.0 z=6.75
+2026-04-24 22:14:48 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied (skipped 1 already handled).
+2026-04-24 22:14:48 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-24 22:14:48 - ReflectionModule - INFO - Logged reflection entry for step 'Place staff'
+2026-04-24 22:14:48 - Pipeline - INFO -   Object cap reached (16/15) — no additions
+2026-04-24 22:14:48 - Pipeline - INFO -   step_complete=no  room_status=good  suggest_additions=False  objects=16
+2026-04-24 22:14:48 - Pipeline - INFO -   suggestions: MoveObject Wall_Panel_01 x=2.7 y=0.02 z=2.0 rotationY=0.0  — reason: visually clipping wall
+MoveObject Nurse_01 x=0.0 y=0.0 z=6.75
+2026-04-24 22:14:48 - Pipeline - INFO -   [parse_alignment] MoveObject Wall_Panel_01 → x=2.7 y=0.02 z=2.0 rot=0.0
+2026-04-24 22:14:48 - Pipeline - INFO -   [parse_alignment] MoveObject Nurse_01 → x=0.0 y=0.0 z=6.75 rot=0.0
+2026-04-24 22:14:48 - Pipeline - INFO - [Phase 1] Applied 2 direct corrections (MoveObject/DeleteObject)
+2026-04-24 22:14:48 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-24 22:14:51 - Pipeline - INFO - [Phase 1 Reflection] Step 6/7: Place staff
+2026-04-24 22:14:51 - ReflectionModule - INFO - [SceneState] Loaded 22 live objects from scene_state.json.
+2026-04-24 22:14:51 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-24 22:14:51 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-24 22:14:51 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Wall_Panel_01 x=2.20 y=0.02 z=2.00 rotationY=0  — reason: [bounds] right edge clips wall (x=2.70, half=0.55)
+2026-04-24 22:14:51 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Nurse_01 x=0.00 y=0.00 z=6.42 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.35m pen_z=0.10m; exact bounds)
+2026-04-24 22:14:51 - ReflectionModule - INFO - [BoundsThread] 1 bound/doorway corrections generated.
+2026-04-24 22:14:51 - ReflectionModule - INFO - [CollisionThread] math path: 1 collision(s) found.
+2026-04-24 22:14:53 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-24 22:14:53 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 2 line(s).
+2026-04-24 22:14:57 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 1 line(s).
+2026-04-24 22:14:57 - ReflectionModule - INFO - [DispatcherThread] LLM visual check added 1 extra correction(s).
+2026-04-24 22:14:57 - ReflectionModule - ERROR - [SurfaceThread] unrecoverable error — falling back to empty result: Error code: 429 - {'error': {'message': 'Rate limit reached for model `meta-llama/llama-4-scout-17b-16e-instruct` in organization `org_01kbgb8q7jf1kvv7fe0h3h4za3` service tier `on_demand` on tokens per minute (TPM): Limit 300000, Used 295538, Requested 17403. Please try again in 2.588199999s. ', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+2026-04-24 22:14:57 - ReflectionModule - INFO - [BoundsThread] 1 correction(s) applied:
+2026-04-24 22:14:57 - ReflectionModule - INFO -   [BoundsThread] MoveObject Wall_Panel_01 x=2.20 y=0.02 z=2.00 rotationY=0  — reason: [bounds] right edge clips wall (x=2.70, half=0.55)
+2026-04-24 22:14:57 - ReflectionModule - INFO - [CollisionThread] 1 correction(s) applied:
+2026-04-24 22:14:57 - ReflectionModule - INFO -   [CollisionThread] MoveObject Nurse_01 x=0.00 y=0.00 z=6.42 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.35m pen_z=0.10m; exact bounds)
+2026-04-24 22:14:57 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied (skipped 1 already handled).
+2026-04-24 22:14:57 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-24 22:14:57 - ReflectionModule - INFO - Logged reflection entry for step 'Place staff'
+2026-04-24 22:14:57 - Pipeline - INFO -   Object cap reached (16/15) — no additions
+2026-04-24 22:14:57 - Pipeline - INFO -   step_complete=no  room_status=good  suggest_additions=False  objects=16
+2026-04-24 22:14:57 - Pipeline - INFO -   suggestions: MoveObject Wall_Panel_01 x=2.20 y=0.02 z=2.00 rotationY=0  — reason: [bounds] right edge clips wall (x=2.70, half=0.55)
+MoveObject Nurse_01 x=0.00 y=0.00 z=6.42 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.35m pen_z=0.10m; exact bounds)
+2026-04-24 22:14:57 - Pipeline - INFO -   [parse_alignment] MoveObject Wall_Panel_01 → x=2.2 y=0.02 z=2.0 rot=0.0
+2026-04-24 22:14:57 - Pipeline - INFO -   [parse_alignment] MoveObject Nurse_01 → x=0.0 y=0.0 z=6.42 rot=0.0
+2026-04-24 22:14:57 - Pipeline - INFO - [Phase 1] Applied 2 direct corrections (MoveObject/DeleteObject)
+2026-04-24 22:14:57 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-24 22:15:00 - Pipeline - INFO - [Phase 1 Reflection] Step 6/7: Place staff
+2026-04-24 22:15:00 - ReflectionModule - INFO - Step '6' reached max reflections (3). Forcing step_complete=yes to avoid infinite correction loop.
+2026-04-24 22:15:00 - ReflectionModule - INFO - Logged reflection entry for step 'Place staff'
+2026-04-24 22:15:00 - Pipeline - INFO -   Object cap reached (16/15) — no additions
+2026-04-24 22:15:00 - Pipeline - INFO -   step_complete=yes  room_status=good  suggest_additions=False  objects=16
+2026-04-24 22:15:00 - Pipeline - INFO -   layout: Layout accepted after maximum correction iterations.
+2026-04-24 22:15:00 - Pipeline - INFO -   Step complete — advancing 6 → 7: Add objects
+2026-04-24 22:15:00 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-24 22:15:06 - Pipeline - INFO - [Phase 1 Reflection] Step 7/7: Add objects
+2026-04-24 22:15:06 - ReflectionModule - INFO - [SceneState] Loaded 22 live objects from scene_state.json.
+2026-04-24 22:15:06 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-24 22:15:06 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-24 22:15:06 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-24 22:15:06 - ReflectionModule - INFO - [CollisionThread] math path: 0 collision(s) found.
+2026-04-24 22:15:09 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 0 line(s).
+2026-04-24 22:15:09 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 1 line(s).
+2026-04-24 22:15:09 - ReflectionModule - INFO - [DispatcherThread] LLM visual check added 1 extra correction(s).
+2026-04-24 22:15:09 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-24 22:15:09 - ReflectionModule - INFO - [BoundsThread] 0 corrections applied.
+2026-04-24 22:15:09 - ReflectionModule - INFO - [CollisionThread] 0 corrections applied.
+2026-04-24 22:15:09 - ReflectionModule - INFO - [DispatcherThread] 1 correction(s) applied:
+2026-04-24 22:15:09 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Nurse_01 x=0.00 y=0.51 z=6.42 rotationY=0.0 — reason: [dispatcher→surface] <issue>
+2026-04-24 22:15:09 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied (skipped 1 already handled).
+2026-04-24 22:15:09 - ReflectionModule - INFO - Logged reflection entry for step 'Add objects'
+2026-04-24 22:15:09 - Pipeline - INFO -   Object cap reached (16/15) — no additions
+2026-04-24 22:15:09 - Pipeline - INFO -   step_complete=yes  room_status=sparse  suggest_additions=False  objects=16
+2026-04-24 22:15:09 - Pipeline - INFO -   layout: The room layout seems mostly correct. The Nurse is behind the desk, chairs are against the wall, and Posters/Clock are in good positions. Some minor adjustments needed for optimal placement and alignment.
+2026-04-24 22:15:09 - Pipeline - INFO -   suggestions: MoveObject Nurse_01 x=0.00 y=0.51 z=6.42 rotationY=0.0 — reason: [dispatcher→surface] <issue>
+2026-04-24 22:15:09 - Pipeline - INFO -   Step complete — all 7 plan steps complete. Stopping environment generation.
+2026-04-24 22:15:13 - Pipeline - INFO - [InteractionMap] Generated map for 13 objects → interaction_map.json
+2026-04-24 22:15:13 - Pipeline - INFO - --phase1-only flag set. Skipping Phase 2.
+2026-04-24 22:15:13 - Pipeline - INFO - Total objects placed: 23

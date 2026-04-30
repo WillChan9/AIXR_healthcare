@@ -1,0 +1,79 @@
+{
+  "room_type": "Medical Supply Closet",
+  "description": "Extreme density stress test in tiny room",
+  "layout_goals": {
+    "interior_bounds": "3m x 3m",
+    "minimum_objects": 12,
+    "focal_point": "center of the room"
+  },
+  "steps": [
+    {
+      "step": 1,
+      "action": "Place utility cart against left wall",
+      "objects": [
+        "Utility_Cart_01"
+      ],
+      "target_area": "left wall, x~-1.0, z~1.5",
+      "condition": "cart is against wall and within bounds"
+    },
+    {
+      "step": 2,
+      "action": "Place utility cart against right wall",
+      "objects": [
+        "Utility_Cart_02"
+      ],
+      "target_area": "right wall, x~1.0, z~1.5",
+      "condition": "cart is against wall and within bounds"
+    },
+    {
+      "step": 3,
+      "action": "Place boxes on utility carts",
+      "objects": [
+        "Box_01",
+        "Box_02"
+      ],
+      "target_area": "on cart, y~0.8",
+      "condition": "boxes are on carts and stacked"
+    },
+    {
+      "step": 4,
+      "action": "Place bottles on surfaces",
+      "objects": [
+        "Bottle_01",
+        "Bottle_02",
+        "Bottle_03"
+      ],
+      "target_area": "on surface, y~0.8",
+      "condition": "bottles are on surfaces and not overlapping"
+    },
+    {
+      "step": 5,
+      "action": "Place mask boxes on surfaces",
+      "objects": [
+        "Mask_Box_01",
+        "Mask_Box_02"
+      ],
+      "target_area": "on surface, y~0.8",
+      "condition": "mask boxes are on surfaces and not overlapping"
+    },
+    {
+      "step": 6,
+      "action": "Place bandage and aid kit on surfaces",
+      "objects": [
+        "Bandage_01",
+        "Aid_Kit_01"
+      ],
+      "target_area": "on surface",
+      "condition": "objects are on surfaces and not overlapping"
+    },
+    {
+      "step": 7,
+      "action": "Place sterilizer drum on floor against back wall",
+      "objects": [
+        "Sterilizer_Drum_01"
+      ],
+      "target_area": "floor, back wall",
+      "condition": "drum is against wall and on floor"
+    }
+  ]
+}

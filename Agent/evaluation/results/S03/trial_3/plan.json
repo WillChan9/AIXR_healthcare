@@ -1,64 +1,100 @@
 {
   "room_type": "Physical Therapy Gym",
-  "description": "High-diversity interaction test room with rehabilitation equipment, medical furniture, props, and characters spread across the space.",
+  "description": "Bright, open rehabilitation gym for active movement therapy. A physical therapist, represented by a doctor character, supervises one or two patients using spread-out rehab equipment. The main interaction arc focuses on the therapist introducing the equipment, highlighting the treadmill, demonstrating proper treadmill form, and then observing a patient walking between parallel bars.",
   "layout_goals": {
-    "interior_bounds": "6m x 6m",
-    "minimum_objects": 12,
-    "focal_point": "open floor plan with diverse objects and characters"
+    "focal_point": "Treadmill_01 positioned as the main rehab station with clear access from the doorway and enough open floor around it for demonstration.",
+    "minimum_objects": 18,
+    "interior_bounds": {
+      "x_min": -3.8,
+      "x_max": 3.8,
+      "z_min": 0.1,
+      "z_max": 7.4
+    }
   },
   "steps": [
     {
       "step": 1,
-      "action": "Place walls and ceiling",
+      "action": "Create a bright open gym floor with the doorway kept clear and broad walkways between all equipment zones.",
       "objects": [],
-      "target_area": "entire room",
-      "condition": "4 walls forming a 6m x 6m enclosure with a 3.2m wall height, and a ceiling covering the full room"
+      "target_area": "central circulation path from doorway to back wall",
+      "condition": "No equipment should block the main walking route."
     },
     {
       "step": 2,
-      "action": "Add doorway",
-      "objects": [],
-      "target_area": "front wall",
-      "condition": "1.4m doorway centered at x=0"
+      "action": "Place the treadmill as the primary interactive equipment station, slightly right of center with open space around the front and sides for therapist demonstration.",
+      "objects": [
+        "Treadmill_01"
+      ],
+      "target_area": "mid-right exercise zone",
+      "condition": "Touching this object should display its purpose and, after the therapist introduction, trigger the therapist demonstration sequence."
     },
     {
       "step": 3,
-      "action": "Place required objects",
+      "action": "Build the parallel bars station using paired handrails, aligned lengthwise with enough space between them for a patient walking exercise.",
       "objects": [
-        "Treadmill_01",
-        "WheelChair_01",
-        "Trolley_01",
-        "Utility_Cart_01",
-        "Table_01",
-        "Towel_Dispenser_01",
-        "Caution_Sign_01",
-        "Clock_01",
-        "Poster_01",
-        "Poster_02",
-        "Folder_01",
-        "Folder_02",
-        "Screen_01",
-        "Reception_Desk_01"
+        "Handrail_01",
+        "Handrail_02"
       ],
-      "target_area": "specified locations",
-      "condition": "objects are floor-accessible (y=0) unless wall-mounted, and no two objects are within 0.8m of each other"
+      "target_area": "mid-left exercise zone",
+      "condition": "Touching the parallel bars after the treadmill interaction should cue a patient to walk between them while the therapist watches."
     },
     {
       "step": 4,
-      "action": "Position staff and patients",
+      "action": "Add additional rehabilitation equipment and floor exercise support to diversify the therapy gym without cluttering the walkways.",
       "objects": [
-        "Patient_01",
-        "Nurse_01"
+        "Kinesotherapy_Apparatus_01",
+        "Mack_01",
+        "Bench_01"
       ],
-      "target_area": "near specified objects",
-      "condition": "Patient_01 near Treadmill_01, Nurse_01 near center of the room"
+      "target_area": "rear and left-side open exercise areas",
+      "condition": "These objects should read as therapy apparatus, mat or padded exercise space, and rest bench."
     },
     {
       "step": 5,
-      "action": "Set lighting",
-      "objects": [],
-      "target_area": "entire room",
-      "condition": "SetLightIntensity warm (scale 1.4), SetAmbientColor warm white"
+      "action": "Place supportive medical furniture for supervision, rest, and standby mobility support.",
+      "objects": [
+        "Exam_Stool_01",
+        "Ambulance_01_Chair_01"
+      ],
+      "target_area": "near therapist station and side wall standby area",
+      "condition": "The chair should function as the standby wheelchair-like mobility support; touching it should display a short purpose description."
+    },
+    {
+      "step": 6,
+      "action": "Add the therapist and patients in active, readable therapy positions: therapist near the center, one patient using the treadmill area, and another patient near the parallel bars.",
+      "objects": [
+        "Doctor_03",
+        "Patient_01",
+        "Patient_02"
+      ],
+      "target_area": "center gym and active equipment stations",
+      "condition": "Touching Doctor_03 should make her explain the equipment and gesture toward Treadmill_01; touching an exercising patient should trigger progress dialogue."
+    },
+    {
+      "step": 7,
+      "action": "Place a compact supply cart and small therapy props along the perimeter so props are available but the gym remains uncluttered.",
+      "objects": [
+        "Utility_Cart_03",
+        "Tray_01",
+        "Aid_Kit_01",
+        "Bandage_01",
+        "Bottle_01",
+        "Crutch_01"
+      ],
+      "target_area": "right wall support zone",
+      "condition": "Small props should rest on or near the cart and not obstruct exercise paths."
+    },
+    {
+      "step": 8,
+      "action": "Add minimal clinical wall decor for orientation, timing, and patient motivation.",
+      "objects": [
+        "Poster_01",
+        "Poster_02",
+        "Clock_01",
+        "Caution_Sign_01"
+      ],
+      "target_area": "back and side walls",
+      "condition": "Wall decor should be visible from the exercise zones and should not compete with the interactive equipment."
     }
   ]
 }

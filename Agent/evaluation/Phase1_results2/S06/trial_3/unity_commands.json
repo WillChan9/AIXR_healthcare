@@ -1,0 +1,1607 @@
+[
+  {
+    "id": "cmd_1777088209861_0",
+    "executed": true,
+    "done": true,
+    "action": "CreateObjectByName",
+    "objectName": "Cube",
+    "x": 0,
+    "y": -0.01,
+    "z": 2.5,
+    "rotationY": 0,
+    "scaleX": 4,
+    "scaleY": 0.02,
+    "scaleZ": 5
+  },
+  {
+    "id": "cmd_1777088209861_1",
+    "executed": true,
+    "done": true,
+    "action": "CreateObjectByName",
+    "objectName": "Cube",
+    "x": 0,
+    "y": 3,
+    "z": 2.5,
+    "rotationY": 0,
+    "scaleX": 4,
+    "scaleY": 0.2,
+    "scaleZ": 5
+  },
+  {
+    "id": "cmd_1777088209861_2",
+    "executed": true,
+    "done": true,
+    "action": "CreateObjectByName",
+    "objectName": "Cube",
+    "x": -2,
+    "y": 1.5,
+    "z": 2.5,
+    "rotationY": 0,
+    "scaleX": 0.2,
+    "scaleY": 3,
+    "scaleZ": 5
+  },
+  {
+    "id": "cmd_1777088209861_3",
+    "executed": true,
+    "done": true,
+    "action": "CreateObjectByName",
+    "objectName": "Cube",
+    "x": 2,
+    "y": 1.5,
+    "z": 2.5,
+    "rotationY": 0,
+    "scaleX": 0.2,
+    "scaleY": 3,
+    "scaleZ": 5
+  },
+  {
+    "id": "cmd_1777088209861_4",
+    "executed": true,
+    "done": true,
+    "action": "CreateObjectByName",
+    "objectName": "Cube",
+    "x": 0,
+    "y": 1.5,
+    "z": 5,
+    "rotationY": 0,
+    "scaleX": 4,
+    "scaleY": 3,
+    "scaleZ": 0.2
+  },
+  {
+    "id": "cmd_1777088209861_5",
+    "executed": true,
+    "done": true,
+    "action": "CreateObjectByName",
+    "objectName": "Cube",
+    "x": -1.3,
+    "y": 1.5,
+    "z": 0,
+    "rotationY": 0,
+    "scaleX": 1.4,
+    "scaleY": 3,
+    "scaleZ": 0.2
+  },
+  {
+    "id": "cmd_1777088209861_6",
+    "executed": true,
+    "done": true,
+    "action": "CreateObjectByName",
+    "objectName": "Cube",
+    "x": 1.3,
+    "y": 1.5,
+    "z": 0,
+    "rotationY": 0,
+    "scaleX": 1.4,
+    "scaleY": 3,
+    "scaleZ": 0.2
+  },
+  {
+    "id": "cmd_1777088209861_7",
+    "executed": true,
+    "done": true,
+    "action": "SetLightIntensity",
+    "scale": 1
+  },
+  {
+    "id": "cmd_1777088209861_8",
+    "executed": true,
+    "done": true,
+    "action": "SetAmbientColor",
+    "r": 0.9,
+    "g": 0.9,
+    "b": 0.92
+  },
+  {
+    "id": "cmd_1777088211479_0",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Bed_01",
+    "x": 0,
+    "y": 0,
+    "z": 3.5,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777088211479_1",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Monitor_01",
+    "x": -1.5,
+    "y": 0,
+    "z": 3.5,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777088211479_2",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Monitor_02",
+    "x": 1.5,
+    "y": 0,
+    "z": 3.5,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777088211479_3",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "IV_Drip_01",
+    "x": 1.2,
+    "y": 0,
+    "z": 4,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777088211479_4",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Ventilator_01",
+    "x": -1.5,
+    "y": 0,
+    "z": 4.5,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777088211479_5",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Utility_Cart_01",
+    "x": 0,
+    "y": 0,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777088211479_6",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Trolley_01",
+    "x": 1.8,
+    "y": 0,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777088211479_7",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Syringe_01",
+    "x": 0,
+    "y": 0,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777088211479_8",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Folder_01",
+    "x": 0,
+    "y": 0,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777088211479_9",
+    "executed": true,
+    "done": true,
+    "action": "PlaceObject",
+    "objectName": "Stethoscope_01",
+    "x": -0.5,
+    "y": 0,
+    "z": 3,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777088211479_10",
+    "executed": true,
+    "done": true,
+    "action": "PlaceHuman",
+    "humanName": "Patient_01",
+    "x": 0,
+    "y": 0,
+    "z": 3.5,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777088211479_11",
+    "executed": true,
+    "done": true,
+    "action": "PlaceHuman",
+    "humanName": "Nurse_01",
+    "x": -0.5,
+    "y": 0,
+    "z": 3,
+    "rotationY": 0
+  },
+  {
+    "id": "919eb8df-7e6b-42a2-86dd-19305752478c",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Bed_01 <-> Stethoscope_01  pen_x=0.28m pen_z=0.50m  moving Stethoscope_01 to (-0.89, 0.01, 3.00)"
+  },
+  {
+    "id": "1a27bfa7-fac0-41fb-8d09-02f9c4e768c6",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Bed_01 <-> Patient_01  pen_x=0.89m pen_z=0.74m  moving Patient_01 to (0.00, 0.83, 4.53)"
+  },
+  {
+    "id": "2060788d-d8fe-4421-8675-522bcd6fee3e",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Bed_01 <-> Nurse_01  pen_x=0.68m pen_z=0.63m  moving Nurse_01 to (-0.50, 0.05, 2.01)"
+  },
+  {
+    "id": "7c35fe4d-b97e-4d66-ab1b-804d5c4457ff",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Monitor_02 <-> IV_Drip_01  pen_x=0.43m pen_z=0.12m  moving IV_Drip_01 to (1.20, 0.01, 4.37)"
+  },
+  {
+    "id": "ea6993f4-a075-4552-95bd-240d471d3ffc",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) IV_Drip_01 <-> Life_Support_01  pen_x=0.19m pen_z=0.17m  moving Life_Support_01 to (1.20, 0.12, 4.63)"
+  },
+  {
+    "id": "76e75114-fc2f-4c05-8c0d-bbe4a95d0ec2",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Utility_Cart_01 <-> Syringe_01  pen_x=0.03m pen_z=0.09m  moving Syringe_01 to (0.60, 0.80, 2.00)"
+  },
+  {
+    "id": "576574f0-22d8-4ba9-aedf-5e2c6561a122",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Utility_Cart_01 <-> Folder_01  pen_x=0.05m pen_z=0.25m  moving Folder_01 to (0.61, 0.83, 2.00)"
+  },
+  {
+    "id": "3b24524b-f278-4bd8-94bd-b8178c33e2ba",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_01 <-> Bottle_01  pen_x=0.07m pen_z=0.07m  moving Bottle_01 to (1.14, 1.55, 2.00)"
+  },
+  {
+    "id": "6a786241-a21d-49a7-992a-1e8abebe1307",
+    "executed": true,
+    "done": true,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Clock_01 <-> Chair_01  pen_x=0.36m pen_z=0.05m  moving Chair_01 to (-1.70, 0.91, 1.10)"
+  },
+  {
+    "id": "cmd_1777088230781_0",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Monitor_02",
+    "x": 1.19,
+    "y": 0.88,
+    "z": 3.5,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777088230781_1",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Ventilator_01",
+    "x": -1.34,
+    "y": 0.01,
+    "z": 4.49,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777088230781_2",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Trolley_01",
+    "x": 1.37,
+    "y": 0.01,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777088230781_3",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Oxygen_Concentrator_01",
+    "x": 1.51,
+    "y": 0.85,
+    "z": 4.42,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777088230781_4",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Mask_Box_01",
+    "x": -1.62,
+    "y": 0.92,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777088230781_5",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Clock_01",
+    "x": -1.56,
+    "y": 3.1,
+    "z": 0.5,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777088230781_6",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Chair_01",
+    "x": -1.48,
+    "y": 0.91,
+    "z": 0.8,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777088230781_7",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Stethoscope_01",
+    "x": -0.89,
+    "y": 0.01,
+    "z": 3,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777088230781_8",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Patient_01",
+    "x": 0,
+    "y": 0.83,
+    "z": 4.53,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777088230781_9",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Nurse_01",
+    "x": -0.5,
+    "y": 0.05,
+    "z": 2.01,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777088230781_10",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "IV_Drip_01",
+    "x": 1.2,
+    "y": 0.01,
+    "z": 4.37,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777088230781_11",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Life_Support_01",
+    "x": 1.2,
+    "y": 0.12,
+    "z": 4.63,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777088230781_12",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Syringe_01",
+    "x": 0.6,
+    "y": 0.8,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777088230781_13",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Folder_01",
+    "x": 0.61,
+    "y": 0.83,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777088230781_14",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Bottle_01",
+    "x": 1.14,
+    "y": 1.55,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777088230781_15",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Chair_01",
+    "x": -1.7,
+    "y": 0.91,
+    "z": 1.1,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777088230781_16",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Monitor_01",
+    "x": 0,
+    "y": 0.11,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "id": "cmd_1777088230781_17",
+    "executed": true,
+    "done": true,
+    "action": "MoveObject",
+    "objectName": "Syringe_02",
+    "x": 0,
+    "y": 0.11,
+    "z": 2,
+    "rotationY": 0
+  },
+  {
+    "action": "PlaceObject",
+    "objectName": "Oxygen_Concentrator_01",
+    "x": 1.7,
+    "y": 0.8,
+    "z": 2.0,
+    "rotationY": 0,
+    "id": "cmd_1777088232681_0",
+    "timestamp": 1777088232.6817138,
+    "executed": false
+  },
+  {
+    "action": "PlaceObject",
+    "objectName": "Mask_Box_01",
+    "x": -1.7,
+    "y": 0.8,
+    "z": 4.7,
+    "rotationY": 0,
+    "id": "cmd_1777088232681_1",
+    "timestamp": 1777088232.6817138,
+    "executed": false
+  },
+  {
+    "action": "PlaceObject",
+    "objectName": "Clock_01",
+    "x": 0,
+    "y": 2.7,
+    "z": 2.5,
+    "rotationY": 0,
+    "id": "cmd_1777088232681_2",
+    "timestamp": 1777088232.6817138,
+    "executed": false
+  },
+  {
+    "id": "27c02f18-b1ab-4222-bb43-e70edcc7dab8",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Bed_01 <-> Patient_01  pen_x=0.74m pen_z=0.32m  moving Patient_01 to (0.00, 0.83, 4.48)"
+  },
+  {
+    "id": "16d11e9e-1a46-4647-a445-08ec15f49f09",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Monitor_01 <-> Utility_Cart_01  pen_x=0.40m pen_z=0.32m  moving Utility_Cart_01 to (0.00, 0.01, 2.66)"
+  },
+  {
+    "id": "5a1b00d6-9ae1-48da-b37c-d532c7231a74",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Monitor_01 <-> Nurse_01  pen_x=0.07m pen_z=0.32m  moving Nurse_01 to (-0.79, 0.05, 2.01)"
+  },
+  {
+    "id": "2315cfea-21a4-4245-ab1d-f337dd38ed60",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Monitor_01 <-> Syringe_02  pen_x=0.03m pen_z=0.13m  moving Syringe_02 to (0.47, 0.11, 2.00)"
+  },
+  {
+    "id": "31699bb3-7708-4b88-8d5c-a869c78b0b40",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) IV_Drip_01 <-> Oxygen_Concentrator_01  pen_x=0.13m pen_z=0.44m  moving Oxygen_Concentrator_01 to (1.56, 0.85, 4.42)"
+  },
+  {
+    "id": "bb412db1-9321-407d-8e04-8cf663b8e6b2",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) IV_Drip_01 <-> Life_Support_01  pen_x=0.19m pen_z=0.41m  moving Life_Support_01 to (1.71, 0.12, 4.63)"
+  },
+  {
+    "id": "cde7d142-0378-4c16-b85b-feea8c798378",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_01 <-> Bottle_01  pen_x=0.07m pen_z=0.07m  moving Bottle_01 to (0.71, 1.55, 2.00)"
+  },
+  {
+    "id": "dc69c336-2ff8-4fb1-9497-aee5056462ab",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Syringe_01 <-> Folder_01  pen_x=0.03m pen_z=0.09m  moving Folder_01 to (0.89, 0.83, 2.00)"
+  },
+  {
+    "id": "9d6f546e-beaa-4eb2-977e-0cabd99abe1b",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (image) Monitor_02: MoveObject Monitor_02 x=1.19 y=0.88 z=3.70 rotationY=0.0  \u2014 reason: visually overlaps Bed_01"
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Monitor_02",
+    "x": 1.19,
+    "y": 0.88,
+    "z": 3.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777088239240_0",
+    "timestamp": 1777088239.240788,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Ventilator_01",
+    "x": -1.34,
+    "y": 0.01,
+    "z": 4.49,
+    "rotationY": 0.0,
+    "id": "cmd_1777088239240_1",
+    "timestamp": 1777088239.240788,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Patient_01",
+    "x": 0.0,
+    "y": 0.83,
+    "z": 4.43,
+    "rotationY": 0.0,
+    "id": "cmd_1777088239240_2",
+    "timestamp": 1777088239.240788,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Oxygen_Concentrator_01",
+    "x": 1.51,
+    "y": 0.85,
+    "z": 4.42,
+    "rotationY": 0.0,
+    "id": "cmd_1777088239240_3",
+    "timestamp": 1777088239.240788,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Mask_Box_01",
+    "x": -1.62,
+    "y": 0.92,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777088239240_4",
+    "timestamp": 1777088239.240788,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Life_Support_01",
+    "x": 1.2,
+    "y": 0.12,
+    "z": 4.58,
+    "rotationY": 0.0,
+    "id": "cmd_1777088239240_5",
+    "timestamp": 1777088239.240788,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Chair_01",
+    "x": -1.48,
+    "y": 0.91,
+    "z": 1.1,
+    "rotationY": 0.0,
+    "id": "cmd_1777088239240_6",
+    "timestamp": 1777088239.240788,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Patient_01",
+    "x": 0.0,
+    "y": 0.83,
+    "z": 4.48,
+    "rotationY": 0.0,
+    "id": "cmd_1777088239240_7",
+    "timestamp": 1777088239.240788,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Utility_Cart_01",
+    "x": 0.0,
+    "y": 0.01,
+    "z": 2.66,
+    "rotationY": 0.0,
+    "id": "cmd_1777088239240_8",
+    "timestamp": 1777088239.240788,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Nurse_01",
+    "x": -0.79,
+    "y": 0.05,
+    "z": 2.01,
+    "rotationY": 0.0,
+    "id": "cmd_1777088239240_9",
+    "timestamp": 1777088239.240788,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Syringe_02",
+    "x": 0.47,
+    "y": 0.11,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777088239240_10",
+    "timestamp": 1777088239.240788,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Oxygen_Concentrator_01",
+    "x": 1.56,
+    "y": 0.85,
+    "z": 4.42,
+    "rotationY": 0.0,
+    "id": "cmd_1777088239240_11",
+    "timestamp": 1777088239.240788,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Life_Support_01",
+    "x": 1.71,
+    "y": 0.12,
+    "z": 4.63,
+    "rotationY": 0.0,
+    "id": "cmd_1777088239240_12",
+    "timestamp": 1777088239.240788,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Bottle_01",
+    "x": 0.71,
+    "y": 1.55,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777088239240_13",
+    "timestamp": 1777088239.240788,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Folder_01",
+    "x": 0.89,
+    "y": 0.83,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777088239240_14",
+    "timestamp": 1777088239.240788,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Monitor_02",
+    "x": 1.19,
+    "y": 0.88,
+    "z": 3.7,
+    "rotationY": 0.0,
+    "id": "cmd_1777088239240_15",
+    "timestamp": 1777088239.240788,
+    "executed": false
+  },
+  {
+    "action": "PlaceObject",
+    "objectName": "Life_Support_01",
+    "x": 1.2,
+    "y": 0.0,
+    "z": 4.5,
+    "rotationY": 0,
+    "id": "cmd_1777088240884_0",
+    "timestamp": 1777088240.8845968,
+    "executed": false
+  },
+  {
+    "action": "PlaceObject",
+    "objectName": "Monitor_03",
+    "x": -1.8,
+    "y": 0.0,
+    "z": 3.8,
+    "rotationY": 0,
+    "id": "cmd_1777088240884_1",
+    "timestamp": 1777088240.8845968,
+    "executed": false
+  },
+  {
+    "action": "PlaceObject",
+    "objectName": "Chair_01",
+    "x": -1.7,
+    "y": 0.0,
+    "z": 2.0,
+    "rotationY": 0,
+    "id": "cmd_1777088240884_2",
+    "timestamp": 1777088240.8845968,
+    "executed": false
+  },
+  {
+    "id": "fda973f3-3165-46c6-85ec-6b2768e6cb86",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Bed_01 <-> Patient_01  pen_x=0.74m pen_z=0.32m  moving Patient_01 to (0.00, 0.83, 4.48)"
+  },
+  {
+    "id": "056b7ea4-7e51-4f2c-8bbf-ee5fd1a414cf",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Monitor_01 <-> Utility_Cart_01  pen_x=0.40m pen_z=0.32m  moving Utility_Cart_01 to (0.00, 0.01, 2.66)"
+  },
+  {
+    "id": "6634db04-2af8-439f-bd78-9bfb5ac8c1c3",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Monitor_01 <-> Nurse_01  pen_x=0.07m pen_z=0.32m  moving Nurse_01 to (-0.79, 0.05, 2.01)"
+  },
+  {
+    "id": "5c9aa708-509a-437d-bd64-8360c21c3b52",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Monitor_01 <-> Syringe_02  pen_x=0.03m pen_z=0.13m  moving Syringe_02 to (0.47, 0.11, 2.00)"
+  },
+  {
+    "id": "074d4a7f-bb0d-4958-9f6d-3b3f420e1501",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) IV_Drip_01 <-> Oxygen_Concentrator_01  pen_x=0.13m pen_z=0.44m  moving Oxygen_Concentrator_01 to (1.56, 0.85, 4.42)"
+  },
+  {
+    "id": "e03d47a4-1317-4cf2-85c2-2b26baab5ca1",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) IV_Drip_01 <-> Life_Support_01  pen_x=0.19m pen_z=0.41m  moving Life_Support_01 to (1.71, 0.12, 4.63)"
+  },
+  {
+    "id": "94ea7f6e-d803-4913-907c-6c6a96dbdeee",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_01 <-> Bottle_01  pen_x=0.07m pen_z=0.07m  moving Bottle_01 to (0.71, 1.55, 2.00)"
+  },
+  {
+    "id": "0484cac6-9cf7-4c8e-a717-5fed987ab6df",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Syringe_01 <-> Folder_01  pen_x=0.03m pen_z=0.09m  moving Folder_01 to (0.89, 0.83, 2.00)"
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Monitor_02",
+    "x": 1.19,
+    "y": 0.88,
+    "z": 3.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777088247568_0",
+    "timestamp": 1777088247.5688884,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Ventilator_01",
+    "x": -1.34,
+    "y": 0.01,
+    "z": 4.49,
+    "rotationY": 0.0,
+    "id": "cmd_1777088247568_1",
+    "timestamp": 1777088247.5688884,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Patient_01",
+    "x": 0.0,
+    "y": 0.83,
+    "z": 4.43,
+    "rotationY": 0.0,
+    "id": "cmd_1777088247568_2",
+    "timestamp": 1777088247.5688884,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Oxygen_Concentrator_01",
+    "x": 1.51,
+    "y": 0.85,
+    "z": 4.42,
+    "rotationY": 0.0,
+    "id": "cmd_1777088247568_3",
+    "timestamp": 1777088247.5688884,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Mask_Box_01",
+    "x": -1.62,
+    "y": 0.92,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777088247568_4",
+    "timestamp": 1777088247.5688884,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Life_Support_01",
+    "x": 1.2,
+    "y": 0.12,
+    "z": 4.58,
+    "rotationY": 0.0,
+    "id": "cmd_1777088247568_5",
+    "timestamp": 1777088247.5688884,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Chair_01",
+    "x": -1.48,
+    "y": 0.91,
+    "z": 1.1,
+    "rotationY": 0.0,
+    "id": "cmd_1777088247568_6",
+    "timestamp": 1777088247.5688884,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Patient_01",
+    "x": 0.0,
+    "y": 0.83,
+    "z": 4.48,
+    "rotationY": 0.0,
+    "id": "cmd_1777088247568_7",
+    "timestamp": 1777088247.5688884,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Utility_Cart_01",
+    "x": 0.0,
+    "y": 0.01,
+    "z": 2.66,
+    "rotationY": 0.0,
+    "id": "cmd_1777088247568_8",
+    "timestamp": 1777088247.5688884,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Nurse_01",
+    "x": -0.79,
+    "y": 0.05,
+    "z": 2.01,
+    "rotationY": 0.0,
+    "id": "cmd_1777088247568_9",
+    "timestamp": 1777088247.5688884,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Syringe_02",
+    "x": 0.47,
+    "y": 0.11,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777088247568_10",
+    "timestamp": 1777088247.5688884,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Oxygen_Concentrator_01",
+    "x": 1.56,
+    "y": 0.85,
+    "z": 4.42,
+    "rotationY": 0.0,
+    "id": "cmd_1777088247568_11",
+    "timestamp": 1777088247.5688884,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Life_Support_01",
+    "x": 1.71,
+    "y": 0.12,
+    "z": 4.63,
+    "rotationY": 0.0,
+    "id": "cmd_1777088247568_12",
+    "timestamp": 1777088247.5688884,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Bottle_01",
+    "x": 0.71,
+    "y": 1.55,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777088247568_13",
+    "timestamp": 1777088247.5688884,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Folder_01",
+    "x": 0.89,
+    "y": 0.83,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777088247568_14",
+    "timestamp": 1777088247.5688884,
+    "executed": false
+  },
+  {
+    "id": "c09eba3b-0a08-4caf-bd67-574e3efe1758",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Bed_01 <-> Patient_01  pen_x=0.74m pen_z=0.32m  moving Patient_01 to (0.00, 0.83, 4.48)"
+  },
+  {
+    "id": "1641955b-24f5-47fe-83ae-7c35fca72c09",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Monitor_01 <-> Utility_Cart_01  pen_x=0.40m pen_z=0.32m  moving Utility_Cart_01 to (0.00, 0.01, 2.66)"
+  },
+  {
+    "id": "cef3fb2e-a2a6-44f2-8ba2-65b3703df009",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Monitor_01 <-> Nurse_01  pen_x=0.07m pen_z=0.32m  moving Nurse_01 to (-0.79, 0.05, 2.01)"
+  },
+  {
+    "id": "85629596-8cd5-4383-88bc-8c64ca946391",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Monitor_01 <-> Syringe_02  pen_x=0.03m pen_z=0.13m  moving Syringe_02 to (0.47, 0.11, 2.00)"
+  },
+  {
+    "id": "c1c7fdcc-2a13-4e6e-978a-2265c81e39be",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) IV_Drip_01 <-> Oxygen_Concentrator_01  pen_x=0.13m pen_z=0.44m  moving Oxygen_Concentrator_01 to (1.56, 0.85, 4.42)"
+  },
+  {
+    "id": "62661479-caa9-4db2-a2a1-cd6374c362c7",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) IV_Drip_01 <-> Life_Support_01  pen_x=0.19m pen_z=0.41m  moving Life_Support_01 to (1.71, 0.12, 4.63)"
+  },
+  {
+    "id": "1b78a718-8d7f-444b-86b3-0ea2feff24b6",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_01 <-> Bottle_01  pen_x=0.07m pen_z=0.07m  moving Bottle_01 to (0.71, 1.55, 2.00)"
+  },
+  {
+    "id": "6f722323-13f4-4070-b995-5d96a63ef659",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Syringe_01 <-> Folder_01  pen_x=0.03m pen_z=0.09m  moving Folder_01 to (0.89, 0.83, 2.00)"
+  },
+  {
+    "id": "10f5ffa0-0bde-4189-916e-e71e892bb950",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (image) Monitor_02: MoveObject Monitor_02 x=1.19 y=0.88 z=3.8 rotationY=0.0  \u2014 reason: visually overlaps Bed_01"
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Monitor_02",
+    "x": 1.19,
+    "y": 0.88,
+    "z": 3.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777088254078_0",
+    "timestamp": 1777088254.0785143,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Ventilator_01",
+    "x": -1.34,
+    "y": 0.01,
+    "z": 4.49,
+    "rotationY": 0.0,
+    "id": "cmd_1777088254078_1",
+    "timestamp": 1777088254.0785143,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Patient_01",
+    "x": 0.0,
+    "y": 0.83,
+    "z": 4.43,
+    "rotationY": 0.0,
+    "id": "cmd_1777088254078_2",
+    "timestamp": 1777088254.0785143,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Oxygen_Concentrator_01",
+    "x": 1.51,
+    "y": 0.85,
+    "z": 4.42,
+    "rotationY": 0.0,
+    "id": "cmd_1777088254078_3",
+    "timestamp": 1777088254.0785143,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Mask_Box_01",
+    "x": -1.62,
+    "y": 0.92,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777088254078_4",
+    "timestamp": 1777088254.0785143,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Life_Support_01",
+    "x": 1.2,
+    "y": 0.12,
+    "z": 4.58,
+    "rotationY": 0.0,
+    "id": "cmd_1777088254078_5",
+    "timestamp": 1777088254.0785143,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Chair_01",
+    "x": -1.48,
+    "y": 0.91,
+    "z": 1.1,
+    "rotationY": 0.0,
+    "id": "cmd_1777088254078_6",
+    "timestamp": 1777088254.0785143,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Patient_01",
+    "x": 0.0,
+    "y": 0.83,
+    "z": 4.48,
+    "rotationY": 0.0,
+    "id": "cmd_1777088254078_7",
+    "timestamp": 1777088254.0785143,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Utility_Cart_01",
+    "x": 0.0,
+    "y": 0.01,
+    "z": 2.66,
+    "rotationY": 0.0,
+    "id": "cmd_1777088254078_8",
+    "timestamp": 1777088254.0785143,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Nurse_01",
+    "x": -0.79,
+    "y": 0.05,
+    "z": 2.01,
+    "rotationY": 0.0,
+    "id": "cmd_1777088254078_9",
+    "timestamp": 1777088254.0785143,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Syringe_02",
+    "x": 0.47,
+    "y": 0.11,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777088254078_10",
+    "timestamp": 1777088254.0785143,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Oxygen_Concentrator_01",
+    "x": 1.56,
+    "y": 0.85,
+    "z": 4.42,
+    "rotationY": 0.0,
+    "id": "cmd_1777088254078_11",
+    "timestamp": 1777088254.0785143,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Life_Support_01",
+    "x": 1.71,
+    "y": 0.12,
+    "z": 4.63,
+    "rotationY": 0.0,
+    "id": "cmd_1777088254078_12",
+    "timestamp": 1777088254.0785143,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Bottle_01",
+    "x": 0.71,
+    "y": 1.55,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777088254078_13",
+    "timestamp": 1777088254.0785143,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Folder_01",
+    "x": 0.89,
+    "y": 0.83,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777088254078_14",
+    "timestamp": 1777088254.0785143,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Monitor_02",
+    "x": 1.19,
+    "y": 0.88,
+    "z": 3.8,
+    "rotationY": 0.0,
+    "id": "cmd_1777088254078_15",
+    "timestamp": 1777088254.0785143,
+    "executed": false
+  },
+  {
+    "id": "f1cfc7e4-68c0-4830-9867-ef6fab981267",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Bed_01 <-> Patient_01  pen_x=0.74m pen_z=0.32m  moving Patient_01 to (0.00, 0.83, 4.48)"
+  },
+  {
+    "id": "ca5b7d6a-afe4-4f4c-a01d-2bfab0605ada",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Monitor_01 <-> Utility_Cart_01  pen_x=0.40m pen_z=0.32m  moving Utility_Cart_01 to (0.00, 0.01, 2.66)"
+  },
+  {
+    "id": "0109fca3-4aec-43a7-9c00-cc6ae41e8185",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Monitor_01 <-> Nurse_01  pen_x=0.07m pen_z=0.32m  moving Nurse_01 to (-0.79, 0.05, 2.01)"
+  },
+  {
+    "id": "b64e9418-de6c-4a6c-897e-0bf205d90b27",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Monitor_01 <-> Syringe_02  pen_x=0.03m pen_z=0.13m  moving Syringe_02 to (0.47, 0.11, 2.00)"
+  },
+  {
+    "id": "6fda2d5b-8427-42e6-aaf4-c5bb3517690e",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) IV_Drip_01 <-> Oxygen_Concentrator_01  pen_x=0.13m pen_z=0.44m  moving Oxygen_Concentrator_01 to (1.56, 0.85, 4.42)"
+  },
+  {
+    "id": "7be58e4f-6293-4dfa-8812-98010e315561",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) IV_Drip_01 <-> Life_Support_01  pen_x=0.19m pen_z=0.41m  moving Life_Support_01 to (1.71, 0.12, 4.63)"
+  },
+  {
+    "id": "b9063d2d-fda9-4ec3-becd-20f3645615dd",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_01 <-> Bottle_01  pen_x=0.07m pen_z=0.07m  moving Bottle_01 to (0.71, 1.55, 2.00)"
+  },
+  {
+    "id": "5c0da729-04d7-4e64-8395-693f42720098",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Syringe_01 <-> Folder_01  pen_x=0.03m pen_z=0.09m  moving Folder_01 to (0.89, 0.83, 2.00)"
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Monitor_02",
+    "x": 1.19,
+    "y": 0.88,
+    "z": 3.5,
+    "rotationY": 0.0,
+    "id": "cmd_1777088260948_0",
+    "timestamp": 1777088260.94876,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Ventilator_01",
+    "x": -1.34,
+    "y": 0.01,
+    "z": 4.49,
+    "rotationY": 0.0,
+    "id": "cmd_1777088260948_1",
+    "timestamp": 1777088260.94876,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Patient_01",
+    "x": 0.0,
+    "y": 0.83,
+    "z": 4.43,
+    "rotationY": 0.0,
+    "id": "cmd_1777088260948_2",
+    "timestamp": 1777088260.94876,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Oxygen_Concentrator_01",
+    "x": 1.51,
+    "y": 0.85,
+    "z": 4.42,
+    "rotationY": 0.0,
+    "id": "cmd_1777088260948_3",
+    "timestamp": 1777088260.94876,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Mask_Box_01",
+    "x": -1.62,
+    "y": 0.92,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777088260948_4",
+    "timestamp": 1777088260.94876,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Life_Support_01",
+    "x": 1.2,
+    "y": 0.12,
+    "z": 4.58,
+    "rotationY": 0.0,
+    "id": "cmd_1777088260948_5",
+    "timestamp": 1777088260.94876,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Chair_01",
+    "x": -1.48,
+    "y": 0.91,
+    "z": 1.1,
+    "rotationY": 0.0,
+    "id": "cmd_1777088260948_6",
+    "timestamp": 1777088260.94876,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Patient_01",
+    "x": 0.0,
+    "y": 0.83,
+    "z": 4.48,
+    "rotationY": 0.0,
+    "id": "cmd_1777088260948_7",
+    "timestamp": 1777088260.94876,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Utility_Cart_01",
+    "x": 0.0,
+    "y": 0.01,
+    "z": 2.66,
+    "rotationY": 0.0,
+    "id": "cmd_1777088260948_8",
+    "timestamp": 1777088260.94876,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Nurse_01",
+    "x": -0.79,
+    "y": 0.05,
+    "z": 2.01,
+    "rotationY": 0.0,
+    "id": "cmd_1777088260948_9",
+    "timestamp": 1777088260.94876,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Syringe_02",
+    "x": 0.47,
+    "y": 0.11,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777088260948_10",
+    "timestamp": 1777088260.94876,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Oxygen_Concentrator_01",
+    "x": 1.56,
+    "y": 0.85,
+    "z": 4.42,
+    "rotationY": 0.0,
+    "id": "cmd_1777088260948_11",
+    "timestamp": 1777088260.94876,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Life_Support_01",
+    "x": 1.71,
+    "y": 0.12,
+    "z": 4.63,
+    "rotationY": 0.0,
+    "id": "cmd_1777088260948_12",
+    "timestamp": 1777088260.94876,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Bottle_01",
+    "x": 0.71,
+    "y": 1.55,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777088260948_13",
+    "timestamp": 1777088260.94876,
+    "executed": false
+  },
+  {
+    "action": "MoveObject",
+    "objectName": "Folder_01",
+    "x": 0.89,
+    "y": 0.83,
+    "z": 2.0,
+    "rotationY": 0.0,
+    "id": "cmd_1777088260948_14",
+    "timestamp": 1777088260.94876,
+    "executed": false
+  },
+  {
+    "id": "7f390a5e-74c5-461a-b7e7-3ca1f2dde315",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Bed_01 <-> Patient_01  pen_x=0.74m pen_z=0.32m  moving Patient_01 to (0.00, 0.83, 4.48)"
+  },
+  {
+    "id": "53603a97-1f26-4a64-89f7-7ff0e0483cc9",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Monitor_01 <-> Utility_Cart_01  pen_x=0.40m pen_z=0.32m  moving Utility_Cart_01 to (0.00, 0.01, 2.66)"
+  },
+  {
+    "id": "d9cfee2a-da0a-4c85-8593-860909c4a604",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Monitor_01 <-> Nurse_01  pen_x=0.07m pen_z=0.32m  moving Nurse_01 to (-0.79, 0.05, 2.01)"
+  },
+  {
+    "id": "5db3d174-f3c6-4468-aa57-166d91c65eea",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Monitor_01 <-> Syringe_02  pen_x=0.03m pen_z=0.13m  moving Syringe_02 to (0.47, 0.11, 2.00)"
+  },
+  {
+    "id": "4a141735-ee9b-46b2-a311-6c4ca4d37e13",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) IV_Drip_01 <-> Oxygen_Concentrator_01  pen_x=0.13m pen_z=0.44m  moving Oxygen_Concentrator_01 to (1.56, 0.85, 4.42)"
+  },
+  {
+    "id": "691b108c-fbec-4c84-9dbe-7a1e458074fc",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) IV_Drip_01 <-> Life_Support_01  pen_x=0.19m pen_z=0.41m  moving Life_Support_01 to (1.71, 0.12, 4.63)"
+  },
+  {
+    "id": "fc0f55a1-f894-4dac-a66f-027274ef72fb",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_01 <-> Bottle_01  pen_x=0.07m pen_z=0.07m  moving Bottle_01 to (0.71, 1.55, 2.00)"
+  },
+  {
+    "id": "a9314535-5d73-4ed8-aece-4af263381990",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Syringe_01 <-> Folder_01  pen_x=0.03m pen_z=0.09m  moving Folder_01 to (0.89, 0.83, 2.00)"
+  },
+  {
+    "id": "ba073be0-64ee-425a-ae72-ea557fac85fa",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Bed_01 <-> Patient_01  pen_x=0.74m pen_z=0.32m  moving Patient_01 to (0.00, 0.83, 4.48)"
+  },
+  {
+    "id": "fdb4cdbb-9c18-4a02-9e1a-2b435928400a",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Monitor_01 <-> Utility_Cart_01  pen_x=0.40m pen_z=0.32m  moving Utility_Cart_01 to (0.00, 0.01, 2.66)"
+  },
+  {
+    "id": "d8c76377-dda0-472a-96c4-08a6a8dc3618",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Monitor_01 <-> Nurse_01  pen_x=0.07m pen_z=0.32m  moving Nurse_01 to (-0.79, 0.05, 2.01)"
+  },
+  {
+    "id": "5d6119d0-64db-481f-9b2a-453e57497f95",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Monitor_01 <-> Syringe_02  pen_x=0.03m pen_z=0.13m  moving Syringe_02 to (0.47, 0.11, 2.00)"
+  },
+  {
+    "id": "6cdfdd9a-65b7-465c-8f61-e44b05602ce7",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) IV_Drip_01 <-> Oxygen_Concentrator_01  pen_x=0.13m pen_z=0.44m  moving Oxygen_Concentrator_01 to (1.56, 0.85, 4.42)"
+  },
+  {
+    "id": "b929f3eb-28cd-4bc4-ab88-035ea20c823c",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) IV_Drip_01 <-> Life_Support_01  pen_x=0.19m pen_z=0.41m  moving Life_Support_01 to (1.71, 0.12, 4.63)"
+  },
+  {
+    "id": "152b56e6-1ae9-4f9e-9ac6-1e48d52c439a",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Trolley_01 <-> Bottle_01  pen_x=0.07m pen_z=0.07m  moving Bottle_01 to (0.71, 1.55, 2.00)"
+  },
+  {
+    "id": "cdcdc0f4-7993-494e-bb08-51677bd81046",
+    "executed": false,
+    "done": false,
+    "action": "DebugLog",
+    "message": "COLLISION (math) Syringe_01 <-> Folder_01  pen_x=0.03m pen_z=0.09m  moving Folder_01 to (0.89, 0.83, 2.00)"
+  }
+]

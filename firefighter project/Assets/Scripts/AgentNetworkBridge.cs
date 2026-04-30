@@ -78,6 +78,9 @@ public class AgentNetworkBridge : MonoBehaviour
 
         // Phase control
         public int phase;
+
+        // WalkCharacterTo: idle animation to crossfade into when arrived
+        public string idleControllerPath;
     }
 
     [System.Serializable]
@@ -197,7 +200,14 @@ public class AgentNetworkBridge : MonoBehaviour
             if (cmd.executed)
                 continue;
             Debug.Log($"[AgentBridge] Dispatching: {cmd.action} | object={cmd.objectName ?? cmd.humanName ?? "-"} | pos=({cmd.x:F2},{cmd.y:F2},{cmd.z:F2}) | rotY={cmd.rotationY:F0} | id={cmd.id ?? "?"}");
-            HandleCommand(cmd);
+            try
+            {
+                HandleCommand(cmd);
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"[AgentBridge] HandleCommand failed for {cmd.action} id={cmd.id ?? "?"}: {ex}");
+            }
             cmd.executed = true;
             cmd.done = true;
         }
@@ -207,9 +217,9 @@ public class AgentNetworkBridge : MonoBehaviour
         {
             System.IO.File.WriteAllText(path, SerializeCommandArray(list.commands));
         }
-        catch
+        catch (System.Exception ex)
         {
-            // If we can't write back, commands may repeat; log once in Console if needed.
+            Debug.LogWarning($"[AgentBridge] Write-back failed: {ex.Message}");
         }
     }
 
@@ -312,6 +322,9 @@ public class AgentNetworkBridge : MonoBehaviour
             case "DeleteObject":
                 AddString("objectName", cmd.objectName);
                 break;
+            case "ClearScene":
+                // No additional fields needed
+                break;
             case "SetHumanAnimationController":
                 AddString("controllerPath", cmd.controllerPath ?? cmd.controllerPathInResources);
                 break;
@@ -330,6 +343,14 @@ public class AgentNetworkBridge : MonoBehaviour
                 AddString("objectName", cmd.objectName ?? cmd.humanName);
                 AddFloat("x", cmd.x); AddFloat("y", cmd.y); AddFloat("z", cmd.z);
                 AddFloat("rotationY", cmd.rotationY);
+                break;
+            case "WalkCharacterTo":
+                AddString("objectName", cmd.objectName ?? cmd.humanName);
+                AddFloat("x", cmd.x); AddFloat("y", cmd.y); AddFloat("z", cmd.z);
+                AddFloat("rotationY", cmd.rotationY);
+                AddFloat("duration", cmd.duration);
+                AddString("controllerPath", cmd.controllerPath ?? cmd.controllerPathInResources);
+                AddString("idleControllerPath", cmd.idleControllerPath);
                 break;
             case "SetHumanAnimatorFloat":
                 AddString("paramName", cmd.paramName);
@@ -444,6 +465,10 @@ public class AgentNetworkBridge : MonoBehaviour
                 environmentAgent.DeleteObject(cmd.objectName);
                 break;
 
+            case "ClearScene":
+                environmentAgent.ClearScene();
+                break;
+
             case "PlaceHuman":
                 var humanPos = new Vector3(cmd.x, cmd.y, cmd.z);
                 environmentAgent.PlaceHuman(cmd.humanName ?? cmd.objectName, humanPos, cmd.rotationY);
@@ -477,6 +502,16 @@ public class AgentNetworkBridge : MonoBehaviour
                     cmd.objectName ?? cmd.humanName ?? "",
                     new Vector3(cmd.x, cmd.y, cmd.z),
                     cmd.rotationY);
+                break;
+
+            case "WalkCharacterTo":
+                environmentAgent.WalkCharacterTo(
+                    cmd.objectName ?? cmd.humanName ?? "",
+                    new Vector3(cmd.x, cmd.y, cmd.z),
+                    cmd.rotationY,
+                    cmd.duration,
+                    cmd.controllerPath ?? cmd.controllerPathInResources,
+                    cmd.idleControllerPath);
                 break;
 
             case "SetHumanAnimatorFloat":

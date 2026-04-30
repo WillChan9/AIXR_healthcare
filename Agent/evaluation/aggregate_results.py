@@ -69,11 +69,14 @@ def collect_reports(results_root: Path) -> Dict[str, List[Dict]]:
 
             eval_report = _load_json(trial_dir / "eval_report.json")
             judge_report = _load_json(trial_dir / "llm_judge_report.json")
+            phase2_report = _load_json(trial_dir / "phase2_eval_report.json")
 
             if eval_report:
                 combined = dict(eval_report)
                 if judge_report:
                     combined["llm_judge"] = judge_report
+                if phase2_report:
+                    combined["phase2"] = phase2_report
                 grouped[scenario_name].append(combined)
 
     return grouped
@@ -106,6 +109,38 @@ def aggregate_scenario(reports: List[Dict]) -> Dict[str, Any]:
         ("efficiency", "total_commands"),
         ("efficiency", "dropped_prefabs"),
         ("efficiency", "fill_commands_total"),
+        ("efficiency", "phase1_duration_seconds"),
+        # Phase 2 — Coverage
+        ("phase2.coverage", "ambient_object_coverage"),
+        ("phase2.coverage", "multi_event_pct"),
+        ("phase2.coverage", "bubble_density"),
+        ("phase2.coverage", "targeted_animation_pct"),
+        # Phase 2 — Validity
+        ("phase2.validity", "map_controller_validity_rate"),
+        ("phase2.validity", "map_state_prefix_validity"),
+        ("phase2.validity", "map_target_validity_rate"),
+        ("phase2.validity", "map_bubble_on_validity"),
+        # Phase 2 — Chain
+        ("phase2.chain", "chain_length"),
+        ("phase2.chain", "chain_beat_validity_rate"),
+        ("phase2.chain", "chain_trigger_validity_rate"),
+        ("phase2.chain", "chain_action_richness"),
+        ("phase2.chain", "chain_unique_action_types"),
+        ("phase2.chain", "chain_char_coverage"),
+        ("phase2.chain", "chain_walk_coord_validity"),
+        # Phase 2 — Runtime (only populated when INCLUDE_PHASE2 was set)
+        ("phase2.runtime", "phase2_ran"),
+        ("phase2.runtime", "phase2_duration_seconds"),
+        ("phase2.runtime", "chain_beats_fired"),
+        ("phase2.runtime", "chain_progression"),
+        ("phase2.runtime", "time_to_first_beat_seconds"),
+        ("phase2.runtime", "time_to_complete_chain_seconds"),
+        ("phase2.runtime", "total_events_handled"),
+        ("phase2.runtime", "ambient_animations_fired"),
+        ("phase2.runtime", "story_chain_dispatches"),
+        ("phase2.runtime", "command_execution_rate"),
+        ("phase2.runtime", "dispatch_failure_rate"),
+        ("phase2.runtime", "unmapped_event_rate"),
     ]
 
     agg: Dict[str, Any] = {
@@ -113,23 +148,43 @@ def aggregate_scenario(reports: List[Dict]) -> Dict[str, Any]:
         "num_trials": len(reports),
     }
 
+    def _walk_section(report: Dict, dotted: str) -> Dict:
+        """Resolve nested section path like 'phase2.chain' → report['phase2']['chain']."""
+        node: Any = report
+        for part in dotted.split("."):
+            if not isinstance(node, dict):
+                return {}
+            node = node.get(part, {})
+        return node if isinstance(node, dict) else {}
+
     for section, key in metric_paths:
         values = []
         for r in reports:
-            sec = r.get(section, {})
+            sec = _walk_section(r, section)
             if key in sec:
-                values.append(float(sec[key]))
+                try:
+                    values.append(float(sec[key]))
+                except (TypeError, ValueError):
+                    continue
         if values:
             agg[f"{section}.{key}_mean"] = round(_mean(values), 4)
             agg[f"{section}.{key}_std"] = round(_std(values), 4)
 
-    # Composite score
+    # Phase 1 composite score
     composites = [r.get("composite_score", 0) for r in reports if "composite_score" in r]
     if composites:
         agg["composite_score_mean"] = round(_mean(composites), 2)
         agg["composite_score_std"] = round(_std(composites), 2)
 
-    # LLM Judge scores
+    # Phase 2 composite score (separate from Phase 1's composite_score above)
+    p2_composites = [r.get("phase2", {}).get("composite_score", 0)
+                     for r in reports
+                     if isinstance(r.get("phase2"), dict) and "composite_score" in r["phase2"]]
+    if p2_composites:
+        agg["phase2.composite_score_mean"] = round(_mean(p2_composites), 2)
+        agg["phase2.composite_score_std"]  = round(_std(p2_composites), 2)
+
+    # LLM Judge — Phase 1 ratings
     coherence = [r.get("llm_judge", {}).get("coherence_score", 0) for r in reports
                  if r.get("llm_judge", {}).get("coherence_score")]
     spatial = [r.get("llm_judge", {}).get("spatial_score", 0) for r in reports
@@ -140,6 +195,17 @@ def aggregate_scenario(reports: List[Dict]) -> Dict[str, Any]:
     if spatial:
         agg["llm_judge.spatial_mean"] = round(_mean(spatial), 2)
         agg["llm_judge.spatial_std"] = round(_std(spatial), 2)
+
+    # LLM Judge — Phase 2 ratings (nested under llm_judge.phase2)
+    for phase2_key in ("bubble_informativeness", "narrative_coherence",
+                       "character_voice_consistency", "bubble_object_fit"):
+        vals = [r.get("llm_judge", {}).get("phase2", {}).get(phase2_key, 0)
+                for r in reports
+                if isinstance(r.get("llm_judge", {}).get("phase2"), dict)
+                and r["llm_judge"]["phase2"].get(phase2_key)]
+        if vals:
+            agg[f"llm_judge.phase2.{phase2_key}_mean"] = round(_mean(vals), 2)
+            agg[f"llm_judge.phase2.{phase2_key}_std"]  = round(_std(vals), 2)
 
     return agg
 
@@ -158,8 +224,13 @@ KEY_METRICS = [
     ("geometric.height_violation_rate_mean", "Height Err"),
     ("semantic.duplicate_rate_mean", "Dup%"),
     ("efficiency.llm_calls_mean", "LLM Calls"),
+    ("efficiency.phase1_duration_seconds_mean", "Time(s)"),
     ("llm_judge.coherence_mean", "Coherence"),
     ("llm_judge.spatial_mean", "Spatial"),
+    ("phase2.composite_score_mean", "P2 Comp"),
+    ("phase2.coverage.ambient_object_coverage_mean", "P2 Cov"),
+    ("phase2.chain.chain_beat_validity_rate_mean", "P2 BeatV"),
+    ("llm_judge.phase2.narrative_coherence_mean", "P2 Narr"),
 ]
 
 

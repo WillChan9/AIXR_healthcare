@@ -1,7 +1,18 @@
 {
-  "raw_response": "```json\n{\n  \"coherence_score\": 1,\n  \"spatial_score\": 1,\n  \"coherence_reasoning\": \"The scene is empty and does not contain any objects, let alone the required objects for a Physical Therapy Gym. This results in a completely wrong object selection for the intended scene type.\",\n  \"spatial_reasoning\": \"With no objects placed in the scene, the placement is random and illogical by default, as there are no objects to evaluate for spatial reasoning.\"\n}\n```",
-  "coherence_score": 1,
-  "spatial_score": 1,
-  "scene_type": "Physical Therapy Gym",
-  "results_dir": "C:\\Users\\Allison\\Programming\\GitHub\\AIXR_healthcare\\Agent\\evaluation\\results\\S03\\trial_1"
+  "raw_response": "{\"coherence_score\":4,\"spatial_score\":3,\"coherence_reasoning\":\"The object selection is strongly aligned with a physical therapy gym: treadmill, wheelchair, walker, crutch, bench, exam stool, therapist/doctor, patient, and therapy apparatus are all appropriate. It lacks some explicitly described equipment such as mats, parallel bars, and exercise balls, but the overall set fits the intended rehab environment well.\",\"spatial_reasoning\":\"Most items are plausibly arranged in an open rehab space, with mobility aids and benches placed around the room and the aid kit positioned on a bench-height surface. However, some placements are semantically weak: the towel dispenser is too low for a wall-mounted item, the bottle is on the floor, the patient is not clearly positioned on or using equipment, and several object heights are slightly inconsistent with expected floor or mounted placement.\"}",
+  "coherence_score": 4,
+  "spatial_score": 3,
+  "coherence_reasoning": "The object selection is strongly aligned with a physical therapy gym: treadmill, wheelchair, walker, crutch, bench, exam stool, therapist/doctor, patient, and therapy apparatus are all appropriate. It lacks some explicitly described equipment such as mats, parallel bars, and exercise balls, but the overall set fits the intended rehab environment well.",
+  "spatial_reasoning": "Most items are plausibly arranged in an open rehab space, with mobility aids and benches placed around the room and the aid kit positioned on a bench-height surface. However, some placements are semantically weak: the towel dispenser is too low for a wall-mounted item, the bottle is on the floor, the patient is not clearly positioned on or using equipment, and several object heights are slightly inconsistent with expected floor or mounted placement.",
+  "scene_type": "Unknown",
+  "results_dir": "S:\\Firefighter_project\\Agent\\evaluation\\results\\S03\\trial_1",
+  "judge_model": "gpt-5.5",
+  "phase2": {
+    "raw_response": "{\"bubble_informativeness\":4,\"narrative_coherence\":3,\"character_voice_consistency\":4,\"bubble_object_fit\":4,\"reasoning\":\"Object bubbles are generally educational and specific to physical therapy functions, though most are brief and not deeply instructional. The story has a clear intro to therapy goals, movement practice, rest/safety support, and patient progress payoff, but coherence is weakened by object/line mismatches: the treadmill beat highlights the kinesotherapy apparatus, and the kinesotherapy beat describes parallel bars. Character voice is fitting: the therapist uses supervisory clinical guidance and the patient expresses rehabilitation progress, though voices are not highly distinctive. Object bubble fit is mostly accurate for treadmill, wheelchair, walker, crutch, benches, towel dispenser, and water bottle; minor issues come from generic phrasing and the scene-chain mismatch around the kinesotherapy apparatus versus parallel bars.\"}",
+    "bubble_informativeness": 4,
+    "narrative_coherence": 3,
+    "character_voice_consistency": 4,
+    "bubble_object_fit": 4,
+    "reasoning": "Object bubbles are generally educational and specific to physical therapy functions, though most are brief and not deeply instructional. The story has a clear intro to therapy goals, movement practice, rest/safety support, and patient progress payoff, but coherence is weakened by object/line mismatches: the treadmill beat highlights the kinesotherapy apparatus, and the kinesotherapy beat describes parallel bars. Character voice is fitting: the therapist uses supervisory clinical guidance and the patient expresses rehabilitation progress, though voices are not highly distinctive. Object bubble fit is mostly accurate for treadmill, wheelchair, walker, crutch, benches, towel dispenser, and water bottle; minor issues come from generic phrasing and the scene-chain mismatch around the kinesotherapy apparatus versus parallel bars."
+  }
 }

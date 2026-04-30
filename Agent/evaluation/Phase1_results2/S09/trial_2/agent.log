@@ -1,0 +1,378 @@
+2026-04-25 22:47:55 - Pipeline - INFO - [Init] Cleared log agent.log
+2026-04-25 22:47:55 - Pipeline - INFO - [Init] Cleared log reflection_log.log
+2026-04-25 22:47:56 - Pipeline - INFO - Generating room layout plan...
+2026-04-25 22:47:57 - Pipeline - INFO - Plan generated and saved to S:\Firefighter_project\Agent\api_files\plan.json
+2026-04-25 22:47:57 - Pipeline - INFO - ============================================================
+2026-04-25 22:47:57 - Pipeline - INFO -   PHASE 1: Static Environment Generation
+2026-04-25 22:47:57 - Pipeline - INFO - ============================================================
+2026-04-25 22:47:57 - Pipeline - INFO - [Phase 1] Room shell written: 9 structural commands
+2026-04-25 22:47:59 - Pipeline - INFO - ----- GROQ RAW RESPONSE (attempt 1/3) -----
+2026-04-25 22:47:59 - Pipeline - INFO - [
+  {"action": "PlaceObject", "objectName": "Reception_Desk_01", "x": -1.5, "y": 0, "z": 4.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Chair_01", "x": -1.5, "y": 0, "z": 4.5, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Computer_01", "x": -1.5, "y": 0.8, "z": 4.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Keyboard_01", "x": -1.5, "y": 0.8, "z": 4.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Folder_01", "x": -1.5, "y": 0.8, "z": 4.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Folder_02", "x": -1.4, "y": 0.8, "z": 4.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Exam_Table_01", "x": 1.5, "y": 0, "z": 3.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Exam_Stool_01", "x": 0.8, "y": 0, "z": 3.0, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Scale_01", "x": 2.0, "y": 0, "z": 1.5, "rotationY": 0},
+  {"action": "PlaceObject", "objectName": "Stethoscope_01", "x": 1.5, "y": 0.8, "z": 3.0, "rotationY": 0},
+  {"action": "PlaceHuman", "humanName": "Doctor_01", "x": -1.5, "y": 0, "z": 4.2, "rotationY": 0}
+]
+2026-04-25 22:47:59 - Pipeline - INFO - ------------------------------------------------------
+2026-04-25 22:47:59 - Pipeline - INFO - [Phase 1] Interior objects: wrote 11 commands
+2026-04-25 22:47:59 - Pipeline - INFO - [Phase 1] Waiting up to 15s for Unity to refresh screenshots...
+2026-04-25 22:48:01 - Pipeline - INFO - [Phase 1] Fresh screenshots detected (3/3). Starting reflection loop.
+2026-04-25 22:48:01 - Pipeline - INFO - [Phase 1 Reflection] Step 1/5: Place desk and chair
+2026-04-25 22:48:01 - ReflectionModule - INFO - [SceneState] Loaded 19 live objects from scene_state.json.
+2026-04-25 22:48:01 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-25 22:48:01 - ReflectionModule - INFO - [DispatcherThread] no floating objects detected.
+2026-04-25 22:48:01 - ReflectionModule - INFO - [BoundsThread] 0 bound/doorway corrections generated.
+2026-04-25 22:48:01 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Chair_01 x=-0.18 y=0.01 z=4.50 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.27m pen_z=0.59m; exact bounds)
+2026-04-25 22:48:01 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Computer_01 x=-0.34 y=1.01 z=4.00 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.10m pen_z=0.22m; exact bounds)
+2026-04-25 22:48:01 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.83 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.19m pen_z=0.07m; exact bounds)
+2026-04-25 22:48:01 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Folder_01 x=-0.43 y=1.53 z=4.00 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.02m pen_z=0.13m; exact bounds)
+2026-04-25 22:48:01 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Folder_02 x=-0.42 y=1.53 z=4.00 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.06m pen_z=0.13m; exact bounds)
+2026-04-25 22:48:01 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Doctor_01 x=-1.50 y=0.92 z=4.55 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.73m pen_z=0.54m; exact bounds)
+2026-04-25 22:48:01 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Stethoscope_01 x=2.11 y=0.77 z=3.00 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.30m pen_z=0.50m; exact bounds)
+2026-04-25 22:48:01 - ReflectionModule - INFO - [CollisionThread] math path: 7 collision(s) found.
+2026-04-25 22:48:02 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 1 line(s).
+2026-04-25 22:48:03 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 1 line(s).
+2026-04-25 22:48:03 - ReflectionModule - INFO - [DispatcherThread] LLM visual check added 1 extra correction(s).
+2026-04-25 22:48:04 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 2 line(s).
+2026-04-25 22:48:04 - ReflectionModule - INFO - [BoundsThread] LLM visual check added 2 extra correction(s).
+2026-04-25 22:48:04 - ReflectionModule - INFO - [BoundsThread] 2 correction(s) applied:
+2026-04-25 22:48:04 - ReflectionModule - INFO -   [BoundsThread] MoveObject Reception_Desk_01 x=-1.5 y=0.01 z=4.8 rotationY=0.0  — reason: visually clipping wall
+2026-04-25 22:48:04 - ReflectionModule - INFO -   [BoundsThread] MoveObject Chair_01 x=-1.5 y=0.01 z=4.7 rotationY=0.0  — reason: visually clipping wall
+2026-04-25 22:48:04 - ReflectionModule - INFO - [CollisionThread] 7 correction(s) applied:
+2026-04-25 22:48:04 - ReflectionModule - INFO -   [CollisionThread] MoveObject Chair_01 x=-0.18 y=0.01 z=4.50 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.27m pen_z=0.59m; exact bounds)
+2026-04-25 22:48:04 - ReflectionModule - INFO -   [CollisionThread] MoveObject Computer_01 x=-0.34 y=1.01 z=4.00 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.10m pen_z=0.22m; exact bounds)
+2026-04-25 22:48:04 - ReflectionModule - INFO -   [CollisionThread] MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.83 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.19m pen_z=0.07m; exact bounds)
+2026-04-25 22:48:04 - ReflectionModule - INFO -   [CollisionThread] MoveObject Folder_01 x=-0.43 y=1.53 z=4.00 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.02m pen_z=0.13m; exact bounds)
+2026-04-25 22:48:04 - ReflectionModule - INFO -   [CollisionThread] MoveObject Folder_02 x=-0.42 y=1.53 z=4.00 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.06m pen_z=0.13m; exact bounds)
+2026-04-25 22:48:04 - ReflectionModule - INFO -   [CollisionThread] MoveObject Doctor_01 x=-1.50 y=0.92 z=4.55 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.73m pen_z=0.54m; exact bounds)
+2026-04-25 22:48:04 - ReflectionModule - INFO -   [CollisionThread] MoveObject Stethoscope_01 x=2.11 y=0.77 z=3.00 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.30m pen_z=0.50m; exact bounds)
+2026-04-25 22:48:04 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied (skipped 1 already handled).
+2026-04-25 22:48:04 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied (skipped 1 already handled).
+2026-04-25 22:48:04 - ReflectionModule - INFO - Logged reflection entry for step 'Place desk and chair'
+2026-04-25 22:48:04 - Pipeline - INFO -   step_complete=no  room_status=good  suggest_additions=False  objects=13
+2026-04-25 22:48:04 - Pipeline - INFO -   layout: The reception desk and chair are correctly placed in the back-left corner. The exam table and stool are correctly placed on the right side of the room. The doctor is standing on the reception desk, which is incorrect. The stethoscope should be moved near the exam area and wall.
+2026-04-25 22:48:04 - Pipeline - INFO -   suggestions: MoveObject Reception_Desk_01 x=-1.5 y=0.01 z=4.8 rotationY=0.0  — reason: visually clipping wall
+MoveObject Chair_01 x=-1.5 y=0.01 z=4.7 rotationY=0.0  — reason: visually clipping wall
+MoveObject Chair_01 x=-0.18 y=0.01 z=4.50 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.27m pen_z=0.59m; exact bounds)
+MoveObject Computer_01 x=-0.34 y=1.01 z=4.00 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.10m pen_z=0.22m; exact bounds)
+MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.83 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.19m pen_z=0.07m; exact bounds)
+MoveObject Folder_01 x=-0.43 y=1.53 z=4.00 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.02m pen_z=0.13m; exact bounds)
+MoveObject Folder_02 x=-0.42 y=1.53 z=4.00 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.06m pen_z=0.13m; exact bounds)
+MoveObject Doctor_01 x=-1.50 y=0.92 z=4.55 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.73m pen_z=0.54m; exact bounds)
+MoveObject Stethoscope_01 x=2.11 y=0.77 z=3.00 rotationY=0  — reason: overlaps Exam_Table_01 (pen_x=0.30m pen_z=0.50m; exact bounds)
+2026-04-25 22:48:04 - Pipeline - INFO -   [parse_alignment] MoveObject Reception_Desk_01 → x=-1.5 y=0.01 z=4.8 rot=0.0
+2026-04-25 22:48:04 - Pipeline - INFO -   [parse_alignment] MoveObject Chair_01 → x=-1.5 y=0.01 z=4.7 rot=0.0
+2026-04-25 22:48:04 - Pipeline - INFO -   [parse_alignment] MoveObject Chair_01 → x=-0.18 y=0.01 z=4.5 rot=0.0
+2026-04-25 22:48:04 - Pipeline - INFO -   [parse_alignment] MoveObject Computer_01 → x=-0.34 y=1.01 z=4.0 rot=0.0
+2026-04-25 22:48:04 - Pipeline - INFO -   [parse_alignment] MoveObject Keyboard_01 → x=-1.5 y=1.49 z=4.83 rot=0.0
+2026-04-25 22:48:04 - Pipeline - INFO -   [parse_alignment] MoveObject Folder_01 → x=-0.43 y=1.53 z=4.0 rot=0.0
+2026-04-25 22:48:04 - Pipeline - INFO -   [parse_alignment] MoveObject Folder_02 → x=-0.42 y=1.53 z=4.0 rot=0.0
+2026-04-25 22:48:04 - Pipeline - INFO -   [parse_alignment] MoveObject Doctor_01 → x=-1.5 y=0.92 z=4.55 rot=0.0
+2026-04-25 22:48:04 - Pipeline - INFO -   [parse_alignment] MoveObject Stethoscope_01 → x=2.11 y=0.77 z=3.0 rot=0.0
+2026-04-25 22:48:04 - Pipeline - INFO - [Phase 1] Applied 9 direct corrections (MoveObject/DeleteObject)
+2026-04-25 22:48:04 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-25 22:48:07 - Pipeline - INFO - [Phase 1 Reflection] Step 1/5: Place desk and chair
+2026-04-25 22:48:07 - ReflectionModule - INFO - [SceneState] Loaded 19 live objects from scene_state.json.
+2026-04-25 22:48:07 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-25 22:48:07 - ReflectionModule - INFO - [DispatcherThread] 4 object(s) flagged: ['Computer_01 → floating ([dispatcher→surface])', 'Folder_01 → floating ([dispatcher→surface])', 'Folder_02 → floating ([dispatcher→surface])', 'Stethoscope_01 → floating ([dispatcher→surface])']
+2026-04-25 22:48:07 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Reception_Desk_01 x=-1.50 y=0.01 z=4.45 rotationY=0  — reason: [bounds] back edge clips wall (z=4.80, half=0.40)
+2026-04-25 22:48:07 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.83 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.19m pen_z=0.10m; exact bounds)
+2026-04-25 22:48:07 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.78 rotationY=0  — reason: [bounds] back edge clips wall (z=4.83, half=0.07)
+2026-04-25 22:48:07 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Stethoscope_01 x=2.06 y=0.77 z=3.00 rotationY=0  — reason: [bounds] right edge clips wall (x=2.11, half=0.19)
+2026-04-25 22:48:07 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Doctor_01 x=-1.50 y=0.92 z=4.46 rotationY=0  — reason: [bounds] back edge clips wall (z=4.55, half=0.39)
+2026-04-25 22:48:07 - ReflectionModule - INFO - [BoundsThread] 4 bound/doorway corrections generated.
+2026-04-25 22:48:07 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Doctor_01 x=-1.50 y=0.92 z=4.16 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.38m pen_z=0.13m; exact bounds)
+2026-04-25 22:48:07 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Computer_01 x=-0.34 y=1.01 z=3.71 rotationY=0  — reason: overlaps Chair_01 (pen_x=0.21m pen_z=0.04m; exact bounds)
+2026-04-25 22:48:07 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Folder_01 x=-0.73 y=1.53 z=4.00 rotationY=0  — reason: overlaps Computer_01 (pen_x=0.05m pen_z=0.25m; exact bounds)
+2026-04-25 22:48:07 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Folder_02 x=-0.73 y=1.53 z=4.00 rotationY=0  — reason: overlaps Computer_01 (pen_x=0.06m pen_z=0.25m; exact bounds)
+2026-04-25 22:48:07 - ReflectionModule - INFO - [CollisionThread] math path: 5 collision(s) found.
+2026-04-25 22:48:09 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 2 line(s).
+2026-04-25 22:48:09 - ReflectionModule - INFO - [CollisionThread][image] MoveObject Stethoscope_01 x=2.11 y=0.77 z=3.2 rotationY=0.0  — reason: visually overlaps Scale_01
+2026-04-25 22:48:09 - ReflectionModule - INFO - [CollisionThread][image] MoveObject Stethoscope_01 x=2.11 y=0.77 z=3.2 rotationY=0.0  — reason: visually overlaps Scale_01
+2026-04-25 22:48:09 - ReflectionModule - INFO - [CollisionThread] image path added 2 extra correction(s).
+2026-04-25 22:48:10 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 1 line(s).
+2026-04-25 22:48:10 - ReflectionModule - INFO - [DispatcherThread] LLM visual check added 1 extra correction(s).
+2026-04-25 22:48:10 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-25 22:48:10 - ReflectionModule - INFO - [BoundsThread] 4 correction(s) applied:
+2026-04-25 22:48:10 - ReflectionModule - INFO -   [BoundsThread] MoveObject Reception_Desk_01 x=-1.50 y=0.01 z=4.45 rotationY=0  — reason: [bounds] back edge clips wall (z=4.80, half=0.40)
+2026-04-25 22:48:10 - ReflectionModule - INFO -   [BoundsThread] MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.78 rotationY=0  — reason: [bounds] back edge clips wall (z=4.83, half=0.07)
+2026-04-25 22:48:10 - ReflectionModule - INFO -   [BoundsThread] MoveObject Stethoscope_01 x=2.06 y=0.77 z=3.00 rotationY=0  — reason: [bounds] right edge clips wall (x=2.11, half=0.19)
+2026-04-25 22:48:10 - ReflectionModule - INFO -   [BoundsThread] MoveObject Doctor_01 x=-1.50 y=0.92 z=4.46 rotationY=0  — reason: [bounds] back edge clips wall (z=4.55, half=0.39)
+2026-04-25 22:48:10 - ReflectionModule - INFO - [CollisionThread] 7 correction(s) applied:
+2026-04-25 22:48:10 - ReflectionModule - INFO -   [CollisionThread] MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.83 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.19m pen_z=0.10m; exact bounds)
+2026-04-25 22:48:10 - ReflectionModule - INFO -   [CollisionThread] MoveObject Doctor_01 x=-1.50 y=0.92 z=4.16 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.38m pen_z=0.13m; exact bounds)
+2026-04-25 22:48:10 - ReflectionModule - INFO -   [CollisionThread] MoveObject Computer_01 x=-0.34 y=1.01 z=3.71 rotationY=0  — reason: overlaps Chair_01 (pen_x=0.21m pen_z=0.04m; exact bounds)
+2026-04-25 22:48:10 - ReflectionModule - INFO -   [CollisionThread] MoveObject Folder_01 x=-0.73 y=1.53 z=4.00 rotationY=0  — reason: overlaps Computer_01 (pen_x=0.05m pen_z=0.25m; exact bounds)
+2026-04-25 22:48:10 - ReflectionModule - INFO -   [CollisionThread] MoveObject Folder_02 x=-0.73 y=1.53 z=4.00 rotationY=0  — reason: overlaps Computer_01 (pen_x=0.06m pen_z=0.25m; exact bounds)
+2026-04-25 22:48:10 - ReflectionModule - INFO -   [CollisionThread] MoveObject Stethoscope_01 x=2.11 y=0.77 z=3.2 rotationY=0.0  — reason: visually overlaps Scale_01
+2026-04-25 22:48:10 - ReflectionModule - INFO -   [CollisionThread] MoveObject Stethoscope_01 x=2.11 y=0.77 z=3.2 rotationY=0.0  — reason: visually overlaps Scale_01
+2026-04-25 22:48:10 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied (skipped 5 already handled).
+2026-04-25 22:48:10 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied (skipped 1 already handled).
+2026-04-25 22:48:10 - ReflectionModule - INFO - Logged reflection entry for step 'Place desk and chair'
+2026-04-25 22:48:10 - Pipeline - INFO -   step_complete=yes  room_status=good  suggest_additions=False  objects=13
+2026-04-25 22:48:10 - Pipeline - INFO -   layout: The reception desk and chair are correctly placed in the back-left corner. The exam table and stool are correctly placed on the right side of the room. The doctor is standing on the reception desk, which is incorrect. The stethoscope should be moved near the exam area and wall.
+2026-04-25 22:48:10 - Pipeline - INFO -   suggestions: MoveObject Reception_Desk_01 x=-1.50 y=0.01 z=4.45 rotationY=0  — reason: [bounds] back edge clips wall (z=4.80, half=0.40)
+MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.78 rotationY=0  — reason: [bounds] back edge clips wall (z=4.83, half=0.07)
+MoveObject Stethoscope_01 x=2.06 y=0.77 z=3.00 rotationY=0  — reason: [bounds] right edge clips wall (x=2.11, half=0.19)
+MoveObject Doctor_01 x=-1.50 y=0.92 z=4.46 rotationY=0  — reason: [bounds] back edge clips wall (z=4.55, half=0.39)
+MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.83 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.19m pen_z=0.10m; exact bounds)
+MoveObject Doctor_01 x=-1.50 y=0.92 z=4.16 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.38m pen_z=0.13m; exact bounds)
+MoveObject Computer_01 x=-0.34 y=1.01 z=3.71 rotationY=0  — reason: overlaps Chair_01 (pen_x=0.21m pen_z=0.04m; exact bounds)
+MoveObject Folder_01 x=-0.73 y=1.53 z=4.00 rotationY=0  — reason: overlaps Computer_01 (pen_x=0.05m pen_z=0.25m; exact bounds)
+MoveObject Folder_02 x=-0.73 y=1.53 z=4.00 rotationY=0  — reason: overlaps Computer_01 (pen_x=0.06m pen_z=0.25m; exact bounds)
+MoveObject Stethoscope_01 x=2.11 y=0.77 z=3.2 rotationY=0.0  — reason: visually overlaps Scale_01
+MoveObject Stethoscope_01 x=2.11 y=0.77 z=3.2 rotationY=0.0  — reason: visually overlaps Scale_01
+2026-04-25 22:48:10 - Pipeline - INFO -   Step complete — advancing 1 → 2: Add computer and office supplies
+2026-04-25 22:48:10 - Pipeline - INFO -   [parse_alignment] MoveObject Reception_Desk_01 → x=-1.5 y=0.01 z=4.45 rot=0.0
+2026-04-25 22:48:10 - Pipeline - INFO -   [parse_alignment] MoveObject Keyboard_01 → x=-1.5 y=1.49 z=4.78 rot=0.0
+2026-04-25 22:48:10 - Pipeline - INFO -   [parse_alignment] MoveObject Stethoscope_01 → x=2.06 y=0.77 z=3.0 rot=0.0
+2026-04-25 22:48:10 - Pipeline - INFO -   [parse_alignment] MoveObject Doctor_01 → x=-1.5 y=0.92 z=4.46 rot=0.0
+2026-04-25 22:48:10 - Pipeline - INFO -   [parse_alignment] MoveObject Keyboard_01 → x=-1.5 y=1.49 z=4.83 rot=0.0
+2026-04-25 22:48:10 - Pipeline - INFO -   [parse_alignment] MoveObject Doctor_01 → x=-1.5 y=0.92 z=4.16 rot=0.0
+2026-04-25 22:48:10 - Pipeline - INFO -   [parse_alignment] MoveObject Computer_01 → x=-0.34 y=1.01 z=3.71 rot=0.0
+2026-04-25 22:48:10 - Pipeline - INFO -   [parse_alignment] MoveObject Folder_01 → x=-0.73 y=1.53 z=4.0 rot=0.0
+2026-04-25 22:48:10 - Pipeline - INFO -   [parse_alignment] MoveObject Folder_02 → x=-0.73 y=1.53 z=4.0 rot=0.0
+2026-04-25 22:48:10 - Pipeline - INFO -   [parse_alignment] MoveObject Stethoscope_01 → x=2.11 y=0.77 z=3.2 rot=0.0
+2026-04-25 22:48:10 - Pipeline - INFO -   [parse_alignment] MoveObject Stethoscope_01 → x=2.11 y=0.77 z=3.2 rot=0.0
+2026-04-25 22:48:10 - Pipeline - INFO - [Phase 1] Applied 11 direct corrections (MoveObject/DeleteObject)
+2026-04-25 22:48:10 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-25 22:48:13 - Pipeline - INFO - [Phase 1 Reflection] Step 2/5: Add computer and office supplies
+2026-04-25 22:48:13 - ReflectionModule - INFO - [SceneState] Loaded 19 live objects from scene_state.json.
+2026-04-25 22:48:13 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-25 22:48:13 - ReflectionModule - INFO - [DispatcherThread] 4 object(s) flagged: ['Computer_01 → floating ([dispatcher→surface])', 'Folder_01 → floating ([dispatcher→surface])', 'Folder_02 → floating ([dispatcher→surface])', 'Stethoscope_01 → floating ([dispatcher→surface])']
+2026-04-25 22:48:13 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.78 rotationY=0  — reason: [bounds] back edge clips wall (z=4.83, half=0.07)
+2026-04-25 22:48:13 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.83 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.19m pen_z=0.14m; exact bounds)
+2026-04-25 22:48:13 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Stethoscope_01 x=2.06 y=0.77 z=3.20 rotationY=0  — reason: [bounds] right edge clips wall (x=2.11, half=0.19)
+2026-04-25 22:48:13 - ReflectionModule - INFO - [BoundsThread] 2 bound/doorway corrections generated.
+2026-04-25 22:48:13 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Doctor_01 x=-1.50 y=0.92 z=3.82 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.34m pen_z=0.11m; exact bounds)
+2026-04-25 22:48:13 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Folder_02 x=-0.42 y=1.53 z=4.00 rotationY=0  — reason: overlaps Folder_01 (pen_x=0.05m pen_z=0.25m; exact bounds)
+2026-04-25 22:48:13 - ReflectionModule - INFO - [CollisionThread] math path: 3 collision(s) found.
+2026-04-25 22:48:18 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-25 22:48:19 - ReflectionModule - WARNING - [DispatcherThread] focused LLM call failed: Error code: 429 - {'error': {'message': 'Rate limit reached for model `meta-llama/llama-4-scout-17b-16e-instruct` in organization `org_01kbgb8q7jf1kvv7fe0h3h4za3` service tier `on_demand` on tokens per minute (TPM): Limit 300000, Used 295985, Requested 9412. Please try again in 1.0794s. ', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+2026-04-25 22:48:20 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 2 line(s).
+2026-04-25 22:48:20 - ReflectionModule - INFO - [BoundsThread] 2 correction(s) applied:
+2026-04-25 22:48:20 - ReflectionModule - INFO -   [BoundsThread] MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.78 rotationY=0  — reason: [bounds] back edge clips wall (z=4.83, half=0.07)
+2026-04-25 22:48:20 - ReflectionModule - INFO -   [BoundsThread] MoveObject Stethoscope_01 x=2.06 y=0.77 z=3.20 rotationY=0  — reason: [bounds] right edge clips wall (x=2.11, half=0.19)
+2026-04-25 22:48:20 - ReflectionModule - INFO - [CollisionThread] 3 correction(s) applied:
+2026-04-25 22:48:20 - ReflectionModule - INFO -   [CollisionThread] MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.83 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.19m pen_z=0.14m; exact bounds)
+2026-04-25 22:48:20 - ReflectionModule - INFO -   [CollisionThread] MoveObject Doctor_01 x=-1.50 y=0.92 z=3.82 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.34m pen_z=0.11m; exact bounds)
+2026-04-25 22:48:20 - ReflectionModule - INFO -   [CollisionThread] MoveObject Folder_02 x=-0.42 y=1.53 z=4.00 rotationY=0  — reason: overlaps Folder_01 (pen_x=0.05m pen_z=0.25m; exact bounds)
+2026-04-25 22:48:20 - ReflectionModule - INFO - [DispatcherThread] 2 correction(s) applied (skipped 2 already handled):
+2026-04-25 22:48:20 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Computer_01 x=-1.50 y=0.11 z=4.45 rotationY=0  — reason: [dispatcher→surface] floating at y=1.01, no surface below; nearest surface is Reception_Desk_01
+2026-04-25 22:48:20 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Folder_01 x=-1.50 y=0.11 z=4.45 rotationY=0  — reason: [dispatcher→surface] floating at y=1.53, no surface below; nearest surface is Reception_Desk_01
+2026-04-25 22:48:20 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied (skipped 1 already handled).
+2026-04-25 22:48:20 - ReflectionModule - INFO - Logged reflection entry for step 'Add computer and office supplies'
+2026-04-25 22:48:20 - Pipeline - INFO -   step_complete=yes  room_status=good  suggest_additions=False  objects=13
+2026-04-25 22:48:20 - Pipeline - INFO -   layout: The reception desk and chair are correctly placed in the back-left corner. The exam table and stool are correctly placed on the right side of the room. The doctor is standing near the reception desk, which needs adjustment. The stethoscope should be moved near the exam area and wall.
+2026-04-25 22:48:20 - Pipeline - INFO -   suggestions: MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.78 rotationY=0  — reason: [bounds] back edge clips wall (z=4.83, half=0.07)
+MoveObject Stethoscope_01 x=2.06 y=0.77 z=3.20 rotationY=0  — reason: [bounds] right edge clips wall (x=2.11, half=0.19)
+MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.83 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.19m pen_z=0.14m; exact bounds)
+MoveObject Doctor_01 x=-1.50 y=0.92 z=3.82 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.34m pen_z=0.11m; exact bounds)
+MoveObject Folder_02 x=-0.42 y=1.53 z=4.00 rotationY=0  — reason: overlaps Folder_01 (pen_x=0.05m pen_z=0.25m; exact bounds)
+MoveObject Computer_01 x=-1.50 y=0.11 z=4.45 rotationY=0  — reason: [dispatcher→surface] floating at y=1.01, no surface below; nearest surface is Reception_Desk_01
+MoveObject Folder_01 x=-1.50 y=0.11 z=4.45 rotationY=0  — reason: [dispatcher→surface] floating at y=1.53, no surface below; nearest surface is Reception_Desk_01
+2026-04-25 22:48:20 - Pipeline - INFO -   Step complete — advancing 2 → 3: Place exam table and stool
+2026-04-25 22:48:20 - Pipeline - INFO -   [parse_alignment] MoveObject Keyboard_01 → x=-1.5 y=1.49 z=4.78 rot=0.0
+2026-04-25 22:48:20 - Pipeline - INFO -   [parse_alignment] MoveObject Stethoscope_01 → x=2.06 y=0.77 z=3.2 rot=0.0
+2026-04-25 22:48:20 - Pipeline - INFO -   [parse_alignment] MoveObject Keyboard_01 → x=-1.5 y=1.49 z=4.83 rot=0.0
+2026-04-25 22:48:20 - Pipeline - INFO -   [parse_alignment] MoveObject Doctor_01 → x=-1.5 y=0.92 z=3.82 rot=0.0
+2026-04-25 22:48:20 - Pipeline - INFO -   [parse_alignment] MoveObject Folder_02 → x=-0.42 y=1.53 z=4.0 rot=0.0
+2026-04-25 22:48:20 - Pipeline - INFO -   [parse_alignment] MoveObject Computer_01 → x=-1.5 y=0.11 z=4.45 rot=0.0
+2026-04-25 22:48:20 - Pipeline - INFO -   [parse_alignment] MoveObject Folder_01 → x=-1.5 y=0.11 z=4.45 rot=0.0
+2026-04-25 22:48:20 - Pipeline - INFO - [Phase 1] Applied 7 direct corrections (MoveObject/DeleteObject)
+2026-04-25 22:48:20 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-25 22:48:23 - Pipeline - INFO - [Phase 1 Reflection] Step 3/5: Place exam table and stool
+2026-04-25 22:48:23 - ReflectionModule - INFO - [SceneState] Loaded 19 live objects from scene_state.json.
+2026-04-25 22:48:23 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-25 22:48:23 - ReflectionModule - INFO - [DispatcherThread] 2 object(s) flagged: ['Folder_02 → floating ([dispatcher→surface])', 'Stethoscope_01 → floating ([dispatcher→surface])']
+2026-04-25 22:48:23 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.78 rotationY=0  — reason: [bounds] back edge clips wall (z=4.83, half=0.07)
+2026-04-25 22:48:23 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Computer_01 x=-0.34 y=0.11 z=4.45 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.10m pen_z=0.22m; exact bounds)
+2026-04-25 22:48:23 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Stethoscope_01 x=2.06 y=0.77 z=3.20 rotationY=0  — reason: [bounds] right edge clips wall (x=2.06, half=0.19)
+2026-04-25 22:48:23 - ReflectionModule - INFO - [BoundsThread] 2 bound/doorway corrections generated.
+2026-04-25 22:48:23 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.83 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.19m pen_z=0.14m; exact bounds)
+2026-04-25 22:48:23 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Folder_01 x=-0.43 y=0.11 z=4.45 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.02m pen_z=0.13m; exact bounds)
+2026-04-25 22:48:23 - ReflectionModule - INFO - [CollisionThread] math path: 3 collision(s) found.
+2026-04-25 22:48:28 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 2 line(s).
+2026-04-25 22:48:28 - ReflectionModule - INFO - [CollisionThread][image] MoveObject Exam_Stool_01 x=0.8 y=0.01 z=2.9 rotationY=0.0  — reason: visually overlaps Exam_Table_01
+2026-04-25 22:48:28 - ReflectionModule - INFO - [CollisionThread][image] MoveObject Exam_Stool_01 x=0.8 y=0.01 z=2.9 rotationY=0.0
+2026-04-25 22:48:28 - ReflectionModule - INFO - [CollisionThread] image path added 2 extra correction(s).
+2026-04-25 22:48:28 - ReflectionModule - WARNING - [DispatcherThread] focused LLM call failed: Error code: 429 - {'error': {'message': 'Rate limit reached for model `meta-llama/llama-4-scout-17b-16e-instruct` in organization `org_01kbgb8q7jf1kvv7fe0h3h4za3` service tier `on_demand` on tokens per minute (TPM): Limit 300000, Used 296334, Requested 9412. Please try again in 1.1492s. ', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+2026-04-25 22:48:28 - ReflectionModule - WARNING - [BoundsThread] focused LLM call failed: Error code: 429 - {'error': {'message': 'Rate limit reached for model `meta-llama/llama-4-scout-17b-16e-instruct` in organization `org_01kbgb8q7jf1kvv7fe0h3h4za3` service tier `on_demand` on tokens per minute (TPM): Limit 300000, Used 295524, Requested 9709. Please try again in 1.0466s. ', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+2026-04-25 22:48:28 - ReflectionModule - INFO - [BoundsThread] 2 correction(s) applied:
+2026-04-25 22:48:28 - ReflectionModule - INFO -   [BoundsThread] MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.78 rotationY=0  — reason: [bounds] back edge clips wall (z=4.83, half=0.07)
+2026-04-25 22:48:28 - ReflectionModule - INFO -   [BoundsThread] MoveObject Stethoscope_01 x=2.06 y=0.77 z=3.20 rotationY=0  — reason: [bounds] right edge clips wall (x=2.06, half=0.19)
+2026-04-25 22:48:28 - ReflectionModule - INFO - [CollisionThread] 5 correction(s) applied:
+2026-04-25 22:48:28 - ReflectionModule - INFO -   [CollisionThread] MoveObject Computer_01 x=-0.34 y=0.11 z=4.45 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.10m pen_z=0.22m; exact bounds)
+2026-04-25 22:48:28 - ReflectionModule - INFO -   [CollisionThread] MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.83 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.19m pen_z=0.14m; exact bounds)
+2026-04-25 22:48:28 - ReflectionModule - INFO -   [CollisionThread] MoveObject Folder_01 x=-0.43 y=0.11 z=4.45 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.02m pen_z=0.13m; exact bounds)
+2026-04-25 22:48:28 - ReflectionModule - INFO -   [CollisionThread] MoveObject Exam_Stool_01 x=0.8 y=0.01 z=2.9 rotationY=0.0  — reason: visually overlaps Exam_Table_01
+2026-04-25 22:48:28 - ReflectionModule - INFO -   [CollisionThread] MoveObject Exam_Stool_01 x=0.8 y=0.01 z=2.9 rotationY=0.0
+2026-04-25 22:48:28 - ReflectionModule - INFO - [DispatcherThread] 1 correction(s) applied (skipped 1 already handled):
+2026-04-25 22:48:28 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Folder_02 x=-1.50 y=0.11 z=4.45 rotationY=0  — reason: [dispatcher→surface] floating at y=1.53, no surface below; nearest surface is Reception_Desk_01
+2026-04-25 22:48:28 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied (skipped 1 already handled).
+2026-04-25 22:48:28 - ReflectionModule - INFO - Logged reflection entry for step 'Place exam table and stool'
+2026-04-25 22:48:28 - Pipeline - INFO -   step_complete=yes  room_status=good  suggest_additions=False  objects=13
+2026-04-25 22:48:28 - Pipeline - INFO -   layout: The reception desk and chair are correctly placed in the back-left corner. The exam table and stool are correctly placed on the right side of the room. The doctor is standing near the reception desk, which needs adjustment. The stethoscope should be moved near the exam area and wall.
+2026-04-25 22:48:28 - Pipeline - INFO -   suggestions: MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.78 rotationY=0  — reason: [bounds] back edge clips wall (z=4.83, half=0.07)
+MoveObject Stethoscope_01 x=2.06 y=0.77 z=3.20 rotationY=0  — reason: [bounds] right edge clips wall (x=2.06, half=0.19)
+MoveObject Computer_01 x=-0.34 y=0.11 z=4.45 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.10m pen_z=0.22m; exact bounds)
+MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.83 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.19m pen_z=0.14m; exact bounds)
+MoveObject Folder_01 x=-0.43 y=0.11 z=4.45 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.02m pen_z=0.13m; exact bounds)
+MoveObject Exam_Stool_01 x=0.8 y=0.01 z=2.9 rotationY=0.0  — reason: visually overlaps Exam_Table_01
+MoveObject Exam_Stool_01 x=0.8 y=0.01 z=2.9 rotationY=0.0
+MoveObject Folder_02 x=-1.50 y=0.11 z=4.45 rotationY=0  — reason: [dispatcher→surface] floating at y=1.53, no surface below; nearest surface is Reception_Desk_01
+2026-04-25 22:48:28 - Pipeline - INFO -   Step complete — advancing 3 → 4: Add basic equipment
+2026-04-25 22:48:28 - Pipeline - INFO -   [parse_alignment] MoveObject Keyboard_01 → x=-1.5 y=1.49 z=4.78 rot=0.0
+2026-04-25 22:48:28 - Pipeline - INFO -   [parse_alignment] MoveObject Stethoscope_01 → x=2.06 y=0.77 z=3.2 rot=0.0
+2026-04-25 22:48:28 - Pipeline - INFO -   [parse_alignment] MoveObject Computer_01 → x=-0.34 y=0.11 z=4.45 rot=0.0
+2026-04-25 22:48:28 - Pipeline - INFO -   [parse_alignment] MoveObject Keyboard_01 → x=-1.5 y=1.49 z=4.83 rot=0.0
+2026-04-25 22:48:28 - Pipeline - INFO -   [parse_alignment] MoveObject Folder_01 → x=-0.43 y=0.11 z=4.45 rot=0.0
+2026-04-25 22:48:28 - Pipeline - INFO -   [parse_alignment] MoveObject Exam_Stool_01 → x=0.8 y=0.01 z=2.9 rot=0.0
+2026-04-25 22:48:28 - Pipeline - INFO -   [parse_alignment] MoveObject Exam_Stool_01 → x=0.8 y=0.01 z=2.9 rot=0.0
+2026-04-25 22:48:28 - Pipeline - INFO -   [parse_alignment] MoveObject Folder_02 → x=-1.5 y=0.11 z=4.45 rot=0.0
+2026-04-25 22:48:28 - Pipeline - INFO - [Phase 1] Applied 8 direct corrections (MoveObject/DeleteObject)
+2026-04-25 22:48:28 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-25 22:48:31 - Pipeline - INFO - [Phase 1 Reflection] Step 4/5: Add basic equipment
+2026-04-25 22:48:31 - ReflectionModule - INFO - [SceneState] Loaded 19 live objects from scene_state.json.
+2026-04-25 22:48:31 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-25 22:48:31 - ReflectionModule - INFO - [DispatcherThread] 1 object(s) flagged: ['Stethoscope_01 → floating ([dispatcher→surface])']
+2026-04-25 22:48:31 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.78 rotationY=0  — reason: [bounds] back edge clips wall (z=4.83, half=0.07)
+2026-04-25 22:48:31 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.83 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.19m pen_z=0.14m; exact bounds)
+2026-04-25 22:48:31 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Stethoscope_01 x=2.06 y=0.77 z=3.20 rotationY=0  — reason: [bounds] right edge clips wall (x=2.06, half=0.19)
+2026-04-25 22:48:31 - ReflectionModule - INFO - [BoundsThread] 2 bound/doorway corrections generated.
+2026-04-25 22:48:31 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Folder_02 x=-0.42 y=0.11 z=4.45 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.03m pen_z=0.13m; exact bounds)
+2026-04-25 22:48:31 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Computer_01 x=-0.81 y=0.11 z=4.45 rotationY=0  — reason: overlaps Chair_01 (pen_x=0.21m pen_z=0.45m; exact bounds)
+2026-04-25 22:48:31 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Folder_01 x=-0.73 y=0.11 z=4.45 rotationY=0  — reason: overlaps Chair_01 (pen_x=0.05m pen_z=0.25m; exact bounds)
+2026-04-25 22:48:31 - ReflectionModule - INFO - [CollisionThread] math path: 4 collision(s) found.
+2026-04-25 22:48:34 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 2 line(s).
+2026-04-25 22:48:34 - ReflectionModule - INFO - [DispatcherThread] LLM visual check added 2 extra correction(s).
+2026-04-25 22:48:34 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-25 22:48:35 - ReflectionModule - WARNING - [CollisionThread] focused LLM call failed: Error code: 429 - {'error': {'message': 'Rate limit reached for model `meta-llama/llama-4-scout-17b-16e-instruct` in organization `org_01kbgb8q7jf1kvv7fe0h3h4za3` service tier `on_demand` on tokens per minute (TPM): Limit 300000, Used 294445, Requested 9652. Please try again in 819.399999ms. ', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+2026-04-25 22:48:40 - ReflectionModule - INFO - [BoundsThread] 2 correction(s) applied:
+2026-04-25 22:48:40 - ReflectionModule - INFO -   [BoundsThread] MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.78 rotationY=0  — reason: [bounds] back edge clips wall (z=4.83, half=0.07)
+2026-04-25 22:48:40 - ReflectionModule - INFO -   [BoundsThread] MoveObject Stethoscope_01 x=2.06 y=0.77 z=3.20 rotationY=0  — reason: [bounds] right edge clips wall (x=2.06, half=0.19)
+2026-04-25 22:48:40 - ReflectionModule - INFO - [CollisionThread] 4 correction(s) applied:
+2026-04-25 22:48:40 - ReflectionModule - INFO -   [CollisionThread] MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.83 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.19m pen_z=0.14m; exact bounds)
+2026-04-25 22:48:40 - ReflectionModule - INFO -   [CollisionThread] MoveObject Folder_02 x=-0.42 y=0.11 z=4.45 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.03m pen_z=0.13m; exact bounds)
+2026-04-25 22:48:40 - ReflectionModule - INFO -   [CollisionThread] MoveObject Computer_01 x=-0.81 y=0.11 z=4.45 rotationY=0  — reason: overlaps Chair_01 (pen_x=0.21m pen_z=0.45m; exact bounds)
+2026-04-25 22:48:40 - ReflectionModule - INFO -   [CollisionThread] MoveObject Folder_01 x=-0.73 y=0.11 z=4.45 rotationY=0  — reason: overlaps Chair_01 (pen_x=0.05m pen_z=0.25m; exact bounds)
+2026-04-25 22:48:40 - ReflectionModule - INFO - [DispatcherThread] 1 correction(s) applied (skipped 2 already handled):
+2026-04-25 22:48:40 - ReflectionModule - INFO -   [DispatcherThread] MoveObject Doctor_01 x=-1.5 y=0.01 z=3.82 — reason: [dispatcher→surface] floating
+2026-04-25 22:48:40 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied (skipped 2 already handled).
+2026-04-25 22:48:40 - ReflectionModule - INFO - Logged reflection entry for step 'Add basic equipment'
+2026-04-25 22:48:40 - Pipeline - INFO -   step_complete=yes  room_status=good  suggest_additions=False  objects=13
+2026-04-25 22:48:40 - Pipeline - INFO -   layout: The reception desk and chair are correctly placed in the back-left corner. The exam table and stool are correctly placed on the right side of the room. The doctor is standing near the reception desk. The stethoscope should be moved to not overlap the scale.
+2026-04-25 22:48:40 - Pipeline - INFO -   suggestions: MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.78 rotationY=0  — reason: [bounds] back edge clips wall (z=4.83, half=0.07)
+MoveObject Stethoscope_01 x=2.06 y=0.77 z=3.20 rotationY=0  — reason: [bounds] right edge clips wall (x=2.06, half=0.19)
+MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.83 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.19m pen_z=0.14m; exact bounds)
+MoveObject Folder_02 x=-0.42 y=0.11 z=4.45 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.03m pen_z=0.13m; exact bounds)
+MoveObject Computer_01 x=-0.81 y=0.11 z=4.45 rotationY=0  — reason: overlaps Chair_01 (pen_x=0.21m pen_z=0.45m; exact bounds)
+MoveObject Folder_01 x=-0.73 y=0.11 z=4.45 rotationY=0  — reason: overlaps Chair_01 (pen_x=0.05m pen_z=0.25m; exact bounds)
+MoveObject Doctor_01 x=-1.5 y=0.01 z=3.82 — reason: [dispatcher→surface] floating
+2026-04-25 22:48:40 - Pipeline - INFO -   Step complete — advancing 4 → 5: Place doctor
+2026-04-25 22:48:40 - Pipeline - INFO -   [parse_alignment] MoveObject Keyboard_01 → x=-1.5 y=1.49 z=4.78 rot=0.0
+2026-04-25 22:48:40 - Pipeline - INFO -   [parse_alignment] MoveObject Stethoscope_01 → x=2.06 y=0.77 z=3.2 rot=0.0
+2026-04-25 22:48:40 - Pipeline - INFO -   [parse_alignment] MoveObject Keyboard_01 → x=-1.5 y=1.49 z=4.83 rot=0.0
+2026-04-25 22:48:40 - Pipeline - INFO -   [parse_alignment] MoveObject Folder_02 → x=-0.42 y=0.11 z=4.45 rot=0.0
+2026-04-25 22:48:40 - Pipeline - INFO -   [parse_alignment] MoveObject Computer_01 → x=-0.81 y=0.11 z=4.45 rot=0.0
+2026-04-25 22:48:40 - Pipeline - INFO -   [parse_alignment] MoveObject Folder_01 → x=-0.73 y=0.11 z=4.45 rot=0.0
+2026-04-25 22:48:40 - Pipeline - INFO -   [parse_alignment] MoveObject Doctor_01 → x=-1.5 y=0.01 z=3.82 rot=0.0
+2026-04-25 22:48:40 - Pipeline - INFO - [Phase 1] Applied 7 direct corrections (MoveObject/DeleteObject)
+2026-04-25 22:48:40 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-25 22:48:43 - Pipeline - INFO - [Phase 1 Reflection] Step 5/5: Place doctor
+2026-04-25 22:48:43 - ReflectionModule - INFO - [SceneState] Loaded 19 live objects from scene_state.json.
+2026-04-25 22:48:43 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-25 22:48:43 - ReflectionModule - INFO - [DispatcherThread] 1 object(s) flagged: ['Stethoscope_01 → floating ([dispatcher→surface])']
+2026-04-25 22:48:43 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.78 rotationY=0  — reason: [bounds] back edge clips wall (z=4.83, half=0.07)
+2026-04-25 22:48:43 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Computer_01 x=-0.34 y=0.11 z=4.45 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.21m pen_z=0.22m; exact bounds)
+2026-04-25 22:48:43 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Stethoscope_01 x=2.06 y=0.77 z=3.20 rotationY=0  — reason: [bounds] right edge clips wall (x=2.06, half=0.19)
+2026-04-25 22:48:43 - ReflectionModule - INFO - [BoundsThread] 2 bound/doorway corrections generated.
+2026-04-25 22:48:43 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.83 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.19m pen_z=0.14m; exact bounds)
+2026-04-25 22:48:43 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Folder_01 x=-0.42 y=0.11 z=4.45 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.05m pen_z=0.13m; exact bounds)
+2026-04-25 22:48:43 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Folder_02 x=-0.74 y=0.11 z=4.45 rotationY=0  — reason: overlaps Chair_01 (pen_x=0.06m pen_z=0.25m; exact bounds)
+2026-04-25 22:48:43 - ReflectionModule - INFO - [CollisionThread] math path: 4 collision(s) found.
+2026-04-25 22:48:45 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 2 line(s).
+2026-04-25 22:48:45 - ReflectionModule - INFO - [DispatcherThread] LLM visual check added 1 extra correction(s).
+2026-04-25 22:48:45 - ReflectionModule - INFO - [CollisionThread] focused LLM returned 1 line(s).
+2026-04-25 22:48:45 - ReflectionModule - INFO - [CollisionThread][image] MoveObject Cube x=0.0 y=0.0 z=0.0 rotationY=0.0  — reason: visually overlaps (there are no actual overlaps based on given data)
+2026-04-25 22:48:45 - ReflectionModule - INFO - [CollisionThread] image path added 1 extra correction(s).
+2026-04-25 22:48:50 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 0 line(s).
+2026-04-25 22:48:52 - ReflectionModule - ERROR - [SurfaceThread] unrecoverable error — falling back to empty result: Error code: 429 - {'error': {'message': 'Rate limit reached for model `meta-llama/llama-4-scout-17b-16e-instruct` in organization `org_01kbgb8q7jf1kvv7fe0h3h4za3` service tier `on_demand` on tokens per minute (TPM): Limit 300000, Used 283845, Requested 18404. Please try again in 449.8ms. ', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+2026-04-25 22:48:52 - ReflectionModule - INFO - [BoundsThread] 2 correction(s) applied:
+2026-04-25 22:48:52 - ReflectionModule - INFO -   [BoundsThread] MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.78 rotationY=0  — reason: [bounds] back edge clips wall (z=4.83, half=0.07)
+2026-04-25 22:48:52 - ReflectionModule - INFO -   [BoundsThread] MoveObject Stethoscope_01 x=2.06 y=0.77 z=3.20 rotationY=0  — reason: [bounds] right edge clips wall (x=2.06, half=0.19)
+2026-04-25 22:48:52 - ReflectionModule - INFO - [CollisionThread] 5 correction(s) applied:
+2026-04-25 22:48:52 - ReflectionModule - INFO -   [CollisionThread] MoveObject Computer_01 x=-0.34 y=0.11 z=4.45 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.21m pen_z=0.22m; exact bounds)
+2026-04-25 22:48:52 - ReflectionModule - INFO -   [CollisionThread] MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.83 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.19m pen_z=0.14m; exact bounds)
+2026-04-25 22:48:52 - ReflectionModule - INFO -   [CollisionThread] MoveObject Folder_01 x=-0.42 y=0.11 z=4.45 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.05m pen_z=0.13m; exact bounds)
+2026-04-25 22:48:52 - ReflectionModule - INFO -   [CollisionThread] MoveObject Folder_02 x=-0.74 y=0.11 z=4.45 rotationY=0  — reason: overlaps Chair_01 (pen_x=0.06m pen_z=0.25m; exact bounds)
+2026-04-25 22:48:52 - ReflectionModule - INFO -   [CollisionThread] MoveObject Cube x=0.0 y=0.0 z=0.0 rotationY=0.0  — reason: visually overlaps (there are no actual overlaps based on given data)
+2026-04-25 22:48:52 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied (skipped 2 already handled).
+2026-04-25 22:48:52 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied.
+2026-04-25 22:48:52 - ReflectionModule - INFO - Logged reflection entry for step 'Place doctor'
+2026-04-25 22:48:52 - Pipeline - INFO -   step_complete=no  room_status=good  suggest_additions=False  objects=13
+2026-04-25 22:48:52 - Pipeline - INFO -   suggestions: MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.78 rotationY=0  — reason: [bounds] back edge clips wall (z=4.83, half=0.07)
+MoveObject Stethoscope_01 x=2.06 y=0.77 z=3.20 rotationY=0  — reason: [bounds] right edge clips wall (x=2.06, half=0.19)
+MoveObject Computer_01 x=-0.34 y=0.11 z=4.45 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.21m pen_z=0.22m; exact bounds)
+MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.83 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.19m pen_z=0.14m; exact bounds)
+MoveObject Folder_01 x=-0.42 y=0.11 z=4.45 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.05m pen_z=0.13m; exact bounds)
+MoveObject Folder_02 x=-0.74 y=0.11 z=4.45 rotationY=0  — reason: overlaps Chair_01 (pen_x=0.06m pen_z=0.25m; exact bounds)
+MoveObject Cube x=0.0 y=0.0 z=0.0 rotationY=0.0  — reason: visually overlaps (there are no actual overlaps based on given data)
+2026-04-25 22:48:52 - Pipeline - INFO -   [parse_alignment] MoveObject Keyboard_01 → x=-1.5 y=1.49 z=4.78 rot=0.0
+2026-04-25 22:48:52 - Pipeline - INFO -   [parse_alignment] MoveObject Stethoscope_01 → x=2.06 y=0.77 z=3.2 rot=0.0
+2026-04-25 22:48:52 - Pipeline - INFO -   [parse_alignment] MoveObject Computer_01 → x=-0.34 y=0.11 z=4.45 rot=0.0
+2026-04-25 22:48:52 - Pipeline - INFO -   [parse_alignment] MoveObject Keyboard_01 → x=-1.5 y=1.49 z=4.83 rot=0.0
+2026-04-25 22:48:52 - Pipeline - INFO -   [parse_alignment] MoveObject Folder_01 → x=-0.42 y=0.11 z=4.45 rot=0.0
+2026-04-25 22:48:52 - Pipeline - INFO -   [parse_alignment] MoveObject Folder_02 → x=-0.74 y=0.11 z=4.45 rot=0.0
+2026-04-25 22:48:52 - Pipeline - INFO -   [parse_alignment] MoveObject Cube → x=0.0 y=0.0 z=0.1 rot=0.0
+2026-04-25 22:48:52 - Pipeline - INFO - [Phase 1] Applied 7 direct corrections (MoveObject/DeleteObject)
+2026-04-25 22:48:52 - Pipeline - INFO - [Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.
+2026-04-25 22:48:55 - Pipeline - INFO - [Phase 1 Reflection] Step 5/5: Place doctor
+2026-04-25 22:48:55 - ReflectionModule - INFO - [SceneState] Loaded 19 live objects from scene_state.json.
+2026-04-25 22:48:55 - ReflectionModule - INFO - Launching reflection threads: [DispatcherThread] [BoundsThread] [CollisionThread] [SurfaceThread]
+2026-04-25 22:48:55 - ReflectionModule - INFO - [DispatcherThread] 1 object(s) flagged: ['Stethoscope_01 → floating ([dispatcher→surface])']
+2026-04-25 22:48:55 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.78 rotationY=0  — reason: [bounds] back edge clips wall (z=4.83, half=0.07)
+2026-04-25 22:48:55 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.83 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.19m pen_z=0.14m; exact bounds)
+2026-04-25 22:48:55 - ReflectionModule - INFO - [BoundsThread] queued: MoveObject Stethoscope_01 x=2.06 y=0.77 z=3.20 rotationY=0  — reason: [bounds] right edge clips wall (x=2.06, half=0.19)
+2026-04-25 22:48:55 - ReflectionModule - INFO - [BoundsThread] 2 bound/doorway corrections generated.
+2026-04-25 22:48:55 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Folder_02 x=-0.42 y=0.11 z=4.45 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.06m pen_z=0.13m; exact bounds)
+2026-04-25 22:48:55 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Computer_01 x=-0.81 y=0.11 z=4.45 rotationY=0  — reason: overlaps Chair_01 (pen_x=0.21m pen_z=0.45m; exact bounds)
+2026-04-25 22:48:55 - ReflectionModule - INFO - [CollisionThread][math] MoveObject Folder_01 x=-0.73 y=0.11 z=4.45 rotationY=0  — reason: overlaps Chair_01 (pen_x=0.05m pen_z=0.25m; exact bounds)
+2026-04-25 22:48:55 - ReflectionModule - INFO - [CollisionThread] math path: 4 collision(s) found.
+2026-04-25 22:48:58 - ReflectionModule - INFO - [BoundsThread] focused LLM returned 1 line(s).
+2026-04-25 22:48:58 - ReflectionModule - INFO - [BoundsThread] LLM visual check added 1 extra correction(s).
+2026-04-25 22:48:58 - ReflectionModule - INFO - [DispatcherThread] focused LLM returned 1 line(s).
+2026-04-25 22:48:58 - ReflectionModule - INFO - [DispatcherThread] LLM visual check added 1 extra correction(s).
+2026-04-25 22:48:59 - ReflectionModule - WARNING - [CollisionThread] focused LLM call failed: Error code: 429 - {'error': {'message': 'Rate limit reached for model `meta-llama/llama-4-scout-17b-16e-instruct` in organization `org_01kbgb8q7jf1kvv7fe0h3h4za3` service tier `on_demand` on tokens per minute (TPM): Limit 300000, Used 296520, Requested 9652. Please try again in 1.2344s. ', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+2026-04-25 22:48:59 - ReflectionModule - INFO - [BoundsThread] 3 correction(s) applied:
+2026-04-25 22:48:59 - ReflectionModule - INFO -   [BoundsThread] MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.78 rotationY=0  — reason: [bounds] back edge clips wall (z=4.83, half=0.07)
+2026-04-25 22:48:59 - ReflectionModule - INFO -   [BoundsThread] MoveObject Stethoscope_01 x=2.06 y=0.77 z=3.20 rotationY=0  — reason: [bounds] right edge clips wall (x=2.06, half=0.19)
+2026-04-25 22:48:59 - ReflectionModule - INFO -   [BoundsThread] MoveObject Reception_Desk_01 x=-1.5 y=0.01 z=4.8 rotationY=0.0  — reason: visually clipping wall
+2026-04-25 22:48:59 - ReflectionModule - INFO - [CollisionThread] 4 correction(s) applied:
+2026-04-25 22:48:59 - ReflectionModule - INFO -   [CollisionThread] MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.83 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.19m pen_z=0.14m; exact bounds)
+2026-04-25 22:48:59 - ReflectionModule - INFO -   [CollisionThread] MoveObject Folder_02 x=-0.42 y=0.11 z=4.45 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.06m pen_z=0.13m; exact bounds)
+2026-04-25 22:48:59 - ReflectionModule - INFO -   [CollisionThread] MoveObject Computer_01 x=-0.81 y=0.11 z=4.45 rotationY=0  — reason: overlaps Chair_01 (pen_x=0.21m pen_z=0.45m; exact bounds)
+2026-04-25 22:48:59 - ReflectionModule - INFO -   [CollisionThread] MoveObject Folder_01 x=-0.73 y=0.11 z=4.45 rotationY=0  — reason: overlaps Chair_01 (pen_x=0.05m pen_z=0.25m; exact bounds)
+2026-04-25 22:48:59 - ReflectionModule - INFO - [DispatcherThread] 0 corrections applied (skipped 2 already handled).
+2026-04-25 22:48:59 - ReflectionModule - INFO - [SurfaceThread] 0 corrections applied (skipped 1 already handled).
+2026-04-25 22:48:59 - ReflectionModule - INFO - Logged reflection entry for step 'Place doctor'
+2026-04-25 22:48:59 - Pipeline - INFO -   step_complete=yes  room_status=good  suggest_additions=False  objects=13
+2026-04-25 22:48:59 - Pipeline - INFO -   layout: The reception desk and chair are correctly placed in the back-left corner. The exam table and stool are correctly placed on the right side of the room. The doctor is standing near the reception desk. The stethoscope should be moved to not overlap the scale.
+2026-04-25 22:48:59 - Pipeline - INFO -   suggestions: MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.78 rotationY=0  — reason: [bounds] back edge clips wall (z=4.83, half=0.07)
+MoveObject Stethoscope_01 x=2.06 y=0.77 z=3.20 rotationY=0  — reason: [bounds] right edge clips wall (x=2.06, half=0.19)
+MoveObject Reception_Desk_01 x=-1.5 y=0.01 z=4.8 rotationY=0.0  — reason: visually clipping wall
+MoveObject Keyboard_01 x=-1.50 y=1.49 z=4.83 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.19m pen_z=0.14m; exact bounds)
+MoveObject Folder_02 x=-0.42 y=0.11 z=4.45 rotationY=0  — reason: overlaps Reception_Desk_01 (pen_x=0.06m pen_z=0.13m; exact bounds)
+MoveObject Computer_01 x=-0.81 y=0.11 z=4.45 rotationY=0  — reason: overlaps Chair_01 (pen_x=0.21m pen_z=0.45m; exact bounds)
+MoveObject Folder_01 x=-0.73 y=0.11 z=4.45 rotationY=0  — reason: overlaps Chair_01 (pen_x=0.05m pen_z=0.25m; exact bounds)
+2026-04-25 22:48:59 - Pipeline - INFO -   Step complete — all 5 plan steps complete. Stopping environment generation.
+2026-04-25 22:49:02 - Pipeline - INFO - [InteractionMap] Generated map for 11 objects → interaction_map.json
+2026-04-25 22:49:02 - Pipeline - INFO - --phase1-only flag set. Skipping Phase 2.
+2026-04-25 22:49:02 - Pipeline - INFO - Total objects placed: 18

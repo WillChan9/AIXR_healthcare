@@ -1,0 +1,76 @@
+{
+  "room_type": "Waiting Room",
+  "description": "A sparse waiting room with a few chairs, a reception desk, and minimal decor.",
+  "layout_goals": {
+    "interior_bounds": "6m x 8m",
+    "minimum_objects": 5,
+    "focal_point": "Reception_Desk_01"
+  },
+  "steps": [
+    {
+      "step": 1,
+      "action": "Place object",
+      "objects": [
+        "Chair_01"
+      ],
+      "target_area": "left wall",
+      "condition": "x~-2.5, z~2.0"
+    },
+    {
+      "step": 2,
+      "action": "Place object",
+      "objects": [
+        "Chair_02"
+      ],
+      "target_area": "left wall",
+      "condition": "x~-2.5, z~4.0"
+    },
+    {
+      "step": 3,
+      "action": "Place object",
+      "objects": [
+        "Reception_Desk_01"
+      ],
+      "target_area": "back center",
+      "condition": "z~7.0"
+    },
+    {
+      "step": 4,
+      "action": "Place object",
+      "objects": [
+        "Folder_01"
+      ],
+      "target_area": "Reception_Desk_01",
+      "condition": "y~0.8"
+    },
+    {
+      "step": 5,
+      "action": "Place object",
+      "objects": [
+        "Poster_01"
+      ],
+      "target_area": "left wall",
+      "condition": "decorative"
+    },
+    {
+      "step": 6,
+      "action": "Place staff",
+      "objects": [
+        "Nurse_01"
+      ],
+      "target_area": "behind Reception_Desk_01",
+      "condition": "standing"
+    },
+    {
+      "step": 7,
+      "action": "Add objects",
+      "objects": [
+        "Chair",
+        "Poster",
+        "Clock"
+      ],
+      "target_area": "empty spaces",
+      "condition": "reasonable spacing"
+    }
+  ]
+}

@@ -1,0 +1,182 @@
+{
+  "Treadmill_01": {
+    "touch": {
+      "bubble_message": "Treadmill — supports gait training with speed and incline control.",
+      "bubble_duration": 4.0
+    },
+    "grab": {
+      "controller": "AnimatorControllers/HumanM@Walk01_Forward",
+      "state": "HumanM@Walk01_Forward",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "I'll help adjust the treadmill safely.",
+      "bubble_on": "Doctor_01",
+      "bubble_duration": 4.0
+    },
+    "release": {
+      "controller": "AnimatorControllers/HumanM@Walk01_Forward",
+      "state": "HumanM@Walk01_Forward",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "Treadmill position set; check the safety clip.",
+      "bubble_on": "Doctor_01",
+      "bubble_duration": 4.0
+    }
+  },
+  "Exam_Stool_01": {
+    "touch": {
+      "bubble_message": "Exam stool — rolling seat for close assessment and therapy support.",
+      "bubble_duration": 4.0
+    }
+  },
+  "WheelChair_01": {
+    "touch": {
+      "bubble_message": "Wheelchair — provides safe seated mobility during rehabilitation.",
+      "bubble_duration": 4.0
+    },
+    "grab": {
+      "controller": "AnimatorControllers/HumanM@Walk01_Forward",
+      "state": "HumanM@Walk01_Forward",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "I'll guide the wheelchair through the clear walkway.",
+      "bubble_on": "Doctor_01",
+      "bubble_duration": 4.0
+    },
+    "release": {
+      "controller": "AnimatorControllers/HumanM@Walk01_Forward",
+      "state": "HumanM@Walk01_Forward",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "Wheelchair parked; brakes should be locked.",
+      "bubble_on": "Doctor_01",
+      "bubble_duration": 4.0
+    }
+  },
+  "Doctor_01": {
+    "hover_enter": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "Keep movements controlled and pain-free.",
+      "bubble_duration": 4.0
+    },
+    "touch": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "Yes? I'm monitoring therapy form and safety.",
+      "bubble_duration": 4.0
+    }
+  },
+  "Patient_01": {
+    "hover_enter": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Patient_01",
+      "bubble_message": "I'm focusing on steady balance.",
+      "bubble_duration": 4.0
+    },
+    "touch": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Patient_01",
+      "bubble_message": "This exercise feels manageable today.",
+      "bubble_duration": 4.0
+    }
+  },
+  "Bench_01": {
+    "touch": {
+      "bubble_message": "Therapy bench — used for seated exercises, rests, and transfers.",
+      "bubble_duration": 4.0
+    }
+  },
+  "Crutch_01": {
+    "touch": {
+      "bubble_message": "Crutch — assists walking by unloading weight from an injured leg.",
+      "bubble_duration": 4.0
+    },
+    "grab": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "Fit the handgrip at wrist height for safe use.",
+      "bubble_on": "Doctor_01",
+      "bubble_duration": 4.0
+    }
+  },
+  "Aid_Kit_01": {
+    "touch": {
+      "bubble_message": "Aid kit — contains basic supplies for minor therapy-room injuries.",
+      "bubble_duration": 4.0
+    },
+    "grab": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "Use clean technique and report any injury.",
+      "bubble_on": "Doctor_01",
+      "bubble_duration": 4.0
+    }
+  },
+  "Walker_01": {
+    "touch": {
+      "bubble_message": "Walker — provides stable support for balance and gait practice.",
+      "bubble_duration": 4.0
+    },
+    "grab": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "Stand tall and step into the walker, not behind it.",
+      "bubble_on": "Doctor_01",
+      "bubble_duration": 4.0
+    }
+  },
+  "Scale_01": {
+    "touch": {
+      "bubble_message": "Scale — measures body weight for rehab progress and dosing checks.",
+      "bubble_duration": 4.0
+    }
+  },
+  "Kinesotherapy_Apparatus_01": {
+    "touch": {
+      "bubble_message": "Kinesotherapy apparatus — guides controlled therapeutic motion.",
+      "bubble_duration": 4.0
+    },
+    "grab": {
+      "controller": "AnimatorControllers/HumanM@Talking",
+      "state": "HumanM@Talking",
+      "fade": 0.3,
+      "idle_delay": 4.0,
+      "target_character": "Doctor_01",
+      "bubble_message": "Adjust resistance slowly and watch patient comfort.",
+      "bubble_on": "Doctor_01",
+      "bubble_duration": 4.0
+    }
+  },
+  "Bench_02": {
+    "touch": {
+      "bubble_message": "Therapy bench — supports stretching, strengthening, and recovery rests.",
+      "bubble_duration": 4.0
+    }
+  }
+}
