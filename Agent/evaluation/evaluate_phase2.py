@@ -1,12 +1,28 @@
 """
-Evaluate Phase 2 interaction quality from artifacts produced at the end of Phase 1.
+Evaluate Phase 2 (interaction layer) quality for a single trial.
 
-Reads `interaction_map.json` (ambient layer), `story_chain.json` (scripted layer),
-`scene_state.json` (what was actually placed), and `experience.txt` (required-objects
-contract). Computes coverage, validity, chain-quality, and composite metrics.
+Inputs (read from ``--results-dir``):
+    interaction_map.json  ambient layer: per-object event -> animation / speech-bubble config
+    story_chain.json      scripted layer: ordered beats (trigger + actions)
+    scene_state.json      objects actually placed in Unity
+    agent.log             used for runtime metrics, if Phase 2 actually ran
+    unity_commands.json   used for command execution rate
+plus the scenario's ``experience.txt`` (``--experience``) for room bounds,
+character prefixes and the required character roster. Animator controller
+names are checked against
+``firefighter project/Assets/Resources/AnimatorControllers/*.controller``.
+
+Output:
+    A JSON report with ``coverage``, ``validity``, ``chain`` and ``runtime``
+    sections and a 0-100 ``composite_score`` (static metrics only; runtime
+    metrics are not part of the composite). Printed to stdout and optionally
+    written to ``--output``. ``run_experiment.py`` saves it as
+    ``phase2_eval_report.json``.
 
 Usage:
-    python evaluate_phase2.py --results-dir path/to/trial [--experience path/to/experience.txt]
+    python evaluate_phase2.py --results-dir results/S03/trial_1 \
+        --experience scenarios/experience_S03.txt \
+        --output results/S03/trial_1/phase2_eval_report.json
 """
 
 import argparse
@@ -15,7 +31,7 @@ import re
 from collections import Counter
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set
 
 
 # ---------------------------------------------------------------------------
@@ -23,6 +39,7 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 # ---------------------------------------------------------------------------
 
 def _load_json(path: Path) -> Any:
+    """Load JSON from ``path``; return None if the file is missing or empty."""
     if not path.exists():
         return None
     text = path.read_text(encoding="utf-8-sig")
@@ -32,6 +49,7 @@ def _load_json(path: Path) -> Any:
 
 
 def _parse_experience_config(txt: str) -> dict:
+    """Parse ``key = value`` lines from the ``[room_config]`` section of an experience file."""
     cfg: dict = {}
     in_section = False
     for line in txt.splitlines():
@@ -49,9 +67,7 @@ def _parse_experience_config(txt: str) -> dict:
 
 
 def _list_animator_controllers(repo_root: Path) -> Set[str]:
-    """Collect controller stems available in Resources/AnimatorControllers.
-    Returns the set of names without the .controller suffix.
-    """
+    """Return controller names (without ``.controller``) in Resources/AnimatorControllers."""
     ctrl_dir = repo_root / "firefighter project" / "Assets" / "Resources" / "AnimatorControllers"
     if not ctrl_dir.exists():
         return set()
@@ -74,6 +90,7 @@ def _placed_object_names(scene_state: List[Dict]) -> Set[str]:
 
 
 def _placed_character_names(scene_state: List[Dict], char_prefixes: List[str]) -> Set[str]:
+    """Names of placed objects that start with one of the character prefixes."""
     chars: Set[str] = set()
     for o in scene_state or []:
         n = (o.get("objectName") or "").strip()
@@ -83,8 +100,11 @@ def _placed_character_names(scene_state: List[Dict], char_prefixes: List[str]) -
 
 
 def _required_characters(experience_txt: str, char_prefixes: List[str]) -> Set[str]:
-    """Names that should be in scene per experience.txt (Name_NN tokens
-    appearing before [interactions], matching configured prefixes)."""
+    """Character names the scene should contain, per experience.txt.
+
+    Collects ``<Prefix>_<digits>`` tokens (e.g. ``Doctor_01``) that appear before
+    the ``[interactions]`` section.
+    """
     if not char_prefixes:
         return set()
     name_re = re.compile(r'\b((?:' + '|'.join(re.escape(p) for p in char_prefixes) + r')_\d+)\b')
@@ -106,6 +126,13 @@ def compute_coverage_metrics(
     placed_names: Set[str],
     placed_chars: Set[str],
 ) -> Dict[str, float]:
+    """How much of the placed scene the interaction map covers, and how richly.
+
+    - ambient_object_coverage: placed objects with a map entry / placed objects
+    - multi_event_pct: map entries with >= 2 event types
+    - bubble_density: event configs with a ``bubble_message`` / all event configs
+    - targeted_animation_pct: character event configs with ``target_character``
+    """
     metrics: Dict[str, float] = {}
 
     # Strip Unity (Clone) suffix from map keys to match scene state.
@@ -120,7 +147,7 @@ def compute_coverage_metrics(
     metrics["map_entry_count"] = len(map_objects)
     metrics["placed_object_count"] = len(placed_names)
 
-    # multi_event_pct = entries with ≥2 distinct event types
+    # multi_event_pct = entries with >= 2 distinct event types
     if map_objects:
         multi = sum(1 for ev in map_objects.values() if isinstance(ev, dict) and len(ev) >= 2)
         metrics["multi_event_pct"] = multi / len(map_objects)
@@ -174,10 +201,15 @@ def compute_map_validity_metrics(
     available_controllers: Set[str],
     cfg: dict,
 ) -> Dict[str, float]:
-    metrics: Dict[str, float] = {}
+    """Check that interaction-map references resolve to real assets/objects.
 
-    x_min = float(cfg.get("x_min", -3.8)); x_max = float(cfg.get("x_max", 3.8))
-    z_min = float(cfg.get("z_min",  0.1)); z_max = float(cfg.get("z_max", 7.9))
+    Each rate is valid / present for configs that set the field (1.0 if none do):
+    controller exists, state name equals the controller stem, target character
+    is placed, ``bubble_on`` refers to a placed object. ``cfg`` is accepted for
+    signature symmetry with ``compute_chain_metrics`` but unused (the map has
+    no coordinates).
+    """
+    metrics: Dict[str, float] = {}
 
     total = 0
     valid_controller = 0
@@ -201,9 +233,8 @@ def compute_map_validity_metrics(
             ctrl = cfg_dict.get("controller") or cfg_dict.get("controllerPath")
             if ctrl:
                 has_controller += 1
-                # Controller path can be either "AnimatorControllers/HumanM@Talking"
-                # or just "HumanM@Talking" — accept both forms but record validity
-                # against the available stems.
+                # Accept both "AnimatorControllers/HumanM@Talking" and "HumanM@Talking";
+                # validity is checked against the available controller stems.
                 stem = ctrl.split("/")[-1] if "/" in ctrl else ctrl
                 if stem in available_controllers:
                     valid_controller += 1
@@ -224,13 +255,14 @@ def compute_map_validity_metrics(
                     valid_bubble_on += 1
 
     metrics["map_total_entries"] = total
-    metrics["map_controller_validity_rate"] = valid_controller / has_controller if has_controller else 1.0
-    metrics["map_state_prefix_validity"]    = valid_state      / has_controller if has_controller else 1.0
-    metrics["map_target_validity_rate"]     = valid_target     / has_target     if has_target     else 1.0
-    metrics["map_bubble_on_validity"]       = valid_bubble_on  / has_bubble_on  if has_bubble_on  else 1.0
-
-    # Coordinate validity isn't applicable here (interaction_map has no coords) —
-    # see chain validity below for WalkCharacterTo coord checks.
+    metrics["map_controller_validity_rate"] = (
+        valid_controller / has_controller if has_controller else 1.0
+    )
+    metrics["map_state_prefix_validity"] = valid_state / has_controller if has_controller else 1.0
+    metrics["map_target_validity_rate"] = valid_target / has_target if has_target else 1.0
+    metrics["map_bubble_on_validity"] = (
+        valid_bubble_on / has_bubble_on if has_bubble_on else 1.0
+    )
 
     return metrics
 
@@ -247,6 +279,14 @@ def compute_chain_metrics(
     available_controllers: Set[str],
     cfg: dict,
 ) -> Dict[str, float]:
+    """Score the story chain's structure and the validity of its references.
+
+    A beat is valid when its trigger object is placed and every action target
+    resolves (characters must be placed; WalkCharacterTo controllers must exist).
+    Also reports action richness, trigger validity, WalkCharacterTo coordinates
+    within room bounds, state-name == controller-stem consistency, and coverage
+    of the required character roster.
+    """
     metrics: Dict[str, float] = {}
 
     beats = (chain or {}).get("beats", []) or []
@@ -263,8 +303,10 @@ def compute_chain_metrics(
         })
         return metrics
 
-    x_min = float(cfg.get("x_min", -3.8)); x_max = float(cfg.get("x_max", 3.8))
-    z_min = float(cfg.get("z_min",  0.1)); z_max = float(cfg.get("z_max", 7.9))
+    x_min = float(cfg.get("x_min", -3.8))
+    x_max = float(cfg.get("x_max", 3.8))
+    z_min = float(cfg.get("z_min", 0.1))
+    z_max = float(cfg.get("z_max", 7.9))
 
     valid_beats = 0
     valid_triggers = 0
@@ -334,16 +376,20 @@ def compute_chain_metrics(
         if beat_valid:
             valid_beats += 1
 
-    metrics["chain_beat_validity_rate"]    = valid_beats     / len(beats)
-    metrics["chain_trigger_validity_rate"] = valid_triggers  / len(beats)
-    metrics["chain_action_richness"]       = total_actions   / len(beats)
-    metrics["chain_unique_action_types"]   = len(action_kinds)
-    metrics["chain_total_actions"]         = total_actions
-    metrics["chain_walk_coord_validity"]   = walk_valid_coords / walk_total if walk_total else 1.0
-    metrics["chain_state_prefix_validity"] = state_valid_prefix / state_total if state_total else 1.0
+    metrics["chain_beat_validity_rate"] = valid_beats / len(beats)
+    metrics["chain_trigger_validity_rate"] = valid_triggers / len(beats)
+    metrics["chain_action_richness"] = total_actions / len(beats)
+    metrics["chain_unique_action_types"] = len(action_kinds)
+    metrics["chain_total_actions"] = total_actions
+    metrics["chain_walk_coord_validity"] = walk_valid_coords / walk_total if walk_total else 1.0
+    metrics["chain_state_prefix_validity"] = (
+        state_valid_prefix / state_total if state_total else 1.0
+    )
 
     if required_chars:
-        metrics["chain_char_coverage"] = len(referenced_chars & required_chars) / len(required_chars)
+        metrics["chain_char_coverage"] = (
+            len(referenced_chars & required_chars) / len(required_chars)
+        )
     else:
         metrics["chain_char_coverage"] = 1.0
 
@@ -358,6 +404,7 @@ _LOG_TS_RE = re.compile(r'^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})')
 
 
 def _parse_log_timestamp(line: str) -> Optional[datetime]:
+    """Parse the leading ``YYYY-MM-DD HH:MM:SS`` timestamp of a log line, if any."""
     m = _LOG_TS_RE.match(line)
     if not m:
         return None
@@ -368,12 +415,11 @@ def _parse_log_timestamp(line: str) -> Optional[datetime]:
 
 
 def compute_runtime_metrics(log_path: Path, commands_path: Path,
-                             chain_total_beats: int) -> Dict[str, float]:
-    """Compute Phase 2 runtime metrics from agent.log + unity_commands.json.
+                            chain_total_beats: int) -> Dict[str, float]:
+    """Compute Phase 2 runtime metrics from agent.log and unity_commands.json.
 
-    Populated only when Phase 2 actually ran (log contains "PHASE 2:" marker
-    and at least one StoryChain firing or ambient event). Returns a dict with
-    NaN-equivalent zeros + `phase2_ran=0` when no Phase 2 activity is found.
+    Only meaningful when Phase 2 actually ran (the log contains a "PHASE 2:"
+    marker). Otherwise returns all-zero metrics with ``phase2_ran = 0``.
     """
     metrics: Dict[str, float] = {
         "phase2_ran": 0,
@@ -390,7 +436,7 @@ def compute_runtime_metrics(log_path: Path, commands_path: Path,
         "unmapped_event_rate": 0.0,
     }
 
-    # ── parse agent.log ───────────────────────────────────────────────────
+    # --- agent.log ---
     if not log_path.exists():
         return metrics
     try:
@@ -407,7 +453,7 @@ def compute_runtime_metrics(log_path: Path, commands_path: Path,
 
     p2_lines = lines[p2_start_idx:]
     p2_start_ts = next((_parse_log_timestamp(l) for l in p2_lines if _parse_log_timestamp(l)), None)
-    p2_end_ts   = None
+    p2_end_ts = None
     for l in reversed(p2_lines):
         ts = _parse_log_timestamp(l)
         if ts is not None:
@@ -435,14 +481,18 @@ def compute_runtime_metrics(log_path: Path, commands_path: Path,
         metrics["chain_progression"] = 1.0
 
     if fire_times and p2_start_ts:
-        metrics["time_to_first_beat_seconds"] = round((fire_times[0] - p2_start_ts).total_seconds(), 2)
+        metrics["time_to_first_beat_seconds"] = round(
+            (fire_times[0] - p2_start_ts).total_seconds(), 2
+        )
         if len(fire_times) >= 2:
             metrics["time_to_complete_chain_seconds"] = round(
                 (fire_times[-1] - fire_times[0]).total_seconds(), 2
             )
 
-    # Ambient animations fired (ambient handler success)
-    ambient_re = re.compile(r"\[(touch|hover_enter|grab|release|activate)\]\s+\S+\s+\(\w+\)\s*[—\-→]")
+    # Ambient event lines handled successfully (excluding unmapped/silent/repeat events).
+    ambient_re = re.compile(
+        r"\[(touch|hover_enter|grab|release|activate)\]\s+\S+\s+\(\w+\)\s*[—\-→]"
+    )
     ambient_lines = [l for l in p2_lines if ambient_re.search(l)
                      and "no animation mapped" not in l
                      and "silent event type" not in l
@@ -456,21 +506,21 @@ def compute_runtime_metrics(log_path: Path, commands_path: Path,
     sc_dispatch = sum(1 for l in p2_lines if "[StoryChain] dispatched" in l)
     metrics["story_chain_dispatches"] = sc_dispatch
 
-    # Unmapped event rate — count "no animation mapped" hits / total touch/hover events
+    # Unmapped event rate: "no animation mapped" lines / all ambient event lines.
     unmapped = sum(1 for l in p2_lines if "no animation mapped" in l and "(touch)" not in l)
     raw_event_lines = [l for l in p2_lines if ambient_re.search(l)]
     metrics["unmapped_event_rate"] = (
         unmapped / len(raw_event_lines) if raw_event_lines else 0.0
     )
 
-    # ── parse unity_commands.json — execution rate ─────────────────────────
+    # --- unity_commands.json: execution rate ---
     if commands_path.exists():
         try:
             cmds = json.loads(commands_path.read_text(encoding="utf-8-sig"))
             if isinstance(cmds, list) and cmds:
                 executed = sum(1 for c in cmds if c.get("executed"))
                 metrics["command_execution_rate"] = round(executed / len(cmds), 4)
-                metrics["dispatch_failure_rate"]  = round(1.0 - executed / len(cmds), 4)
+                metrics["dispatch_failure_rate"] = round(1.0 - executed / len(cmds), 4)
         except Exception:
             pass
 
@@ -482,8 +532,12 @@ def compute_runtime_metrics(log_path: Path, commands_path: Path,
 # ---------------------------------------------------------------------------
 
 def compute_composite(coverage: Dict, validity: Dict, chain: Dict) -> float:
-    """0–100 composite. Weights mirror Phase-1 evaluator's structure."""
+    """Return the 0-100 Phase 2 composite score.
 
+    composite = 30% coverage + 30% map validity + 40% chain quality, where each
+    component is itself a weighted mean of its metrics (see below). The chain
+    component is 0 when the story chain is empty.
+    """
     cov = (
         coverage.get("ambient_object_coverage", 0) * 0.4
         + coverage.get("bubble_density", 0)        * 0.3
@@ -516,15 +570,16 @@ def compute_composite(coverage: Dict, validity: Dict, chain: Dict) -> float:
 # ---------------------------------------------------------------------------
 
 def evaluate(results_dir: Path, experience_path: Optional[Path] = None) -> Dict[str, Any]:
+    """Evaluate one trial directory and return the full Phase 2 report dict."""
     repo_root = Path(__file__).resolve().parents[2]
 
-    map_path   = results_dir / "interaction_map.json"
+    map_path = results_dir / "interaction_map.json"
     chain_path = results_dir / "story_chain.json"
     scene_path = results_dir / "scene_state.json"
 
-    interaction_map = _load_json(map_path)        or {}
-    chain           = _load_json(chain_path)      or {}
-    scene_state     = _load_json(scene_path)      or []
+    interaction_map = _load_json(map_path) or {}
+    chain = _load_json(chain_path) or {}
+    scene_state = _load_json(scene_path) or []
 
     cfg: dict = {}
     char_prefixes: List[str] = ["Doctor", "Nurse", "Patient", "Surgeon", "EMT"]
@@ -543,9 +598,9 @@ def evaluate(results_dir: Path, experience_path: Optional[Path] = None) -> Dict[
     coverage = compute_coverage_metrics(interaction_map, placed_names, placed_chars)
     validity = compute_map_validity_metrics(interaction_map, placed_names, placed_chars,
                                             available_controllers, cfg)
-    chain_m  = compute_chain_metrics(chain, placed_names, placed_chars, required_chars,
-                                     available_controllers, cfg)
-    runtime  = compute_runtime_metrics(
+    chain_m = compute_chain_metrics(chain, placed_names, placed_chars, required_chars,
+                                    available_controllers, cfg)
+    runtime = compute_runtime_metrics(
         log_path=results_dir / "agent.log",
         commands_path=results_dir / "unity_commands.json",
         chain_total_beats=int(chain_m.get("chain_length", 0)),
@@ -556,17 +611,18 @@ def evaluate(results_dir: Path, experience_path: Optional[Path] = None) -> Dict[
         "experience_file": str(experience_path) if experience_path else None,
         "scene_type": cfg.get("scene_type", "unknown"),
         "required_characters_count": len(required_chars),
-        "placed_characters_count":   len(placed_chars),
+        "placed_characters_count": len(placed_chars),
     }
     report["coverage"] = coverage
     report["validity"] = validity
-    report["chain"]    = chain_m
-    report["runtime"]  = runtime
+    report["chain"] = chain_m
+    report["runtime"] = runtime
     report["composite_score"] = compute_composite(coverage, validity, chain_m)
     return report
 
 
 def print_report(report: Dict[str, Any]) -> None:
+    """Pretty-print a Phase 2 evaluation report."""
     print(f"\n{'=' * 60}")
     print(f"  Phase 2 Evaluation: {report.get('scene_type', 'unknown')}")
     print(f"  Results dir: {report.get('results_dir', 'N/A')}")
@@ -583,10 +639,15 @@ def print_report(report: Dict[str, Any]) -> None:
         print()
 
 
+# ---------------------------------------------------------------------------
+# CLI
+# ---------------------------------------------------------------------------
+
 def main():
     parser = argparse.ArgumentParser(description="Evaluate Phase 2 interaction quality")
     parser.add_argument("--results-dir", type=Path, required=True,
-                        help="Directory containing interaction_map.json + story_chain.json + scene_state.json")
+                        help="Directory containing interaction_map.json + story_chain.json "
+                             "+ scene_state.json")
     parser.add_argument("--experience", type=Path, default=None,
                         help="Path to the experience.txt used for this run")
     parser.add_argument("--output", type=Path, default=None,

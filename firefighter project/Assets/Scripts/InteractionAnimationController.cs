@@ -4,25 +4,32 @@ using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
 /// <summary>
-/// Unity-side interaction → animation system.
+/// Unity-side interaction-to-animation system that reacts to player interactions
+/// immediately, without waiting for the Python agent's polling loop.
 ///
-/// Subscribes directly to every XRBaseInteractable in the scene (including
-/// objects spawned at runtime by EnvironmentAgent) and fires character
-/// animations and highlight pulses the instant the player interacts —
-/// no Python polling delay.
+/// Subscribes to every <see cref="XRBaseInteractable"/> in the scene (rescanning
+/// periodically to pick up objects spawned at runtime by <see cref="EnvironmentAgent"/>).
+/// On hover, grab, release or activate it flashes a highlight on the object and plays
+/// a character animation looked up in a built-in table keyed by object category and
+/// event type. The category is the lowercase object-name prefix before the first '_'
+/// or digit: "Treadmill_01" becomes "treadmill", "Utility_Cart_01" becomes "utility".
 ///
-/// Mirrors the ANIMATION_MAP from Agent/agent/interaction_animations.py.
-/// Category is derived from the object name prefix before the first '_' or
-/// digit: "Treadmill_01" → "treadmill", "Utility_Cart_01" → "utility", etc.
+/// Animations target <c>EnvironmentAgent.defaultHumanModel</c>, except when the touched
+/// object is itself a character (patient, doctor, nurse, ...), in which case that
+/// character is animated. Many entries return the character to idle after a delay.
 ///
-/// Attach to the same GameObject as EnvironmentAgent / AgentNetworkBridge
-/// (i.e. AI_Manager).  Works independently of whether the Python agent is
-/// running — and complements it when it is.
+/// This table is independent of the Python agent's per-scene interaction map
+/// (<c>Agent/interaction_animations.py</c>); the two complement each other.
+///
+/// Setup: added automatically to the EnvironmentAgent GameObject (AI_Manager) through
+/// <c>RequireComponent</c>. Optionally makes pre-placed scene objects interactable at
+/// startup via <see cref="InteractionSetup"/>.
 /// </summary>
 public class InteractionAnimationController : MonoBehaviour
 {
-    // ── Animation config ──────────────────────────────────────────────────────
+    // ---- Animation config ----
 
+    /// <summary>One animation reaction: which controller/state to play and when to return to idle.</summary>
     private struct AnimConfig
     {
         public string Controller;   // Resources path, e.g. "AnimatorControllers/HumanM@Walk01_Forward"
@@ -39,7 +46,9 @@ public class InteractionAnimationController : MonoBehaviour
         }
     }
 
-    // ── Constants ─────────────────────────────────────────────────────────────
+    // ---- Constants ----
+    // Controller paths are relative to a Resources folder; state names match the
+    // controller file names (Kevin Iglesias Human Animations pack).
 
     private const string IdleCtrl  = "AnimatorControllers/HumanM@Idles";
     private const string IdleState = "HumanM@Idles";
@@ -54,66 +63,67 @@ public class InteractionAnimationController : MonoBehaviour
     private const string WalkBackState = "HumanM@Walk01_Backward";
     private const string TalkingState  = "HumanM@Talking";
 
-    // ── Animation map ─────────────────────────────────────────────────────────
-    // Key: "category:event_type"  (category = lowercase prefix before first '_' or digit)
+    // ---- Animation map ----
+    // Key: "category:event_type" (category = lowercase name prefix before the first '_' or digit).
+    // Unmapped grab/activate events fall back to the idle animation; other unmapped events do nothing.
 
     private static readonly Dictionary<string, AnimConfig> AnimMap =
         new Dictionary<string, AnimConfig>
     {
-        // ── Treadmill ──────────────────────────────────────────────────────
+        // Treadmill
         { "treadmill:grab",         new AnimConfig(WalkFwd,  WalkFwdState,  0.35f, 6.0f) },
         { "treadmill:release",      new AnimConfig(IdleCtrl, IdleState,     0.5f)        },
         { "treadmill:hover_enter",  new AnimConfig(WalkFwd,  WalkFwdState,  0.4f,  2.5f) },
 
-        // ── Wheelchair ─────────────────────────────────────────────────────
+        // Wheelchair
         { "wheelchair:hover_enter", new AnimConfig(WalkFwd,  WalkFwdState,  0.4f,  2.0f) },
         { "wheelchair:grab",        new AnimConfig(IdleCtrl, IdleState,     0.4f)        },
         { "wheelchair:release",     new AnimConfig(WalkFwd,  WalkFwdState,  0.35f, 3.0f) },
 
-        // ── Trolley ────────────────────────────────────────────────────────
+        // Trolley
         { "trolley:grab",           new AnimConfig(WalkFwd,  WalkFwdState,  0.3f,  4.0f) },
         { "trolley:release",        new AnimConfig(IdleCtrl, IdleState,     0.4f)        },
 
-        // ── Utility cart ───────────────────────────────────────────────────
+        // Utility cart
         { "utility:grab",           new AnimConfig(WalkLeft, WalkLeftState, 0.3f,  3.0f) },
         { "utility:release",        new AnimConfig(IdleCtrl, IdleState,     0.4f)        },
 
-        // ── Patient ────────────────────────────────────────────────────────
+        // Patient
         { "patient:hover_enter",    new AnimConfig(Talking,  TalkingState,  0.3f,  5.0f) },
         { "patient:grab",           new AnimConfig(WalkFwd,  WalkFwdState,  0.4f,  4.0f) },
         { "patient:activate",       new AnimConfig(Talking,  TalkingState,  0.25f, 5.0f) },
 
-        // ── Folder / chart ─────────────────────────────────────────────────
+        // Folder / chart
         { "folder:hover_enter",     new AnimConfig(IdleCtrl, IdleState,     0.3f)        },
         { "folder:grab",            new AnimConfig(Talking,  TalkingState,  0.3f,  5.0f) },
         { "folder:activate",        new AnimConfig(Talking,  TalkingState,  0.25f, 6.0f) },
 
-        // ── Monitor (both "monitor" and "screen" prefixes) ─────────────────
+        // Monitor (both "monitor" and "screen" prefixes)
         { "monitor:hover_enter",    new AnimConfig(Talking,  TalkingState,  0.3f,  4.0f) },
         { "monitor:grab",           new AnimConfig(Talking,  TalkingState,  0.25f, 5.0f) },
         { "screen:hover_enter",     new AnimConfig(Talking,  TalkingState,  0.3f,  4.0f) },
         { "screen:grab",            new AnimConfig(Talking,  TalkingState,  0.25f, 5.0f) },
 
-        // ── Reception / desk ───────────────────────────────────────────────
+        // Reception / desk
         { "reception:hover_enter",  new AnimConfig(WalkFwd,  WalkFwdState,  0.3f,  2.0f) },
         { "reception:grab",         new AnimConfig(Talking,  TalkingState,  0.25f, 4.0f) },
         { "desk:hover_enter",       new AnimConfig(WalkFwd,  WalkFwdState,  0.3f,  2.0f) },
         { "desk:grab",              new AnimConfig(Talking,  TalkingState,  0.25f, 4.0f) },
 
-        // ── Sanitizer dispenser ────────────────────────────────────────────
+        // Sanitizer dispenser
         { "sanitizer:grab",         new AnimConfig(IdleCtrl, IdleState,     0.2f,  2.0f) },
         { "sanitizer:activate",     new AnimConfig(IdleCtrl, IdleState,     0.2f,  2.0f) },
 
-        // ── Waste bin ──────────────────────────────────────────────────────
+        // Waste bin
         { "waste:grab",             new AnimConfig(WalkFwd,  WalkFwdState,  0.3f,  2.0f) },
 
-        // ── Caution / sign ─────────────────────────────────────────────────
+        // Caution / sign
         { "caution:hover_enter",    new AnimConfig(IdleCtrl, IdleState,     0.3f)        },
         { "caution:grab",           new AnimConfig(WalkBack, WalkBackState, 0.3f,  2.0f) },
         { "sign:hover_enter",       new AnimConfig(IdleCtrl, IdleState,     0.3f)        },
         { "sign:grab",              new AnimConfig(WalkBack, WalkBackState, 0.3f,  2.0f) },
 
-        // ── Table / plinth ─────────────────────────────────────────────────
+        // Table / plinth
         { "table:hover_enter",      new AnimConfig(WalkFwd,  WalkFwdState,  0.4f,  1.5f) },
         { "table:grab",             new AnimConfig(WalkFwd,  WalkFwdState,  0.3f,  2.0f) },
         { "plinth:hover_enter",     new AnimConfig(WalkFwd,  WalkFwdState,  0.4f,  1.5f) },
@@ -121,47 +131,51 @@ public class InteractionAnimationController : MonoBehaviour
         { "mat:hover_enter",        new AnimConfig(WalkFwd,  WalkFwdState,  0.4f,  1.5f) },
         { "mat:grab",               new AnimConfig(WalkFwd,  WalkFwdState,  0.3f,  2.0f) },
 
-        // ── Towel dispenser ────────────────────────────────────────────────
+        // Towel dispenser
         { "towel:grab",             new AnimConfig(IdleCtrl, IdleState,     0.2f)        },
         { "towel:activate",         new AnimConfig(IdleCtrl, IdleState,     0.2f)        },
 
-        // ── Clock ──────────────────────────────────────────────────────────
+        // Clock
         { "clock:hover_enter",      new AnimConfig(IdleCtrl, IdleState,     0.3f)        },
 
-        // ── Poster ─────────────────────────────────────────────────────────
+        // Poster
         { "poster:hover_enter",     new AnimConfig(IdleCtrl, IdleState,     0.3f)        },
         { "poster:grab",            new AnimConfig(IdleCtrl, IdleState,     0.3f)        },
     };
 
-    // ── Inspector fields ──────────────────────────────────────────────────────
+    // ---- Inspector fields ----
 
-    [Tooltip("Seconds between rescans for newly-spawned interactables.")]
+    /// <summary>Seconds between scans for newly spawned interactables.</summary>
+    [Tooltip("Seconds between scans for newly spawned interactables.")]
     public float rescanInterval = 2f;
 
+    /// <summary>Color flashed on the object the player interacts with.</summary>
     [Tooltip("Highlight color flashed on the interacted object.")]
     public Color highlightColor = new Color(0.3f, 0.8f, 1.0f);
 
-    [Tooltip("Automatically add XR interaction components to pre-placed scene objects that don't have them yet.")]
+    /// <summary>If true, pre-placed scene objects are made XR-interactable at Start.</summary>
+    [Tooltip("At Start, add XR interaction components to pre-placed scene objects that don't have them yet.")]
     public bool autoMakeSceneObjectsInteractable = true;
 
-
-    // ── Character categories ──────────────────────────────────────────────────
+    // ---- Character categories ----
     // Objects in these categories are themselves character prefabs; when the player
-    // interacts with them we animate the character directly rather than defaultHumanModel.
+    // interacts with one, that character is animated instead of defaultHumanModel.
     private static readonly HashSet<string> CharacterCategories = new HashSet<string>
         { "patient", "doctor", "nurse", "surgeon", "therapist", "emt", "infectiologist" };
 
-    // ── Runtime state ─────────────────────────────────────────────────────────
+    // ---- Runtime state ----
 
     private EnvironmentAgent _envAgent;
     private InteractionSetup _interactionSetup;
     private readonly HashSet<int> _subscribedIds = new HashSet<int>();
 
-    // Single pending idle-return coroutine (EnvironmentAgent targets defaultHumanModel)
+    // Single pending idle-return coroutine; a new interaction cancels it. The idle
+    // return always targets defaultHumanModel.
     private Coroutine _pendingIdle;
 
-    // ── Lifecycle ─────────────────────────────────────────────────────────────
+    // ---- Lifecycle ----
 
+    /// <summary>Resolves the EnvironmentAgent and InteractionSetup (same GameObject first, then scene-wide).</summary>
     private void Awake()
     {
         _envAgent = GetComponent<EnvironmentAgent>()
@@ -179,6 +193,7 @@ public class InteractionAnimationController : MonoBehaviour
             Debug.LogWarning("[InteractionAnimationController] InteractionSetup not found — pre-placed objects will not be auto-made interactable.");
     }
 
+    /// <summary>Optionally makes pre-placed objects interactable, then subscribes to all current interactables.</summary>
     private void Start()
     {
         // Auto-add XR interaction components to pre-placed scene objects so they
@@ -186,7 +201,7 @@ public class InteractionAnimationController : MonoBehaviour
         if (autoMakeSceneObjectsInteractable && _interactionSetup != null)
             MakeSceneObjectsInteractable();
 
-        // Run one immediate scan so objects already in the scene at startup are covered
+        // Run one immediate scan so objects already in the scene at startup are covered.
         SubscribeToNewInteractables();
 
         Debug.Log("[InteractionAnimationController] Start complete. Animations will target EnvironmentAgent.defaultHumanModel.");
@@ -194,6 +209,7 @@ public class InteractionAnimationController : MonoBehaviour
 
     private float _nextRescan;
 
+    /// <summary>Rescans for new interactables every <see cref="rescanInterval"/> seconds.</summary>
     private void Update()
     {
         if (Time.time >= _nextRescan)
@@ -203,18 +219,17 @@ public class InteractionAnimationController : MonoBehaviour
         }
     }
 
-    // ── Auto-setup ────────────────────────────────────────────────────────────
+    // ---- Auto-setup ----
 
     /// <summary>
-    /// Walk every root GameObject in the scene and call MakeInteractable on
-    /// anything that has a Renderer (i.e. is visible) but not yet an
-    /// XRBaseInteractable.  Structural objects (walls, floor, etc.) are
-    /// skipped by InteractionSetup.MakeInteractable itself.
+    /// Calls <see cref="InteractionSetup.MakeInteractable"/> on the root of every
+    /// GameObject that has a Renderer (i.e. is visible) but no XRBaseInteractable yet.
+    /// Structural objects (walls, floor, etc.) are skipped by MakeInteractable itself.
     /// </summary>
     private void MakeSceneObjectsInteractable()
     {
         int count = 0;
-        // GetComponentsInChildren on every root covers the full hierarchy
+        // Collect every renderer in the scene and process each distinct root once.
         var allRenderers = FindObjectsByType<Renderer>(FindObjectsSortMode.None);
         var seen = new HashSet<int>();
 
@@ -228,7 +243,7 @@ public class InteractionAnimationController : MonoBehaviour
             if (seen.Contains(id)) continue;
             seen.Add(id);
 
-            // Skip if already interactable anywhere in the hierarchy
+            // Skip if already interactable anywhere in the hierarchy.
             if (root.GetComponentInChildren<XRBaseInteractable>() != null) continue;
 
             _interactionSetup.MakeInteractable(root);
@@ -241,8 +256,13 @@ public class InteractionAnimationController : MonoBehaviour
             Debug.Log("[InteractionAnimationController] No new scene objects needed interaction setup.");
     }
 
-    // ── Subscription ─────────────────────────────────────────────────────────
+    // ---- Subscription ----
 
+    /// <summary>
+    /// Adds hover/select/activate listeners to every XRBaseInteractable not yet
+    /// subscribed. Subscriptions are tracked by instance ID so each object is only
+    /// subscribed once.
+    /// </summary>
     private void SubscribeToNewInteractables()
     {
         var interactables = FindObjectsByType<XRBaseInteractable>(FindObjectsSortMode.None);
@@ -263,7 +283,7 @@ public class InteractionAnimationController : MonoBehaviour
 
             Debug.Log($"[InteractionAnimationController] Subscribed: {objName}  category=\"{category}\"  mapped={isMapped}");
 
-            // Capture local ref — lambdas inside foreach need this
+            // Capture a local reference for the listener lambdas.
             XRBaseInteractable captured = ia;
             ia.hoverEntered.AddListener(_ => OnInteract("hover_enter", captured.gameObject));
             ia.hoverExited.AddListener(_  => OnInteract("hover_exit",  captured.gameObject));
@@ -276,8 +296,15 @@ public class InteractionAnimationController : MonoBehaviour
             Debug.Log($"[InteractionAnimationController] +{newCount} interactable(s) this scan ({_subscribedIds.Count} total tracked)");
     }
 
-    // ── Event handler ─────────────────────────────────────────────────────────
+    // ---- Event handler ----
 
+    /// <summary>
+    /// Handles one interaction event: highlights the object (0.6 s for hover, 1.5 s
+    /// otherwise), plays the mapped animation and schedules the idle return.
+    /// <c>hover_exit</c> events are ignored.
+    /// </summary>
+    /// <param name="eventType">"hover_enter", "hover_exit", "grab", "release" or "activate".</param>
+    /// <param name="target">GameObject that owns the interactable.</param>
     private void OnInteract(string eventType, GameObject target)
     {
         if (eventType == "hover_exit") return;
@@ -288,13 +315,13 @@ public class InteractionAnimationController : MonoBehaviour
 
         Debug.Log($"[InteractionAnimationController] {eventType} → {cleanName}  (key=\"{key}\")");
 
-        // ── Resolve character root ────────────────────────────────────────────
+        // Resolve the character root.
         // For character-category objects, use the prefab root (transform.root) as both the
-        // highlight target and the animation target.  The Animator may live on a sub-bone
+        // highlight target and the animation target. The Animator may live on a sub-bone
         // (e.g. Kevin Iglesias "B-root"), so targeting the bone directly would give a
-        // GameObject with no Renderer children.  Using the prefab root means:
-        //   • HighlightCoroutine finds all renderers via GetComponentsInChildren
-        //   • PlayHumanAnimationFromResources finds the primary Animator via FindPrimaryAnimator
+        // GameObject with no Renderer children. Using the prefab root means:
+        //   - HighlightCoroutine finds all renderers via GetComponentsInChildren
+        //   - PlayHumanAnimationFromResources finds the primary Animator via FindPrimaryAnimator
         GameObject animTarget = null;
         if (CharacterCategories.Contains(category))
         {
@@ -302,7 +329,7 @@ public class InteractionAnimationController : MonoBehaviour
             Debug.Log($"[InteractionAnimationController] Character root: {animTarget.name}");
         }
 
-        // ── Always highlight the touched/hovered object ───────────────────────
+        // Always highlight the touched/hovered object.
         if (_envAgent != null)
         {
             float hlDuration = eventType == "hover_enter" ? 0.6f : 1.5f;
@@ -314,20 +341,20 @@ public class InteractionAnimationController : MonoBehaviour
                     highlightColor.r, highlightColor.g, highlightColor.b, hlDuration);
         }
 
-        // ── Look up NPC animation (all animations target the NPC character) ──
+        // Look up the NPC animation.
         AnimConfig cfg;
         if (!AnimMap.TryGetValue(key, out cfg))
         {
-            // Fallback for grab/activate so there's always some NPC reaction
+            // Fallback for grab/activate so there is always some NPC reaction.
             if (eventType == "grab" || eventType == "activate")
                 cfg = new AnimConfig(IdleCtrl, IdleState, 0.3f);
             else
-                return;  // no animation for unmapped hover/release
+                return;  // No animation for unmapped hover/release.
         }
 
         if (_envAgent == null) return;
 
-        // Cancel any pending idle-return
+        // Cancel any pending idle return.
         if (_pendingIdle != null)
         {
             StopCoroutine(_pendingIdle);
@@ -341,8 +368,9 @@ public class InteractionAnimationController : MonoBehaviour
             _pendingIdle = StartCoroutine(IdleAfterDelay(cfg.IdleDelay));
     }
 
-    // ── Idle scheduling ───────────────────────────────────────────────────────
+    // ---- Idle scheduling ----
 
+    /// <summary>Waits <paramref name="delay"/> seconds, then returns the default human to idle.</summary>
     private IEnumerator IdleAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
@@ -352,15 +380,13 @@ public class InteractionAnimationController : MonoBehaviour
             _envAgent.PlayHumanAnimationFromResources(null, IdleCtrl, IdleState, 0.5f);
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
+    // ---- Helpers ----
 
     /// <summary>
-    /// Extract the category token from an object name: the lowercase prefix
-    /// before the first underscore or digit.
-    ///   "Treadmill_01"    → "treadmill"
-    ///   "WheelChair_01"   → "wheelchair"
-    ///   "Utility_Cart_01" → "utility"
-    ///   "Screen_02"       → "screen"
+    /// Extracts the category token from an object name: the lowercase prefix before
+    /// the first underscore or digit, ignoring a "(Clone)" suffix. Examples:
+    /// "Treadmill_01" gives "treadmill", "WheelChair_01" gives "wheelchair",
+    /// "Utility_Cart_01" gives "utility", "Screen_02" gives "screen".
     /// </summary>
     private static string GetCategory(string objName)
     {
@@ -375,5 +401,4 @@ public class InteractionAnimationController : MonoBehaviour
         }
         return sb.ToString().ToLower();
     }
-
 }

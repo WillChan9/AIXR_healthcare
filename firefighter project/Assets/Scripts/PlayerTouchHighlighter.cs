@@ -39,7 +39,7 @@ public class PlayerTouchHighlighter : MonoBehaviour
     [Tooltip("Minimum seconds between highlights on the SAME object (prevents spam).")]
     public float cooldownPerObject = 2.0f;
 
-    // ── Runtime ───────────────────────────────────────────────────────────────
+    // ---- Runtime ----
 
     private EnvironmentAgent _envAgent;
     private InteractionEventReporter _eventReporter;
@@ -47,7 +47,7 @@ public class PlayerTouchHighlighter : MonoBehaviour
     // instanceID → last-highlighted timestamp
     private readonly Dictionary<int, float> _lastHighlight = new Dictionary<int, float>();
 
-    // ── Lifecycle ─────────────────────────────────────────────────────────────
+    // ---- Lifecycle ----
 
     private void Awake()
     {
@@ -74,7 +74,7 @@ public class PlayerTouchHighlighter : MonoBehaviour
             Debug.Log($"[PlayerTouchHighlighter] Registered. Watching '{playerTransform.name}' — waiting for Phase 2.");
     }
 
-    // ── Per-frame overlap check ───────────────────────────────────────────────
+    // ---- Per-frame overlap check ----
 
     private void Update()
     {
@@ -127,7 +127,7 @@ public class PlayerTouchHighlighter : MonoBehaviour
         }
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
+    // ---- Helpers ----
 
     private static readonly System.Collections.Generic.HashSet<string> PrimitiveMeshNames
         = new System.Collections.Generic.HashSet<string> { "Cube", "Sphere", "Capsule", "Cylinder", "Plane", "Quad" };
@@ -167,7 +167,7 @@ public class PlayerTouchHighlighter : MonoBehaviour
         return go;
     }
 
-    // ── Gizmo: visualise touch sphere in Scene view ───────────────────────────
+    // ---- Gizmo: visualise touch sphere in Scene view ----
 
     private void OnDrawGizmosSelected()
     {

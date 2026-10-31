@@ -1,11 +1,23 @@
 """
-Evaluate Phase 1 scene generation quality from output artifacts.
+Evaluate Phase 1 (static scene generation) quality for a single trial.
 
-Computes geometric, semantic (automated), plan-completion, and efficiency metrics
-from scene_state.json, reflection.json, agent.log, and unity_commands.json.
+Inputs (read from ``--results-dir``):
+    scene_state.json     objects actually present in Unity, with positions and AABB bounds
+    reflection.json      per-step reflection entries from the planning loop
+    unity_commands.json  command list sent to Unity
+    agent.log            pipeline log (LLM-call counts, timings, dropped prefabs)
+plus the scenario's ``experience.txt`` (``--experience``) for room bounds and the
+REQUIRED OBJECTS list.
+
+Output:
+    A JSON report with ``geometric``, ``semantic``, ``plan`` and ``efficiency``
+    sections and a 0-100 ``composite_score``. Printed to stdout and optionally
+    written to ``--output``. ``run_experiment.py`` saves it as ``eval_report.json``.
 
 Usage:
-    python evaluate_scene.py --results-dir path/to/run_output [--experience path/to/experience.txt]
+    python evaluate_scene.py --results-dir results/S03/trial_1 \
+        --experience scenarios/experience_S03.txt \
+        --output results/S03/trial_1/eval_report.json
 """
 
 import argparse
@@ -23,6 +35,7 @@ from typing import Any, Dict, List, Optional, Tuple
 # ---------------------------------------------------------------------------
 
 def _load_json(path: Path) -> Any:
+    """Load JSON from ``path``; return None if the file is missing or empty."""
     if not path.exists():
         return None
     text = path.read_text(encoding="utf-8-sig")
@@ -32,6 +45,7 @@ def _load_json(path: Path) -> Any:
 
 
 def _parse_experience_config(txt: str) -> dict:
+    """Parse ``key = value`` lines from the ``[room_config]`` section of an experience file."""
     cfg: dict = {}
     in_section = False
     for line in txt.splitlines():
@@ -49,15 +63,17 @@ def _parse_experience_config(txt: str) -> dict:
 
 
 def _clean_description(txt: str) -> str:
+    """Return the free-text description (everything before ``[room_config]``)."""
     idx = txt.find("[room_config]")
     return txt[:idx].strip() if idx != -1 else txt.strip()
 
 
 def _extract_required_objects(description: str) -> List[str]:
-    """Extract object names referenced after 'REQUIRED OBJECTS' in the description."""
+    """Extract prefab-like names (e.g. ``Treadmill_01``) listed under 'REQUIRED OBJECTS'.
+
+    The block ends at a blank line or a line starting with "Staff" / "Room exterior".
+    """
     required: List[str] = []
-    # Match patterns like "Treadmill_01", "Bed_01", etc.
-    # Look for lines with numbered items containing prefab-like names
     pattern = re.compile(r'\b([A-Z][a-zA-Z]*(?:_[A-Za-z0-9]+)+)\b')
     in_required = False
     for line in description.splitlines():
@@ -65,7 +81,8 @@ def _extract_required_objects(description: str) -> List[str]:
             in_required = True
             continue
         if in_required:
-            if line.strip() == "" or line.strip().startswith("Staff") or line.strip().startswith("Room exterior"):
+            if (line.strip() == "" or line.strip().startswith("Staff")
+                    or line.strip().startswith("Room exterior")):
                 in_required = False
                 continue
             matches = pattern.findall(line)
@@ -76,11 +93,11 @@ def _extract_required_objects(description: str) -> List[str]:
 
 
 # ---------------------------------------------------------------------------
-# Geometric Metrics
+# Geometric metrics
 # ---------------------------------------------------------------------------
 
 def _aabb_overlap(a: Dict, b: Dict) -> bool:
-    """Check if two objects' AABB bounding boxes overlap."""
+    """Return True if two objects' axis-aligned bounding boxes overlap (strictly)."""
     return (
         a["boundsMinX"] < b["boundsMaxX"] and a["boundsMaxX"] > b["boundsMinX"] and
         a["boundsMinY"] < b["boundsMaxY"] and a["boundsMaxY"] > b["boundsMinY"] and
@@ -88,15 +105,8 @@ def _aabb_overlap(a: Dict, b: Dict) -> bool:
     )
 
 
-def _center_dist(a: Dict, b: Dict) -> float:
-    return math.sqrt(
-        (a["x"] - b["x"]) ** 2 +
-        (a["y"] - b["y"]) ** 2 +
-        (a["z"] - b["z"]) ** 2
-    )
-
-
 def _xz_dist(a: Dict, b: Dict) -> float:
+    """Euclidean distance between object centers on the floor (XZ) plane."""
     return math.sqrt((a["x"] - b["x"]) ** 2 + (a["z"] - b["z"]) ** 2)
 
 
@@ -104,7 +114,12 @@ def compute_geometric_metrics(
     scene_state: List[Dict],
     cfg: dict,
 ) -> Dict[str, float]:
-    """Compute all geometric quality metrics from scene_state.json objects."""
+    """Compute geometric quality metrics from scene_state.json objects.
+
+    Structural ``Cube`` objects (walls/floor/ceiling) are excluded. Room bounds
+    come from ``cfg`` (``x_min``/``x_max``/``z_min``/``z_max``/``room_width``/
+    ``room_depth``), with defaults for a 6 x 6 m room.
+    """
 
     x_min = float(cfg.get("x_min", -2.8))
     x_max = float(cfg.get("x_max", 2.8))
@@ -113,7 +128,6 @@ def compute_geometric_metrics(
     room_w = float(cfg.get("room_width", 6))
     room_d = float(cfg.get("room_depth", 6))
 
-    # Filter out structural Cubes (walls/floor/ceiling)
     objects = [
         obj for obj in scene_state
         if obj.get("objectName", "") != "Cube"
@@ -166,7 +180,10 @@ def compute_geometric_metrics(
         nn_distances.append(min_d if min_d < float("inf") else 0.0)
     metrics["mean_nn_distance"] = sum(nn_distances) / len(nn_distances) if nn_distances else 0.0
     metrics["std_nn_distance"] = (
-        math.sqrt(sum((d - metrics["mean_nn_distance"]) ** 2 for d in nn_distances) / len(nn_distances))
+        math.sqrt(
+            sum((d - metrics["mean_nn_distance"]) ** 2 for d in nn_distances)
+            / len(nn_distances)
+        )
         if nn_distances else 0.0
     )
 
@@ -179,8 +196,9 @@ def compute_geometric_metrics(
                 min_pw = d
     metrics["min_pairwise_distance"] = min_pw if min_pw < float("inf") else 0.0
 
-    # --- Floor Coverage (union of XZ footprints / room area) ---
-    # Approximate: sum of individual footprint areas (overestimates if overlapping)
+    # --- Floor Coverage ---
+    # Approximated as the sum of individual XZ footprints / room area (capped at 1.0);
+    # overestimates when footprints overlap.
     room_area = room_w * room_d
     total_footprint = 0.0
     for obj in objects:
@@ -190,7 +208,7 @@ def compute_geometric_metrics(
     metrics["floor_coverage"] = min(total_footprint / room_area, 1.0) if room_area > 0 else 0.0
 
     # --- Height Violation Rate ---
-    # Small props (defined by keywords) should be on surfaces (y > 0.3), not on floor
+    # Small props (matched by keyword) should sit on surfaces (y >= 0.3), not the floor.
     small_keywords = {"folder", "syringe", "scalpel", "forceps", "bottle", "tray",
                       "stethoscope", "thermometer", "otoscope", "keyboard", "mouse",
                       "copybook", "glasses", "bandage", "bowl", "mask_box", "aid_kit",
@@ -210,7 +228,7 @@ def compute_geometric_metrics(
 
 
 # ---------------------------------------------------------------------------
-# Semantic Metrics (automated, no LLM)
+# Semantic metrics (automated, no LLM)
 # ---------------------------------------------------------------------------
 
 def compute_semantic_metrics(
@@ -219,7 +237,14 @@ def compute_semantic_metrics(
     description: str,
     prefab_list: Optional[List[str]] = None,
 ) -> Dict[str, float]:
-    """Compute automated semantic metrics."""
+    """Compute automated semantic metrics.
+
+    - prefab_hit_rate: fraction of REQUIRED OBJECTS whose name appears (substring
+      match) in a placed object name; 1.0 when the description lists none.
+    - prefab_name_validity: fraction of PlaceObject/PlaceHuman commands using a
+      name from ``prefab_list`` (only computed when ``prefab_list`` is given).
+    - duplicate_rate, character_count.
+    """
 
     objects = [
         obj for obj in scene_state
@@ -256,7 +281,9 @@ def compute_semantic_metrics(
                 valid_names += 1
         metrics["total_placements"] = total_placements
         metrics["valid_name_count"] = valid_names
-        metrics["prefab_name_validity"] = valid_names / total_placements if total_placements > 0 else 1.0
+        metrics["prefab_name_validity"] = (
+            valid_names / total_placements if total_placements > 0 else 1.0
+        )
 
     # --- Duplicate Object Rate ---
     name_counts = Counter(object_names)
@@ -276,11 +303,16 @@ def compute_semantic_metrics(
 
 
 # ---------------------------------------------------------------------------
-# Plan Completion Metrics
+# Plan completion metrics
 # ---------------------------------------------------------------------------
 
 def compute_plan_metrics(reflection_data: List[Dict]) -> Dict[str, float]:
-    """Compute plan completion metrics from reflection.json."""
+    """Compute plan completion metrics from reflection.json.
+
+    A step counts as complete if any of its reflection entries has
+    ``step_complete == "yes"``. Corrections are the number of ``MoveObject`` /
+    ``DeleteObject`` mentions in ``alignment_suggestions``.
+    """
     metrics: Dict[str, float] = {}
 
     if not reflection_data:
@@ -305,11 +337,9 @@ def compute_plan_metrics(reflection_data: List[Dict]) -> Dict[str, float]:
     total_iterations = len(reflection_data)
     total_corrections = 0
 
-    for step_num, entries in step_results.items():
-        # Check if any entry for this step has step_complete="yes"
+    for entries in step_results.values():
         if any(e.get("reflection", {}).get("step_complete") == "yes" for e in entries):
             completed_steps += 1
-        # Count corrections
         for entry in entries:
             suggestions = entry.get("reflection", {}).get("alignment_suggestions", "")
             total_corrections += suggestions.count("MoveObject")
@@ -331,19 +361,19 @@ def compute_plan_metrics(reflection_data: List[Dict]) -> Dict[str, float]:
 
 
 # ---------------------------------------------------------------------------
-# Efficiency Metrics
+# Efficiency metrics
 # ---------------------------------------------------------------------------
 
 _LOG_TS_RE = re.compile(r'^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})')
 
 
 def _extract_phase1_duration(log_text: str) -> Tuple[Optional[float], Optional[str], Optional[str]]:
-    """Find Phase 1 start/end timestamps in agent.log and return (duration_seconds, start, end).
+    """Return ``(duration_seconds, start, end)`` for Phase 1 from agent.log timestamps.
 
-    Start marker: line containing "PHASE 1: Static Environment Generation".
-    End markers (whichever appears last): "Step complete — all", "Total objects placed:",
-    "--phase1-only flag set", or the start of "PHASE 2".
-    Falls back to the last timestamped line if no end marker is found.
+    Start marker: "PHASE 1: Static Environment Generation".
+    End marker: the last line containing "Step complete — all", "Total objects placed:",
+    "--phase1-only flag set" or "PHASE 2:". Falls back to the last timestamped line.
+    Returns ``(None, None, None)`` if no start marker is found.
     """
     start_dt: Optional[datetime] = None
     end_dt: Optional[datetime] = None
@@ -385,30 +415,31 @@ def compute_efficiency_metrics(
     log_path: Path,
     commands: List[Dict],
 ) -> Dict[str, float]:
-    """Compute efficiency metrics from agent.log and unity_commands.json."""
+    """Compute efficiency metrics (LLM calls, waits, drops, duration, command counts)."""
     metrics: Dict[str, float] = {}
 
-    # --- Count LLM calls and timing from log ---
     llm_calls = 0
     screenshot_wait_total = 0.0
 
     if log_path.exists():
         log_text = log_path.read_text(encoding="utf-8", errors="replace")
-        # Count Groq API calls
+        # One "GROQ RAW RESPONSE" line is logged per LLM call.
         llm_calls = log_text.count("GROQ RAW RESPONSE")
 
-        # Count screenshot waits
+        # Sum of the screenshot-wait budgets requested (upper bound, not actual time).
         wait_matches = re.findall(r'Waiting up to (\d+)s for Unity', log_text)
         screenshot_wait_total = sum(int(w) for w in wait_matches)
 
-        # Count fill commands
+        # Objects added by the sparse-room fill loop.
         fill_matches = re.findall(r'Appended (\d+) fill commands', log_text)
         metrics["fill_commands_total"] = sum(int(f) for f in fill_matches)
 
-        # Count dropped prefabs
-        metrics["dropped_prefabs"] = log_text.count("Dropping PlaceObject") + log_text.count("Dropping PlaceHuman")
+        # Placement commands dropped because the prefab name was not found.
+        metrics["dropped_prefabs"] = (
+            log_text.count("Dropping PlaceObject") + log_text.count("Dropping PlaceHuman")
+        )
 
-        # --- Phase 1 wall-clock duration (from log timestamps) ---
+        # Phase 1 wall-clock duration from log timestamps.
         duration, start_ts, end_ts = _extract_phase1_duration(log_text)
         if duration is not None:
             metrics["phase1_duration_seconds"] = round(duration, 2)
@@ -420,7 +451,6 @@ def compute_efficiency_metrics(
     metrics["llm_calls"] = llm_calls
     metrics["screenshot_wait_seconds"] = screenshot_wait_total
 
-    # --- Command counts ---
     if commands:
         action_counts = Counter(c.get("action", "") for c in commands)
         metrics["total_commands"] = len(commands)
@@ -434,13 +464,19 @@ def compute_efficiency_metrics(
 
 
 # ---------------------------------------------------------------------------
-# Main Evaluation
+# Main evaluation
 # ---------------------------------------------------------------------------
 
 def evaluate(results_dir: Path, experience_path: Optional[Path] = None) -> Dict[str, Any]:
-    """Run full evaluation on a single experiment run."""
+    """Evaluate one trial directory and return the full report dict.
 
-    # Load artifacts
+    Composite score (0-100) =
+        25% collision  (1 - 10 * collision_rate, floored at 0)
+      + 15% OOB        (1 - 5 * oob_rate, floored at 0)
+      + 30% prefab hit rate
+      + 20% plan step completion rate
+      + 10% height   (1 - height_violation_rate)
+    """
     scene_state_path = results_dir / "scene_state.json"
     reflection_path = results_dir / "reflection.json"
     commands_path = results_dir / "unity_commands.json"
@@ -450,7 +486,6 @@ def evaluate(results_dir: Path, experience_path: Optional[Path] = None) -> Dict[
     reflection_data = _load_json(reflection_path) or []
     commands = _load_json(commands_path) or []
 
-    # Load experience description + config
     cfg = {}
     description = ""
     if experience_path and experience_path.exists():
@@ -458,7 +493,6 @@ def evaluate(results_dir: Path, experience_path: Optional[Path] = None) -> Dict[
         cfg = _parse_experience_config(exp_text)
         description = _clean_description(exp_text)
 
-    # Compute all metric groups
     report: Dict[str, Any] = {
         "results_dir": str(results_dir),
         "experience_file": str(experience_path) if experience_path else None,
@@ -470,12 +504,11 @@ def evaluate(results_dir: Path, experience_path: Optional[Path] = None) -> Dict[
     report["plan"] = compute_plan_metrics(reflection_data)
     report["efficiency"] = compute_efficiency_metrics(log_path, commands)
 
-    # Compute composite score (0-100)
     g = report["geometric"]
     s = report["semantic"]
     p = report["plan"]
 
-    collision_score = max(0, 1.0 - g.get("collision_rate", 0) * 10)  # penalize heavily
+    collision_score = max(0, 1.0 - g.get("collision_rate", 0) * 10)  # penalized heavily
     oob_score = max(0, 1.0 - g.get("oob_rate", 0) * 5)
     hit_score = s.get("prefab_hit_rate", 0)
     plan_score = p.get("step_completion_rate", 0)
@@ -521,7 +554,8 @@ def print_report(report: Dict[str, Any]) -> None:
 def main():
     parser = argparse.ArgumentParser(description="Evaluate Phase 1 scene generation quality")
     parser.add_argument("--results-dir", type=Path, required=True,
-                        help="Directory containing scene_state.json, reflection.json, agent.log, unity_commands.json")
+                        help="Directory containing scene_state.json, reflection.json, "
+                             "agent.log, unity_commands.json")
     parser.add_argument("--experience", type=Path, default=None,
                         help="Path to the experience.txt used for this run")
     parser.add_argument("--output", type=Path, default=None,

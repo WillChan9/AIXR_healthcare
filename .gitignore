@@ -1,4 +1,24 @@
+# Secrets
 .env
 *.env
 
-/Agent/api_files
+# Editor / IDE
+.idea/
+.vscode/
+.claude/settings.local.json
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Agent runtime output (api_files/experience.txt is the tracked input)
+/Agent/api_files/*
+!/Agent/api_files/experience.txt
+
+# Files exchanged between the Python agent and Unity at runtime
+/firefighter project/Assets/Scripts/unity_commands.json*
+/firefighter project/Assets/Scripts/interaction_events.json*
+/firefighter project/Assets/Scripts/scene_state.json*

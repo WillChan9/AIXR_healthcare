@@ -1,11 +1,26 @@
 """
-Aggregate evaluation results across scenarios and trials.
+Aggregate per-trial evaluation reports across trials and scenarios.
 
-Reads per-run JSON reports from evaluate_scene.py + llm_judge.py,
-computes mean/std across trials, generates summary tables and charts.
+Input layout (``--results-root``)::
+
+    <results-root>/<scenario>/<trial>/
+        eval_report.json          from evaluate_scene.py (required; trials without it are skipped)
+        phase2_eval_report.json   from evaluate_phase2.py (optional)
+        llm_judge_report.json     from llm_judge.py (optional)
+
+For each scenario, computes the mean and population standard deviation of each
+metric across trials (keys like ``geometric.collision_rate_mean`` /
+``..._std``).
+
+Outputs (``--output-dir``, default ``<results-root>/../reports``):
+    summary.json        all aggregated metrics per scenario
+    summary.csv         same, one row per scenario
+    summary_table.txt   fixed-width table of key metrics (also printed)
+    charts/             per-metric bar charts and a radar chart (requires matplotlib;
+                        the radar chart also requires numpy)
 
 Usage:
-    python aggregate_results.py --results-root Agent/evaluation/results --output-dir Agent/evaluation/reports
+    python aggregate_results.py --results-root results --output-dir reports
 """
 
 import argparse
@@ -17,7 +32,12 @@ from pathlib import Path
 from typing import Any, Dict, List
 
 
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
 def _load_json(path: Path) -> Any:
+    """Load JSON from ``path``; return None if the file is missing or empty."""
     if not path.exists():
         return None
     text = path.read_text(encoding="utf-8-sig")
@@ -31,6 +51,7 @@ def _mean(values: List[float]) -> float:
 
 
 def _std(values: List[float]) -> float:
+    """Population standard deviation (0.0 for fewer than two values)."""
     if len(values) < 2:
         return 0.0
     m = _mean(values)
@@ -42,19 +63,11 @@ def _std(values: List[float]) -> float:
 # ---------------------------------------------------------------------------
 
 def collect_reports(results_root: Path) -> Dict[str, List[Dict]]:
-    """
-    Collect evaluation reports grouped by scenario.
+    """Collect per-trial reports, grouped by scenario directory name.
 
-    Expected directory structure:
-        results_root/
-            S01/
-                trial_1/
-                    eval_report.json
-                    llm_judge_report.json
-                trial_2/
-                    ...
-            S02/
-                ...
+    Each returned report is the trial's ``eval_report.json`` with the judge
+    report merged in under ``"llm_judge"`` and the Phase 2 report under
+    ``"phase2"`` (when present). Trials without ``eval_report.json`` are skipped.
     """
     grouped: Dict[str, List[Dict]] = defaultdict(list)
 
@@ -83,11 +96,11 @@ def collect_reports(results_root: Path) -> Dict[str, List[Dict]]:
 
 
 def aggregate_scenario(reports: List[Dict]) -> Dict[str, Any]:
-    """Aggregate metrics across trials for a single scenario."""
+    """Aggregate metrics across the trials of one scenario into ``<path>_mean/_std`` keys."""
     if not reports:
         return {}
 
-    # Collect all metric keys
+    # (section, key) pairs to aggregate; dotted sections are nested dicts.
     metric_paths = [
         ("geometric", "collision_rate"),
         ("geometric", "oob_rate"),
@@ -110,17 +123,17 @@ def aggregate_scenario(reports: List[Dict]) -> Dict[str, Any]:
         ("efficiency", "dropped_prefabs"),
         ("efficiency", "fill_commands_total"),
         ("efficiency", "phase1_duration_seconds"),
-        # Phase 2 — Coverage
+        # Phase 2: coverage
         ("phase2.coverage", "ambient_object_coverage"),
         ("phase2.coverage", "multi_event_pct"),
         ("phase2.coverage", "bubble_density"),
         ("phase2.coverage", "targeted_animation_pct"),
-        # Phase 2 — Validity
+        # Phase 2: validity
         ("phase2.validity", "map_controller_validity_rate"),
         ("phase2.validity", "map_state_prefix_validity"),
         ("phase2.validity", "map_target_validity_rate"),
         ("phase2.validity", "map_bubble_on_validity"),
-        # Phase 2 — Chain
+        # Phase 2: story chain
         ("phase2.chain", "chain_length"),
         ("phase2.chain", "chain_beat_validity_rate"),
         ("phase2.chain", "chain_trigger_validity_rate"),
@@ -128,7 +141,7 @@ def aggregate_scenario(reports: List[Dict]) -> Dict[str, Any]:
         ("phase2.chain", "chain_unique_action_types"),
         ("phase2.chain", "chain_char_coverage"),
         ("phase2.chain", "chain_walk_coord_validity"),
-        # Phase 2 — Runtime (only populated when INCLUDE_PHASE2 was set)
+        # Phase 2: runtime (only populated when the trial ran with --include-phase2)
         ("phase2.runtime", "phase2_ran"),
         ("phase2.runtime", "phase2_duration_seconds"),
         ("phase2.runtime", "chain_beats_fired"),
@@ -149,7 +162,7 @@ def aggregate_scenario(reports: List[Dict]) -> Dict[str, Any]:
     }
 
     def _walk_section(report: Dict, dotted: str) -> Dict:
-        """Resolve nested section path like 'phase2.chain' → report['phase2']['chain']."""
+        """Resolve a dotted section path, e.g. 'phase2.chain' -> report['phase2']['chain']."""
         node: Any = report
         for part in dotted.split("."):
             if not isinstance(node, dict):
@@ -176,15 +189,15 @@ def aggregate_scenario(reports: List[Dict]) -> Dict[str, Any]:
         agg["composite_score_mean"] = round(_mean(composites), 2)
         agg["composite_score_std"] = round(_std(composites), 2)
 
-    # Phase 2 composite score (separate from Phase 1's composite_score above)
+    # Phase 2 composite score (separate from the Phase 1 composite above)
     p2_composites = [r.get("phase2", {}).get("composite_score", 0)
                      for r in reports
                      if isinstance(r.get("phase2"), dict) and "composite_score" in r["phase2"]]
     if p2_composites:
         agg["phase2.composite_score_mean"] = round(_mean(p2_composites), 2)
-        agg["phase2.composite_score_std"]  = round(_std(p2_composites), 2)
+        agg["phase2.composite_score_std"] = round(_std(p2_composites), 2)
 
-    # LLM Judge — Phase 1 ratings
+    # LLM judge: Phase 1 ratings (falsy/missing scores are skipped)
     coherence = [r.get("llm_judge", {}).get("coherence_score", 0) for r in reports
                  if r.get("llm_judge", {}).get("coherence_score")]
     spatial = [r.get("llm_judge", {}).get("spatial_score", 0) for r in reports
@@ -196,7 +209,7 @@ def aggregate_scenario(reports: List[Dict]) -> Dict[str, Any]:
         agg["llm_judge.spatial_mean"] = round(_mean(spatial), 2)
         agg["llm_judge.spatial_std"] = round(_std(spatial), 2)
 
-    # LLM Judge — Phase 2 ratings (nested under llm_judge.phase2)
+    # LLM judge: Phase 2 ratings (nested under llm_judge.phase2)
     for phase2_key in ("bubble_informativeness", "narrative_coherence",
                        "character_voice_consistency", "bubble_object_fit"):
         vals = [r.get("llm_judge", {}).get("phase2", {}).get(phase2_key, 0)
@@ -205,15 +218,16 @@ def aggregate_scenario(reports: List[Dict]) -> Dict[str, Any]:
                 and r["llm_judge"]["phase2"].get(phase2_key)]
         if vals:
             agg[f"llm_judge.phase2.{phase2_key}_mean"] = round(_mean(vals), 2)
-            agg[f"llm_judge.phase2.{phase2_key}_std"]  = round(_std(vals), 2)
+            agg[f"llm_judge.phase2.{phase2_key}_std"] = round(_std(vals), 2)
 
     return agg
 
 
 # ---------------------------------------------------------------------------
-# Output: Summary Table
+# Output: summary table
 # ---------------------------------------------------------------------------
 
+# (aggregated key, column label) for the summary table.
 KEY_METRICS = [
     ("composite_score_mean", "Composite"),
     ("geometric.collision_rate_mean", "Collision%"),
@@ -235,19 +249,20 @@ KEY_METRICS = [
 
 
 def print_summary_table(all_agg: Dict[str, Dict]) -> str:
-    """Print a formatted summary table and return as string."""
+    """Print a fixed-width table of KEY_METRICS per scenario (plus an AVERAGE row).
+
+    Returns the table as a string.
+    """
     header_labels = ["Scenario"] + [label for _, label in KEY_METRICS]
     col_widths = [max(12, len(h) + 2) for h in header_labels]
 
     lines = []
-    # Header
     header = ""
     for i, label in enumerate(header_labels):
         header += label.ljust(col_widths[i])
     lines.append(header)
     lines.append("-" * len(header))
 
-    # Rows
     for scenario, agg in sorted(all_agg.items()):
         row = scenario.ljust(col_widths[0])
         for i, (key, _) in enumerate(KEY_METRICS):
@@ -262,7 +277,7 @@ def print_summary_table(all_agg: Dict[str, Dict]) -> str:
             row += cell.ljust(col_widths[i + 1])
         lines.append(row)
 
-    # Overall average
+    # Unweighted mean of the per-scenario values.
     lines.append("-" * len(lines[0]))
     avg_row = "AVERAGE".ljust(col_widths[0])
     for i, (key, _) in enumerate(KEY_METRICS):
@@ -285,7 +300,10 @@ def print_summary_table(all_agg: Dict[str, Dict]) -> str:
 # ---------------------------------------------------------------------------
 
 def generate_charts(all_agg: Dict[str, Dict], output_dir: Path) -> None:
-    """Generate bar charts for key metrics. Requires matplotlib."""
+    """Save bar charts (mean +/- std per scenario) and a radar chart to ``output_dir``.
+
+    Skipped with a warning if matplotlib is not installed.
+    """
     try:
         import matplotlib
         matplotlib.use("Agg")
@@ -323,12 +341,11 @@ def generate_charts(all_agg: Dict[str, Dict], output_dir: Path) -> None:
         plt.close(fig)
         print(f"  Chart saved: {output_dir / fname}")
 
-    # Radar chart for overall averages
     _generate_radar(all_agg, scenarios, output_dir)
 
 
 def _generate_radar(all_agg: Dict[str, Dict], scenarios: List[str], output_dir: Path) -> None:
-    """Generate a radar chart comparing scenarios on key metrics."""
+    """Save a radar chart comparing the first 5 scenarios on normalized key metrics."""
     try:
         import matplotlib
         matplotlib.use("Agg")
@@ -372,15 +389,14 @@ def _generate_radar(all_agg: Dict[str, Dict], scenarios: List[str], output_dir: 
 
 
 # ---------------------------------------------------------------------------
-# CSV Export
+# Output: CSV
 # ---------------------------------------------------------------------------
 
 def export_csv(all_agg: Dict[str, Dict], output_path: Path) -> None:
-    """Export aggregated results to CSV."""
+    """Write one CSV row per scenario with every aggregated key as a column."""
     if not all_agg:
         return
 
-    # Collect all keys
     all_keys = set()
     for agg in all_agg.values():
         all_keys.update(agg.keys())
@@ -404,7 +420,8 @@ def main():
     parser.add_argument("--results-root", type=Path, required=True,
                         help="Root directory: results_root/{scenario}/{trial}/")
     parser.add_argument("--output-dir", type=Path, default=None,
-                        help="Directory for reports and charts")
+                        help="Directory for reports and charts "
+                             "(default: <results-root>/../reports)")
     args = parser.parse_args()
 
     output_dir = args.output_dir or (args.results_root.parent / "reports")
@@ -417,20 +434,18 @@ def main():
         print("  No reports found. Run experiments first.")
         sys.exit(1)
 
-    print(f"  Found {sum(len(v) for v in grouped.values())} reports across {len(grouped)} scenarios.\n")
+    n_reports = sum(len(v) for v in grouped.values())
+    print(f"  Found {n_reports} reports across {len(grouped)} scenarios.\n")
 
-    # Aggregate
     all_agg: Dict[str, Dict] = {}
     for scenario, reports in sorted(grouped.items()):
         all_agg[scenario] = aggregate_scenario(reports)
 
-    # Summary table
     print("\n" + "=" * 80)
     print("  SUMMARY TABLE")
     print("=" * 80 + "\n")
     table_str = print_summary_table(all_agg)
 
-    # Save outputs
     summary_path = output_dir / "summary.json"
     summary_path.write_text(json.dumps(all_agg, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"\n  Summary JSON: {summary_path}")

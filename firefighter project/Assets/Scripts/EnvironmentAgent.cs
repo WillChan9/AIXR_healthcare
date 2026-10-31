@@ -4,48 +4,77 @@ using System.Text;
 using UnityEngine;
 
 /// <summary>
-/// Agent control interface: object placement + environment parameters (light, fog, time of day, gravity, etc.).
-/// External AI or game logic controls the environment by calling this script's public methods.
-/// Humanoid animation control reference: Kevin Iglesias Human Animations (AnimatorController + SpineProxy upper/lower body blend).
+/// Central scene-control API used by the LLM agent. Every command received by
+/// <see cref="AgentNetworkBridge"/> ends up as a call to one of the public methods here.
+///
+/// Responsibilities:
+/// <list type="bullet">
+/// <item><description>Spawning, moving and deleting objects and characters loaded by
+/// name from any <c>Resources</c> folder (with primitive-shape fallbacks).</description></item>
+/// <item><description>Environment parameters: directional light, time of day, fog,
+/// ambient light, gravity and time scale.</description></item>
+/// <item><description>Humanoid animation (Kevin Iglesias Human Animations controllers and
+/// ithappy Medical Pack characters), including smooth walking between positions.</description></item>
+/// <item><description>Interaction feedback: object highlighting, speech bubbles, the player
+/// avatar and phase switching (Phase 2 enables touch detection).</description></item>
+/// <item><description>Exporting the live scene layout to <c>Agent/api_files/scene_state.json</c>
+/// after every change so the Python agent can reason about current positions and bounds.</description></item>
+/// </list>
+///
+/// Setup: add this component to a scene GameObject (AI_Manager in the sample scene).
+/// <see cref="InteractionSetup"/>, <see cref="InteractionAnimationController"/> and
+/// <see cref="InteractionEventReporter"/> are added automatically through
+/// <c>RequireComponent</c>, and a <see cref="PlayerAvatarController"/> is added in
+/// <c>Start</c> if missing. All Inspector references are optional.
 /// </summary>
 [RequireComponent(typeof(InteractionSetup))]
 [RequireComponent(typeof(InteractionAnimationController))]
 [RequireComponent(typeof(InteractionEventReporter))]
 public class EnvironmentAgent : MonoBehaviour
 {
-    // ── Scene-state tracking ──────────────────────────────────────────────────
-    // Maps unique key → spawned GameObject so WriteSceneState() can query live transforms/bounds.
+    // ---- Scene-state tracking ----
+
+    // Unique key -> spawned GameObject, so WriteSceneState() can query live transforms and bounds.
     private readonly Dictionary<string, GameObject> _trackedObjects = new Dictionary<string, GameObject>();
-    // Counter for generating unique keys when the same objectName is used multiple times (e.g. Cube walls).
+    // Counter for generating unique keys when the same objectName is created several times (e.g. Cube walls).
     private int _spawnCounter = 0;
-    // Maps character name → spawned character GameObject for multi-character support.
+    // Character name -> spawned character GameObject, for addressing multiple characters by name.
     private readonly Dictionary<string, GameObject> _namedCharacters = new Dictionary<string, GameObject>();
-    [Header("Optional: assign for Time-of-Day control")]
+
+    // ---- Inspector ----
+
+    [Header("Optional: directional light for light / time-of-day control (auto-found if empty)")]
     [SerializeField] Light mainDirectionalLight;
 
-    [Header("Optional: auto-add XR interaction components to spawned objects")]
+    [Header("Optional: adds XR interaction components to spawned objects (auto-found if empty)")]
     [SerializeField] InteractionSetup interactionSetup;
 
-    [Header("Optional: default human model for animation (if not passed in methods)")]
-    [Tooltip("Leave empty to auto-find the first object with an Animator in the scene at Start (prefer names containing 'Human').")]
+    [Header("Optional: default human model for animation commands without a target")]
+    [Tooltip("Leave empty to auto-select the best humanoid Animator in the scene (names containing 'Human' or 'Doctor' are preferred). Each PlaceHuman call replaces this with the newly placed character.")]
     [SerializeField] GameObject defaultHumanModel;
 
-    [Header("Player avatar (optional)")]
-    [Tooltip("Attach PlayerAvatarController here to enable player body animations via targetModel='player'.")]
+    [Header("Optional: player avatar")]
+    [Tooltip("PlayerAvatarController that drives the player's visible body. Added automatically at Start if empty.")]
     [SerializeField] PlayerAvatarController playerAvatarController;
 
-    [Header("ithappy Medical Pack: test prefab references (assign in Inspector)")]
+    [Header("ithappy Medical Pack: test prefabs for the context-menu spawn buttons")]
     [SerializeField] GameObject ithappyFurniturePrefab;   // e.g. Medical_Pack/Prefabs/Furniture/Table_01
     [SerializeField] GameObject ithappyPropPrefab;        // e.g. Medical_Pack/Prefabs/Props/Syringe_02
     [SerializeField] GameObject ithappyCharacterPrefab;   // e.g. Medical_Pack/Characters/Prefabs/Doctor_01_Sneakers
 
-    [Header("ithappy Medical Pack: character animation test")]
-    [Tooltip("Assign AnimatorController such as Medical_Pack/Animations/Animation_Controllers/All_Animations.controller")]
+    [Header("ithappy Medical Pack: controller for the context-menu animation tests")]
+    [Tooltip("AnimatorController to use, e.g. Medical_Pack/Animations/Animation_Controllers/All_Animations.controller")]
     [SerializeField] RuntimeAnimatorController ithappyCharacterController;
 
-    // Runtime: last spawned ithappy character instance, used for playing test animations
+    // Last character spawned by the "ithappy: Spawn Character (test)" context menu.
     GameObject ithappyCharacterInstance;
 
+    // ---- Lifecycle ----
+
+    /// <summary>
+    /// Resolves optional references (light, InteractionSetup, default human) and makes
+    /// sure the InteractionEventReporter and PlayerAvatarController components exist.
+    /// </summary>
     void Start()
     {
         if (mainDirectionalLight == null)
@@ -56,7 +85,7 @@ public class EnvironmentAgent : MonoBehaviour
         if (interactionSetup == null)
             interactionSetup = FindFirstObjectByType<InteractionSetup>();
 
-        // Ensure InteractionEventReporter is present — required for Phase 2 touch logging
+        // Ensure InteractionEventReporter is present (required for Phase 2 touch logging).
         if (GetComponent<InteractionEventReporter>() == null)
         {
             gameObject.AddComponent<InteractionEventReporter>();
@@ -65,7 +94,7 @@ public class EnvironmentAgent : MonoBehaviour
 
         AutoBindDefaultHumanIfNeeded();
 
-        // Auto-add PlayerAvatarController so the player body is always present without Inspector setup
+        // Auto-add PlayerAvatarController so the player body is present without Inspector setup.
         if (playerAvatarController == null)
         {
             playerAvatarController = GetComponent<PlayerAvatarController>()
@@ -74,10 +103,13 @@ public class EnvironmentAgent : MonoBehaviour
         }
     }
 
-    // ========== Object placement (same as Chair/Table; all loaded from Resources/Prefabs/) ==========
+    // ---- Object placement ----
 
-    /// <summary>Track a spawned object under a unique key. If the key already exists,
-    /// destroy the old GameObject first so it doesn't become an orphan.</summary>
+    /// <summary>
+    /// Tracks a spawned object under <paramref name="key"/>. If the key is already in
+    /// use by a different GameObject, the old one is destroyed first so it does not
+    /// become an untracked orphan.
+    /// </summary>
     private void TrackObject(string key, GameObject spawned)
     {
         if (_trackedObjects.TryGetValue(key, out var old) && old != null && old != spawned)
@@ -88,10 +120,19 @@ public class EnvironmentAgent : MonoBehaviour
         _trackedObjects[key] = spawned;
     }
 
-    /// <summary>Called by Agent: place a prefab at the given position. Prefab must be under Resources/Prefabs/.
-    /// If the same prefab name has already been placed, this call generates a unique
-    /// track key with suffix `__inst_N` so multiple instances coexist instead of
-    /// silently destroying the earlier one (e.g. 4× PlaceObject Bed_01 → all 4 beds spawn).</summary>
+    /// <summary>
+    /// Agent action <c>PlaceObject</c>: instantiates a prefab, snaps it to the surface
+    /// below and makes it XR-interactable.
+    /// </summary>
+    /// <remarks>
+    /// The prefab is looked up by name (case-insensitive) among all prefabs in any
+    /// <c>Resources</c> folder. If the same name has already been placed, the new
+    /// instance is named and tracked as <c>{objectName}__inst_N</c> so multiple
+    /// instances coexist (e.g. four PlaceObject Bed_01 commands spawn four beds).
+    /// </remarks>
+    /// <param name="objectName">Prefab name, e.g. "Bed_01".</param>
+    /// <param name="position">World position; Y is replaced by the floor-snap result when a surface is found.</param>
+    /// <param name="rotationY">Yaw in degrees.</param>
     public void PlaceObject(string objectName, Vector3 position, float rotationY)
     {
         GameObject prefab = LoadPrefabByName(objectName);
@@ -113,9 +154,11 @@ public class EnvironmentAgent : MonoBehaviour
         }
     }
 
-    /// <summary>Generate a tracking key that doesn't collide with an existing one.
-    /// First call returns `name` unchanged; subsequent calls return `name__inst_2`,
-    /// `name__inst_3`, etc.</summary>
+    /// <summary>
+    /// Returns a tracking key that does not collide with an existing one: the first
+    /// call returns <paramref name="baseName"/> unchanged, later calls return
+    /// <c>baseName__inst_2</c>, <c>baseName__inst_3</c>, and so on.
+    /// </summary>
     private string _uniqueTrackKey(string baseName)
     {
         if (!_trackedObjects.ContainsKey(baseName)) return baseName;
@@ -125,9 +168,22 @@ public class EnvironmentAgent : MonoBehaviour
     }
 
     /// <summary>
-    /// Called by Agent: create by name. Prefer prefab in Resources/Prefabs/, else primitive, else empty GameObject.
-    /// scaleX/Y/Z: if <= 0, keep default 1.
+    /// Agent action <c>CreateObjectByName</c>: creates an object with an explicit scale,
+    /// typically used to build room structure (floor, walls, ceiling) from Cubes.
     /// </summary>
+    /// <remarks>
+    /// Looks for a prefab at <c>Resources/Prefabs/{objectName}</c> first, then falls back
+    /// to a Unity primitive (cube/box, sphere/ball, capsule, cylinder, plane, quad).
+    /// Unknown names are skipped with a warning. Objects placed above y = 0.05 or with
+    /// scaleY &gt; 1.5 are treated as structural and are not floor-snapped. Repeated
+    /// names are tracked as <c>{objectName}__struct_N</c>.
+    /// </remarks>
+    /// <param name="objectName">Prefab or primitive name.</param>
+    /// <param name="position">World position.</param>
+    /// <param name="rotationY">Yaw in degrees.</param>
+    /// <param name="scaleX">X scale; values &lt;= 0 mean 1.</param>
+    /// <param name="scaleY">Y scale; values &lt;= 0 mean 1.</param>
+    /// <param name="scaleZ">Z scale; values &lt;= 0 mean 1.</param>
     public void CreateObjectByName(string objectName, Vector3 position, float rotationY, float scaleX, float scaleY, float scaleZ)
     {
         GameObject spawned = null;
@@ -172,14 +228,28 @@ public class EnvironmentAgent : MonoBehaviour
             {
                 trackKey = $"{objectName}__struct_{_spawnCounter++}";
             }
-            spawned.name = trackKey;  // Rename in scene hierarchy for clarity
+            spawned.name = trackKey;  // Match the hierarchy name to the tracking key so name lookups work
             TrackObject(trackKey, spawned);
             WriteSceneState();
             if (interactionSetup != null) interactionSetup.MakeInteractable(spawned);
         }
     }
 
-    /// <summary>Called by Agent: place a human prefab from Resources/Prefabs/ (same usage as Chair/Table). After placement it becomes the "current human"; subsequent PlayHumanAnimation(null, ...) etc. will target it. humanName is the prefab name, e.g. "HumanM_Idle01".</summary>
+    /// <summary>
+    /// Agent action <c>PlaceHuman</c> (also used by <c>PlaceObject</c> for character
+    /// prefab names): spawns a character prefab standing in an idle pose.
+    /// </summary>
+    /// <remarks>
+    /// The prefab is looked up by name like <see cref="PlaceObject"/>. The character is
+    /// snapped to the real floor (never onto furniture), extra Animators are removed,
+    /// the <c>AnimatorControllers/HumanM@Idles</c> controller is applied, and a
+    /// CapsuleCollider is added if the prefab has none (needed for touch detection).
+    /// The character is registered by name for <see cref="GetCharacterByName"/> and
+    /// becomes the default target for animation calls that pass no explicit target.
+    /// </remarks>
+    /// <param name="humanName">Character prefab name, e.g. "Doctor_01".</param>
+    /// <param name="position">World position (X/Z used; Y comes from the floor).</param>
+    /// <param name="rotationY">Yaw in degrees.</param>
     public void PlaceHuman(string humanName, Vector3 position, float rotationY)
     {
         GameObject prefab = LoadHumanPrefabByName(humanName);
@@ -189,7 +259,7 @@ public class EnvironmentAgent : MonoBehaviour
             GameObject spawned = Instantiate(prefab, position, Quaternion.Euler(0, rotationY, 0));
             SnapHumanToFloor(spawned);
             defaultHumanModel = spawned;
-            // Ensure only the main Animator drives the humanoid rig (remove extra Animators on clothing, etc.)
+            // Ensure only the main Animator drives the humanoid rig (remove extra Animators on clothing, etc.).
             Animator mainAnim = FindPrimaryAnimator(spawned);
             if (mainAnim != null)
             {
@@ -205,7 +275,7 @@ public class EnvironmentAgent : MonoBehaviour
                 }
                 else
                 {
-                    // No idle controller available — disable the animator to prevent random animations
+                    // No idle controller available: clear the controller so the prefab's default animation does not play.
                     mainAnim.runtimeAnimatorController = null;
                 }
             }
@@ -233,7 +303,11 @@ public class EnvironmentAgent : MonoBehaviour
         }
     }
 
-    /// <summary>Called by Agent: find a previously spawned object by name and destroy it.</summary>
+    /// <summary>
+    /// Agent action <c>DeleteObject</c>: finds an object by name (see
+    /// <see cref="FindSpawnedObject"/>) and destroys it.
+    /// </summary>
+    /// <param name="objectName">Name or name prefix of the object to delete.</param>
     public void DeleteObject(string objectName)
     {
         GameObject target = FindSpawnedObject(objectName);
@@ -250,14 +324,22 @@ public class EnvironmentAgent : MonoBehaviour
         }
     }
 
-    /// <summary>Called by Agent: destroy ALL spawned objects and characters, resetting the scene to empty.
-    /// Uses a full scene scan because _trackedObjects loses duplicates (e.g. multiple "Cube" walls).
-    /// Floor objects (flat Cubes near y=0) are preserved so characters don't fall through.</summary>
+    /// <summary>
+    /// Agent action <c>ClearScene</c>: destroys all spawned objects and characters,
+    /// resetting the scene to an empty room.
+    /// </summary>
+    /// <remarks>
+    /// After clearing the tracking dictionaries, a full scan of root GameObjects is also
+    /// performed so untracked objects are removed as well. Scene infrastructure is kept:
+    /// cameras, lights, audio listeners, XR rigs, objects tagged "Player", this agent's
+    /// own GameObject and a fixed list of named objects. Floor objects (flat Cubes near
+    /// y = 0) are preserved so characters placed afterwards do not fall through.
+    /// </remarks>
     public void ClearScene()
     {
         int count = 0;
 
-        // 1. Destroy everything in the tracking dictionaries, but keep floor objects
+        // 1. Destroy everything in the tracking dictionaries, but keep floor objects.
         var keepObjects = new System.Collections.Generic.Dictionary<string, GameObject>();
         foreach (var kvp in _trackedObjects)
         {
@@ -273,7 +355,7 @@ public class EnvironmentAgent : MonoBehaviour
             }
         }
         _trackedObjects.Clear();
-        // Re-add preserved floor objects
+        // Re-add preserved floor objects.
         foreach (var kvp in keepObjects)
             _trackedObjects[kvp.Key] = kvp.Value;
 
@@ -283,9 +365,8 @@ public class EnvironmentAgent : MonoBehaviour
         }
         _namedCharacters.Clear();
 
-        // 2. Full scene scan: destroy any remaining objects that were Instantiated
-        //    (Unity appends "(Clone)" to their name) or created as primitives by the agent.
-        //    Preserve scene infrastructure: cameras, lights, EventSystem, XR rigs, Canvas, etc.
+        // 2. Full scene scan: destroy any remaining root objects that are not scene
+        //    infrastructure (cameras, lights, EventSystem, XR rigs, Canvas, etc.).
         var preserve = new System.Collections.Generic.HashSet<string>(System.StringComparer.OrdinalIgnoreCase)
         {
             "Main Camera", "Directional Light", "EventSystem",
@@ -297,23 +378,23 @@ public class EnvironmentAgent : MonoBehaviour
         foreach (var go in FindObjectsByType<GameObject>(FindObjectsSortMode.None))
         {
             if (go == null) continue;
-            // Only consider root-level objects (no parents) to avoid destroying child components
+            // Only consider root-level objects; destroying a root also destroys its children.
             if (go.transform.parent != null) continue;
-            // Skip the EnvironmentAgent's own GameObject and its ancestors
+            // Skip the EnvironmentAgent's own GameObject.
             if (go == this.gameObject) continue;
-            // Skip preserved infrastructure objects
+            // Skip preserved infrastructure objects.
             string cleanName = go.name.Replace("(Clone)", "").Trim();
             if (preserve.Contains(cleanName)) continue;
-            // Skip objects with cameras, lights, or AudioListener (infrastructure)
+            // Skip objects with cameras, lights or an AudioListener (infrastructure).
             if (go.GetComponent<Camera>() != null) continue;
             if (go.GetComponent<Light>() != null) continue;
             if (go.GetComponent<AudioListener>() != null) continue;
-            // Skip XR rigs (detected by common XR component names)
+            // Skip XR rigs (detected by common naming conventions).
             if (go.name.Contains("XR") || go.name.Contains("xr") ||
                 go.name.Contains("OVR") || go.name.Contains("Rig")) continue;
-            // Skip player avatar (tagged "Player" by PlayerAvatarController)
+            // Skip the player rig / avatar (tagged "Player").
             if (go.CompareTag("Player")) continue;
-            // Skip floor objects
+            // Skip floor objects.
             if (IsFloorObject(go)) continue;
 
             toDestroy.Add(go);
@@ -332,11 +413,15 @@ public class EnvironmentAgent : MonoBehaviour
         Debug.Log($"AI Agent ClearScene: destroyed {count} objects, kept {keepObjects.Count} floor(s).");
     }
 
-    /// <summary>Check if a GameObject is a floor (flat Cube near ground level).</summary>
+    /// <summary>
+    /// Returns true if <paramref name="go"/> looks like a floor: a GameObject whose name
+    /// contains "Cube", positioned at y &lt;= 0.15 with a flat scale
+    /// (Y &lt;= 0.5, X and Z &gt;= 1).
+    /// </summary>
     private static bool IsFloorObject(GameObject go)
     {
         if (go == null) return false;
-        // Floor is a Cube primitive with flat proportions near y=0
+        // The floor is a Cube primitive with flat proportions near y = 0.
         bool isCube = go.name.Contains("Cube");
         if (!isCube) return false;
         Vector3 pos = go.transform.position;
@@ -346,26 +431,30 @@ public class EnvironmentAgent : MonoBehaviour
         return nearGround && isFlat;
     }
 
-    /// <summary>Called by Agent: find a previously spawned object by name and move/rotate it.</summary>
+    /// <summary>
+    /// Agent action <c>MoveObject</c>: finds an object by name and teleports it to a new
+    /// position and yaw (no floor snapping).
+    /// </summary>
+    /// <param name="objectName">Name or name prefix of the object to move.</param>
+    /// <param name="position">New world position.</param>
+    /// <param name="rotationY">New yaw in degrees.</param>
     public void MoveObject(string objectName, Vector3 position, float rotationY)
     {
         GameObject target = FindSpawnedObject(objectName);
         if (target != null)
         {
-            // Check if object has a Rigidbody for physics-based movement
+            // Dynamic rigidbodies are moved through physics; everything else via the transform.
             Rigidbody rb = target.GetComponent<Rigidbody>();
             Quaternion newRotation = Quaternion.Euler(0, rotationY, 0);
-            
+
             if (rb != null && !rb.isKinematic)
             {
-                // Use physics-based movement for dynamic rigidbodies
                 rb.MovePosition(position);
                 rb.MoveRotation(newRotation);
                 Debug.Log($"AI Agent moved (physics): {objectName} to {position}");
             }
             else
             {
-                // Use transform directly for kinematic/static objects
                 target.transform.position = position;
                 target.transform.rotation = newRotation;
                 Debug.Log($"AI Agent moved (transform): {objectName} to {position}");
@@ -378,15 +467,22 @@ public class EnvironmentAgent : MonoBehaviour
         }
     }
 
-    // ── Scene state export ────────────────────────────────────────────────────
+    // ---- Scene state export ----
+
     /// <summary>
-    /// Writes scene_state.json next to unity_commands.json.
-    /// Each entry has: objectName, x/y/z (world position), rotationY, and renderer bounds.
-    /// The Python agent reads this file instead of reconstructing state from the command log.
+    /// Writes <c>{repoRoot}/Agent/api_files/scene_state.json</c>, where repoRoot is the
+    /// folder that contains the Unity project folder.
     /// </summary>
+    /// <remarks>
+    /// The file is a JSON array with one entry per tracked object: <c>objectName</c>,
+    /// world position <c>x</c>/<c>y</c>/<c>z</c>, <c>rotationY</c>, and the world-space
+    /// renderer bounds (<c>boundsMin*</c>, <c>boundsMax*</c>, <c>boundsSize*</c>; all zero
+    /// if the object has no renderers). The Python agent reads this file instead of
+    /// reconstructing state from the command log. Called after every scene change.
+    /// </remarks>
     private void WriteSceneState()
     {
-        // Write to Agent/api_files/ so the Python agent can read it directly
+        // Write to Agent/api_files/ so the Python agent can read it directly.
         string repoRoot = Path.GetFullPath(Path.Combine(Application.dataPath, "..", ".."));
         string dir = Path.Combine(repoRoot, "Agent", "api_files");
         string path = Path.Combine(dir, "scene_state.json");
@@ -397,17 +493,18 @@ public class EnvironmentAgent : MonoBehaviour
 
         foreach (var kv in _trackedObjects)
         {
-            // Strip the __struct_N suffix so scene_state.json reports the original prefab name
+            // Strip the __struct_N suffix so scene_state.json reports the original name.
+            // (The __inst_N suffix from PlaceObject/PlaceHuman is kept.)
             string prefabName = kv.Key;
             int structIdx = prefabName.IndexOf("__struct_");
             if (structIdx >= 0) prefabName = prefabName.Substring(0, structIdx);
             GameObject go = kv.Value;
-            if (go == null) continue;  // destroyed but not yet removed
+            if (go == null) continue;  // destroyed but not yet removed from the dictionary
 
             Vector3 pos = go.transform.position;
             float rotY = go.transform.eulerAngles.y;
 
-            // Compute world-space bounds by encapsulating all renderers
+            // Compute world-space bounds by encapsulating all renderers.
             Bounds bounds = new Bounds(pos, Vector3.zero);
             bool hasBounds = false;
             foreach (var r in go.GetComponentsInChildren<Renderer>(true))
@@ -439,7 +536,7 @@ public class EnvironmentAgent : MonoBehaviour
             }
             else
             {
-                // No renderers — emit zero bounds so Python can still read the record
+                // No renderers: emit zero bounds so Python can still read the record.
                 sb.Append    ("    \"boundsMinX\": 0, \"boundsMinY\": 0, \"boundsMinZ\": 0,\n" +
                               "    \"boundsMaxX\": 0, \"boundsMaxY\": 0, \"boundsMaxZ\": 0,\n" +
                               "    \"boundsSizeX\": 0, \"boundsSizeY\": 0, \"boundsSizeZ\": 0");
@@ -462,25 +559,33 @@ public class EnvironmentAgent : MonoBehaviour
         }
     }
 
+    /// <summary>Escapes backslashes and double quotes for embedding in a JSON string.</summary>
     private static string EscapeJson(string s)
     {
         if (string.IsNullOrEmpty(s)) return "";
         return s.Replace("\\", "\\\\").Replace("\"", "\\\"");
     }
 
+    /// <summary>
+    /// Finds an active GameObject by name: exact match first, then with Unity's
+    /// "(Clone)" suffix, then the first object whose name starts with
+    /// <paramref name="objectName"/> (case-insensitive). Searches the whole scene,
+    /// not only objects spawned by the agent.
+    /// </summary>
+    /// <returns>The matching GameObject, or null if none was found.</returns>
     private static GameObject FindSpawnedObject(string objectName)
     {
         if (string.IsNullOrEmpty(objectName)) return null;
 
-        // Exact match
+        // Exact match.
         GameObject found = GameObject.Find(objectName);
         if (found != null) return found;
 
-        // Unity appends "(Clone)" on Instantiate
+        // Unity appends "(Clone)" on Instantiate.
         found = GameObject.Find(objectName + "(Clone)");
         if (found != null) return found;
 
-        // Prefix search across all active objects
+        // Prefix search across all active objects.
         string lower = objectName.ToLowerInvariant();
         foreach (var go in Object.FindObjectsByType<GameObject>(FindObjectsSortMode.None))
         {
@@ -490,9 +595,9 @@ public class EnvironmentAgent : MonoBehaviour
         return null;
     }
 
-    // ========== Environment parameter control (for Agent calls) ==========
+    // ---- Environment parameters ----
 
-    /// <summary>Set main directional light intensity; recommended range 0~2.</summary>
+    /// <summary>Agent action <c>SetLightIntensity</c>: sets the main directional light intensity, clamped to [0, 2].</summary>
     public void SetLightIntensity(float intensity)
     {
         if (mainDirectionalLight == null) return;
@@ -500,7 +605,7 @@ public class EnvironmentAgent : MonoBehaviour
         Debug.Log($"Agent: Light intensity = {mainDirectionalLight.intensity}");
     }
 
-    /// <summary>Set main light color (R,G,B 0~1).</summary>
+    /// <summary>Agent action <c>SetLightColor</c>: sets the main light color; each channel is clamped to [0, 1].</summary>
     public void SetLightColor(float r, float g, float b)
     {
         if (mainDirectionalLight == null) return;
@@ -508,7 +613,10 @@ public class EnvironmentAgent : MonoBehaviour
             Mathf.Clamp01(r), Mathf.Clamp01(g), Mathf.Clamp01(b));
     }
 
-    /// <summary>Set “time of day”(0~24); rotates main directional light to simulate sun elevation.</summary>
+    /// <summary>
+    /// Agent action <c>SetTimeOfDay</c>: rotates the main directional light to simulate
+    /// the sun's elevation for an hour in [0, 24) (values wrap around).
+    /// </summary>
     public void SetTimeOfDay(float hour)
     {
         if (mainDirectionalLight == null) return;
@@ -518,20 +626,25 @@ public class EnvironmentAgent : MonoBehaviour
         Debug.Log($"Agent: Time of day = {hour:F1}h");
     }
 
-    /// <summary>Enable or disable fog.</summary>
+    /// <summary>Agent action <c>SetFogEnabled</c>: enables or disables scene fog.</summary>
     public void SetFogEnabled(bool enabled)
     {
         RenderSettings.fog = enabled;
     }
 
-    /// <summary>Set fog density; recommended range 0~0.1.</summary>
+    /// <summary>Agent action <c>SetFogDensity</c>: sets the fog density, clamped to [0, 0.2] (0 to 0.1 recommended).</summary>
     public void SetFogDensity(float density)
     {
         RenderSettings.fogDensity = Mathf.Clamp(density, 0f, 0.2f);
     }
 
-    // ========== Phase control ==========
+    // ---- Phase control ----
 
+    /// <summary>
+    /// Agent action <c>SetPhase</c>: switches the experiment phase. Phase 1 is scene
+    /// building; any value &gt;= 2 activates Phase 2 (player interaction), which enables
+    /// touch detection through <see cref="PlayerTouchHighlighter"/>. Lower values only log.
+    /// </summary>
     public void SetPhase(int phase)
     {
         Debug.Log($"[EnvironmentAgent] SetPhase({phase})");
@@ -539,14 +652,19 @@ public class EnvironmentAgent : MonoBehaviour
             ActivatePhase2();
     }
 
+    /// <summary>
+    /// Tags the XR rig as "Player", ensures a <see cref="PlayerTouchHighlighter"/>
+    /// exists and is enabled, and hands the rig transform to the touch highlighter and
+    /// the player avatar controller.
+    /// </summary>
     private void ActivatePhase2()
     {
-        // 0. Ensure PlayerAvatarController exists on AI_Manager
+        // 0. Ensure PlayerAvatarController exists on this GameObject.
         if (playerAvatarController == null)
             playerAvatarController = gameObject.GetComponent<PlayerAvatarController>()
                                   ?? gameObject.AddComponent<PlayerAvatarController>();
 
-        // 1. Tag the XR Origin / Camera Rig as "Player"
+        // 1. Tag the XR Origin / Camera Rig as "Player".
         GameObject rig = FindXRRig();
         if (rig != null && !rig.CompareTag("Player"))
         {
@@ -554,7 +672,7 @@ public class EnvironmentAgent : MonoBehaviour
             Debug.Log($"[EnvironmentAgent] Tagged '{rig.name}' as Player.");
         }
 
-        // 2. Ensure PlayerTouchHighlighter exists and is enabled
+        // 2. Ensure PlayerTouchHighlighter exists and is enabled.
         PlayerTouchHighlighter pth = FindFirstObjectByType<PlayerTouchHighlighter>(FindObjectsInactive.Include);
         if (pth == null)
         {
@@ -567,24 +685,32 @@ public class EnvironmentAgent : MonoBehaviour
 
         pth.enabled = true;
 
-        // Give PlayerAvatarController the now-tagged XR rig so it can lock avatar position to it
+        // 3. Give PlayerAvatarController the now-tagged XR rig so it can keep the avatar on the rig's floor level.
         if (playerAvatarController != null && rig != null && playerAvatarController.xrRigRoot == null)
             playerAvatarController.xrRigRoot = rig.transform;
 
         Debug.Log("[EnvironmentAgent] Phase 2 active — PlayerTouchHighlighter enabled.");
     }
 
+    /// <summary>Finds the XR rig root GameObject via <see cref="PlayerAvatarController.FindXRRigRoot"/>.</summary>
     private static GameObject FindXRRig()
     {
-        // Delegate to PlayerAvatarController's shared helper (partial-name search)
+        // Delegate to PlayerAvatarController's shared helper (tag, then partial-name search).
         Transform t = PlayerAvatarController.FindXRRigRoot();
         return t != null ? t.gameObject : null;
     }
 
-    // ========== Interaction feedback commands (Phase 2) ==========
+    // ---- Interaction feedback (Phase 2) ----
 
-    /// <summary>Temporarily highlight an object with an outline / emission color.
-    /// duration &lt;= 0 means highlight until explicitly cleared.</summary>
+    /// <summary>
+    /// Agent action <c>HighlightObject</c>: finds an object by name and tints it with
+    /// an emissive glow of the given color.
+    /// </summary>
+    /// <param name="objectName">Name or name prefix of the object.</param>
+    /// <param name="r">Red, 0 to 1.</param>
+    /// <param name="g">Green, 0 to 1.</param>
+    /// <param name="b">Blue, 0 to 1.</param>
+    /// <param name="duration">Seconds before the original colors are restored; &lt;= 0 keeps the highlight.</param>
     public void HighlightObject(string objectName, float r, float g, float b, float duration)
     {
         GameObject target = FindSpawnedObject(objectName);
@@ -592,13 +718,19 @@ public class EnvironmentAgent : MonoBehaviour
         HighlightObject(target, r, g, b, duration);
     }
 
-    /// <summary>Highlight a GameObject directly (no name lookup required).</summary>
+    /// <summary>Highlights a GameObject directly (no name lookup). Same behavior as the name-based overload.</summary>
     public void HighlightObject(GameObject target, float r, float g, float b, float duration)
     {
         if (target == null) return;
         StartCoroutine(HighlightCoroutine(target, new Color(r, g, b), duration));
     }
 
+    /// <summary>
+    /// Tints every renderer's base color 85% toward <paramref name="color"/> and sets an
+    /// HDR emission (2.5x the color) so it glows under bloom; after
+    /// <paramref name="duration"/> seconds (if &gt; 0) the original values are restored.
+    /// Supports both URP (<c>_BaseColor</c>) and built-in (<c>_Color</c>) shaders.
+    /// </summary>
     private System.Collections.IEnumerator HighlightCoroutine(GameObject target, Color color, float duration)
     {
         var renderers = target.GetComponentsInChildren<Renderer>();
@@ -615,9 +747,9 @@ public class EnvironmentAgent : MonoBehaviour
         {
             mats[i] = renderers[i].material; // instantiates if needed; same ref hereafter
 
-            // Tint base color almost fully toward the highlight color so the
-            // change is actually visible (was 0.6 before — too subtle on light
-            // materials. Now 0.85 = strongly tinted but not pure replacement.)
+            // Tint the base color strongly toward the highlight color. Weaker tints
+            // (e.g. 0.6) are hard to see on light materials; 0.85 is clearly visible
+            // without fully replacing the original color.
             if (mats[i].HasProperty("_BaseColor"))
             {
                 origBase[i] = mats[i].GetColor("_BaseColor");
@@ -634,9 +766,8 @@ public class EnvironmentAgent : MonoBehaviour
                 ? mats[i].GetColor("_EmissionColor")
                 : Color.black;
 
-            // Boost emission to HDR levels so the object actually glows (with
-            // bloom enabled the brightness threshold is around 1.0; was 0.8
-            // = below threshold, no glow. Now 2.5x for a real glow.)
+            // Boost emission to HDR levels so the object actually glows: the bloom
+            // threshold is around 1.0, so values below that produce no glow.
             if (mats[i].HasProperty("_EmissionColor"))
             {
                 mats[i].EnableKeyword("_EMISSION");
@@ -666,7 +797,14 @@ public class EnvironmentAgent : MonoBehaviour
         }
     }
 
-    /// <summary>Show a speech bubble above a named character for <paramref name="duration"/> seconds.</summary>
+    /// <summary>
+    /// Agent action <c>ShowSpeechBubble</c>: shows a world-space speech bubble above a
+    /// character. A <see cref="SpeechBubble"/> component is added to the character on
+    /// first use.
+    /// </summary>
+    /// <param name="characterName">Character name (see <see cref="GetCharacterByName"/>).</param>
+    /// <param name="text">Text to display.</param>
+    /// <param name="duration">Seconds the bubble stays visible.</param>
     public void ShowSpeechBubble(string characterName, string text, float duration = 5f)
     {
         var charGo = GetCharacterByName(characterName);
@@ -680,7 +818,10 @@ public class EnvironmentAgent : MonoBehaviour
         Debug.Log($"[EnvironmentAgent] Speech bubble → {characterName}: \"{text}\"");
     }
 
-    /// <summary>Clear highlight from an object.</summary>
+    /// <summary>
+    /// Agent action <c>ClearHighlight</c>: sets the emission color of every renderer on
+    /// the named object to black. Note that this does not restore a tinted base color.
+    /// </summary>
     public void ClearHighlight(string objectName)
     {
         GameObject target = FindSpawnedObject(objectName);
@@ -690,36 +831,40 @@ public class EnvironmentAgent : MonoBehaviour
             r.material.SetColor("_EmissionColor", Color.black);
     }
 
-    /// <summary>Set fog color (R,G,B 0~1).</summary>
+    /// <summary>Sets the fog color; each channel is clamped to [0, 1]. Not exposed as an agent action.</summary>
     public void SetFogColor(float r, float g, float b)
     {
         RenderSettings.fogColor = new Color(
             Mathf.Clamp01(r), Mathf.Clamp01(g), Mathf.Clamp01(b));
     }
 
-    /// <summary>Set ambient light color (R,G,B 0~1).</summary>
+    /// <summary>Agent action <c>SetAmbientColor</c>: sets the ambient light color; each channel is clamped to [0, 1].</summary>
     public void SetAmbientColor(float r, float g, float b)
     {
         RenderSettings.ambientLight = new Color(
             Mathf.Clamp01(r), Mathf.Clamp01(g), Mathf.Clamp01(b));
     }
 
-    /// <summary>Set gravity Y component (default -9.81).</summary>
+    /// <summary>Agent action <c>SetGravity</c>: sets gravity to (0, gravityY, 0). Unity's default is -9.81.</summary>
     public void SetGravity(float gravityY)
     {
         Physics.gravity = new Vector3(0, gravityY, 0);
     }
 
-    /// <summary>Set time scale; 0=paused, 1=normal.</summary>
+    /// <summary>Agent action <c>SetTimeScale</c>: sets <c>Time.timeScale</c>, clamped to [0, 2] (0 = paused, 1 = normal).</summary>
     public void SetTimeScale(float scale)
     {
         Time.timeScale = Mathf.Clamp(scale, 0f, 2f);
     }
 
-    // ========== Humanoid animation control (reference: Kevin Iglesias Human Animations) ==========
-    // Usage: human must have an Animator; for upper/lower body blend, attach SpineProxy on B-spineProxy.
+    // ---- Humanoid animation: rig helpers ----
+    // Characters must have an Animator. Kevin Iglesias rigs that use upper/lower body
+    // blending also need the SpineProxy component on the B-spineProxy bone.
 
-    /// <summary>Get the human GameObject used for animation (prefer the passed-in one, else Inspector-assigned defaultHumanModel).</summary>
+    /// <summary>
+    /// Returns the character to animate: <paramref name="human"/> if given, otherwise
+    /// <see cref="defaultHumanModel"/> (auto-selected from the scene if unset).
+    /// </summary>
     GameObject GetHumanTarget(GameObject human)
     {
         if (human != null) return human;
@@ -727,7 +872,10 @@ public class EnvironmentAgent : MonoBehaviour
         return defaultHumanModel;
     }
 
-    /// <summary>Find Animator on the human itself, its children, or parent (Kevin Iglesias human sometimes has Animator on child or parent).</summary>
+    /// <summary>
+    /// Returns the first Animator found on the object itself, then its children, then its
+    /// parents (Kevin Iglesias characters sometimes keep the Animator on a child or parent).
+    /// </summary>
     static Animator GetHumanAnimator(GameObject target)
     {
         if (target == null) return null;
@@ -738,6 +886,13 @@ public class EnvironmentAgent : MonoBehaviour
         return target.GetComponentInParent<Animator>();
     }
 
+    /// <summary>
+    /// Picks the Animator that drives the main body of a character prefab that may
+    /// contain several (e.g. separate clothing parts with their own Animators).
+    /// Preference order: the Animator above the humanoid key bones, then the one above
+    /// the "Body" skinned mesh, then the best score (human Avatar, more skinned meshes,
+    /// more bones, closer to the root).
+    /// </summary>
     static Animator FindPrimaryAnimator(GameObject root)
     {
         if (root == null) return null;
@@ -788,6 +943,10 @@ public class EnvironmentAgent : MonoBehaviour
         return best;
     }
 
+    /// <summary>
+    /// Finds the best-scoring Animator that is a parent of a key humanoid bone
+    /// (Hips, Pelvis, Spine, Root, B-root). Returns null if there is none.
+    /// </summary>
     static Animator FindAnimatorFromHumanoidBones(GameObject root)
     {
         var bones = root.GetComponentsInChildren<Transform>(true);
@@ -827,6 +986,7 @@ public class EnvironmentAgent : MonoBehaviour
         return best;
     }
 
+    /// <summary>Returns the first SkinnedMeshRenderer whose name contains "body" (case-insensitive), or null.</summary>
     static SkinnedMeshRenderer FindBodySkinnedMesh(GameObject root)
     {
         var renderers = root.GetComponentsInChildren<SkinnedMeshRenderer>(true);
@@ -840,6 +1000,11 @@ public class EnvironmentAgent : MonoBehaviour
         return null;
     }
 
+    /// <summary>
+    /// Re-targets skinned meshes that are not yet bound to <paramref name="anim"/>'s
+    /// skeleton onto bones with the same names under it, so one Animator drives all
+    /// parts. Meshes with any bone that has no match are left unchanged.
+    /// </summary>
     static void RebindSkinnedMeshesToAnimator(GameObject root, Animator anim)
     {
         if (root == null || anim == null) return;
@@ -884,13 +1049,18 @@ public class EnvironmentAgent : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Prepares a multi-part character for animation: destroys every Animator except
+    /// <paramref name="anim"/>, rebinds all skinned meshes to its skeleton, and forces
+    /// the meshes to update even when off-screen.
+    /// </summary>
     static void HardCleanupHumanRig(GameObject root, Animator anim)
     {
         if (root == null || anim == null) return;
         RemoveChildAnimators(root, anim);
         RebindSkinnedMeshesToAnimator(root, anim);
 
-        // Force all skinned meshes to use the same Animator GameObject for update.
+        // Keep every skinned mesh updating so no part freezes or culls while animating.
         var renderers = root.GetComponentsInChildren<SkinnedMeshRenderer>(true);
         foreach (var r in renderers)
         {
@@ -902,6 +1072,7 @@ public class EnvironmentAgent : MonoBehaviour
         Debug.Log($"[HumanRig] Hard cleanup applied to {root.name}, using Animator {anim.name}");
     }
 
+    /// <summary>Returns the number of ancestors of <paramref name="t"/> (0 for a root object).</summary>
     static int GetDepth(Transform t)
     {
         int depth = 0;
@@ -913,6 +1084,7 @@ public class EnvironmentAgent : MonoBehaviour
         return depth;
     }
 
+    /// <summary>Destroys every Animator under <paramref name="root"/> except <paramref name="keep"/>.</summary>
     static void RemoveChildAnimators(GameObject root, Animator keep)
     {
         if (root == null || keep == null) return;
@@ -924,6 +1096,10 @@ public class EnvironmentAgent : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// If <see cref="defaultHumanModel"/> is unset or has no Animator, selects the
+    /// best-scoring humanoid Animator in the scene (see <see cref="ChooseBestSceneAnimator"/>).
+    /// </summary>
     void AutoBindDefaultHumanIfNeeded()
     {
         if (defaultHumanModel != null && GetHumanAnimator(defaultHumanModel) != null)
@@ -939,12 +1115,14 @@ public class EnvironmentAgent : MonoBehaviour
         }
     }
 
-    // ========== Multi-character support ==========
+    // ---- Multi-character support ----
 
     /// <summary>
-    /// Find a named character by the name it was placed with.
-    /// Falls back to a scene search so pre-placed characters work too.
+    /// Finds a character by the name it was registered under (its tracking key from
+    /// <see cref="PlaceHuman"/>, or "player" after <see cref="AttachPlayerAvatar"/>).
+    /// Falls back to <see cref="FindSpawnedObject"/> so pre-placed characters work too.
     /// </summary>
+    /// <returns>The character's root GameObject, or null if not found.</returns>
     public GameObject GetCharacterByName(string name)
     {
         if (string.IsNullOrEmpty(name)) return null;
@@ -952,12 +1130,19 @@ public class EnvironmentAgent : MonoBehaviour
         return FindSpawnedObject(name);
     }
 
-    // Tracks active smooth-move coroutines per character so a new MoveCharacter
-    // call cancels and replaces any previous in-flight motion on the same target.
+    // Active move/walk coroutine per character, so a new MoveCharacter or WalkCharacterTo
+    // call cancels and replaces any motion still in progress on the same target.
     private readonly Dictionary<GameObject, Coroutine> _activeCharMoves = new Dictionary<GameObject, Coroutine>();
 
-    /// <summary>Move a named character to a new position.
-    /// duration=0 (default) → instant teleport. duration>0 → smooth lerp over that many seconds.</summary>
+    /// <summary>
+    /// Agent action <c>MoveCharacter</c>: moves a named character without playing a walk
+    /// animation (no floor snapping).
+    /// </summary>
+    /// <param name="name">Character name (see <see cref="GetCharacterByName"/>).</param>
+    /// <param name="position">Target world position.</param>
+    /// <param name="rotationY">Target yaw in degrees.</param>
+    /// <param name="duration">0 (default) teleports instantly; &gt; 0 interpolates smoothly over that many seconds.
+    /// The agent action always uses the instant teleport.</param>
     public void MoveCharacter(string name, Vector3 position, float rotationY, float duration = 0f)
     {
         GameObject target = GetCharacterByName(name);
@@ -967,7 +1152,7 @@ public class EnvironmentAgent : MonoBehaviour
             return;
         }
 
-        // Cancel any in-flight smooth move on this character so the new call wins.
+        // Cancel any in-progress move on this character so the new call wins.
         if (_activeCharMoves.TryGetValue(target, out var prev) && prev != null)
         {
             StopCoroutine(prev);
@@ -988,6 +1173,7 @@ public class EnvironmentAgent : MonoBehaviour
         Debug.Log($"[EnvironmentAgent] MoveCharacter: '{name}' → {position} over {duration}s");
     }
 
+    /// <summary>Smoothly interpolates position and yaw (smooth-step easing) over <paramref name="duration"/> seconds.</summary>
     private System.Collections.IEnumerator MoveCharacterSmoothCoroutine(
         GameObject target, string name, Vector3 endPos, float endRotY, float duration)
     {
@@ -1014,14 +1200,25 @@ public class EnvironmentAgent : MonoBehaviour
     }
 
     /// <summary>
-    /// Make a named character walk to a target position: plays a walk animation,
-    /// smoothly interpolates position + rotation over <paramref name="duration"/>,
-    /// then crossfades back to the idle animation when arrived.
-    ///
-    /// walkController / idleController are full Resources paths
-    /// (e.g. "AnimatorControllers/HumanF@Walk01_Forward"). If null/empty,
-    /// defaults to HumanM@Walk01_Forward and HumanM@Idles respectively.
+    /// Agent action <c>WalkCharacterTo</c>: makes a named character walk to a target
+    /// position. Plays the walk animation, smoothly interpolates position and rotation
+    /// over <paramref name="duration"/> seconds, then crossfades to the idle animation
+    /// on arrival.
     /// </summary>
+    /// <remarks>
+    /// Root motion is disabled during the walk so it does not fight the transform
+    /// interpolation, and restored on arrival. The animator state played is the last
+    /// path segment of each controller path (e.g. "HumanM@Walk01_Forward").
+    /// </remarks>
+    /// <param name="name">Character name (see <see cref="GetCharacterByName"/>).</param>
+    /// <param name="position">Target world position.</param>
+    /// <param name="rotationY">Final yaw in degrees.</param>
+    /// <param name="duration">Walk time in seconds; &lt;= 0 means 2 seconds.</param>
+    /// <param name="walkController">Resources path of the walk controller, e.g.
+    /// "AnimatorControllers/HumanF@Walk01_Forward". Null/empty means
+    /// "AnimatorControllers/HumanM@Walk01_Forward".</param>
+    /// <param name="idleController">Resources path of the idle controller. Null/empty means
+    /// "AnimatorControllers/HumanM@Idles".</param>
     public void WalkCharacterTo(string name, Vector3 position, float rotationY, float duration,
                                 string walkController, string idleController)
     {
@@ -1038,17 +1235,17 @@ public class EnvironmentAgent : MonoBehaviour
             idleController = "AnimatorControllers/HumanM@Idles";
         if (duration <= 0f) duration = 2.0f;
 
-        // Cancel any in-flight motion on this character
+        // Cancel any in-progress motion on this character.
         if (_activeCharMoves.TryGetValue(target, out var prev) && prev != null)
         {
             StopCoroutine(prev);
             _activeCharMoves.Remove(target);
         }
 
-        // Disable RootMotion during transform-driven motion. Walk animations
-        // typically have RootMotion which would fight our transform.position
-        // lerp and visually leave the character moving in place. Save the
-        // original setting so we can restore it when the walk finishes.
+        // Disable root motion during transform-driven motion. Walk animations
+        // usually contain root motion, which would fight the transform.position
+        // interpolation and make the character appear to walk in place. Save the
+        // original setting so it can be restored when the walk finishes.
         var animator = target.GetComponentInChildren<Animator>();
         bool savedRootMotion = false;
         if (animator != null)
@@ -1068,6 +1265,10 @@ public class EnvironmentAgent : MonoBehaviour
                   + $"(walk={walkState}, rootMotion saved={savedRootMotion})");
     }
 
+    /// <summary>
+    /// Interpolates the character to its destination, then restores root motion and
+    /// crossfades to the idle controller.
+    /// </summary>
     private System.Collections.IEnumerator WalkCoroutine(
         GameObject target, string name, Vector3 endPos, float endRotY, float duration,
         string idleController, Animator animator, bool restoreRootMotion)
@@ -1089,10 +1290,10 @@ public class EnvironmentAgent : MonoBehaviour
         {
             target.transform.position = endPos;
             target.transform.rotation = endRot;
-            // Restore the original RootMotion setting before switching to idle
+            // Restore the original root motion setting before switching to idle
             // so the idle animation can drive the character normally.
             if (animator != null) animator.applyRootMotion = restoreRootMotion;
-            // Crossfade back to idle
+            // Crossfade back to idle.
             string idleState = LeafName(idleController);
             PlayHumanAnimationFromResources(target, idleController, idleState, 0.4f);
             WriteSceneState();
@@ -1101,6 +1302,7 @@ public class EnvironmentAgent : MonoBehaviour
         _activeCharMoves.Remove(target);
     }
 
+    /// <summary>Returns the part of a Resources path after the last '/', e.g. "HumanM@Idles".</summary>
     private static string LeafName(string resourcesPath)
     {
         if (string.IsNullOrEmpty(resourcesPath)) return "";
@@ -1109,14 +1311,18 @@ public class EnvironmentAgent : MonoBehaviour
     }
 
     /// <summary>
-    /// Attach (or replace) the player body avatar.
-    /// prefabName: Resources path or plain prefab name (same lookup as PlaceObject).
-    /// The spawned avatar is registered under "player" so animation commands with
-    /// targetModel="player" automatically target it.
+    /// Agent action <c>AttachPlayerAvatar</c>: attaches (or replaces) the player's
+    /// visible body via <see cref="PlayerAvatarController.AttachAvatar"/>.
     /// </summary>
+    /// <remarks>
+    /// The spawned avatar is registered under the character name "player" so animation
+    /// commands with <c>targetModel = "player"</c> target it.
+    /// </remarks>
+    /// <param name="prefabName">Plain prefab name (same lookup as <see cref="PlaceObject"/>)
+    /// or a full Resources path.</param>
     public void AttachPlayerAvatar(string prefabName)
     {
-        // Auto-add controller if not assigned
+        // Auto-add the controller if not assigned.
         if (playerAvatarController == null)
         {
             playerAvatarController = gameObject.GetComponent<PlayerAvatarController>()
@@ -1127,7 +1333,7 @@ public class EnvironmentAgent : MonoBehaviour
         GameObject prefab = LoadPrefabByName(prefabName);
         if (prefab == null)
         {
-            // Try direct Resources path
+            // Fall back to treating the name as a direct Resources path.
             prefab = Resources.Load<GameObject>(prefabName);
         }
         if (prefab == null)
@@ -1139,7 +1345,7 @@ public class EnvironmentAgent : MonoBehaviour
         GameObject avatarRoot = playerAvatarController.AttachAvatar(prefab);
         if (avatarRoot != null)
         {
-            // Register as "player" so GetCharacterByName("player") works
+            // Register as "player" so GetCharacterByName("player") works.
             _namedCharacters["player"] = avatarRoot;
             _trackedObjects["PlayerAvatar"] = avatarRoot;
             WriteSceneState();
@@ -1148,9 +1354,14 @@ public class EnvironmentAgent : MonoBehaviour
     }
 
     /// <summary>
-    /// Play an animation on a named character.  If characterName is null/empty,
-    /// falls back to defaultHumanModel (same behaviour as PlayHumanAnimationFromResources(null,...)).
+    /// Agent action <c>PlayHumanAnimationFromResources</c>: loads a controller and plays a
+    /// state on a named character.
     /// </summary>
+    /// <param name="characterName">Character name (see <see cref="GetCharacterByName"/>).
+    /// Null/empty targets <see cref="defaultHumanModel"/>.</param>
+    /// <param name="controllerPath">Resources path of the AnimatorController.</param>
+    /// <param name="stateName">Animator state to crossfade into.</param>
+    /// <param name="crossFadeTime">Blend time in seconds.</param>
     public void PlayHumanAnimationFromResourcesNamed(string characterName, string controllerPath, string stateName, float crossFadeTime = 0.25f)
     {
         GameObject target = string.IsNullOrEmpty(characterName)
@@ -1165,6 +1376,11 @@ public class EnvironmentAgent : MonoBehaviour
         PlayHumanAnimationFromResources(target, controllerPath, stateName, crossFadeTime);
     }
 
+    /// <summary>
+    /// Scores scene Animators to find the most likely full-body human: names containing
+    /// "human" or "doctor" and human Avatars score higher, clothing/accessory names
+    /// (hat, shoe, pants, shirt) score lower, and more skinned meshes and bones help.
+    /// </summary>
     static Animator ChooseBestSceneAnimator(Animator[] animators)
     {
         if (animators == null || animators.Length == 0) return null;
@@ -1180,7 +1396,7 @@ public class EnvironmentAgent : MonoBehaviour
             if (name.IndexOf("human", System.StringComparison.OrdinalIgnoreCase) >= 0) score += 50;
             if (name.IndexOf("doctor", System.StringComparison.OrdinalIgnoreCase) >= 0) score += 50;
 
-            // Penalize accessories.
+            // Penalize clothing and accessories.
             if (name.IndexOf("hat", System.StringComparison.OrdinalIgnoreCase) >= 0) score -= 200;
             if (name.IndexOf("shoe", System.StringComparison.OrdinalIgnoreCase) >= 0) score -= 200;
             if (name.IndexOf("pants", System.StringComparison.OrdinalIgnoreCase) >= 0) score -= 150;
@@ -1205,7 +1421,17 @@ public class EnvironmentAgent : MonoBehaviour
         }
         return best;
     }
-    /// <summary>Called by Agent: switch the human's Animator Controller. controllerPath is path under Resources, e.g. "AnimatorControllers/HumanM@Walk01_Forward" (place Kevin Iglesias .controller under Resources/AnimatorControllers/).</summary>
+
+    // ---- Humanoid animation: playback ----
+
+    /// <summary>
+    /// Agent action <c>SetHumanAnimationController</c>: replaces the character's
+    /// AnimatorController without playing a specific state.
+    /// </summary>
+    /// <param name="human">Character to change; null targets <see cref="defaultHumanModel"/>
+    /// (the agent action always passes null).</param>
+    /// <param name="controllerPathInResources">Resources path or controller name, e.g.
+    /// "AnimatorControllers/HumanM@Walk01_Forward".</param>
     public void SetHumanAnimationController(GameObject human, string controllerPathInResources)
     {
         GameObject target = GetHumanTarget(human);
@@ -1222,7 +1448,14 @@ public class EnvironmentAgent : MonoBehaviour
         Debug.Log($"Agent: human AnimatorController set to {controllerPathInResources}");
     }
 
-    /// <summary>Called by Agent: play the given animation state (state name inside current Controller), e.g. "HumanM@Walk01_Forward". crossFadeTime is blend duration.</summary>
+    /// <summary>
+    /// Agent action <c>PlayHumanAnimation</c>: crossfades into a state of the character's
+    /// current AnimatorController (e.g. "HumanM@Walk01_Forward"). Does nothing if the
+    /// Animator has no controller; use <see cref="PlayHumanAnimationFromResources"/> then.
+    /// </summary>
+    /// <param name="human">Character to animate; null targets <see cref="defaultHumanModel"/>.</param>
+    /// <param name="stateName">Animator state name.</param>
+    /// <param name="crossFadeTime">Blend time in seconds.</param>
     public void PlayHumanAnimation(GameObject human, string stateName, float crossFadeTime = 0.25f)
     {
         GameObject target = GetHumanTarget(human);
@@ -1243,11 +1476,15 @@ public class EnvironmentAgent : MonoBehaviour
     }
 
     /// <summary>
-    /// Called by Agent: load/ensure AnimatorController from Resources then play the given state.
-    /// Use this to avoid "Animator does not have an AnimatorController" errors.
-    /// controllerPathInResources e.g. "AnimatorControllers/HumanM@Walk01_Forward"
-    /// stateName e.g. "HumanM@Walk01_Forward"
+    /// Loads an AnimatorController from Resources, applies it to the character and
+    /// crossfades into the given state. Preferred over <see cref="PlayHumanAnimation"/>
+    /// because it never fails with "Animator does not have an AnimatorController".
     /// </summary>
+    /// <param name="human">Character to animate; null targets <see cref="defaultHumanModel"/>.</param>
+    /// <param name="controllerPathInResources">Resources path or controller name, e.g.
+    /// "AnimatorControllers/HumanM@Walk01_Forward". Null/empty keeps the current controller.</param>
+    /// <param name="stateName">Animator state name, e.g. "HumanM@Walk01_Forward".</param>
+    /// <param name="crossFadeTime">Blend time in seconds.</param>
     public void PlayHumanAnimationFromResources(GameObject human, string controllerPathInResources, string stateName, float crossFadeTime = 0.25f)
     {
         GameObject target = GetHumanTarget(human);
@@ -1257,7 +1494,7 @@ public class EnvironmentAgent : MonoBehaviour
         if (anim == null) { Debug.LogWarning("EnvironmentAgent: human model has no Animator."); return; }
         HardCleanupHumanRig(target, anim);
 
-        // Always apply the specified controller so we're never playing states against the wrong one.
+        // Always apply the specified controller so the state is never looked up in the wrong one.
         if (!string.IsNullOrEmpty(controllerPathInResources))
         {
             RuntimeAnimatorController ctrl = LoadAnimatorControllerByName(controllerPathInResources);
@@ -1267,7 +1504,7 @@ public class EnvironmentAgent : MonoBehaviour
                 return;
             }
             anim.runtimeAnimatorController = ctrl;
-            // Let the controller initialise for one frame before crossing-fading into its state.
+            // Evaluate the new controller once so CrossFade can find its states immediately.
             anim.Update(0f);
         }
 
@@ -1275,13 +1512,16 @@ public class EnvironmentAgent : MonoBehaviour
         Debug.Log($"Agent: human playing state '{stateName}' (controller: {controllerPathInResources})");
     }
 
+    // ---- Debugging ----
+
+    /// <summary>Context-menu wrapper for <see cref="DebugHumanRig"/> on the default human.</summary>
     [ContextMenu("Debug Human Rig (Default)")]
     void DebugHumanRigDefault()
     {
         DebugHumanRig(null);
     }
 
-    /// <summary>Log animators and skinned mesh bindings for the current/default human.</summary>
+    /// <summary>Logs the Animators and skinned-mesh bone bindings of a character (null = default human).</summary>
     public void DebugHumanRig(GameObject human)
     {
         GameObject target = GetHumanTarget(human);
@@ -1319,6 +1559,7 @@ public class EnvironmentAgent : MonoBehaviour
         }
     }
 
+    /// <summary>Returns the slash-separated hierarchy path of <paramref name="t"/>, e.g. "Root/Hips/Spine".</summary>
     static string GetHierarchyPath(Transform t)
     {
         if (t == null) return "None";
@@ -1332,7 +1573,9 @@ public class EnvironmentAgent : MonoBehaviour
         return path;
     }
 
-    /// <summary>Set an Animator Float parameter (e.g. Speed).</summary>
+    // ---- Humanoid animation: Animator parameters ----
+
+    /// <summary>Agent action <c>SetHumanAnimatorFloat</c>: sets an Animator float parameter (e.g. Speed). Null targets the default human.</summary>
     public void SetHumanAnimatorFloat(GameObject human, string paramName, float value)
     {
         GameObject target = GetHumanTarget(human);
@@ -1341,7 +1584,7 @@ public class EnvironmentAgent : MonoBehaviour
         if (anim != null) anim.SetFloat(paramName, value);
     }
 
-    /// <summary>Set an Animator Bool parameter.</summary>
+    /// <summary>Agent action <c>SetHumanAnimatorBool</c>: sets an Animator bool parameter. Null targets the default human.</summary>
     public void SetHumanAnimatorBool(GameObject human, string paramName, bool value)
     {
         GameObject target = GetHumanTarget(human);
@@ -1350,7 +1593,7 @@ public class EnvironmentAgent : MonoBehaviour
         if (anim != null) anim.SetBool(paramName, value);
     }
 
-    /// <summary>Trigger an Animator Trigger parameter.</summary>
+    /// <summary>Agent action <c>SetHumanAnimatorTrigger</c>: fires an Animator trigger parameter. Null targets the default human.</summary>
     public void SetHumanAnimatorTrigger(GameObject human, string paramName)
     {
         GameObject target = GetHumanTarget(human);
@@ -1359,6 +1602,12 @@ public class EnvironmentAgent : MonoBehaviour
         if (anim != null) anim.SetTrigger(paramName);
     }
 
+    // ---- Placement helpers ----
+
+    /// <summary>
+    /// Drops an object onto the first collider found below it (ray cast from 1 m above
+    /// its position, 10 m long). The object is left unchanged if nothing is hit.
+    /// </summary>
     private void SnapToFloor(GameObject obj)
     {
         RaycastHit hit;
@@ -1369,10 +1618,11 @@ public class EnvironmentAgent : MonoBehaviour
     }
 
     /// <summary>
-    /// Snap a character to the actual floor — never perch onto chairs/desks/trolleys.
-    /// Casts from high above (to ignore the agent's spawn-y guess) and picks the
-    /// highest IsFloorObject hit. Falls back to y=0 if no floor collider is found.
-    /// Use this instead of SnapToFloor when spawning humans.
+    /// Snaps a character to the actual floor, never onto chairs, desks or trolleys.
+    /// Casts from high above (ignoring the agent's spawn Y) and uses the highest hit
+    /// that belongs to a floor object (see <see cref="IsFloorObject"/>). Falls back to
+    /// y = 0 if no floor collider is found. Use this instead of
+    /// <see cref="SnapToFloor"/> when spawning characters.
     /// </summary>
     private void SnapHumanToFloor(GameObject obj)
     {
@@ -1399,6 +1649,11 @@ public class EnvironmentAgent : MonoBehaviour
             obj.transform.position = new Vector3(p.x, 0f, p.z);
     }
 
+    /// <summary>
+    /// Creates a Unity primitive for the names cube/box, sphere/ball, capsule, cylinder,
+    /// plane and quad (case-insensitive).
+    /// </summary>
+    /// <returns>True if a primitive was created.</returns>
     private bool TryCreatePrimitive(string objectName, out GameObject spawned)
     {
         spawned = null;
@@ -1415,6 +1670,11 @@ public class EnvironmentAgent : MonoBehaviour
         return spawned != null;
     }
 
+    // ---- Resource lookup ----
+    // Every prefab and AnimatorController under any Resources folder is indexed once by
+    // lowercase asset name, so the agent can refer to assets by name alone. When two
+    // assets share a name, the first one loaded wins.
+
     private static readonly System.Collections.Generic.Dictionary<string, GameObject> PrefabCache =
         new System.Collections.Generic.Dictionary<string, GameObject>();
 
@@ -1424,6 +1684,7 @@ public class EnvironmentAgent : MonoBehaviour
     private static bool _prefabCacheLoaded = false;
     private static bool _animatorCacheLoaded = false;
 
+    /// <summary>Builds <see cref="PrefabCache"/> on first use by loading every GameObject in Resources.</summary>
     private void EnsurePrefabCache()
     {
         if (_prefabCacheLoaded) return;
@@ -1440,6 +1701,7 @@ public class EnvironmentAgent : MonoBehaviour
         _prefabCacheLoaded = true;
     }
 
+    /// <summary>Builds <see cref="AnimatorCache"/> on first use by loading every RuntimeAnimatorController in Resources.</summary>
     private void EnsureAnimatorCache()
     {
         if (_animatorCacheLoaded) return;
@@ -1456,6 +1718,7 @@ public class EnvironmentAgent : MonoBehaviour
         _animatorCacheLoaded = true;
     }
 
+    /// <summary>Returns the prefab with the given name (case-insensitive) from any Resources folder, or null.</summary>
     private GameObject LoadPrefabByName(string name)
     {
         if (string.IsNullOrEmpty(name)) return null;
@@ -1464,16 +1727,21 @@ public class EnvironmentAgent : MonoBehaviour
         return prefab;
     }
 
+    /// <summary>Character prefab lookup; identical to <see cref="LoadPrefabByName"/>.</summary>
     private GameObject LoadHumanPrefabByName(string name)
     {
-        // Same lookup as other prefabs (humans are also prefabs).
+        // Same lookup as other prefabs (characters are ordinary prefabs).
         return LoadPrefabByName(name);
     }
 
+    /// <summary>
+    /// Loads an AnimatorController by Resources path (e.g. "AnimatorControllers/HumanM@Idles")
+    /// or, failing that, by controller name alone (case-insensitive). Returns null if not found.
+    /// </summary>
     private RuntimeAnimatorController LoadAnimatorControllerByName(string nameOrPath)
     {
         if (string.IsNullOrEmpty(nameOrPath)) return null;
-        // Try direct path first (Resources.Load supports relative paths).
+        // Try the value as a Resources-relative path first.
         var direct = Resources.Load<RuntimeAnimatorController>(nameOrPath);
         if (direct != null) return direct;
 
@@ -1482,7 +1750,11 @@ public class EnvironmentAgent : MonoBehaviour
         return ctrl;
     }
 
-    // --- Inspector test buttons (ithappy Medical Pack) ---
+    // ---- Inspector test buttons (ithappy Medical Pack) ----
+    // Right-click the component header in the Inspector during Play Mode to use these.
+    // They use the test prefabs assigned in the Inspector and are not tracked in scene_state.json.
+
+    /// <summary>Context menu: spawns <see cref="ithappyFurniturePrefab"/> at (0, 0, 2).</summary>
     [ContextMenu("ithappy: Spawn Furniture (test)")]
     void TestSpawnIthappyFurniture()
     {
@@ -1496,6 +1768,7 @@ public class EnvironmentAgent : MonoBehaviour
         Debug.Log($"EnvironmentAgent: Spawn ithappy furniture '{ithappyFurniturePrefab.name}'");
     }
 
+    /// <summary>Context menu: spawns <see cref="ithappyPropPrefab"/> at (1.5, 0, 2).</summary>
     [ContextMenu("ithappy: Spawn Prop (test)")]
     void TestSpawnIthappyProp()
     {
@@ -1509,6 +1782,7 @@ public class EnvironmentAgent : MonoBehaviour
         Debug.Log($"EnvironmentAgent: Spawn ithappy prop '{ithappyPropPrefab.name}'");
     }
 
+    /// <summary>Context menu: spawns <see cref="ithappyCharacterPrefab"/> at (-1.5, 0, 2) for the animation tests below.</summary>
     [ContextMenu("ithappy: Spawn Character (test)")]
     void TestSpawnIthappyCharacter()
     {
@@ -1522,8 +1796,10 @@ public class EnvironmentAgent : MonoBehaviour
         Debug.Log($"EnvironmentAgent: Spawn ithappy character '{ithappyCharacterPrefab.name}' (set as ithappyCharacterInstance)");
     }
 
-    // --- ithappy character animation test ---
-
+    /// <summary>
+    /// Crossfades the test character into <paramref name="stateName"/>, assigning
+    /// <see cref="ithappyCharacterController"/> first if its Animator has no controller.
+    /// </summary>
     void PlayIthappyAnimation(string stateName, float crossFadeTime = 0.25f)
     {
         if (ithappyCharacterInstance == null)

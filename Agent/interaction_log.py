@@ -1,15 +1,21 @@
 """
 Persistent interaction log for Phase 2.
 
-Tracks every player interaction event, what animation was triggered,
-whether it was LLM-chosen or deterministic, and the agent's reasoning.
-Stored in api_files/interaction_log.json as a capped JSON array.
+Records each player interaction event, which animation (if any) it triggered,
+whether that choice came from the LLM or the static interaction map, and the
+reasoning behind it. Entries are kept in ``api_files/interaction_log.json`` as a
+JSON array capped at the most recent 200 entries.
 
-Usage:
-    from agent.interaction_log import InteractionLog
+Writers: ``interaction_animations.InteractionAnimationHandler`` (map-driven
+responses) and ``agent/animation_planner.py`` (LLM-chosen responses), which
+also reads recent entries back as context.
+
+Usage (with Agent/ on sys.path)::
+
+    from interaction_log import InteractionLog
     log = InteractionLog()
     log.append("grab", "Treadmill_01", animation_triggered="HumanM@Walk01_Forward",
-                llm_chosen=False, reasoning="deterministic map")
+               llm_chosen=False, reasoning="deterministic map")
     recent = log.recent(n=5)
 """
 
@@ -24,20 +30,23 @@ from typing import Any, Dict, List, Optional
 
 _AGENT_ROOT  = Path(__file__).parent          # Agent/
 _DEFAULT_LOG = _AGENT_ROOT / "api_files" / "interaction_log.json"
-_MAX_ENTRIES = 200
+_MAX_ENTRIES = 200                            # oldest entries are dropped beyond this
 
 
 class InteractionLog:
-    """Thread-safe append-only interaction log backed by a JSON file."""
+    """Thread-safe, append-only interaction log backed by a JSON file."""
 
     def __init__(self, log_path: Optional[Path] = None):
+        """Open (creating if needed) the log at ``log_path`` or api_files/interaction_log.json."""
         self._path = log_path or _DEFAULT_LOG
         self._lock = threading.Lock()
         self._path.parent.mkdir(parents=True, exist_ok=True)
         if not self._path.exists():
             self._path.write_text("[]", encoding="utf-8")
 
-    # ── public API ─────────────────────────────────────────────────────────
+    # ---------------------------------------------------------------------------
+    # Public API
+    # ---------------------------------------------------------------------------
 
     def append(
         self,
@@ -80,9 +89,12 @@ class InteractionLog:
         player_pos: Optional[Any] = None,
     ) -> Dict:
         """
-        For touch events: if the most recent entry is already a touch for
-        the same object, increment its touch_count instead of appending.
-        The agent can read touch_count to decide whether to keep responding.
+        Record a touch event, collapsing consecutive touches on one object.
+
+        If the most recent entry is already a touch on ``object_name``, its
+        ``touch_count`` is incremented instead of appending a new entry, so
+        callers can use ``touch_count`` to decide whether to keep responding.
+        Returns the new or updated entry.
         """
         now = time.time()
         with self._lock:
@@ -99,19 +111,19 @@ class InteractionLog:
                         encoding="utf-8",
                     )
                     return last
-            # No matching prior touch — create a new entry
+            # No matching prior touch: create a new entry.
             entry = {
-                "id":               f"log_{int(now * 1000)}",
-                "timestamp":        now,
-                "iso_time":         datetime.fromtimestamp(now, tz=timezone.utc).isoformat(),
-                "event_type":       "touch",
-                "object_name":      object_name,
-                "touch_count":      1,
-                "last_touch_time":  now,
+                "id":                  f"log_{int(now * 1000)}",
+                "timestamp":           now,
+                "iso_time":            datetime.fromtimestamp(now, tz=timezone.utc).isoformat(),
+                "event_type":          "touch",
+                "object_name":         object_name,
+                "touch_count":         1,
+                "last_touch_time":     now,
                 "animation_triggered": None,
-                "llm_chosen":       False,
-                "reasoning":        reasoning,
-                "player_position":  player_pos,
+                "llm_chosen":          False,
+                "reasoning":           reasoning,
+                "player_position":     player_pos,
             }
             entries.append(entry)
             if len(entries) > _MAX_ENTRIES:
@@ -137,9 +149,12 @@ class InteractionLog:
         with self._lock:
             self._path.write_text("[]", encoding="utf-8")
 
-    # ── internal ──────────────────────────────────────────────────────────
+    # ---------------------------------------------------------------------------
+    # Internal
+    # ---------------------------------------------------------------------------
 
     def _load(self) -> List[Dict]:
+        """Read all entries (caller holds the lock); returns [] if unreadable."""
         try:
             text = self._path.read_text(encoding="utf-8").strip()
             if not text or text == "[]":

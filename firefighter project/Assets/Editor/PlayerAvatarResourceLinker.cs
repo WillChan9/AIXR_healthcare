@@ -3,15 +3,20 @@ using UnityEditor;
 using UnityEngine;
 
 /// <summary>
-/// Ensures the Kevin Iglesias dummy prefabs are present under Assets/Resources/Prefabs/
-/// so PlayerAvatarController can load them at runtime via Resources.Load().
+/// Editor-only utility that copies the Kevin Iglesias "Human Basic Motions" dummy
+/// prefabs into <c>Assets/Resources/Prefabs/</c> so that
+/// <see cref="PlayerAvatarController"/> can load them at runtime with
+/// <c>Resources.Load()</c> (used by the Male / Female avatar presets).
 ///
 /// Runs automatically on every domain reload (script compile, project open, etc.).
-/// Idempotent — skips the copy if the file already exists.
+/// It is idempotent: a prefab is only copied if the destination does not exist yet.
+/// Requires the Kevin Iglesias "Human Animations" asset to be imported; otherwise a
+/// warning is logged and nothing is copied.
 /// </summary>
 [InitializeOnLoad]
 public static class PlayerAvatarResourceLinker
 {
+    /// <summary>Source prefab path and destination path (inside Resources) for each prefab to copy.</summary>
     private static readonly (string src, string dst)[] Prefabs =
     {
         (
@@ -24,11 +29,13 @@ public static class PlayerAvatarResourceLinker
         ),
     };
 
+    /// <summary>Called by Unity on domain reload.</summary>
     static PlayerAvatarResourceLinker()
     {
         EnsurePrefabsLinked();
     }
 
+    /// <summary>Copies any missing prefab into Resources and refreshes the AssetDatabase if anything changed.</summary>
     private static void EnsurePrefabsLinked()
     {
         bool anyNew = false;

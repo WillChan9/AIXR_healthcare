@@ -37,7 +37,7 @@ public class PlayerAvatarController : MonoBehaviour
         Patient_06,
     }
 
-    // ── Inspector ─────────────────────────────────────────────────────────────
+    // ---- Inspector ----
 
     [Tooltip("Player body model. KI Male/Female = grey tracksuit dummies. Patient_01–06 = ithappy hospital gown characters. Ignored if avatarPrefab is assigned directly.")]
     public AvatarPreset avatarPreset = AvatarPreset.Patient_01;
@@ -54,13 +54,13 @@ public class PlayerAvatarController : MonoBehaviour
     [Tooltip("Vertical offset applied to the avatar's root relative to the XR rig floor position (negative = sink into floor slightly to hide feet seam).")]
     public float floorOffset = 0f;
 
-    // ── Runtime state ─────────────────────────────────────────────────────────
+    // ---- Runtime state ----
 
     private GameObject _avatarRoot;
     private Animator   _avatarAnimator;
     private Transform  _cameraTransform;
 
-    // ── Lifecycle ─────────────────────────────────────────────────────────────
+    // ---- Lifecycle ----
 
     private void Awake()
     {
@@ -176,7 +176,7 @@ public class PlayerAvatarController : MonoBehaviour
         _avatarRoot.transform.rotation = Quaternion.Euler(0f, yaw, 0f);
     }
 
-    // ── Public API ────────────────────────────────────────────────────────────
+    // ---- Public API ----
 
     /// <summary>
     /// Spawn (or replace) the player avatar from <paramref name="prefab"/>.
@@ -246,7 +246,7 @@ public class PlayerAvatarController : MonoBehaviour
     /// <summary>Returns the avatar's primary Animator (null if not attached yet).</summary>
     public Animator GetAnimator() => _avatarAnimator;
 
-    // ── Renderer hiding ───────────────────────────────────────────────────────
+    // ---- Renderer hiding ----
 
     /// <summary>Disable every renderer on the avatar so the player cannot see their own body.</summary>
     private void HideAllRenderers(GameObject root)
@@ -281,7 +281,7 @@ public class PlayerAvatarController : MonoBehaviour
         Debug.Log($"[PlayerAvatarController] Hid {hidden} head renderer(s) on {root.name}.");
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
+    // ---- Helpers ----
 
     /// <summary>
     /// Find the primary (humanoid) Animator on a character root, preferring

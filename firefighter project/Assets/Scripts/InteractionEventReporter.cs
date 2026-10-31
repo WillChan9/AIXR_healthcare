@@ -26,7 +26,7 @@ public class InteractionEventReporter : MonoBehaviour
     [Tooltip("Maximum events kept in file (oldest are trimmed).")]
     public int maxEvents = 200;
 
-    // --- runtime state -------------------------------------------------------
+    // ---- Runtime state ----
     private string _filePath;
     private List<InteractionEvent> _events = new List<InteractionEvent>();
     private readonly HashSet<int> _subscribedIds = new HashSet<int>();
@@ -35,7 +35,7 @@ public class InteractionEventReporter : MonoBehaviour
     // Reference to the XR player rig (auto-found)
     private Transform _playerHead;
 
-    // ========== Data model ====================================================
+    // ---- Data model ----
 
     [Serializable]
     private class InteractionEvent
@@ -63,7 +63,7 @@ public class InteractionEventReporter : MonoBehaviour
         public InteractionEvent[] events;
     }
 
-    // ========== Lifecycle =====================================================
+    // ---- Lifecycle ----
 
     private void Awake()
     {
@@ -81,7 +81,7 @@ public class InteractionEventReporter : MonoBehaviour
         }
     }
 
-    // ========== Subscribe to XR events ========================================
+    // ---- Subscribe to XR events ----
 
     private void SubscribeToNewInteractables()
     {
@@ -106,7 +106,7 @@ public class InteractionEventReporter : MonoBehaviour
         }
     }
 
-    // ========== Record + persist ==============================================
+    // ---- Record + persist ----
 
     public void RecordEvent(string eventType, GameObject target)
     {
@@ -180,7 +180,7 @@ public class InteractionEventReporter : MonoBehaviour
         }
     }
 
-    // ========== Player tracking ===============================================
+    // ---- Player tracking ----
 
     private void FindPlayerHead()
     {
@@ -202,7 +202,7 @@ public class InteractionEventReporter : MonoBehaviour
         return _playerHead != null ? _playerHead.forward : Vector3.forward;
     }
 
-    // ========== Utility =======================================================
+    // ---- Utility ----
 
     /// <summary>Strip "(Clone)" suffix that Unity adds on Instantiate.</summary>
     private static string CleanName(string name)

@@ -1,191 +1,323 @@
-# Evaluation: Phase 1 Scene Generation Quality
+# Evaluation Harness
 
-Automated evaluation framework for testing the Phase 1 static environment generation pipeline across 10 medical/healthcare scenarios.
+Automated experiment harness for the VR healthcare scene-generation pipeline
+(`Agent/groq_static_test.py`). It runs a set of healthcare scenarios through the
+pipeline several times each, scores every generated scene with automated metrics
+and an LLM judge, and aggregates the results into tables and charts.
 
-## Directory Structure
+- **Phase 1** = static environment generation (objects placed in the Unity room).
+- **Phase 2** = interaction layer: an *interaction map* (per-object ambient
+  responses such as animations and speech bubbles) and a *story chain* (scripted
+  beats triggered by the player).
+
+The study design and results write-up are in
+[`experiment_design.md`](experiment_design.md) and
+[`phase1_experiment_writeup.md`](phase1_experiment_writeup.md).
+
+## Contents
 
 ```
 evaluation/
-  scenarios/                  # 10 experience files (S01-S10)
-    experience_S01.txt        # Emergency Triage Room (4x4m, 12 obj)
-    experience_S02.txt        # Hospital Ward 4-Bed (8x6m, 25 obj)
-    experience_S03.txt        # Physical Therapy Gym (6x6m, 30 obj)  [baseline]
-    experience_S04.txt        # Surgery Prep Room (5x5m, 20 obj)
-    experience_S05.txt        # Waiting Room (6x8m, 15 obj)
-    experience_S06.txt        # ICU Single-Patient (4x5m, 18 obj)
-    experience_S07.txt        # Medical Supply Closet (3x3m, 20 obj)
-    experience_S08.txt        # Rehabilitation Corridor (3x10m, 15 obj)
-    experience_S09.txt        # Doctor's Office (5x5m, 15 obj)
-    experience_S10.txt        # Nurse Station (8x8m, 35 obj)
-  results/                    # Auto-created: per-scenario/trial outputs
-    S01/trial_1/              # scene_state.json, reflection.json, etc.
+  scenarios/               15 scenario descriptions: experience_S01.txt ... experience_S15.txt
+  run_experiment.py        Orchestrator: generate -> collect -> evaluate -> judge -> aggregate
+  evaluate_scene.py        Phase 1 automated metrics (geometric, semantic, plan, efficiency)
+  evaluate_phase2.py       Phase 2 automated metrics (coverage, validity, chain, runtime)
+  llm_judge.py             LLM-as-judge ratings for Phase 1 and Phase 2 (1-5 scales)
+  aggregate_results.py     Mean/std across trials, summary table, CSV, charts
+  run_experiment.bat       Windows launcher for run_experiment.py (edit settings inside)
+  replay_trial.bat         Windows launcher to replay a saved trial and play Phase 2 in Unity
+  experiment_design.md     Experiment design document
+  phase1_experiment_writeup.md
+```
+
+Generated at run time:
+
+```
+evaluation/
+  results/                 (default; change with --results-dir)
+    S01/trial_1/           Per-trial artifacts and reports (see "Outputs" below)
     S01/trial_2/
     ...
-  reports/                    # Auto-created: aggregated results
+  reports/                 Aggregated outputs
     summary.json
     summary.csv
     summary_table.txt
-    charts/                   # Bar charts + radar chart (requires matplotlib)
-  run_experiment.py           # Main orchestrator
-  evaluate_scene.py           # Geometric + semantic + plan + efficiency metrics
-  llm_judge.py                # LLM-as-judge (coherence + spatial scores)
-  aggregate_results.py        # Cross-trial aggregation, tables, charts
-  experiment_design.md        # Full experiment design document
+    charts/                Bar charts + radar chart (matplotlib)
 ```
 
 ## Prerequisites
 
-- Python environment with `groq`, `python-dotenv` installed
-- `GROQ_API_KEY` set in environment (or `.env` file in `Agent/`)
-- Unity running with `AgentNetworkBridge` + `ScreenshotLoopSender` active (for full runs)
-- Optional: `matplotlib` for chart generation
-- Optional: `OPENAI_API_KEY` if using `--judge-provider openai`
+- Python 3 with the packages in [`Agent/requirements.txt`](../requirements.txt)
+  (`groq`, `openai`, `python-dotenv`; `matplotlib` and `numpy` for charts).
+- API keys in the environment or in `Agent/.env`:
+  - `GROQ_API_KEY` (pipeline and the default `groq` judge)
+  - `OPENAI_API_KEY` (frontier model in the pipeline, and `--judge-provider openai`)
+- For generation runs: the Unity project open in the Editor, in Play mode, with
+  `AgentNetworkBridge` and `ScreenshotLoopSender` active. The harness talks to
+  Unity through `firefighter project/Assets/Scripts/unity_commands.json` and
+  `Agent/api_files/`. Unity is **not** needed for `--eval-only` or
+  `--aggregate-only`.
 
-## Quick Start
+## Reproducing the experiment
 
-### Run all 10 scenarios (3 trials each = 30 runs)
+All commands are run from the `Agent/` directory.
 
 ```bash
 cd Agent
+
+# Full run: all 15 scenarios x 3 trials, Groq judge
 python evaluation/run_experiment.py
-```
 
-### Run specific scenarios
-
-```bash
-# Only S01 and S03, 2 trials each
+# Subset of scenarios / trials
 python evaluation/run_experiment.py --scenarios S01,S03 --trials 2
 
-# Quick single test
+# Quick smoke test without the LLM judge
 python evaluation/run_experiment.py --scenarios S03 --trials 1 --skip-judge
-```
 
-### Evaluate existing results (no Phase 1 re-generation)
+# Choose the pipeline's frontier model and use an OpenAI judge
+python evaluation/run_experiment.py --frontier-model gpt-5.4-mini \
+    --judge-provider openai --judge-model gpt-5.4-mini --timeout 300
 
-```bash
+# Re-score existing results without regenerating (no Unity needed)
 python evaluation/run_experiment.py --eval-only
-```
 
-### Aggregate only (just regenerate reports from existing eval_report.json files)
-
-```bash
+# Rebuild reports from existing per-trial reports
 python evaluation/run_experiment.py --aggregate-only
 ```
 
-## run_experiment.py Options
+On Windows you can instead edit the settings block at the top of
+`run_experiment.bat` and double-click it; it builds the same command line.
+
+### What happens per trial
+
+1. **Clear scene**: write a `ClearScene` command for Unity and wait for
+   confirmation (`--clear-wait` x `--clear-retries` seconds, then `--stabilize`).
+   After 3 consecutive unconfirmed clears the run aborts and aggregates what it has.
+2. **Reset `api_files/`**: `reflection.json`, `actions.json`, `agent.log`,
+   `reflection_log.log`, `scene_state.json`.
+3. **Generate**: copy `scenarios/experience_SXX.txt` to `api_files/experience.txt`
+   and run `groq_static_test.py --phase1-only` (or, with `--include-phase2`,
+   without `--phase1-only` so the interactive Phase 2 loop runs too).
+4. **Collect**: wait for fresh Unity screenshots, then copy artifacts into
+   `results/SXX/trial_N/`.
+5. **Evaluate**: `evaluate_scene.py` -> `eval_report.json`;
+   `evaluate_phase2.py` -> `phase2_eval_report.json` (if Phase 2 artifacts exist).
+6. **Judge**: `llm_judge.py` -> `llm_judge_report.json` (unless `--skip-judge`).
+
+After all trials, results are aggregated into `evaluation/reports/`.
+
+Before the first trial, a `DebugLog` probe checks that Unity is responding;
+if not, the run stops (skipped with `--eval-only`).
+
+### Outputs
+
+Per trial (`<results-dir>/SXX/trial_N/`):
+
+| File | Source |
+|------|--------|
+| `scene_state.json` | Objects present in Unity after generation (positions, bounds) |
+| `unity_commands.json` | Commands sent to Unity |
+| `reflection.json`, `plan.json`, `agent.log` | Pipeline planning/reflection records and log |
+| `interaction_map.json`, `story_chain.json` | Phase 2 artifacts |
+| `experience.txt` | Experience file as used by the pipeline |
+| `scene_screenshot_{xz,xy,yz}.png` | Orthographic screenshots of the final scene |
+| `eval_report.json` | `evaluate_scene.py` |
+| `phase2_eval_report.json` | `evaluate_phase2.py` |
+| `llm_judge_report.json` | `llm_judge.py` |
+
+Aggregated (`evaluation/reports/`; when run via `run_experiment.py` this location
+is fixed even if `--results-dir` is changed):
+
+| File | Content |
+|------|---------|
+| `summary.json` | Per-scenario `<metric>_mean` / `<metric>_std` for every aggregated metric |
+| `summary.csv` | Same data, one row per scenario |
+| `summary_table.txt` | Fixed-width table of key metrics plus an AVERAGE row |
+| `charts/*.png` | Bar charts (composite, collision rate, hit rate, plan completion) and a radar chart |
+
+## Script reference
+
+### `run_experiment.py`
 
 | Flag | Default | Description |
 |------|---------|-------------|
-| `--scenarios` | all 10 | Comma-separated IDs: `S01,S03,S07` |
-| `--trials` | 3 | Repetitions per scenario |
-| `--timeout` | 300 | Max seconds per Phase 1 run |
-| `--clear-wait` | 5.0 | Seconds to wait after `ClearScene` for Unity |
-| `--skip-judge` | off | Skip LLM-as-judge evaluation (faster) |
-| `--judge-provider` | groq | LLM for judge: `groq` or `openai` |
-| `--eval-only` | off | Only evaluate existing results, no generation |
-| `--aggregate-only` | off | Only aggregate existing evaluation reports |
+| `--scenarios` | all (S01-S15) | Comma-separated IDs, e.g. `S01,S03,S07` |
+| `--trials` | 3 | Trials per scenario |
+| `--timeout` | 300 | Max seconds per pipeline run |
+| `--clear-wait` | 8.0 | Seconds per ClearScene polling attempt |
+| `--clear-retries` | 3 | ClearScene polling attempts (total wait = wait x retries) |
+| `--stabilize` | 3.0 | Seconds to wait after ClearScene is confirmed |
+| `--skip-judge` | off | Skip the LLM judge |
+| `--judge-provider` | `groq` | Judge provider: `groq` or `openai` |
+| `--judge-model` | provider default | Judge model override (e.g. `gpt-5.5`) |
+| `--frontier-model` | pipeline default (`gpt-5.5`) | Forwarded to `groq_static_test.py --frontier-model`; `''` disables the frontier model |
+| `--include-phase2` | off | Also run the interactive Phase 2 loop (requires player input in Unity) |
+| `--phase2-max-iterations` | 0 (no cap) | Phase 2 loop iteration cap; only with `--include-phase2` |
+| `--results-dir` | `evaluation/results` | Where per-trial results are written/read |
+| `--eval-only` | off | Evaluate existing results only (no generation, no Unity) |
+| `--aggregate-only` | off | Only aggregate existing reports |
+| `--abort-no-unity` | off | Accepted but currently has no effect |
 
-## What Happens Per Trial
-
-1. **ClearScene** -- sends `ClearScene` command to Unity, waits for old objects to be destroyed
-2. **Clear api_files** -- resets `reflection.json`, `agent.log`, `scene_state.json`
-3. **Copy scenario** -- copies `experience_S{XX}.txt` to `api_files/experience.txt`
-4. **Phase 1** -- runs `groq_static_test.py --phase1-only`
-5. **Collect artifacts** -- copies all outputs to `results/{scenario}/trial_{N}/`
-6. **Evaluate** -- runs `evaluate_scene.py`, writes `eval_report.json`
-7. **LLM Judge** -- runs `llm_judge.py`, writes `llm_judge_report.json`
-
-After all trials: runs aggregation, prints summary table, generates charts.
-
-## Using Individual Scripts
-
-### evaluate_scene.py
-
-Compute all automated metrics from a single run's output:
+### `evaluate_scene.py` (Phase 1 metrics)
 
 ```bash
 python evaluation/evaluate_scene.py \
-  --results-dir evaluation/results/S03/trial_1 \
-  --experience evaluation/scenarios/experience_S03.txt \
-  --output evaluation/results/S03/trial_1/eval_report.json
+    --results-dir evaluation/results/S03/trial_1 \
+    --experience evaluation/scenarios/experience_S03.txt \
+    --output evaluation/results/S03/trial_1/eval_report.json
 ```
 
-### llm_judge.py
+| Flag | Required | Description |
+|------|----------|-------------|
+| `--results-dir` | yes | Trial directory with `scene_state.json`, `reflection.json`, `agent.log`, `unity_commands.json` |
+| `--experience` | no | Experience file; its `[room_config]` section supplies room bounds and `scene_type` |
+| `--output` | no | Write the JSON report here (it is always printed) |
 
-Rate a scene via LLM (coherence 1-5, spatial 1-5):
+### `evaluate_phase2.py` (Phase 2 metrics)
+
+```bash
+python evaluation/evaluate_phase2.py \
+    --results-dir evaluation/results/S03/trial_1 \
+    --experience evaluation/scenarios/experience_S03.txt \
+    --output evaluation/results/S03/trial_1/phase2_eval_report.json
+```
+
+Same flags as `evaluate_scene.py`; reads `interaction_map.json`,
+`story_chain.json`, `scene_state.json` (and `agent.log` /
+`unity_commands.json` for runtime metrics).
+
+### `llm_judge.py`
 
 ```bash
 python evaluation/llm_judge.py \
-  --results-dir evaluation/results/S03/trial_1 \
-  --experience evaluation/scenarios/experience_S03.txt \
-  --provider groq \
-  --output evaluation/results/S03/trial_1/llm_judge_report.json
+    --results-dir evaluation/results/S03/trial_1 \
+    --experience evaluation/scenarios/experience_S03.txt \
+    --provider groq \
+    --output evaluation/results/S03/trial_1/llm_judge_report.json
 ```
 
-### aggregate_results.py
+| Flag | Required | Default | Description |
+|------|----------|---------|-------------|
+| `--results-dir` | yes | | Trial directory |
+| `--experience` | yes | | Experience file used for the run |
+| `--provider` | no | `groq` | `groq` (`meta-llama/llama-4-scout-17b-16e-instruct`) or `openai` (`gpt-5.5`) |
+| `--model` | no | provider default | Model override |
+| `--output` | no | | Write the JSON ratings here |
 
-Aggregate all results and generate reports:
+### `aggregate_results.py`
 
 ```bash
 python evaluation/aggregate_results.py \
-  --results-root evaluation/results \
-  --output-dir evaluation/reports
+    --results-root evaluation/results \
+    --output-dir evaluation/reports
 ```
+
+| Flag | Required | Default | Description |
+|------|----------|---------|-------------|
+| `--results-root` | yes | | Directory laid out as `<root>/<scenario>/<trial>/` |
+| `--output-dir` | no | `<results-root>/../reports` | Where summaries and charts are written |
+
+Trials without an `eval_report.json` are skipped.
+
+### `replay_trial.bat` (Windows)
+
+Rebuilds a saved trial's scene in Unity (`groq_static_test.py --replay-trial`)
+and enters the interactive Phase 2 loop so you can play it in the XR Device
+Simulator. Edit `TRIAL_DIR` (relative to `Agent/`) inside the file, make sure
+Unity is in Play mode, run it, and press Ctrl+C when done; Phase 2 runtime
+metrics are then written to the trial's `phase2_eval_report.json`.
 
 ## Metrics
 
-### Geometric (from scene_state.json)
+### Phase 1: geometric (`scene_state.json`)
+
+Structural `Cube` objects (walls, floor, ceiling) are excluded.
 
 | Metric | Description |
 |--------|-------------|
-| Collision Rate | AABB-overlapping object pairs / total pairs |
-| OOB Rate | Objects with center outside room bounds / total |
-| Mean NN Distance | Average nearest-neighbor distance (XZ plane) |
-| Min Pairwise Distance | Closest any two objects get |
-| Floor Coverage | Sum of object footprints / room floor area |
-| Height Violation Rate | Small props on floor (y<0.3) that should be on surfaces |
+| `collision_rate` | Object pairs with overlapping AABBs / all pairs |
+| `oob_rate` | Objects whose center is outside the room bounds / all objects |
+| `mean_nn_distance` | Mean nearest-neighbor distance on the XZ plane |
+| `min_pairwise_distance` | Smallest XZ distance between any two objects |
+| `floor_coverage` | Sum of object XZ footprints / room floor area (capped at 1.0) |
+| `height_violation_rate` | Small props (keyword match) with y < 0.3 / all small props |
 
-### Semantic (automated + LLM)
-
-| Metric | Description |
-|--------|-------------|
-| Prefab Hit Rate | Required objects actually placed / required objects listed |
-| Prefab Name Validity | Valid prefab names / total placements |
-| Duplicate Rate | Duplicate object names / total objects |
-| Coherence Score (LLM) | 1-5: object selection appropriateness for scene type |
-| Spatial Score (LLM) | 1-5: logical placement quality |
-
-### Plan Completion (from reflection.json)
+### Phase 1: semantic (automated)
 
 | Metric | Description |
 |--------|-------------|
-| Step Completion Rate | Steps marked complete / total plan steps |
-| Avg Iterations/Step | Reflection iterations / plan steps |
-| Total Corrections | MoveObject + DeleteObject from reflection |
+| `prefab_hit_rate` | Objects listed under "REQUIRED OBJECTS" that were placed / listed (1.0 if none are listed) |
+| `prefab_name_validity` | Placements using a valid prefab name / all placements (only when a prefab list is supplied) |
+| `duplicate_rate` | Duplicate object names / all objects |
+| `character_count` | Placed objects whose name starts with a character prefix (doctor, nurse, patient, ...) |
 
-### Efficiency (from agent.log)
+### Phase 1: plan completion (`reflection.json`)
 
 | Metric | Description |
 |--------|-------------|
-| LLM Calls | Total Groq API calls |
-| Dropped Prefabs | PlaceObject commands dropped (name not found) |
-| Fill Commands | Objects added by the sparse-room fill loop |
+| `step_completion_rate` | Plan steps with a reflection marked `step_complete: "yes"` / all steps |
+| `avg_iterations_per_step` | Reflection entries / plan steps |
+| `total_corrections` | `MoveObject` + `DeleteObject` mentions in reflection suggestions |
 
-### Composite Score (0-100)
+### Phase 1: efficiency (`agent.log`, `unity_commands.json`)
 
-Weighted combination: `collision(25%) + OOB(15%) + hit_rate(30%) + plan_completion(20%) + height(10%)`
+| Metric | Description |
+|--------|-------------|
+| `llm_calls` | Groq responses logged (`GROQ RAW RESPONSE`) |
+| `dropped_prefabs` | Placement commands dropped because the prefab was not found |
+| `fill_commands_total` | Objects added by the sparse-room fill loop |
+| `phase1_duration_seconds` | Wall-clock Phase 1 duration from log timestamps |
+| `total_commands`, `place_object_count`, ... | Command counts by action type |
 
-## Scenarios at a Glance
+### Phase 1 composite score (0-100)
 
-| ID | Scene | Size | Objects | Tests |
-|----|-------|------|---------|-------|
-| S01 | Emergency Triage | 4x4m | 12 | Small space, collision avoidance |
-| S02 | Hospital Ward | 8x6m | 25 | Symmetric/grid layout |
-| S03 | Physical Therapy Gym | 6x6m | 30 | High object diversity (baseline) |
-| S04 | Surgery Prep | 5x5m | 20 | Surface placement (y>0.7) |
-| S05 | Waiting Room | 6x8m | 15 | Sparse room fill behavior |
-| S06 | ICU Single-Patient | 4x5m | 18 | Character-equipment relationship |
-| S07 | Supply Closet | 3x3m | 20 | Extreme density, tiny room |
-| S08 | Rehab Corridor | 3x10m | 15 | Elongated linear layout |
-| S09 | Doctor's Office | 5x5m | 15 | Functional zone grouping |
-| S10 | Nurse Station | 8x8m | 35 | Max scale + density stress test |
+```
+composite = 100 * ( 0.25 * max(0, 1 - 10 * collision_rate)
+                  + 0.15 * max(0, 1 - 5 * oob_rate)
+                  + 0.30 * prefab_hit_rate
+                  + 0.20 * step_completion_rate
+                  + 0.10 * (1 - height_violation_rate) )
+```
+
+### Phase 2 (`interaction_map.json`, `story_chain.json`)
+
+| Group | Metrics |
+|-------|---------|
+| Coverage | `ambient_object_coverage` (placed objects with a map entry), `multi_event_pct`, `bubble_density`, `targeted_animation_pct` |
+| Validity | `map_controller_validity_rate`, `map_state_prefix_validity`, `map_target_validity_rate`, `map_bubble_on_validity` (references resolve to real controllers / placed objects) |
+| Chain | `chain_length`, `chain_beat_validity_rate`, `chain_trigger_validity_rate`, `chain_action_richness`, `chain_unique_action_types`, `chain_walk_coord_validity`, `chain_state_prefix_validity`, `chain_char_coverage` |
+| Runtime | Only populated when Phase 2 actually ran: `phase2_ran`, `chain_beats_fired`, `chain_progression`, `time_to_first_beat_seconds`, `command_execution_rate`, `unmapped_event_rate`, ... |
+
+Phase 2 composite (0-100) = 30% coverage + 30% validity + 40% chain quality
+(each a weighted mean of its group's metrics; see `compute_composite` in
+`evaluate_phase2.py`). Runtime metrics are not part of the composite.
+
+### LLM judge (1-5 each)
+
+| Phase | Ratings |
+|-------|---------|
+| Phase 1 | `coherence_score` (object selection fits the scene type), `spatial_score` (logical placement) |
+| Phase 2 | `bubble_informativeness`, `narrative_coherence`, `character_voice_consistency`, `bubble_object_fit` |
+
+## Scenarios
+
+| ID | Scenario |
+|----|----------|
+| S01 | Emergency Triage Room |
+| S02 | Hospital Ward (4-Bed) |
+| S03 | Physical Therapy Gym |
+| S04 | Surgery Prep Room |
+| S05 | Dental Office |
+| S06 | ICU Single-Patient Room |
+| S07 | Medical Supply Closet |
+| S08 | Rehabilitation Corridor |
+| S09 | Doctor's Office |
+| S10 | Nurse Station (Open) |
+| S11 | Radiology Imaging Suite |
+| S12 | Maternity / Neonatal Ward |
+| S13 | Ophthalmology Exam Room |
+| S14 | Clinical Laboratory |
+| S15 | Cosmetic Treatment Room |
+
+Each file starts with a one-line title and free-text description, followed by an
+`[interactions]` section describing the desired Phase 2 behavior.

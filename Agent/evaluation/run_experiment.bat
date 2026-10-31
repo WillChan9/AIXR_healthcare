@@ -1,12 +1,13 @@
 @echo off
 REM ============================================================
-REM  Experiment Runner - Phase 1 + Phase 2 evaluation
-REM  Edit the settings below, then double-click to run.
+REM  Experiment Runner - Phase 1 + Phase 2 evaluation (Windows)
+REM  Wraps evaluation\run_experiment.py. Edit the settings below,
+REM  then double-click to run. Uses whichever "python" is on PATH.
 REM ============================================================
 
 REM ---- Settings (edit here) ---------------------------------
 
-REM Scenarios to run (comma-separated, no spaces). Leave empty for all (S01-S10).
+REM Scenarios to run (comma-separated, e.g. S01,S03). Leave empty for all (S01-S15).
 set SCENARIOS=S02, S04, S05, S06, S07, S08, S09, S10
 
 REM Number of trials per scenario
@@ -20,7 +21,7 @@ set SKIP_JUDGE=NO
 
 REM LLM judge provider: groq or openai
 REM   groq    - cheap, uses Llama-4-Scout (less accurate evaluator)
-REM   openai  - frontier-quality judge, uses model below
+REM   openai  - frontier-quality judge, uses JUDGE_MODEL below
 set JUDGE_PROVIDER=openai
 
 REM LLM judge model (only used when JUDGE_PROVIDER=openai)
@@ -31,37 +32,38 @@ REM   gpt-4o      - legacy fallback
 set JUDGE_MODEL=gpt-5.4-mini
 
 REM Timeout per trial in seconds.
-REM Notes:
-REM   - GPT-5.5 / GPT-5.5-pro are reasoning models — single calls can take
-REM     1-3 minutes. With 4 frontier calls per trial, expect 7-10 min total.
-REM     Use 900 (15 min) for safety with gpt-5.5.
-REM   - GPT-5.4-mini / GPT-5.2 are much faster — 300-500 is enough.
+REM   - gpt-5.5 / gpt-5.5-pro are reasoning models: single calls can take
+REM     1-3 minutes. With 4 frontier calls per trial, expect 7-10 min total,
+REM     so use 900 (15 min) for safety.
+REM   - gpt-5.4-mini / gpt-5.2 are much faster: 300-500 is enough.
 set TIMEOUT=300
 
-REM Frontier LLM for scene_synthesis + interaction_map + story_chain
+REM Frontier LLM for scene synthesis + interaction map + story chain
 REM   gpt-5.5        - newest (2026-04-23), best quality
 REM   gpt-5.5-pro    - top-tier reasoning, more expensive
 REM   gpt-5.2        - stable mid-tier (2025-12-11)
 REM   gpt-5.4-mini   - cheap and fast
 REM   gpt-4o         - legacy fallback
-REM   (empty)        - disable frontier, use Llama-4-Scout for everything
+REM   (empty)        - omit --frontier-model, so groq_static_test.py uses
+REM                    its own default (currently gpt-5.5)
 set FRONTIER_MODEL=gpt-5.4-mini
 
 REM Run Phase 2 (interactive event loop)? YES requires you to interact with
-REM the scene in Unity (touch / grab via simulator or VR). NO = batch-only,
-REM Phase 1 + static Phase 2 evaluation only.
-REM Tip: use INCLUDE_PHASE2=YES with TRIALS=1 and a single SCENARIOS entry —
-REM otherwise batch trials hang on Phase 2 waiting for player input.
+REM the scene in Unity (touch / grab via simulator or VR). NO = batch-only:
+REM Phase 1 + static Phase 2 evaluation.
+REM Tip: use INCLUDE_PHASE2=YES with TRIALS=1 and a single SCENARIOS entry,
+REM otherwise batch trials hang in Phase 2 waiting for player input.
 set INCLUDE_PHASE2=NO
 
-REM Phase 2 event-loop iterations cap (only applies when INCLUDE_PHASE2=YES).
-REM 0 = no cap, only TIMEOUT stops the loop.
-REM A small number like 50-100 = the loop self-stops after that many event
-REM batches, useful for unattended phase 2 runs.
+REM Phase 2 event-loop iteration cap (only applies when INCLUDE_PHASE2=YES).
+REM   0      - no cap; only TIMEOUT stops the loop
+REM   50-100 - the loop stops itself after that many event batches
+REM            (useful for unattended Phase 2 runs)
 set PHASE2_MAX_ITERATIONS=0
 
 REM ---- End of settings --------------------------------------
 
+REM Run from Agent\ (the parent of this script's folder).
 cd /d "%~dp0.."
 
 set CMD=python evaluation/run_experiment.py

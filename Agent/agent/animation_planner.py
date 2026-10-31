@@ -1,23 +1,34 @@
-"""
-LLM-powered animation planner — Phase 2 background thread.
+"""LLM-powered animation planner for Phase 2 (interactive runtime).
 
-Runs as a daemon thread alongside the deterministic InteractionAnimationHandler.
-When an interaction event is submitted, it calls the Groq LLM to choose the most
-contextually appropriate animation from the available animator controllers,
-taking into account:
+Runs as a daemon thread alongside the deterministic
+``interaction_animations.InteractionAnimationHandler``. The deterministic
+handler responds to an interaction immediately (zero LLM latency); this
+planner then produces a second, richer response once the LLM has reasoned
+about the context. For each submitted interaction event it asks a Groq-hosted
+LLM to choose the most appropriate animation from the available animator
+controllers, taking into account:
+
   - the object being interacted with and its position
   - nearby objects in the scene
-  - recent interaction history (from the log)
-  - the type of interaction (grab, activate, hover_enter, …)
+  - recent interaction history (from ``InteractionLog``)
+  - the interaction type (grab, activate, hover_enter, ...)
 
-The deterministic handler fires immediately (zero LLM latency).
-This planner fires a *second*, richer response once the LLM has reasoned.
+Inputs:
+    Interaction events passed to ``submit_event()`` (dicts with ``type``,
+    ``objectName``, ``playerPosition``, ``playerLookDir``), the list of placed
+    scene commands, and the list of available animator controller names.
 
-Usage (embedded in phase2_interaction_loop):
+Outputs:
+    ``PlayHumanAnimationFromResources`` and ``ShowSpeechBubble`` commands
+    appended to ``unity_commands.json`` via ``Agent/main.py``; an entry per
+    event in ``InteractionLog``; logs in ``api_files/animation_planner.log``.
+
+Usage::
+
     from agent.animation_planner import AnimationPlannerThread
-    from agent.interaction_log    import InteractionLog
+    from interaction_log import InteractionLog
 
-    log     = InteractionLog()
+    log = InteractionLog()
     planner = AnimationPlannerThread(groq_client, animators, all_placed, log)
     planner.start()
     ...
@@ -35,22 +46,30 @@ import threading
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-# ── path bootstrap ─────────────────────────────────────────────────────────
+# ---------------------------------------------------------------------------
+# Path bootstrap and imports
+# ---------------------------------------------------------------------------
+
+# Make Agent/ importable so the top-level helper modules (main, interaction_log)
+# resolve regardless of the caller's working directory.
 _AGENT_DIR  = Path(__file__).parent      # Agent/agent/
 _AGENT_ROOT = _AGENT_DIR.parent          # Agent/
 if str(_AGENT_ROOT) not in sys.path:
     sys.path.insert(0, str(_AGENT_ROOT))
 
-import main as unity                     # Agent/main.py
+import main as unity                     # Agent/main.py: writes unity_commands.json
 
 try:
     from .logger import get_logger
 except ImportError:
+    # Fallback when this file is loaded outside the ``agent`` package.
     import logging
+
     def get_logger(name: str, **_):
         logging.basicConfig(level=logging.INFO,
                             format="%(asctime)s [%(name)s] %(message)s")
         return logging.getLogger(name)
+
 
 from interaction_log import InteractionLog
 
@@ -99,7 +118,7 @@ Rules:
   contextually appropriate (greeting, reassurance, clinical instruction, etc.).
 """
 
-# Character name prefixes — objects with these prefixes get speech bubbles
+# Object-name prefixes that identify characters; only these get speech bubbles.
 _CHARACTER_PREFIXES = frozenset({
     "doctor", "nurse", "patient", "emt", "surgeon", "infectiologist",
 })
@@ -109,14 +128,24 @@ _CHARACTER_PREFIXES = frozenset({
 # ---------------------------------------------------------------------------
 
 class AnimationPlannerThread(threading.Thread):
-    """
-    Background daemon thread — LLM-based animation planner for Phase 2.
+    """Background daemon thread that plans animations for interactions via an LLM.
 
-    Events are submitted via submit_event() and processed asynchronously.
-    Results are dispatched to unity_commands.json and logged to InteractionLog.
+    Events are submitted with ``submit_event()`` and processed asynchronously
+    in FIFO order. Chosen animations are dispatched to ``unity_commands.json``
+    and recorded in the ``InteractionLog``.
+
+    Args:
+        groq_client: An initialized ``groq.Groq`` client.
+        animators: Names of available animator controllers (file stems).
+        all_placed: Placed-object command dicts. Held by reference, so objects
+            the main thread appends later are visible to the planner.
+        interaction_log: Shared ``InteractionLog`` for history and results.
+        model: Groq model ID used for planning.
+        max_queue_size: Maximum number of pending events; when full, the
+            oldest event is dropped.
     """
 
-    # Events of these types are silently dropped (low-value for LLM reasoning)
+    # Event types silently dropped (low value for LLM reasoning).
     _SKIP_TYPES = frozenset({"hover_exit"})
 
     def __init__(
@@ -137,12 +166,15 @@ class AnimationPlannerThread(threading.Thread):
         self._queue: queue.Queue = queue.Queue(maxsize=max_queue_size)
         self._stop_event = threading.Event()
 
-    # ── public API ────────────────────────────────────────────────────────
+    # -----------------------------------------------------------------------
+    # Public API
+    # -----------------------------------------------------------------------
 
     def submit_event(self, event: Dict[str, Any]):
-        """
-        Non-blocking enqueue of an interaction event.
-        Drops the oldest queued event if the queue is full.
+        """Enqueue an interaction event without blocking.
+
+        Events whose type is in ``_SKIP_TYPES`` are ignored. If the queue is
+        full, the oldest queued event is dropped to make room.
         """
         if event.get("type") in self._SKIP_TYPES:
             return
@@ -159,9 +191,12 @@ class AnimationPlannerThread(threading.Thread):
         """Signal the thread to finish after its current task."""
         self._stop_event.set()
 
-    # ── thread body ───────────────────────────────────────────────────────
+    # -----------------------------------------------------------------------
+    # Thread body
+    # -----------------------------------------------------------------------
 
     def run(self):
+        """Process queued events until ``stop()`` is called."""
         logger.info("AnimationPlannerThread started (model=%s).", self._model)
         while not self._stop_event.is_set():
             try:
@@ -174,9 +209,16 @@ class AnimationPlannerThread(threading.Thread):
                 logger.error("Unhandled error in planner: %s", exc, exc_info=True)
         logger.info("AnimationPlannerThread stopped.")
 
-    # ── core logic ────────────────────────────────────────────────────────
+    # -----------------------------------------------------------------------
+    # Core logic
+    # -----------------------------------------------------------------------
 
     def _plan_and_dispatch(self, event: Dict):
+        """Ask the LLM for an animation for ``event`` and dispatch it to Unity.
+
+        Unknown controller names returned by the LLM are dropped. A speech
+        bubble is also queued when the target object is a character.
+        """
         event_type = event.get("type", "")
         obj_name   = event.get("objectName", "")
 
@@ -283,7 +325,9 @@ class AnimationPlannerThread(threading.Thread):
         except Exception as exc:
             logger.error("[Planner] Dispatch failed: %s", exc)
 
-    # ── helpers ───────────────────────────────────────────────────────────
+    # -----------------------------------------------------------------------
+    # Helpers
+    # -----------------------------------------------------------------------
 
     def _parse_response(self, raw: str) -> Optional[Dict]:
         """Extract a JSON object from the LLM response, tolerating code fences."""
@@ -303,7 +347,7 @@ class AnimationPlannerThread(threading.Thread):
             return None
 
     def _find_object_position(self, obj_name: str) -> Optional[Dict]:
-        """Look up x/y/z of a placed object by name."""
+        """Return the x/y/z of a placed object by (case-insensitive) name, or None."""
         lo = obj_name.lower()
         for c in self._all_placed:
             name = c.get("objectName") or c.get("humanName", "")

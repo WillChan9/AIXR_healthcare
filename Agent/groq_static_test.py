@@ -1,26 +1,108 @@
-import os
-import sys
-import re
-import json
-import time
+"""LLM pipeline that builds and runs a VR healthcare training scene in Unity.
+
+This is the main entry point of the agent. It turns a natural-language scene
+description into Unity commands, then reacts to player events at runtime.
+
+Phase 1: scene synthesis
+    1. Read ``api_files/experience.txt``: a free-text description, plus an
+       optional ``[interactions]`` section (story intent) and an optional
+       ``[room_config]`` section (room geometry, object bounds, keywords).
+    2. If no ``[room_config]`` exists and a frontier model is enabled, an OpenAI
+       model synthesizes both the room config and a layout plan
+       (``scene_synthesis``). Otherwise a Groq model generates the plan.
+    3. Write a fixed room shell (floor, walls, ceiling, lighting) built from
+       the config, then ask a Groq model (Llama-4-Scout) for interior objects.
+    4. Run a reflection loop (``ReflectionModule``) over Unity's orthographic
+       screenshots. Each iteration checks the current plan step, applies
+       MoveObject/DeleteObject corrections directly, and asks the LLM for more
+       objects while the room is sparse.
+    5. Back-fill any required characters the LLM dropped, then compile an
+       ambient interaction map and a linear story chain for Phase 2.
+
+Phase 2: interaction loop
+    Poll ``interaction_events.json``, which Unity writes, and dispatch each
+    player event, first through the story chain (Layer 2) and then through
+    the ambient interaction map (Layer 1). Phase 2 makes no LLM calls: every
+    response was compiled at the end of Phase 1.
+
+Inputs:
+    api_files/experience.txt          Scene description (see ``--path``).
+    <Unity>/Assets/Resources/         Prefab (*.prefab) and animator
+                                      (*.controller) names offered to the LLM.
+    api_files/scene_screenshot_{xz,xy,yz}.png
+                                      Orthographic views written by Unity.
+    interaction_events.json           Player events (next to the commands file).
+
+Outputs:
+    <Unity>/Assets/Scripts/unity_commands.json
+                                      Command queue run by the Unity bridge
+                                      (see ``--out``).
+    api_files/plan.json               Layout plan used by the reflection module.
+    api_files/interaction_map.json    Per-object ambient reactions (Layer 1).
+    api_files/story_chain.json        Scripted story beats (Layer 2).
+    api_files/agent.log, reflection.json, actions.json
+                                      Logs and scratch files, cleared at startup.
+
+Environment variables (read from the environment or a ``.env`` file):
+    GROQ_API_KEY            Required. Groq API key for Llama-4-Scout.
+    OPENAI_API_KEY          Required when a frontier model is used
+                            (``--frontier-model``, on by default).
+    UNITY_SCREENSHOT_PATH   Optional base path of the screenshots
+                            (default: api_files/scene_screenshot.png).
+
+Usage:
+    # Full run: Phase 1, then Phase 2 until Ctrl+C
+    python groq_static_test.py
+
+    # Phase 1 only, on a different scenario file
+    python groq_static_test.py --path evaluation/scenarios/experience_S01.txt --phase1-only
+
+    # Quick Phase 1 (3 plan steps x 1 iteration) to test Phase 2
+    python groq_static_test.py --fast-phase1
+
+    # Fine-grained Phase 1 caps
+    python groq_static_test.py --phase1-max-steps 2 --phase1-max-iters 2
+
+    # Use Groq/Llama-4-Scout for every step (no OpenAI calls)
+    python groq_static_test.py --frontier-model ""
+
+    # Restore a saved trial and go straight to Phase 2
+    python groq_static_test.py --replay-trial path/to/trial_dir --max-iterations 50
+
+    Other flags: --out, --interval, --max-iterations, --screenshot.
+    Run with --help for details.
+"""
+
 import argparse
 import base64
+import importlib.util
+import json
+import os
+import re
+import shutil
+import sys
+import time
 from pathlib import Path
-from typing import List, Dict, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 from dotenv import load_dotenv
 from groq import Groq
 
-# Allow importing from the agent package
+# Make the sibling modules (agent/, interaction_*.py, story_chain.py) importable
+# no matter which directory the script is launched from.
 sys.path.insert(0, str(Path(__file__).parent))
-from agent.Reflection_module import ReflectionModule
-from agent.logger import get_logger
-from interaction_animations import InteractionAnimationHandler
-from interaction_log import InteractionLog
-from story_chain import StoryChainHandler
+from agent.Reflection_module import ReflectionModule  # noqa: E402
+from agent.logger import get_logger  # noqa: E402
+from interaction_animations import InteractionAnimationHandler  # noqa: E402
+from interaction_log import InteractionLog  # noqa: E402
+from story_chain import StoryChainHandler  # noqa: E402
 
 logger = get_logger("Pipeline")
 
+
+# ---------------------------------------------------------------------------
+# experience.txt parsing
+# ---------------------------------------------------------------------------
 
 def _parse_experience_config(txt: str) -> dict:
     """Parse key=value pairs from the [room_config] section of experience.txt."""
@@ -41,12 +123,30 @@ def _parse_experience_config(txt: str) -> dict:
 
 
 def _clean_description(txt: str) -> str:
-    """Strip the [room_config] section so only the human-readable description goes to the LLM."""
+    """Return only the human-readable description from experience.txt.
+
+    Drops the [room_config] section and the [interactions] section (if it
+    appears before [room_config]), so neither is sent to the LLM as scene text.
+    """
     idx = txt.find("[room_config]")
     base = txt[:idx].strip() if idx != -1 else txt.strip()
-    # Also strip the [interactions] section if it ends up before [room_config]
     iidx = base.find("[interactions]")
     return base[:iidx].strip() if iidx != -1 else base
+
+
+def _parse_interactions_section(txt: str) -> str:
+    """Extract the free-text body of the [interactions] section from experience.txt.
+
+    The block ends at the next [section] header or end-of-file. Returns an empty
+    string if no [interactions] section exists.
+    """
+    idx = txt.find("[interactions]")
+    if idx == -1:
+        return ""
+    rest = txt[idx + len("[interactions]"):]
+    next_sec = re.search(r'\n\[[A-Za-z_]+\]', rest)
+    body = rest[:next_sec.start()] if next_sec else rest
+    return body.strip()
 
 
 # ---------------------------------------------------------------------------
@@ -66,12 +166,12 @@ def _replay_trial(trial_dir: Path, agent_dir: Path, out_path: Path,
          and write it to the live commands file. Unity replays it in order.
       5. Poll for Unity to finish executing all commands (or until timeout).
 
-    Returns True if replay succeeded (Unity executed all commands), False
-    otherwise. Phase 2 can be entered either way — partial replay is still
-    useful for collecting runtime metrics.
+    Returns False only if the trial cannot be loaded (missing directory, or a
+    missing or invalid unity_commands.json). Once the commands are written it
+    returns True, even after a partial replay or a timeout, because a partial
+    scene is still useful for collecting Phase 2 runtime metrics.
     """
-    import shutil
-    import main as _unity
+    import main as _unity  # Unity bridge (Agent/main.py); imported lazily
 
     if not trial_dir.exists() or not trial_dir.is_dir():
         logger.error(f"[Replay] Trial dir not found: {trial_dir}")
@@ -96,10 +196,12 @@ def _replay_trial(trial_dir: Path, agent_dir: Path, out_path: Path,
         if scenario_file.exists():
             shutil.copy2(scenario_file, api / "experience.txt")
             restored.append("experience.txt (from scenarios/)")
-            logger.info(f"[Replay] experience.txt absent in trial — fell back to scenarios/{scenario_file.name}")
-    logger.info(f"[Replay] Restored {len(restored)} artifact(s) from {trial_dir.name}: {restored}")
+            logger.info(f"[Replay] experience.txt absent in trial — fell back to "
+                        f"scenarios/{scenario_file.name}")
+    logger.info(f"[Replay] Restored {len(restored)} artifact(s) from {trial_dir.name}: "
+                f"{restored}")
 
-    # 2. Clear log + scene_state so Phase 2 + Unity start fresh
+    # 2. Clear the log and scratch files so Phase 2 starts fresh
     try:
         (api / "agent.log").write_text("", encoding="utf-8")
         (api / "actions.json").write_text("[]", encoding="utf-8")
@@ -179,12 +281,13 @@ def _replay_trial(trial_dir: Path, agent_dir: Path, out_path: Path,
 
 def _call_frontier(messages: List[Dict], model: str = "gpt-5",
                    max_tokens: int = 6000, temperature: float = 0.2) -> str:
-    """Call an OpenAI frontier model. Returns response text content.
+    """Call an OpenAI chat model and return the stripped response text.
 
-    Falls back to gpt-4o on errors that look model-not-available related so a
-    typo in --frontier-model doesn't kill the whole run.
+    If the error looks like the model is unavailable (not found, no access,
+    unsupported), retry once with gpt-4o, so a typo in --frontier-model does
+    not end the whole run. Other errors are re-raised.
     """
-    from openai import OpenAI
+    from openai import OpenAI  # optional dependency; only needed for frontier runs
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
     def _do_call(m: str) -> str:
@@ -211,7 +314,7 @@ def _call_frontier(messages: List[Dict], model: str = "gpt-5",
 
 
 def _strip_json_fences(raw: str) -> str:
-    """Extract JSON object from a markdown-fenced or plain LLM response."""
+    """Extract the outermost JSON object from a markdown-fenced or plain LLM response."""
     raw = raw.strip()
     if "```" in raw:
         s = raw.find("```") + 3
@@ -230,15 +333,18 @@ def scene_synthesis(
     prefabs: List[str],
     model: str = "gpt-5",
 ) -> Tuple[Dict, Dict]:
-    """Frontier-LLM-driven scene synthesis. Reads the natural-language
-    experience.txt (description + [interactions]) and produces:
+    """Turn a narrative experience.txt into a room config and a layout plan.
+
+    One frontier-LLM call reads the description and [interactions] text and
+    returns:
 
       cfg : dict   — equivalent to a [room_config] section
                      (room dimensions, bounds, keyword categories, …)
       plan: dict   — equivalent to plan.json
                      (steps[] with action + objects + target_area)
 
-    Returns (cfg, plan). Raises RuntimeError on parse failure.
+    Returns (cfg, plan). Raises RuntimeError if the response is not valid
+    JSON or lacks either key.
     """
     description = _clean_description(raw_experience)
     interactions = _parse_interactions_section(raw_experience)
@@ -312,16 +418,19 @@ Rules:
     try:
         data = json.loads(json_text)
     except json.JSONDecodeError as exc:
-        logger.error(f"[SceneSynthesis] LLM returned invalid JSON: {exc}\n--- raw ---\n{raw[:1000]}")
+        logger.error(f"[SceneSynthesis] LLM returned invalid JSON: {exc}\n"
+                     f"--- raw ---\n{raw[:1000]}")
         raise RuntimeError(f"scene_synthesis: invalid JSON from {model}: {exc}")
 
     cfg = data.get("cfg") or {}
     plan = data.get("plan") or {}
     if not cfg or not plan:
-        raise RuntimeError(f"scene_synthesis: missing cfg or plan in response. Got keys: {list(data.keys())}")
+        raise RuntimeError(f"scene_synthesis: missing cfg or plan in response. "
+                           f"Got keys: {list(data.keys())}")
 
-    # Normalize cfg values — Reflection module expects strings for keyword fields
-    # and parses numeric fields with float() / int() so accept both.
+    # The Reflection module expects comma-separated strings for keyword fields,
+    # so join any lists. Numeric fields are parsed with float()/int() downstream,
+    # so numbers and numeric strings both work.
     for key in ("surface_keywords", "supply_keywords", "character_prefixes",
                 "small_prop_keywords", "decor_keywords"):
         if isinstance(cfg.get(key), list):
@@ -338,10 +447,11 @@ Rules:
 
 
 def _write_room_config_to_experience(experience_path: Path, cfg: Dict) -> None:
-    """Append the synthesized cfg as a [room_config] section to experience.txt
-    so the Reflection module (which parses experience.txt directly) picks it up.
+    """Append the synthesized cfg to experience.txt as a [room_config] section.
 
-    Strips any prior [room_config] section first to avoid duplicates.
+    The Reflection module parses experience.txt directly, so this is how it
+    receives the synthesized config. Any earlier [room_config] section is
+    removed first to avoid duplicates.
     """
     text = experience_path.read_text(encoding="utf-8")
     idx = text.find("[room_config]")
@@ -357,7 +467,8 @@ def _write_room_config_to_experience(experience_path: Path, cfg: Dict) -> None:
         lines.append(f"{key} = {val}")
     new_text = text.rstrip() + "\n" + "\n".join(lines) + "\n"
     experience_path.write_text(new_text, encoding="utf-8")
-    logger.info(f"[SceneSynthesis] Wrote {len(cfg)} cfg fields to [room_config] in {experience_path.name}")
+    logger.info(f"[SceneSynthesis] Wrote {len(cfg)} cfg fields to [room_config] in "
+                f"{experience_path.name}")
 
 
 # ---------------------------------------------------------------------------
@@ -366,13 +477,19 @@ def _write_room_config_to_experience(experience_path: Path, cfg: Dict) -> None:
 
 def _ensure_required_staff(raw_experience: str, all_placed: List[Dict], out_path: Path,
                            cfg: dict) -> List[Dict]:
-    """Phase 1 LLM sometimes truncates output and drops PlaceHuman commands
-    for required staff. Parse names + positions from experience.txt and append
-    missing PlaceHuman commands to unity_commands.json + all_placed.
+    """Back-fill required characters that the Phase 1 LLM failed to place.
 
-    Required characters are detected by matching the configured character
-    prefixes (e.g. Doctor, Nurse, Surgeon, Patient, EMT) against tokens of
-    the form `Name_NN`, then extracting nearby `x~...` and `z~...` literals.
+    The Phase 1 LLM sometimes truncates its output and drops PlaceHuman
+    commands. This parses character names and positions from experience.txt
+    and appends any missing PlaceHuman commands to both unity_commands.json
+    and ``all_placed`` (in place).
+
+    A character is required when a token of the form ``Prefix_NN`` matches
+    one of the configured character prefixes (e.g. Doctor, Nurse, Patient)
+    on a line that also contains ``x~...`` and ``z~...`` (``y~...`` optional).
+    Lines after the [interactions] header are ignored.
+
+    Returns the list of commands that were appended (possibly empty).
     """
     prefixes_raw = cfg.get("character_prefixes", "Doctor,Nurse,Patient,Surgeon,EMT")
     prefixes = [p.strip() for p in prefixes_raw.split(",") if p.strip()]
@@ -427,22 +544,12 @@ def _ensure_required_staff(raw_experience: str, all_placed: List[Dict], out_path
     return new_cmds
 
 
-def _parse_interactions_section(txt: str) -> str:
-    """Extract the free-text body of the [interactions] section from experience.txt.
+# ---------------------------------------------------------------------------
+# Prefab / animator discovery and name resolution
+# ---------------------------------------------------------------------------
 
-    The block ends at the next [section] header or end-of-file. Returns an empty
-    string if no [interactions] section exists.
-    """
-    idx = txt.find("[interactions]")
-    if idx == -1:
-        return ""
-    rest = txt[idx + len("[interactions]"):]
-    next_sec = re.search(r'\n\[[A-Za-z_]+\]', rest)
-    body = rest[:next_sec.start()] if next_sec else rest
-    return body.strip()
-
-
-# Regex matching sub-part suffixes: _Part_01, _Body, _Coat, _Wheel_01, etc.
+# Matches sub-part prefab suffixes (_Part_01, _Body, _Coat, _Wheel_01, ...).
+# Sub-parts are pieces of a larger prefab and must never be placed on their own.
 _SUBPART_RE = re.compile(
     r'_Part_\d+$'
     r'|_Body$|_Face$|_Coat$|_Hat$|_Pants$|_Sneakers$|_Hair$|_Mask$'
@@ -453,6 +560,7 @@ _SUBPART_RE = re.compile(
 
 
 def _load_prefab_names(resources_dir: Path) -> List[str]:
+    """Return the sorted, unique prefab names under ``resources_dir``, excluding sub-parts."""
     if not resources_dir.exists():
         return []
     stems = {p.stem for p in resources_dir.rglob("*.prefab")}
@@ -460,13 +568,19 @@ def _load_prefab_names(resources_dir: Path) -> List[str]:
 
 
 def _load_animator_names(resources_dir: Path) -> List[str]:
-    """Return animation controllers, excluding large-movement animations (run, sprint, jump, etc.)."""
+    """Return animator controller names, excluding large-movement ones (run, sprint, jump, ...).
+
+    Large movements would carry characters out of position in a small room.
+    """
     if not resources_dir.exists():
         return []
-    _exclude_keywords = {"run", "sprint", "jump", "fall", "turn", "backward", "backwardleft", "backwardright"}
+    _exclude_keywords = {"run", "sprint", "jump", "fall", "turn",
+                         "backward", "backwardleft", "backwardright"}
     result = []
     for p in resources_dir.rglob("*.controller"):
-        norm = p.stem.lower().replace("@", "").replace("[", "").replace("]", "").replace("_", "").replace(" ", "")
+        norm = (p.stem.lower()
+                .replace("@", "").replace("[", "").replace("]", "")
+                .replace("_", "").replace(" ", ""))
         if any(kw in norm for kw in _exclude_keywords):
             continue
         result.append(p.stem)
@@ -474,20 +588,30 @@ def _load_animator_names(resources_dir: Path) -> List[str]:
 
 
 def _normalize_name(name: str) -> str:
+    """Lower-case ``name`` and drop non-alphanumerics, for fuzzy name matching."""
     return "".join(ch.lower() for ch in name if ch.isalnum())
 
 
 def _build_prefab_lookup(prefabs: List[str]) -> Dict[str, str]:
+    """Map each normalized prefab name to its exact (case-preserving) name."""
     lookup = {}
     for p in prefabs:
         lookup[_normalize_name(p)] = p
     return lookup
 
 
-def _resolve_prefab_name(name: Optional[str], prefabs: List[str], lookup: Dict[str, str]) -> Optional[str]:
+def _resolve_prefab_name(name: Optional[str], prefabs: List[str],
+                         lookup: Dict[str, str]) -> Optional[str]:
+    """Map an LLM-supplied name to a real prefab name, or return None.
+
+    Resolution order: full character prefab for a character part
+    (Doctor_01_Body -> Doctor_01), exact normalized match, then the closest-length
+    substring match among non-sub-part prefabs.
+    """
     if not name:
         return None
-    # If a character part is referenced (e.g., Doctor_01_Body), prefer the full character prefab (Doctor_01).
+    # A referenced character part (e.g. Doctor_01_Body) resolves to the full
+    # character prefab (Doctor_01).
     full_name = _to_full_character_name(name)
     if full_name:
         norm_full = _normalize_name(full_name)
@@ -497,8 +621,8 @@ def _resolve_prefab_name(name: Optional[str], prefabs: List[str], lookup: Dict[s
     if norm in lookup:
         return lookup[norm]
 
-    # Substring match (handles suffixes like _01)
-    # Exclude sub-parts from substring matching — they should never be resolved to.
+    # Substring match (handles suffixes like _01). Sub-parts are excluded so a
+    # name never resolves to one.
     candidates: List[Tuple[str, str]] = [
         (p, _normalize_name(p)) for p in prefabs if not _SUBPART_RE.search(p)
     ]
@@ -511,9 +635,12 @@ def _resolve_prefab_name(name: Optional[str], prefabs: List[str], lookup: Dict[s
 
 
 def _to_full_character_name(name: str) -> Optional[str]:
+    """Map a character part name to its full character name (Doctor_01_Body -> Doctor_01).
+
+    Returns None if ``name`` is not a known character family with a part suffix.
+    """
     if not name:
         return None
-    # Map character parts to full character prefab: Doctor_01_Body -> Doctor_01
     parts = [
         "body", "face", "coat", "hat", "pants", "shoes", "sneakers", "hair",
         "mask", "gloves", "slippers", "suit", "shirt", "beard", "glasses"
@@ -531,14 +658,21 @@ def _to_full_character_name(name: str) -> Optional[str]:
     return None
 
 
+# ---------------------------------------------------------------------------
+# Command sanitizing (repair LLM output before validation)
+# ---------------------------------------------------------------------------
 
 def _strip_unknown_fields(commands: List[Dict]) -> List[Dict]:
-    """Remove any fields the LLM added to commands that the validator will reject.
-    E.g. x/y/z/objectName appended to PlayHumanAnimationFromResources."""
+    """Drop fields the validator would reject from each command.
+
+    For example, x/y/z/objectName added to PlayHumanAnimationFromResources.
+    Commands whose action is not listed here pass through unchanged.
+    """
     allowed_fields_by_action = {
         "PlaceObject": {"action", "objectName", "x", "y", "z", "rotationY"},
         "PlaceHuman": {"action", "humanName", "x", "y", "z", "rotationY"},
-        "CreateObjectByName": {"action", "objectName", "x", "y", "z", "rotationY", "scaleX", "scaleY", "scaleZ"},
+        "CreateObjectByName": {"action", "objectName", "x", "y", "z", "rotationY",
+                               "scaleX", "scaleY", "scaleZ"},
         "SetTimeOfDay": {"action", "hour"},
         "SetFogEnabled": {"action", "enabled"},
         "SetFogDensity": {"action", "density"},
@@ -549,7 +683,8 @@ def _strip_unknown_fields(commands: List[Dict]) -> List[Dict]:
         "SetTimeScale": {"action", "scale"},
         "SetHumanAnimationController": {"action", "controllerPath"},
         "PlayHumanAnimation": {"action", "stateName", "crossFadeTime"},
-        "PlayHumanAnimationFromResources": {"action", "controllerPath", "stateName", "crossFadeTime"},
+        "PlayHumanAnimationFromResources": {"action", "controllerPath", "stateName",
+                                            "crossFadeTime"},
         "SetHumanAnimatorFloat": {"action", "paramName", "value"},
         "SetHumanAnimatorBool": {"action", "paramName", "boolValue"},
         "SetHumanAnimatorTrigger": {"action", "paramName"},
@@ -571,7 +706,7 @@ def _strip_unknown_fields(commands: List[Dict]) -> List[Dict]:
 
 
 def _fix_light_commands(commands: List[Dict]) -> List[Dict]:
-    """Normalise LLM field-name variations for SetLightIntensity so validation passes."""
+    """Normalize LLM field-name variants for SetLightIntensity so validation passes."""
     for cmd in commands:
         if cmd.get("action") == "SetLightIntensity":
             if "scale" not in cmd:
@@ -586,6 +721,15 @@ def _fix_light_commands(commands: List[Dict]) -> List[Dict]:
 
 
 def _fix_prefab_names(commands: List[Dict], prefabs: List[str]) -> List[Dict]:
+    """Resolve object names in placement commands to real prefabs.
+
+    - PlaceObject naming a character becomes PlaceHuman.
+    - PlaceObject / PlaceHuman with an unresolvable name is dropped.
+    - CreateObjectByName keeps Unity primitives, becomes PlaceObject if the name
+      resolves to a prefab, becomes a Cube if it is structural (large scale),
+      and is dropped otherwise.
+    Other commands pass through unchanged.
+    """
     lookup = _build_prefab_lookup(prefabs)
     _primitive_names = {"cube", "sphere", "capsule", "cylinder", "plane", "quad"}
     result = []
@@ -595,7 +739,7 @@ def _fix_prefab_names(commands: List[Dict], prefabs: List[str]) -> List[Dict]:
 
         if action == "PlaceObject":
             name = cmd.get("objectName", "")
-            # Check if it's actually a character first
+            # Check whether it is actually a character first
             full_name = _to_full_character_name(name)
             if full_name:
                 resolved = _resolve_prefab_name(full_name, prefabs, lookup)
@@ -606,14 +750,16 @@ def _fix_prefab_names(commands: List[Dict], prefabs: List[str]) -> List[Dict]:
                     result.append(cmd)
                     continue
                 # Character name but no prefab found — drop it
-                logger.warning(f"[fix_prefab_names] Dropping PlaceObject (character not found): {name}")
+                logger.warning(f"[fix_prefab_names] Dropping PlaceObject "
+                               f"(character not found): {name}")
                 continue
             resolved = _resolve_prefab_name(name, prefabs, lookup)
             if resolved:
                 cmd["objectName"] = resolved
                 result.append(cmd)
             else:
-                logger.warning(f"[fix_prefab_names] Dropping PlaceObject (prefab not found): {name}")
+                logger.warning(f"[fix_prefab_names] Dropping PlaceObject "
+                               f"(prefab not found): {name}")
             continue
 
         if action == "PlaceHuman":
@@ -641,7 +787,7 @@ def _fix_prefab_names(commands: List[Dict], prefabs: List[str]) -> List[Dict]:
                 cmd.pop("scaleZ", None)
                 result.append(cmd)
             else:
-                # Check if structural (walls/ceiling) — keep as-is since those ARE primitives
+                # Structural elements (walls/ceiling) are primitives: keep them
                 sx = abs(cmd.get("scaleX") or 1.0)
                 sz = abs(cmd.get("scaleZ") or 1.0)
                 if sx > 2.0 or sz > 2.0:
@@ -649,7 +795,8 @@ def _fix_prefab_names(commands: List[Dict], prefabs: List[str]) -> List[Dict]:
                     cmd["objectName"] = "Cube"
                     result.append(cmd)
                 else:
-                    logger.warning(f"[fix_prefab_names] Dropping CreateObjectByName (not a prefab or primitive): {name}")
+                    logger.warning(f"[fix_prefab_names] Dropping CreateObjectByName "
+                                   f"(not a prefab or primitive): {name}")
             continue
 
         # All other commands pass through unchanged
@@ -658,7 +805,18 @@ def _fix_prefab_names(commands: List[Dict], prefabs: List[str]) -> List[Dict]:
     return result
 
 
+# ---------------------------------------------------------------------------
+# LLM response parsing
+# ---------------------------------------------------------------------------
+
 def _extract_json_array(text: str) -> List[Dict]:
+    """Extract a list of command dicts from a raw LLM response.
+
+    Tries, in order: a markdown code fence, a direct parse (a list, or a dict
+    with a commands/actions/result/output list), a ``<tool_call>`` wrapper,
+    merging every top-level ``[...]`` array in the text, and finally the
+    outermost ``{...}`` object. Raises ValueError if nothing works.
+    """
     text = text.strip()
 
     # Try code block first
@@ -700,7 +858,7 @@ def _extract_json_array(text: str) -> List[Dict]:
                 if isinstance(value, list):
                     return value
 
-    # Try to find and MERGE all JSON arrays in the text (LLM sometimes outputs multiple arrays)
+    # Find and MERGE all top-level JSON arrays (the LLM sometimes emits several)
     merged: List[Dict] = []
     depth = 0
     arr_start = None
@@ -739,7 +897,12 @@ def _extract_json_array(text: str) -> List[Dict]:
 
 
 def _repair_incomplete_json(json_str: str) -> str:
-    """Try to repair incomplete JSON by adding missing closing brackets and braces."""
+    """Best-effort repair of truncated JSON.
+
+    Removes trailing commas, then appends any missing ``}`` and ``]`` (all
+    braces first, then all brackets). Brackets inside string literals are
+    ignored when counting.
+    """
     if not json_str:
         return json_str
 
@@ -778,7 +941,6 @@ def _repair_incomplete_json(json_str: str) -> str:
         elif char == '}':
             close_braces += 1
 
-    # Add missing closing brackets and braces in the correct order
     # Close braces first (inner objects), then brackets (arrays)
     missing_braces = open_braces - close_braces
     missing_brackets = open_brackets - close_brackets
@@ -791,7 +953,17 @@ def _repair_incomplete_json(json_str: str) -> str:
     return result
 
 
+# ---------------------------------------------------------------------------
+# Command validation and geometric post-processing
+# ---------------------------------------------------------------------------
+
 def _validate_commands(commands: List[Dict]) -> None:
+    """Check commands against the Unity bridge schema.
+
+    Checks that each action is allowed, required fields are present, no
+    unknown fields appear, and numeric and boolean fields have the right
+    types. Raises ValueError on the first problem.
+    """
     allowed_actions = {
         "PlaceObject",
         "PlaceHuman",
@@ -846,7 +1018,8 @@ def _validate_commands(commands: List[Dict]) -> None:
     allowed_fields_by_action = {
         "PlaceObject": {"action", "objectName", "x", "y", "z", "rotationY"},
         "PlaceHuman": {"action", "humanName", "x", "y", "z", "rotationY"},
-        "CreateObjectByName": {"action", "objectName", "x", "y", "z", "rotationY", "scaleX", "scaleY", "scaleZ"},
+        "CreateObjectByName": {"action", "objectName", "x", "y", "z", "rotationY",
+                               "scaleX", "scaleY", "scaleZ"},
         "SetTimeOfDay": {"action", "hour"},
         "SetFogEnabled": {"action", "enabled"},
         "SetFogDensity": {"action", "density"},
@@ -857,13 +1030,14 @@ def _validate_commands(commands: List[Dict]) -> None:
         "SetTimeScale": {"action", "scale"},
         "SetHumanAnimationController": {"action", "controllerPath"},
         "PlayHumanAnimation": {"action", "stateName", "crossFadeTime"},
-        "PlayHumanAnimationFromResources": {"action", "controllerPath", "stateName", "crossFadeTime"},
+        "PlayHumanAnimationFromResources": {"action", "controllerPath", "stateName",
+                                            "crossFadeTime"},
         "SetHumanAnimatorFloat": {"action", "paramName", "value"},
         "SetHumanAnimatorBool": {"action", "paramName", "boolValue"},
         "SetHumanAnimatorTrigger": {"action", "paramName"},
         "MoveObject": {"action", "objectName", "x", "y", "z", "rotationY"},
         "DeleteObject": {"action", "objectName"},
-        "HighlightObject": {"action", "objectName", "r", "g", "b", "duration"},
+        "HighlightObject":{"action", "objectName", "r", "g", "b", "duration"},
         "ClearHighlight": {"action", "objectName"},
         "ClearScene": {"action"},
     }
@@ -926,13 +1100,17 @@ def _validate_commands(commands: List[Dict]) -> None:
             raise ValueError(f"Command #{i+1} boolValue must be boolean")
 
 
-
 def _clamp_positions(commands: List[Dict], cfg: dict = None) -> List[Dict]:
-    """Clamp placed-object positions to stay inside room bounds.
-    Structural elements (walls, ceiling) have large scaleX/Z and are skipped."""
+    """Clamp placement positions (in place) to the room bounds in ``cfg``.
+
+    Structural elements (walls, ceiling) have a large scaleX/scaleZ and are
+    skipped. y is only floored at 0.
+    """
     cfg = cfg or {}
-    X_MIN = float(cfg.get("x_min", -2.8)); X_MAX = float(cfg.get("x_max", 2.8))
-    Z_MIN = float(cfg.get("z_min",  0.1)); Z_MAX = float(cfg.get("z_max", 5.9))
+    X_MIN = float(cfg.get("x_min", -2.8))
+    X_MAX = float(cfg.get("x_max", 2.8))
+    Z_MIN = float(cfg.get("z_min", 0.1))
+    Z_MAX = float(cfg.get("z_max", 5.9))
     Y_MIN = 0.0
     place_actions = {"PlaceObject", "CreateObjectByName", "PlaceHuman"}
     for cmd in commands:
@@ -952,8 +1130,11 @@ def _clamp_positions(commands: List[Dict], cfg: dict = None) -> List[Dict]:
 
 
 def _filter_loop_structural(commands: List[Dict]) -> List[Dict]:
-    """In loop iterations, drop any CreateObjectByName commands that look like walls/ceiling
-    (large scaleX or scaleZ). The room shell is fixed after initial generation."""
+    """Drop CreateObjectByName commands that look like walls/ceiling (large scaleX/scaleZ).
+
+    Used in reflection-loop iterations: the room shell is fixed after the
+    initial generation and must not be rebuilt.
+    """
     result = []
     for cmd in commands:
         if cmd.get("action") == "CreateObjectByName":
@@ -966,8 +1147,11 @@ def _filter_loop_structural(commands: List[Dict]) -> List[Dict]:
 
 
 def _dedup_structural(commands: List[Dict]) -> List[Dict]:
-    """Remove duplicate structural CreateObjectByName commands (walls/ceiling) that land
-    at approximately the same position. Keeps only the first occurrence."""
+    """Remove structural CreateObjectByName commands that duplicate an earlier one.
+
+    Two walls/ceilings count as duplicates when they are within 0.5 m on every
+    axis. The first occurrence is kept.
+    """
     seen: List[Dict] = []
     result = []
     for cmd in commands:
@@ -994,8 +1178,18 @@ def _dedup_structural(commands: List[Dict]) -> List[Dict]:
     return result
 
 
-def _write_commands_safe(path: Path, commands: List[Dict], retries: int = 5, delay: float = 0.5) -> None:
-    """Write JSON to a temp file then replace the target to avoid Unity file-lock errors."""
+# ---------------------------------------------------------------------------
+# unity_commands.json I/O
+# ---------------------------------------------------------------------------
+
+def _write_commands_safe(path: Path, commands: List[Dict], retries: int = 5,
+                         delay: float = 0.5) -> None:
+    """Atomically write ``commands`` as JSON to ``path``.
+
+    Writes a temp file, then replaces the target. On PermissionError (for
+    example, Unity holding a lock on the file) it retries up to ``retries``
+    times.
+    """
     data = json.dumps(commands, indent=2)
     for attempt in range(retries):
         try:
@@ -1011,6 +1205,7 @@ def _write_commands_safe(path: Path, commands: List[Dict], retries: int = 5, del
 
 
 def _load_existing_commands(path: Path) -> List[Dict]:
+    """Return the command list stored at ``path``, or [] if it is missing, empty or invalid."""
     if not path.exists():
         return []
     try:
@@ -1023,8 +1218,26 @@ def _load_existing_commands(path: Path) -> List[Dict]:
         return []
 
 
+def _stamp_commands(commands: List[Dict]) -> None:
+    """Add id/timestamp/executed fields to commands in place (existing values are kept)."""
+    for i, cmd in enumerate(commands):
+        if isinstance(cmd, dict):
+            cmd.setdefault("id", f"cmd_{int(time.time() * 1000)}_{i}")
+            cmd.setdefault("timestamp", time.time())
+            cmd.setdefault("executed", False)
+
+
+# ---------------------------------------------------------------------------
+# Groq helpers: plan generation, LLM context, command generation
+# ---------------------------------------------------------------------------
+
 def _generate_plan(description: str, client, agent_dir: Path, cfg: dict = None) -> Dict:
-    """Generate a structured room layout plan and save to plan.json for the reflection module."""
+    """Generate a structured room layout plan with Groq and save it to api_files/plan.json.
+
+    Used when scene synthesis is disabled or failed. After 3 failed attempts,
+    a generic 4-step plan built from ``cfg`` is written instead.
+    Returns the plan dict.
+    """
     cfg = cfg or {}
     plan_path = agent_dir / "api_files" / "plan.json"
 
@@ -1067,9 +1280,11 @@ def _generate_plan(description: str, client, agent_dir: Path, cfg: dict = None) 
 
     # Fallback: write a minimal plan derived from the description and config
     scene_type = cfg.get("scene_type", "room")
-    min_obj    = int(cfg.get("min_objects", 10))
-    x_min = cfg.get("x_min", "-2.8"); x_max = cfg.get("x_max", "2.8")
-    z_min = cfg.get("z_min", "0.1");  z_max = cfg.get("z_max", "5.9")
+    min_obj = int(cfg.get("min_objects", 10))
+    x_min = cfg.get("x_min", "-2.8")
+    x_max = cfg.get("x_max", "2.8")
+    z_min = cfg.get("z_min", "0.1")
+    z_max = cfg.get("z_max", "5.9")
     plan = {
         "room_type": scene_type,
         "description": description,
@@ -1079,10 +1294,18 @@ def _generate_plan(description: str, client, agent_dir: Path, cfg: dict = None) 
             "focal_point": "primary anchor object near room center",
         },
         "steps": [
-            {"step": 1, "action": "Place primary anchor object", "objects": [], "target_area": "room center", "condition": "anchor visible near room center"},
-            {"step": 2, "action": "Place supporting furniture and equipment", "objects": [], "target_area": "near anchor", "condition": "supporting objects adjacent to anchor"},
-            {"step": 3, "action": "Add utility and supply objects", "objects": [], "target_area": "walls and corners", "condition": "supply objects near walls"},
-            {"step": 4, "action": "Add props and decor", "objects": [], "target_area": "surfaces and walls", "condition": "props on surfaces, decor on walls"},
+            {"step": 1, "action": "Place primary anchor object", "objects": [],
+             "target_area": "room center",
+             "condition": "anchor visible near room center"},
+            {"step": 2, "action": "Place supporting furniture and equipment", "objects": [],
+             "target_area": "near anchor",
+             "condition": "supporting objects adjacent to anchor"},
+            {"step": 3, "action": "Add utility and supply objects", "objects": [],
+             "target_area": "walls and corners",
+             "condition": "supply objects near walls"},
+            {"step": 4, "action": "Add props and decor", "objects": [],
+             "target_area": "surfaces and walls",
+             "condition": "props on surfaces, decor on walls"},
         ],
     }
     plan_path.write_text(json.dumps(plan, indent=2), encoding="utf-8")
@@ -1091,7 +1314,7 @@ def _generate_plan(description: str, client, agent_dir: Path, cfg: dict = None) 
 
 
 def _load_screenshots(xz_path: Path, xy_path: Path, yz_path: Path) -> Dict[str, Optional[str]]:
-    """Load orthographic view screenshots as base64 strings."""
+    """Load the three orthographic screenshots as base64 strings (None for missing files)."""
     view_images: Dict[str, Optional[str]] = {"xz": None, "xy": None, "yz": None}
     for label, path in [("xz", xz_path), ("xy", xy_path), ("yz", yz_path)]:
         if path.exists():
@@ -1104,7 +1327,7 @@ def _load_screenshots(xz_path: Path, xy_path: Path, yz_path: Path) -> Dict[str, 
 
 
 def _build_placed_summary(all_placed: List[Dict]) -> List[Dict]:
-    """Build compact summary of placed objects for LLM context."""
+    """Build a compact summary of placed objects (name, id, position) for LLM context."""
     _place_actions = {"PlaceObject", "CreateObjectByName", "PlaceHuman"}
     return [
         {
@@ -1118,8 +1341,21 @@ def _build_placed_summary(all_placed: List[Dict]) -> List[Dict]:
     ]
 
 
-def _call_groq_and_parse(client, messages, prefabs, is_loop: bool = False, cfg: dict = None) -> Optional[List[Dict]]:
-    """Call Groq API with retry, parse/validate the resulting command array."""
+def _call_groq_and_parse(client, messages, prefabs, is_loop: bool = False,
+                         cfg: dict = None) -> Optional[List[Dict]]:
+    """Call Groq (Llama-4-Scout) and return a sanitized, validated command list.
+
+    Each of up to 3 attempts parses the response (with JSON repair as a
+    fallback), then runs the sanitize pipeline: structural filtering (removed in
+    loop mode, de-duplicated otherwise), unknown-field stripping, light-field
+    fixes, prefab name resolution, position clamping, and validation.
+
+    ``is_loop`` selects the reflection-loop settings (higher temperature,
+    smaller token budget, no structural objects).
+
+    Returns the command list, [] if the LLM deliberately returned an empty
+    array, or None if every attempt failed.
+    """
     commands = None
     last_error = None
     for attempt in range(3):
@@ -1174,15 +1410,6 @@ def _call_groq_and_parse(client, messages, prefabs, is_loop: bool = False, cfg: 
     return None
 
 
-def _stamp_commands(commands: List[Dict]) -> None:
-    """Add id/timestamp/executed fields to commands in-place."""
-    for i, cmd in enumerate(commands):
-        if isinstance(cmd, dict):
-            cmd.setdefault("id", f"cmd_{int(time.time() * 1000)}_{i}")
-            cmd.setdefault("timestamp", time.time())
-            cmd.setdefault("executed", False)
-
-
 # ---------------------------------------------------------------------------
 # Phase 1: Static environment generation + reflection correction
 # ---------------------------------------------------------------------------
@@ -1191,56 +1418,88 @@ def phase1_generate_environment(
     client, description, prefabs, animators, plan, out_path, reflector,
     xz_path, xy_path, yz_path, interval, cfg: dict = None,
 ):
-    """Generate the static scene and run reflection corrections until all plan
-    steps are confirmed complete. Returns the list of all placed commands."""
+    """Build the static scene, then refine it with the reflection loop.
+
+    Steps:
+      1. Write a deterministic room shell (floor, walls with doorway, ceiling,
+         lighting) from ``cfg``. The LLM never generates structural geometry.
+      2. Ask Groq for the interior objects and append them to ``out_path``.
+      3. Loop: on each screenshot update (or every ``2 * interval`` seconds),
+         reflect on the current plan step, apply the reflector's
+         MoveObject/DeleteObject suggestions directly, and, if the room is
+         sparse and under the object cap, ask Groq for 3-5 more objects.
+         Move to the next plan step when the reflector marks it complete or
+         after ``phase1_max_iters`` iterations. Stop after the last step.
+
+    Args:
+        client: Groq client.
+        description: Scene description (without config sections).
+        prefabs / animators: Names available to the LLM.
+        plan: Layout plan dict (``steps`` drives the reflection loop).
+        out_path: Path of unity_commands.json.
+        reflector: ReflectionModule instance.
+        xz_path / xy_path / yz_path: Orthographic screenshot paths.
+        interval: Base polling interval in seconds.
+        cfg: Room config; also honors ``phase1_max_steps`` / ``phase1_max_iters``.
+
+    Returns the list of all commands sent (room shell + objects + corrections),
+    or only the room shell if the initial interior generation fails.
+    """
 
     cfg = cfg or {}
 
-    # --- Load scene params from config (all fall back to sensible defaults) ---
-    scene_type     = cfg.get("scene_type", "room")
-    room_w         = float(cfg.get("room_width",  4))
-    room_d         = float(cfg.get("room_depth",  4))
-    room_h         = float(cfg.get("room_height", 2.5))
-    light_intensity= float(cfg.get("lighting_intensity", 1.5))
-    amb_r          = float(cfg.get("ambient_r", 0.88))
-    amb_g          = float(cfg.get("ambient_g", 0.90))
-    amb_b          = float(cfg.get("ambient_b", 0.92))
-    door_w         = float(cfg.get("doorway_width", 1.2))
-    x_min          = float(cfg.get("x_min", -(room_w / 2) + 0.2))
-    x_max          = float(cfg.get("x_max",  (room_w / 2) - 0.2))
-    z_min          = float(cfg.get("z_min", 0.1))
-    z_max          = float(cfg.get("z_max", room_d - 0.1))
+    # --- Scene parameters from config (each has a default) ---
+    scene_type      = cfg.get("scene_type", "room")
+    room_w          = float(cfg.get("room_width",  4))
+    room_d          = float(cfg.get("room_depth",  4))
+    room_h          = float(cfg.get("room_height", 2.5))
+    light_intensity = float(cfg.get("lighting_intensity", 1.5))
+    amb_r           = float(cfg.get("ambient_r", 0.88))
+    amb_g           = float(cfg.get("ambient_g", 0.90))
+    amb_b           = float(cfg.get("ambient_b", 0.92))
+    door_w          = float(cfg.get("doorway_width", 1.2))
+    x_min           = float(cfg.get("x_min", -(room_w / 2) + 0.2))
+    x_max           = float(cfg.get("x_max",  (room_w / 2) - 0.2))
+    z_min           = float(cfg.get("z_min", 0.1))
+    z_max           = float(cfg.get("z_max", room_d - 0.1))
 
     MAX_MEANINGFUL_OBJECTS = int(cfg.get("max_objects", 25))
 
     # Derived geometry
-    half_w   = room_w / 2
-    half_d   = room_d / 2
-    half_h   = room_h / 2
+    half_w    = room_w / 2
+    half_d    = room_d / 2
+    half_h    = room_h / 2
     door_half = door_w / 2
-    side_w   = (half_w - door_half)   # each front-wall half width
-    side_cx  = -(door_half + side_w / 2)  # left panel center x
+    side_w    = (half_w - door_half)       # width of each front-wall panel
+    side_cx   = -(door_half + side_w / 2)  # left panel center x
 
-    # Addition lists from config
-    add_furniture = cfg.get("additions_furniture", "").split(",") if cfg.get("additions_furniture") else []
-    add_equipment = cfg.get("additions_equipment", "").split(",") if cfg.get("additions_equipment") else []
-    add_props     = cfg.get("additions_props", "").split(",")     if cfg.get("additions_props")     else []
-    add_decor     = cfg.get("additions_decor", "").split(",")     if cfg.get("additions_decor")     else []
+    # Optional "additions" lists from config, listed in the loop prompt
+    add_furniture = (cfg.get("additions_furniture", "").split(",")
+                     if cfg.get("additions_furniture") else [])
+    add_equipment = (cfg.get("additions_equipment", "").split(",")
+                     if cfg.get("additions_equipment") else [])
+    add_props     = cfg.get("additions_props", "").split(",") if cfg.get("additions_props") else []
+    add_decor     = cfg.get("additions_decor", "").split(",") if cfg.get("additions_decor") else []
     add_furniture = [s.strip() for s in add_furniture if s.strip()]
     add_equipment = [s.strip() for s in add_equipment if s.strip()]
     add_props     = [s.strip() for s in add_props     if s.strip()]
     add_decor     = [s.strip() for s in add_decor     if s.strip()]
 
     additions_lines = []
-    if add_furniture: additions_lines.append(f"Extra furniture: {', '.join(add_furniture)}.")
-    if add_equipment: additions_lines.append(f"Equipment: {', '.join(add_equipment)}.")
-    if add_props:     additions_lines.append(f"Props (on surfaces only): {', '.join(add_props)}.")
-    if add_decor:     additions_lines.append(f"Wall decor: {', '.join(add_decor)}.")
+    if add_furniture:
+        additions_lines.append(f"Extra furniture: {', '.join(add_furniture)}.")
+    if add_equipment:
+        additions_lines.append(f"Equipment: {', '.join(add_equipment)}.")
+    if add_props:
+        additions_lines.append(f"Props (on surfaces only): {', '.join(add_props)}.")
+    if add_decor:
+        additions_lines.append(f"Wall decor: {', '.join(add_decor)}.")
     additions_str = " ".join(additions_lines) if additions_lines else "See available_prefabs."
 
-    # --- Helper functions (defined early so they can be used throughout) ---
+    # --- Local helpers (closures over the room bounds above) ---
 
     def _count_meaningful(placed: List[Dict]) -> int:
+        """Count placed objects and characters, excluding structural Cubes."""
         count = 0
         for c in placed:
             action = c.get("action", "")
@@ -1254,13 +1513,17 @@ def phase1_generate_environment(
         return count
 
     def _parse_alignment_commands(hints: str) -> List[Dict]:
-        """Parse structured MoveObject/DeleteObject from reflection alignment_suggestions.
-        Handles LLM formatting variations: commas, 'to', quotes, em-dashes, bullet prefixes."""
+        """Parse MoveObject/DeleteObject commands from the reflector's alignment_suggestions.
+
+        Tolerates LLM formatting variants (commas, an optional "to", quotes,
+        bullet prefixes). Move targets are clamped to the room bounds. A
+        DeleteObject is skipped if the same object is also being moved.
+        """
         cmds = []
         if not hints:
             return cmds
 
-        # Flexible number pattern — handles optional comma/space separators between coords
+        # Number pattern; the regex below allows a comma or spaces between coordinates
         _num = r"[-\d.]+"
         move_pattern = re.compile(
             r"MoveObject\s+[\"']?([A-Za-z0-9_]+)[\"']?"   # object name (optional quotes)
@@ -1287,10 +1550,12 @@ def phase1_generate_environment(
             cmd["z"] = max(z_min, min(z_max, cmd["z"]))
             cmd["y"] = max(0.0, cmd["y"])
             cmds.append(cmd)
-            logger.info(f"  [parse_alignment] MoveObject {name} → x={cmd['x']} y={cmd['y']} z={cmd['z']} rot={cmd['rotationY']}")
+            logger.info(f"  [parse_alignment] MoveObject {name} → x={cmd['x']} y={cmd['y']} "
+                        f"z={cmd['z']} rot={cmd['rotationY']}")
         for m in delete_pattern.finditer(hints):
             name = m.group(1).strip("\"'")
-            if not any(c.get("objectName") == name and c.get("action") == "MoveObject" for c in cmds):
+            if not any(c.get("objectName") == name and c.get("action") == "MoveObject"
+                       for c in cmds):
                 cmds.append({"action": "DeleteObject", "objectName": name})
                 logger.info(f"  [parse_alignment] DeleteObject {name}")
         if not cmds and hints:
@@ -1320,9 +1585,10 @@ def phase1_generate_environment(
     logger.info("=" * 60)
 
     # ----- Room shell (walls, floor, ceiling) built from config geometry -----
-    # These are always exact — LLM is never trusted with structural geometry.
+    # Always generated deterministically: the LLM is never trusted with
+    # structural geometry. (Rows are column-aligned on purpose for readability.)
     room_shell: List[Dict] = [
-        # Floor — thin slab, top surface at y=0, only 2cm thick so no visible edge
+        # Floor — thin slab, top surface at y=0, only 2 cm thick so no visible edge
         {"action": "CreateObjectByName", "objectName": "Cube", "x": 0,       "y": -0.01,  "z": half_d, "rotationY": 0, "scaleX": room_w, "scaleY": 0.02,   "scaleZ": room_d},
         # Ceiling
         {"action": "CreateObjectByName", "objectName": "Cube", "x": 0,       "y": room_h, "z": half_d, "rotationY": 0, "scaleX": room_w, "scaleY": 0.2,    "scaleZ": room_d},
@@ -1332,7 +1598,7 @@ def phase1_generate_environment(
         {"action": "CreateObjectByName", "objectName": "Cube", "x":  half_w, "y": half_h, "z": half_d, "rotationY": 0, "scaleX": 0.2,    "scaleY": room_h, "scaleZ": room_d},
         # Back wall
         {"action": "CreateObjectByName", "objectName": "Cube", "x": 0,       "y": half_h, "z": room_d, "rotationY": 0, "scaleX": room_w, "scaleY": room_h, "scaleZ": 0.2},
-        # Front wall LEFT half (doorway gap centered at door_x)
+        # Front wall LEFT half (doorway gap centered at x=0)
         {"action": "CreateObjectByName", "objectName": "Cube", "x": round(side_cx, 3),  "y": half_h, "z": 0, "rotationY": 0, "scaleX": round(side_w, 3), "scaleY": room_h, "scaleZ": 0.2},
         # Front wall RIGHT half
         {"action": "CreateObjectByName", "objectName": "Cube", "x": round(-side_cx, 3), "y": half_h, "z": 0, "rotationY": 0, "scaleX": round(side_w, 3), "scaleY": room_h, "scaleZ": 0.2},
@@ -1391,11 +1657,12 @@ def phase1_generate_environment(
         logger.error("[Phase 1] Interior generation failed. Exiting.")
         return room_shell
 
-    # Filter out structural and animation commands — LLM should not generate these
+    # Filter out structural and animation commands — the LLM should not generate these
     _blocked_actions = {"CreateObjectByName", "PlayHumanAnimationFromResources",
                         "PlayHumanAnimation", "SetHumanAnimationController"}
     commands = [c for c in commands if c.get("action") not in _blocked_actions]
-    commands = _dedup_humans(commands, [])  # also limit humans from the start
+    # NOTE: with an empty `existing` list this call removes nothing; it is kept as-is.
+    commands = _dedup_humans(commands, [])
 
     _stamp_commands(commands)
     existing_file = _load_existing_commands(out_path)
@@ -1432,10 +1699,11 @@ def phase1_generate_environment(
 
     plan_steps = plan.get("steps", [])
 
-    # Speed-up overrides for fast Phase 2 testing
+    # Optional speed-up caps (set via --fast-phase1 / --phase1-max-steps / --phase1-max-iters)
     phase1_max_steps = int(cfg.get("phase1_max_steps", 0) or 0)
     if phase1_max_steps > 0 and len(plan_steps) > phase1_max_steps:
-        logger.info(f"[Phase 1] FAST MODE: capping plan steps {len(plan_steps)} → {phase1_max_steps}")
+        logger.info(f"[Phase 1] FAST MODE: capping plan steps {len(plan_steps)} → "
+                    f"{phase1_max_steps}")
         plan_steps = plan_steps[:phase1_max_steps]
 
     current_step_idx = 0
@@ -1443,15 +1711,16 @@ def phase1_generate_environment(
     MAX_STEP_ITERATIONS = int(cfg.get("phase1_max_iters", 0) or 4)
     last_mtime = 0.0
     last_loop_time = 0.0
-    last_applied_hints = ""  # track previous alignment_suggestions to avoid repeating identical MoveObjects
-    stale_count = 0  # how many consecutive iterations returned the same suggestions
+    last_applied_hints = ""  # previous alignment_suggestions, to avoid re-applying them
+    stale_count = 0  # consecutive iterations that returned the same suggestions
 
-    # --- FIX 1: Wait for screenshots to be refreshed after initial generation ---
-    # We need screenshots that reflect the CURRENT scene (after initial commands),
-    # not stale ones from a previous run. Wait until mtime is newer than generation start.
+    # --- Wait for Unity to refresh the screenshots after the initial generation ---
+    # Reflection needs screenshots of the CURRENT scene, not stale ones from a
+    # previous run, so wait until a screenshot's mtime is newer than this point.
     SCREENSHOT_WAIT_TIMEOUT = 15  # seconds
     generation_time = time.time()
-    logger.info(f"[Phase 1] Waiting up to {SCREENSHOT_WAIT_TIMEOUT}s for Unity to refresh screenshots...")
+    logger.info(f"[Phase 1] Waiting up to {SCREENSHOT_WAIT_TIMEOUT}s for Unity to refresh "
+                f"screenshots...")
     wait_start = time.time()
     screenshots_ready = False
     while time.time() - wait_start < SCREENSHOT_WAIT_TIMEOUT:
@@ -1461,21 +1730,24 @@ def phase1_generate_environment(
         ]
         if fresh:
             screenshots_ready = True
-            logger.info(f"[Phase 1] Fresh screenshots detected ({len(fresh)}/3). Starting reflection loop.")
+            logger.info(f"[Phase 1] Fresh screenshots detected ({len(fresh)}/3). "
+                        f"Starting reflection loop.")
             break
         time.sleep(2.0)
 
     if not screenshots_ready:
-        # Fall back: accept any existing screenshots even if stale
+        # Fallback: accept any existing screenshots even if stale
         if any(p.exists() and p.stat().st_size > 0 for p in [xz_path, xy_path, yz_path]):
             screenshots_ready = True
-            logger.info("[Phase 1] Using existing screenshots (may be stale). Starting reflection loop.")
+            logger.info("[Phase 1] Using existing screenshots (may be stale). "
+                        "Starting reflection loop.")
         else:
             logger.warning("[Phase 1] No screenshots available after timeout. "
                            "Reflection will run in CORRECTION-ONLY mode (no new objects).")
 
+    # ----- Main reflection loop -----
     while True:
-        # Wait for screenshot update or timer
+        # Run an iteration when a screenshot changes or the timer expires
         latest_mtime = max(
             (p.stat().st_mtime if p.exists() else 0.0) for p in [xz_path, xy_path, yz_path]
         )
@@ -1498,7 +1770,7 @@ def phase1_generate_environment(
 
         placed_summary = _build_placed_summary(all_placed)
         alignment_hints = ""
-        # FIX 3: Default to no additions when blind
+        # Default to no additions; reflection must explicitly allow them
         suggest_additions = False
 
         # --- Reflection ---
@@ -1512,7 +1784,8 @@ def phase1_generate_environment(
                     "condition": f"Room looks like a realistic {scene_type}",
                 }
             step_label = current_plan_step.get("action", f"step {current_step_idx + 1}")
-            logger.info(f"[Phase 1 Reflection] Step {current_step_idx + 1}/{len(plan_steps)}: {step_label}")
+            logger.info(f"[Phase 1 Reflection] Step {current_step_idx + 1}/{len(plan_steps)}: "
+                        f"{step_label}")
 
             reflection_result = reflector.reflect_step(
                 plan_step=current_plan_step,
@@ -1520,17 +1793,21 @@ def phase1_generate_environment(
             )
             alignment_hints = reflection_result.alignment_suggestions
 
-            # FIX 3 + 6: Only allow additions if screenshots confirm sparse AND under cap
+            # Only allow additions when screenshots exist AND the room is under the
+            # object cap. Without screenshots the LLM would place objects blindly.
             meaningful_count = _count_meaningful(all_placed)
             if not has_screenshots:
-                suggest_additions = False  # blind = no new objects
+                suggest_additions = False  # no screenshots, so no new objects
             elif meaningful_count >= MAX_MEANINGFUL_OBJECTS:
                 suggest_additions = False  # at cap
-                logger.info(f"  Object cap reached ({meaningful_count}/{MAX_MEANINGFUL_OBJECTS}) — no additions")
+                logger.info(f"  Object cap reached ({meaningful_count}/{MAX_MEANINGFUL_OBJECTS})"
+                            f" — no additions")
             else:
                 suggest_additions = reflection_result.suggest_additions
 
-            logger.info(f"  step_complete={reflection_result.step_complete}  room_status={reflection_result.room_status}  suggest_additions={suggest_additions}  objects={meaningful_count}")
+            logger.info(f"  step_complete={reflection_result.step_complete}  "
+                        f"room_status={reflection_result.room_status}  "
+                        f"suggest_additions={suggest_additions}  objects={meaningful_count}")
             if reflection_result.layout_comments:
                 logger.info(f"  layout: {reflection_result.layout_comments}")
             if alignment_hints:
@@ -1542,45 +1819,54 @@ def phase1_generate_environment(
                 or step_iteration_count >= MAX_STEP_ITERATIONS
             )
             if should_advance:
-                reason = "complete" if reflection_result.step_complete == "yes" else f"max iters ({MAX_STEP_ITERATIONS})"
+                reason = ("complete" if reflection_result.step_complete == "yes"
+                          else f"max iters ({MAX_STEP_ITERATIONS})")
                 if plan_steps and current_step_idx < len(plan_steps) - 1:
                     new_idx = current_step_idx + 1  # always forward — never go back
-                    logger.info(f"  Step {reason} — advancing {current_step_idx + 1} → {new_idx + 1}: {plan_steps[new_idx].get('action', '')}")
+                    logger.info(f"  Step {reason} — advancing {current_step_idx + 1} → "
+                                f"{new_idx + 1}: {plan_steps[new_idx].get('action', '')}")
                     current_step_idx = new_idx
                     step_iteration_count = 0
                     reflector.reset_step_count()
                 else:
-                    logger.info(f"  Step {reason} — all {len(plan_steps)} plan steps complete. Stopping environment generation.")
+                    logger.info(f"  Step {reason} — all {len(plan_steps)} plan steps complete. "
+                                f"Stopping environment generation.")
                     break
         except Exception as e:
             logger.warning(f"[Phase 1 Reflection] skipped: {e}")
             alignment_hints = ""
 
-        # --- FIX 4: Execute alignment suggestions directly (bypass LLM) ---
-        # Skip if identical to last iteration (avoids spamming the same MoveObject 15 times)
+        # --- Apply alignment suggestions directly (no LLM round-trip) ---
+        # Skip them if they are identical to the last iteration's, so the same
+        # MoveObject is not sent over and over.
         if alignment_hints and alignment_hints != last_applied_hints:
             direct_commands = _parse_alignment_commands(alignment_hints)
             if direct_commands:
                 _stamp_commands(direct_commands)
                 all_placed.extend(direct_commands)
+                # Append (never overwrite) so Unity keeps the full command history
                 existing_file = _load_existing_commands(out_path)
-                _write_commands_safe(out_path, existing_file + direct_commands)  # FIX 2: keep ALL
-                logger.info(f"[Phase 1] Applied {len(direct_commands)} direct corrections (MoveObject/DeleteObject)")
+                _write_commands_safe(out_path, existing_file + direct_commands)
+                logger.info(f"[Phase 1] Applied {len(direct_commands)} direct corrections "
+                            f"(MoveObject/DeleteObject)")
             last_applied_hints = alignment_hints
             stale_count = 0
         elif alignment_hints == last_applied_hints and alignment_hints:
             stale_count += 1
-            logger.info(f"[Phase 1] Same suggestions as last iteration — skipping (stale x{stale_count}).")
+            logger.info(f"[Phase 1] Same suggestions as last iteration — skipping "
+                        f"(stale x{stale_count}).")
             if stale_count >= 2 and _count_meaningful(all_placed) >= MAX_MEANINGFUL_OBJECTS:
                 logger.info("[Phase 1] Reflection stale + object cap reached — finishing early.")
                 break
 
-        # --- Correction / fill via LLM (only if suggest_additions=True) ---
+        # --- Fill via LLM (only when suggest_additions is True) ---
         if suggest_additions:
             existing_summary = [
-                {"id": c.get("id", ""), "objectName": c.get("objectName") or c.get("humanName", "?"),
+                {"id": c.get("id", ""),
+                 "objectName": c.get("objectName") or c.get("humanName", "?"),
                  "x": c.get("x"), "y": c.get("y"), "z": c.get("z")}
-                for c in all_placed if c.get("action") in {"PlaceObject", "CreateObjectByName", "PlaceHuman"}
+                for c in all_placed
+                if c.get("action") in {"PlaceObject", "CreateObjectByName", "PlaceHuman"}
             ]
 
             loop_user = {
@@ -1606,20 +1892,28 @@ def phase1_generate_environment(
                 {"role": "user", "content": json.dumps(loop_user)},
             ]
             if has_screenshots:
-                image_content = [{"type": "text", "text": "Orthographic screenshots (XZ=top-down, XY=front, YZ=side):"}]
+                image_content = [{
+                    "type": "text",
+                    "text": "Orthographic screenshots (XZ=top-down, XY=front, YZ=side):",
+                }]
                 for data in view_images.values():
                     if data:
-                        image_content.append({"type": "image_url", "image_url": {"url": f"data:image/png;base64,{data}"}})
+                        image_content.append({
+                            "type": "image_url",
+                            "image_url": {"url": f"data:image/png;base64,{data}"},
+                        })
                 loop_messages.append({"role": "user", "content": image_content})
 
-            new_commands = _call_groq_and_parse(client, loop_messages, prefabs, is_loop=True, cfg=cfg)
+            new_commands = _call_groq_and_parse(client, loop_messages, prefabs,
+                                                is_loop=True, cfg=cfg)
             if new_commands:
-                new_commands = _dedup_humans(new_commands, all_placed)  # FIX 5
+                # Never place a character that is already in the scene
+                new_commands = _dedup_humans(new_commands, all_placed)
                 if new_commands:
                     _stamp_commands(new_commands)
                     all_placed.extend(new_commands)
                     existing_file = _load_existing_commands(out_path)
-                    _write_commands_safe(out_path, existing_file + new_commands)  # FIX 2: keep ALL
+                    _write_commands_safe(out_path, existing_file + new_commands)
                     logger.info(f"[Phase 1] Appended {len(new_commands)} fill commands")
         else:
             logger.info("[Phase 1] CORRECTION-ONLY mode — skipping LLM fill call.")
@@ -1637,12 +1931,18 @@ def generate_interaction_map(
     client, all_placed: List[Dict], description: str, animators: List[str], out_path: Path,
     frontier_model: Optional[str] = None,
 ) -> Dict:
-    """Ask the LLM to generate a scene-specific object→animation map based on the
-    objects that were actually placed in Phase 1.  Saves to out_path and returns
-    the dict so phase2_interaction_loop can pass it to InteractionAnimationHandler.
+    """Generate the ambient interaction map (Layer 1) for the objects placed in Phase 1.
 
-    frontier_model: if provided, use OpenAI frontier model (e.g. "gpt-5") instead
-    of Groq's Llama-4-Scout. Higher quality, slower, more expensive."""
+    The map says, per object and event type (touch, grab, ...), which
+    animation and/or speech bubble to fire. It is saved to ``out_path``
+    (interaction_map.json), where InteractionAnimationHandler reads it in
+    Phase 2.
+
+    frontier_model: if given, use this OpenAI model (e.g. "gpt-5.5") instead
+    of Groq's Llama-4-Scout: better output, but slower and more expensive.
+
+    Returns the map dict, or {} on failure or when no objects were placed.
+    """
 
     placed_objects = []
     for cmd in all_placed:
@@ -1746,7 +2046,8 @@ Return ONLY a valid JSON object (no markdown, no explanation).
         interaction_map = json.loads(json_text)
 
         out_path.parent.mkdir(parents=True, exist_ok=True)
-        out_path.write_text(json.dumps(interaction_map, indent=2, ensure_ascii=False), encoding="utf-8")
+        out_path.write_text(json.dumps(interaction_map, indent=2, ensure_ascii=False),
+                            encoding="utf-8")
         logger.info(
             "[InteractionMap] Generated map for %d objects → %s",
             len(interaction_map), out_path.name,
@@ -1771,7 +2072,12 @@ def generate_story_chain(
     out_path: Path,
     frontier_model: Optional[str] = None,
 ) -> Dict:
-    """Compile the natural-language [interactions] block into a linear story chain.
+    """Compile the natural-language [interactions] block into a linear story chain (Layer 2).
+
+    Beats whose trigger object is not in the scene are dropped. The result is
+    saved to ``out_path`` (story_chain.json), where StoryChainHandler reads it in
+    Phase 2. If there is no [interactions] block, an empty chain is written.
+    ``frontier_model`` works as in ``generate_interaction_map``.
 
     Output schema (story_chain.json):
         {
@@ -1793,7 +2099,8 @@ def generate_story_chain(
     if not interactions_text:
         logger.info("[StoryChain] No [interactions] section in experience.txt — skipping.")
         out_path.parent.mkdir(parents=True, exist_ok=True)
-        out_path.write_text(json.dumps({"title": "", "synopsis": "", "beats": []}, indent=2), encoding="utf-8")
+        out_path.write_text(json.dumps({"title": "", "synopsis": "", "beats": []}, indent=2),
+                            encoding="utf-8")
         return {}
 
     placed_objects = []
@@ -1925,8 +2232,10 @@ Rules:
         for beat in chain.get("beats", []):
             trig_obj = (beat.get("trigger") or {}).get("object")
             if trig_obj and trig_obj not in placed_names:
-                logger.warning("[StoryChain] Dropping beat %s — trigger object '%s' not in scene.",
-                               beat.get("id", "?"), trig_obj)
+                logger.warning(
+                    "[StoryChain] Dropping beat %s — trigger object '%s' not in scene.",
+                    beat.get("id", "?"), trig_obj,
+                )
                 continue
             valid_beats.append(beat)
         chain["beats"] = valid_beats
@@ -1935,7 +2244,7 @@ Rules:
         out_path.write_text(json.dumps(chain, indent=2, ensure_ascii=False), encoding="utf-8")
         logger.info(
             "[StoryChain] Generated %d beats → %s (title='%s')",
-            len(valid_beats), out_path.name, chain.get("title", "")
+            len(valid_beats), out_path.name, chain.get("title", ""),
         )
         return chain
 
@@ -1972,8 +2281,8 @@ def _load_interaction_events(events_path: Path, min_timestamp: float = 0.0) -> L
         return []
 
 
-def _mark_events_processed(events_path: Path, event_ids: List[str]):
-    """Mark specific events as processed so Unity/agent don't re-process them."""
+def _mark_events_processed(events_path: Path, event_ids: List[str]) -> None:
+    """Set ``processed: true`` on the given event ids so they are not dispatched again."""
     if not events_path.exists() or not event_ids:
         return
     try:
@@ -1994,18 +2303,21 @@ def phase2_interaction_loop(
     client, description, prefabs, animators, all_placed, out_path,
     reflector, xz_path, xy_path, yz_path, interval, max_iterations, cfg: dict = None,
 ):
-    """Deterministic Phase 2: dispatch player events through the story chain
-    (Layer 2) and the ambient interaction map (Layer 1). No runtime LLM —
-    all responses are pre-compiled at the end of Phase 1 into
-    story_chain.json + interaction_map.json.
+    """Deterministic Phase 2: dispatch player events until stopped.
 
-    Most parameters (client, description, prefabs, animators, reflector,
-    screenshot paths, interval) are kept for signature compatibility with
-    callers but are unused at runtime — Phase 2 no longer calls Groq, takes
-    screenshots, or generates commands on the fly.
+    Sends ``SetPhase 2`` to Unity, then polls interaction_events.json (next to
+    ``out_path``) every 0.2 s. Each new event goes first to the story chain
+    (Layer 2). Events the chain does not consume go to the ambient interaction
+    map (Layer 1). No LLM runs at this stage: every response was compiled at
+    the end of Phase 1 into story_chain.json and interaction_map.json.
+
+    Only ``out_path`` and ``max_iterations`` (number of polls that had events;
+    0 = run forever) are used. The other parameters are kept for signature
+    compatibility with callers.
     """
-    del client, description, prefabs, animators, all_placed, reflector  # unused in deterministic Phase 2
-    del xz_path, xy_path, yz_path, interval, cfg                          # ditto
+    # Unused in deterministic Phase 2
+    del client, description, prefabs, animators, all_placed, reflector
+    del xz_path, xy_path, yz_path, interval, cfg
 
     logger.info("=" * 60)
     logger.info("  PHASE 2: User Interaction (deterministic)")
@@ -2013,7 +2325,7 @@ def phase2_interaction_loop(
     logger.info("=" * 60)
 
     # Enable Phase 2 interaction system in Unity (PlayerTouchHighlighter + Player tag)
-    import main as _unity
+    import main as _unity  # Unity bridge (Agent/main.py); imported lazily
     _unity.add_command("SetPhase", phase=2)
     logger.info("[Phase 2] SetPhase 2 sent to Unity.")
 
@@ -2087,27 +2399,39 @@ def phase2_interaction_loop(
 # ---------------------------------------------------------------------------
 
 def main():
-    parser = argparse.ArgumentParser(description="Two-phase scene generator: build environment, then interact")
-    parser.add_argument("--path", type=str, default="api_files/experience.txt", help="Path to experience file")
-    parser.add_argument("--out", type=str, default=None, help="Output path for unity_commands.json")
-    parser.add_argument("--interval", type=float, default=3.0, help="Loop interval in seconds")
-    parser.add_argument("--max-iterations", type=int, default=0, help="Max Phase 2 iterations (0 = infinite)")
-    parser.add_argument("--screenshot", type=str, default=None, help="Screenshot path (overrides UNITY_SCREENSHOT_PATH)")
-    parser.add_argument("--phase1-only", action="store_true", help="Exit after Phase 1 (environment generation only)")
+    """Parse CLI arguments and run replay mode, or Phase 1 followed by Phase 2."""
+    parser = argparse.ArgumentParser(
+        description="Two-phase scene generator: build environment, then interact")
+    parser.add_argument("--path", type=str, default="api_files/experience.txt",
+                        help="Path to experience file")
+    parser.add_argument("--out", type=str, default=None,
+                        help="Output path for unity_commands.json")
+    parser.add_argument("--interval", type=float, default=3.0,
+                        help="Loop interval in seconds")
+    parser.add_argument("--max-iterations", type=int, default=0,
+                        help="Max Phase 2 iterations (0 = infinite)")
+    parser.add_argument("--screenshot", type=str, default=None,
+                        help="Screenshot path (overrides UNITY_SCREENSHOT_PATH)")
+    parser.add_argument("--phase1-only", action="store_true",
+                        help="Exit after Phase 1 (environment generation only)")
     parser.add_argument("--fast-phase1", action="store_true",
-                        help="Speed up Phase 1 for testing Phase 2: cap to first 3 plan steps × 1 iter each")
+                        help="Speed up Phase 1 for testing Phase 2: "
+                             "cap to first 3 plan steps × 1 iter each")
     parser.add_argument("--phase1-max-steps", type=int, default=0,
                         help="Override max number of plan steps to run in Phase 1 (0 = no cap)")
     parser.add_argument("--phase1-max-iters", type=int, default=0,
                         help="Override max reflection iterations per plan step (0 = default 4)")
     parser.add_argument("--frontier-model", type=str, default="gpt-5.5",
-                        help="OpenAI frontier model used for scene_synthesis + interaction_map + story_chain "
-                             "(default 'gpt-5.5'; alternatives: 'gpt-5.5-pro', 'gpt-5.2', 'gpt-5.4-mini' for cheaper, 'gpt-4o' for legacy). "
-                             "Set to '' to disable frontier LLM and use Llama-4-Scout for everything.")
+                        help="OpenAI frontier model used for scene_synthesis + interaction_map "
+                             "+ story_chain (default 'gpt-5.5'; alternatives: 'gpt-5.5-pro', "
+                             "'gpt-5.2', 'gpt-5.4-mini' for cheaper, 'gpt-4o' for legacy). "
+                             "Set to '' to disable frontier LLM and use Llama-4-Scout for "
+                             "everything.")
     parser.add_argument("--replay-trial", type=str, default=None,
-                        help="Restore a saved trial directory (Phase 1 already done) and jump straight "
-                             "to Phase 2. The directory should contain unity_commands.json, "
-                             "interaction_map.json, story_chain.json, and experience.txt — "
+                        help="Restore a saved trial directory (Phase 1 already done) and jump "
+                             "straight to Phase 2. The directory should contain "
+                             "unity_commands.json, interaction_map.json, story_chain.json, "
+                             "and experience.txt — "
                              "as produced by run_experiment.py. Skips Phase 1 entirely.")
     args = parser.parse_args()
 
@@ -2149,7 +2473,7 @@ def main():
         cfg = _parse_experience_config(raw_experience)
         description = _clean_description(raw_experience)
 
-        # Screenshot paths for Phase 2 signature compatibility
+        # Screenshot paths (unused by Phase 2; passed for signature compatibility)
         screenshot_base = screenshot_path.with_suffix("")
         xz_path = screenshot_base.parent / (screenshot_base.name + "_xz.png")
         xy_path = screenshot_base.parent / (screenshot_base.name + "_xy.png")
@@ -2165,7 +2489,6 @@ def main():
         finally:
             # Copy fresh runtime artifacts back to the trial dir so the next
             # evaluate_phase2.py run picks up the new agent.log + scene_state.
-            import shutil
             for fname in ("agent.log", "scene_state.json"):
                 src = agent_dir / "api_files" / fname
                 if src.exists():
@@ -2183,7 +2506,6 @@ def main():
 
             # Re-run evaluate_phase2 to refresh runtime metrics in the report.
             try:
-                import importlib.util
                 ep2_path = agent_dir / "evaluation" / "evaluate_phase2.py"
                 spec = importlib.util.spec_from_file_location("evaluate_phase2", ep2_path)
                 ep2_mod = importlib.util.module_from_spec(spec)
@@ -2193,9 +2515,11 @@ def main():
                     exp_for_eval = replayed_exp_path
                 report = ep2_mod.evaluate(trial_dir, exp_for_eval)
                 report_path = trial_dir / "phase2_eval_report.json"
-                report_path.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
+                report_path.write_text(json.dumps(report, indent=2, ensure_ascii=False),
+                                       encoding="utf-8")
                 rt = report.get("runtime", {})
-                logger.info(f"[Replay] Re-evaluated Phase 2 — composite={report.get('composite_score', 0)}, "
+                logger.info(f"[Replay] Re-evaluated Phase 2 — "
+                            f"composite={report.get('composite_score', 0)}, "
                             f"chain_progression={rt.get('chain_progression', 0):.2f} "
                             f"({rt.get('chain_beats_fired', 0)} beats fired)")
             except Exception as exc:
@@ -2209,9 +2533,9 @@ def main():
     if not raw_experience:
         raise ValueError("Experience file is empty.")
 
-    # Parse any pre-existing [room_config] section. If experience.txt is in the
-    # new "narrative-only" format (no [room_config]) and a frontier model is
-    # configured, scene_synthesis will produce one and we append it back below.
+    # Parse any existing [room_config] section. If experience.txt is
+    # narrative-only (no [room_config]) and a frontier model is configured,
+    # scene_synthesis produces one below and appends it to the file.
     cfg = _parse_experience_config(raw_experience)
     description = _clean_description(raw_experience)
     use_frontier = bool(args.frontier_model)
@@ -2231,22 +2555,25 @@ def main():
     animators = _load_animator_names(resources_dir)
 
     # Clear all runtime files at startup
-    for jf in [out_path, agent_dir / "api_files" / "reflection.json", agent_dir / "api_files" / "actions.json"]:
+    for jf in [out_path,
+               agent_dir / "api_files" / "reflection.json",
+               agent_dir / "api_files" / "actions.json"]:
         try:
             jf.write_text("[]", encoding="utf-8")
             logger.info(f"[Init] Cleared {jf.name}")
         except Exception as e:
             logger.warning(f"[Init] Could not clear {jf.name}: {e}")
 
-    for lf in [agent_dir / "api_files" / "agent.log", agent_dir / "api_files" / "reflection_log.log"]:
+    for lf in [agent_dir / "api_files" / "agent.log",
+               agent_dir / "api_files" / "reflection_log.log"]:
         try:
             lf.write_text("", encoding="utf-8")
             logger.info(f"[Init] Cleared log {lf.name}")
         except Exception as e:
             logger.warning(f"[Init] Could not clear log {lf.name}: {e}")
 
-    # NOTE: Do NOT delete screenshots at init — Unity ScreenshotLoopSender will
-    # overwrite them automatically, and deleting causes a long wait for re-creation.
+    # Do NOT delete screenshots at startup: Unity's ScreenshotLoopSender
+    # overwrites them, and deleting them causes a long wait while they are re-created.
     screenshot_base = screenshot_path.with_suffix("")
 
     client = Groq(api_key=api_key)
@@ -2269,9 +2596,11 @@ def main():
             (agent_dir / "api_files" / "plan.json").write_text(
                 json.dumps(plan, indent=2, ensure_ascii=False), encoding="utf-8"
             )
-            logger.info(f"[Frontier] Synthesis complete. Plan has {len(plan.get('steps', []))} steps.")
+            logger.info(f"[Frontier] Synthesis complete. "
+                        f"Plan has {len(plan.get('steps', []))} steps.")
         except Exception as exc:
-            logger.error(f"[Frontier] scene_synthesis failed: {exc} — falling back to Groq plan generation.")
+            logger.error(f"[Frontier] scene_synthesis failed: {exc} — "
+                         f"falling back to Groq plan generation.")
             plan = None
 
     # Re-apply CLI overrides if synthesis just replaced cfg from scratch
@@ -2322,8 +2651,8 @@ def main():
     # ===== STORY CHAIN: Layer 2 — scripted, conditional interaction sequence =====
     story_chain_path = agent_dir / "api_files" / "story_chain.json"
     interactions_text = _parse_interactions_section(raw_experience)
-    generate_story_chain(client, interactions_text, all_placed, description, animators, story_chain_path,
-                         frontier_model=frontier_model)
+    generate_story_chain(client, interactions_text, all_placed, description, animators,
+                         story_chain_path, frontier_model=frontier_model)
 
     if args.phase1_only:
         logger.info("--phase1-only flag set. Skipping Phase 2.")

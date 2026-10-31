@@ -1,18 +1,19 @@
-"""
-Centralized logging for all Agent modules.
+"""Centralized logging for all Agent modules.
 
-Every module should import its logger from here:
+Every module obtains its logger from here::
 
     from .logger import get_logger
     logger = get_logger("ModuleName")
 
-All modules write to a single combined log file (api_files/agent.log)
-as well as to the console. Each module can optionally also keep its
-own per-module log file.
+All loggers write to the console and to a single combined log file,
+``Agent/api_files/agent.log`` (the evaluation scripts parse this file).
+A module can optionally also keep its own per-module log file, e.g.
+``api_files/reflection_log.log``. The ``api_files/`` directory is created
+at import time if it does not exist.
 """
 
-import os
 import logging
+import os
 from typing import Optional
 
 # Resolve paths once at import time.
@@ -27,11 +28,12 @@ _FORMATTER = logging.Formatter(
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 
-# Shared file handler — created once, reused by every module logger.
+# Shared file handler: created once, reused by every module logger.
 _combined_handler: Optional[logging.FileHandler] = None
 
 
 def _get_combined_handler() -> logging.FileHandler:
+    """Return the shared agent.log handler, creating it on first use."""
     global _combined_handler
     if _combined_handler is None:
         _combined_handler = logging.FileHandler(_COMBINED_LOG, encoding="utf-8")
@@ -48,11 +50,17 @@ def get_logger(
 ) -> logging.Logger:
     """Return a logger that writes to the combined agent.log **and** console.
 
+    Calling this again for the same name replaces the logger's handlers
+    rather than duplicating them.
+
     Args:
-        name: Logger name (typically the module name, e.g. "DecisionMaker").
+        name: Logger name (typically the module name, e.g. "ReflectionModule").
         module_log_file: Optional path (relative to project root) for a
-            per-module log file, e.g. "api_files/decision_log.log".
+            per-module log file, e.g. "api_files/reflection_log.log".
         level: Logging level (default DEBUG).
+
+    Returns:
+        The configured ``logging.Logger``.
     """
     logger = logging.getLogger(name)
     logger.setLevel(level)

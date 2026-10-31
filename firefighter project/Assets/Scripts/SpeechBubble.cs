@@ -17,14 +17,14 @@ public class SpeechBubble : MonoBehaviour
     [Tooltip("Font size for bubble text.")]
     public int fontSize = 28;
 
-    // ── Runtime ───────────────────────────────────────────────────────────────
+    // ---- Runtime ----
     private Canvas        _canvas;
     private Text          _label;
     private RectTransform _panel;
     private Coroutine     _hideCoroutine;
     private Transform     _cam;
 
-    // ── Lifecycle ─────────────────────────────────────────────────────────────
+    // ---- Lifecycle ----
 
     private void Awake()
     {
@@ -46,7 +46,7 @@ public class SpeechBubble : MonoBehaviour
             _canvas.transform.rotation = _cam.rotation;
     }
 
-    // ── Public API ────────────────────────────────────────────────────────────
+    // ---- Public API ----
 
     /// <summary>Display <paramref name="text"/> for <paramref name="duration"/> seconds.</summary>
     public void Show(string text, float duration = 5f)
@@ -70,7 +70,7 @@ public class SpeechBubble : MonoBehaviour
         if (_canvas != null) _canvas.gameObject.SetActive(false);
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
+    // ---- Helpers ----
 
     private IEnumerator HideAfter(float duration)
     {

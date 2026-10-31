@@ -31,7 +31,7 @@ public class InteractionSetup : MonoBehaviour
         if (IsStructural(obj.name)) return;
         if (obj.GetComponentInChildren<XRBaseInteractable>() != null) return;
 
-        // --- Collider ----------------------------------------------------------
+        // Collider
         // If the object (or any child) already has a collider, keep it.
         // Otherwise, add a BoxCollider that wraps the entire renderer bounds.
         if (obj.GetComponentInChildren<Collider>() == null)
@@ -45,7 +45,7 @@ public class InteractionSetup : MonoBehaviour
             box.size = Vector3.Max(box.size, Vector3.one * 0.05f);
         }
 
-        // --- Rigidbody ---------------------------------------------------------
+        // Rigidbody
         Rigidbody rb = obj.GetComponent<Rigidbody>();
         if (rb == null)
         {
@@ -54,7 +54,7 @@ public class InteractionSetup : MonoBehaviour
         rb.isKinematic = true;
         rb.useGravity  = false;
 
-        // --- XRGrabInteractable ------------------------------------------------
+        // XRGrabInteractable
         var grab = obj.AddComponent<XRGrabInteractable>();
         grab.movementType = usePhysicsOnGrab
             ? XRGrabInteractable.MovementType.VelocityTracking
@@ -80,7 +80,7 @@ public class InteractionSetup : MonoBehaviour
         // them could break physics queries (SnapToFloor, etc.).
     }
 
-    // ========== Helpers ==========
+    // ---- Helpers ----
 
     private static bool IsStructural(string name)
     {

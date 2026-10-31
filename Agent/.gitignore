@@ -1,10 +1,9 @@
-.env
+# Python
 __pycache__/
-*.pyc
-*.pyo
+*.py[cod]
 .venv/
 venv/
-.DS_Store
-api_files/*.log
-api_files/*.png
-api_files/*.json
+
+# Runtime output written by the pipeline
+api_files/*
+!api_files/experience.txt

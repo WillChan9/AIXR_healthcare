@@ -1,17 +1,41 @@
 """
-Phase 2 — Layer 2: Scripted interaction chain.
+Phase 2, Layer 2: scripted story chain.
 
-Reads story_chain.json (written at the end of Phase 1 by generate_story_chain)
-and advances a single cursor through a linear list of beats. A beat fires when
-the player produces an event that matches the beat's trigger; firing dispatches
-the beat's actions to Unity and advances the cursor to the next beat.
+Phase 2 reacts to player interactions in two layers:
 
-Layer 1 (interaction_animations.InteractionAnimationHandler) handles ambient
-interactions for every object. Layer 2 handles the scripted narrative on top.
+* Layer 1 (``interaction_animations.InteractionAnimationHandler``) gives every
+  object an ambient response from ``interaction_map.json``.
+* Layer 2 (this module) plays a linear, scripted narrative on top of that.
 
-Beats whose trigger matches an event are "consumed" and the event is reported
-back so the caller can suppress the ambient handler for the same event (avoids
-the ambient Talking command overwriting the scripted character animation).
+``StoryChainHandler`` reads ``api_files/story_chain.json`` (written at the end
+of Phase 1 by ``generate_story_chain`` in ``groq_static_test.py``) and keeps a
+single cursor into its list of beats. When a player event matches the current
+beat's trigger, the beat's actions are sent to Unity via ``main.add_command``
+(i.e. appended to ``unity_commands.json``) and the cursor advances.
+
+Events that fire a beat are reported back as "consumed" so the caller can skip
+Layer 1 for them; otherwise the ambient response (e.g. a generic Talking
+animation) could overwrite the scripted character animation.
+
+Chain file format (``synopsis`` is ignored here)::
+
+    {"title": "<short title>",
+     "synopsis": "<one-sentence summary>",
+     "beats": [{"id": "B1",
+                "trigger": {"event": "<hover_enter|grab|release|activate|touch>",
+                            "object": "<exact objectName>"},
+                "actions": [{<AgentNetworkBridge command>}, ...]},
+               ...]}
+
+Usage::
+
+    from story_chain import StoryChainHandler      # with Agent/ on sys.path
+    chain = StoryChainHandler()
+    consumed_ids = chain.process_events_list(new_events)
+
+Running ``python Agent/story_chain.py [path/to/story_chain.json]`` walks the
+chain with synthetic events (note: this does append the beats' actions to the
+Unity command file).
 """
 
 from __future__ import annotations
@@ -19,20 +43,25 @@ from __future__ import annotations
 import json
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
-# ── path bootstrap so this module can be imported OR run directly ──────────
+# ---------------------------------------------------------------------------
+# Path bootstrap (lets this module be imported or run directly)
+# ---------------------------------------------------------------------------
+
 _AGENT_ROOT = Path(__file__).parent
 if str(_AGENT_ROOT) not in sys.path:
     sys.path.insert(0, str(_AGENT_ROOT))
 
-import main as unity  # Agent/main.py — add_command()
+import main as unity  # noqa: E402  Agent/main.py: Unity command-file writer
 
 try:
     from agent.logger import get_logger
 except ImportError:
     import logging
+
     def get_logger(name: str, **_):
+        """Fallback logger used when agent.logger is unavailable."""
         logging.basicConfig(level=logging.INFO,
                             format="%(asctime)s [%(name)s] %(message)s")
         return logging.getLogger(name)
@@ -44,23 +73,29 @@ logger = get_logger("StoryChain",
 _DEFAULT_CHAIN_FILE = _AGENT_ROOT / "api_files" / "story_chain.json"
 
 
+# ---------------------------------------------------------------------------
+# Story chain handler
+# ---------------------------------------------------------------------------
+
 class StoryChainHandler:
-    """Linear story chain — fires beat N when its trigger matches an event,
-    then advances cursor to beat N+1."""
+    """Linear story chain: fires beat N when an event matches its trigger, then moves to N+1."""
 
     def __init__(self, chain_file: Optional[Path] = None):
         self._chain_file: Path = chain_file or _DEFAULT_CHAIN_FILE
         self._beats: List[Dict] = []
         self._cursor: int = 0
         self._title: str = ""
-        # Track which event IDs we've consumed so we never advance twice on the
-        # same event (events can be replayed within a single tick).
+        # Event IDs already consumed, so the same event never advances the chain
+        # twice (events can be replayed within a single tick).
         self._consumed_ids: set = set()
         self._load_chain()
 
-    # ── loading ───────────────────────────────────────────────────────────
+    # ---------------------------------------------------------------------------
+    # Loading
+    # ---------------------------------------------------------------------------
 
     def _load_chain(self):
+        """Read the chain file; leaves the chain empty (inactive) on any problem."""
         if not self._chain_file.exists():
             logger.info("[StoryChain] No story_chain.json — Layer 2 inactive.")
             return
@@ -81,19 +116,24 @@ class StoryChainHandler:
 
     @staticmethod
     def _format_trigger(beat: Dict) -> str:
+        """Render a beat's trigger as 'event → object' for log messages."""
         t = beat.get("trigger") or {}
         return f"{t.get('event', '?')} → {t.get('object', '?')}"
 
-    # ── public API ────────────────────────────────────────────────────────
+    # ---------------------------------------------------------------------------
+    # Public API
+    # ---------------------------------------------------------------------------
 
     @property
     def is_active(self) -> bool:
-        """True iff there are beats remaining to fire."""
+        """True if there are beats left to fire."""
         return self._cursor < len(self._beats)
 
     def process_events_list(self, events: List[Dict]) -> List[str]:
-        """Try to advance the chain on each event. Returns the list of event IDs
-        that were consumed by the chain (so the caller can skip Layer 1 for them).
+        """Try to advance the chain on each event, in order.
+
+        Returns the IDs of events that fired a beat, so the caller can skip
+        Layer 1 for them.
         """
         consumed: List[str] = []
         if not self.is_active:
@@ -118,12 +158,16 @@ class StoryChainHandler:
                         self._format_trigger(self._beats[self._cursor]),
                     )
                 else:
-                    logger.info("[StoryChain] Chain complete — all %d beats fired.", len(self._beats))
+                    logger.info("[StoryChain] Chain complete — all %d beats fired.",
+                                len(self._beats))
         return consumed
 
-    # ── matching + dispatch ───────────────────────────────────────────────
+    # ---------------------------------------------------------------------------
+    # Matching and dispatch
+    # ---------------------------------------------------------------------------
 
     def _matches_current_beat(self, event: Dict) -> bool:
+        """True if the event's type and object (minus "(Clone)") match the current trigger."""
         beat = self._beats[self._cursor]
         trig = beat.get("trigger") or {}
         want_event = trig.get("event")
@@ -135,6 +179,7 @@ class StoryChainHandler:
         return ev_type == want_event and ev_obj == want_object
 
     def _fire_beat(self, beat: Dict, triggering_event: Dict):
+        """Dispatch every action of a beat; a failing action is logged and skipped."""
         beat_id = beat.get("id", f"#{self._cursor}")
         actions = beat.get("actions") or []
         logger.info(
@@ -148,8 +193,10 @@ class StoryChainHandler:
                 logger.warning("[StoryChain] Action failed (%s): %s", act.get("action", "?"), exc)
 
     def _dispatch_action(self, act: Dict):
-        """Forward the action dict to Unity via the generic add_command channel.
-        Unity's AgentNetworkBridge already validates each action shape."""
+        """Forward an action dict to Unity via ``main.add_command``.
+
+        No validation is done here; Unity's AgentNetworkBridge checks each action.
+        """
         action = act.get("action")
         if not action:
             return
@@ -159,11 +206,12 @@ class StoryChainHandler:
 
 
 # ---------------------------------------------------------------------------
-# Standalone smoke test (no Unity)
+# Standalone smoke test (Unity need not be running)
 # ---------------------------------------------------------------------------
 
 def _smoke_test():
-    """Run a synthetic event sequence against a chain file and print progress.
+    """Walk a chain file with one synthetic event per beat and print progress.
+
     Usage: python story_chain.py [path/to/story_chain.json]
     """
     chain_path = Path(sys.argv[1]) if len(sys.argv) > 1 else _DEFAULT_CHAIN_FILE
@@ -172,7 +220,7 @@ def _smoke_test():
         print(f"No active chain at {chain_path}.")
         return
 
-    # Synthesize one event per beat using the beat's own trigger
+    # Synthesize one event per beat from the beat's own trigger.
     print(f"\nFiring {len(handler._beats)} synthetic events to walk the chain:\n")
     for i, beat in enumerate(handler._beats):
         trig = beat.get("trigger") or {}

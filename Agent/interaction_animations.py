@@ -1,57 +1,81 @@
 """
-Phase 2 – Interaction Animation Handler.
+Phase 2, Layer 1: ambient interaction responses.
 
-Polls interaction_events.json (written by InteractionEventReporter.cs)
-and responds with appropriate human animations via unity_commands.json.
+Reacts to player interactions in the running Unity scene. Player events are
+read from ``interaction_events.json`` (written by Unity's
+``InteractionEventReporter.cs``); responses are looked up per object in
+``api_files/interaction_map.json`` (generated at the end of Phase 1 by
+``generate_interaction_map`` in ``groq_static_test.py``) and sent to Unity
+through ``main.py`` (i.e. appended to ``unity_commands.json``). A response can
+combine a character animation, a speech bubble, a highlight pulse on the
+object, and a delayed return to idle. Decisions are recorded in
+``api_files/interaction_log.json`` via ``InteractionLog``.
 
-Trigger types captured by Unity:
-    hover_enter  – player looks at / ray-hits the object
-    hover_exit   – player looks away
-    grab         – player selects / grabs the object
-    release      – player releases the object
-    activate     – player presses "activate" while holding
+The scripted narrative (Layer 2) lives in ``story_chain.py``.
 
-Animation controllers live in  Resources/AnimatorControllers/.
-State names match the controller filename (Kevin Iglesias Human Animations pack).
+Event types reported by Unity:
+    hover_enter  player looks at / ray-hits the object
+    hover_exit   player looks away (always ignored)
+    grab         player selects / grabs the object
+    release      player releases the object
+    activate     player presses "activate" while holding
+    touch        player comes within touch range of the object (proximity,
+                 reported via PlayerTouchHighlighter.cs); consecutive repeat
+                 touches on the same object are collapsed and only the first
+                 triggers a response
 
-Usage (standalone):
-    python -m agent.interaction_animations
+``interaction_map.json`` maps ``objectName -> event_type -> config``, where
+config may contain ``controller``, ``state``, ``fade``, ``target_character``
+(or ``target``), ``bubble_message``, ``bubble_on``, ``bubble_duration`` and
+``idle_delay``. Animator controllers live in ``Resources/AnimatorControllers/``
+and state names match the controller file name (Kevin Iglesias Human
+Animations pack).
 
-Usage (embedded in main loop):
-    from agent.interaction_animations import InteractionAnimationHandler
+Usage (standalone, polls and marks events itself)::
+
+    python Agent/interaction_animations.py
+
+Usage (embedded; with Agent/ on sys.path)::
+
+    from interaction_animations import InteractionAnimationHandler
     handler = InteractionAnimationHandler()
     while True:
-        handler.tick()
-        time.sleep(0.5)
+        handler.tick()          # or process_events_list(events) if the caller
+        time.sleep(0.5)         # loads and marks events itself
 """
 
 from __future__ import annotations
 
 import json
-import time
 import sys
+import time
 from pathlib import Path
 from typing import Dict, List, Optional
 
-# ── path bootstrap so this module can be imported OR run directly ──────────
+# ---------------------------------------------------------------------------
+# Path bootstrap (lets this module be imported or run directly)
+# ---------------------------------------------------------------------------
+
 _AGENT_ROOT   = Path(__file__).parent          # Agent/
 _PROJECT_ROOT = _AGENT_ROOT.parent             # repo root
 
 if str(_AGENT_ROOT) not in sys.path:
     sys.path.insert(0, str(_AGENT_ROOT))
 
-import main as unity  # Agent/main.py  (play_human_animation, add_command)
+import main as unity  # noqa: E402  Agent/main.py: play_human_animation, add_command
 
 try:
     from agent.logger import get_logger
 except ImportError:
     import logging
+
     def get_logger(name: str, **_):
+        """Fallback logger used when agent.logger is unavailable."""
         logging.basicConfig(level=logging.INFO,
                             format="%(asctime)s [%(name)s] %(message)s")
         return logging.getLogger(name)
 
-from interaction_log import InteractionLog
+from interaction_log import InteractionLog  # noqa: E402
 
 logger = get_logger("InteractionAnimations",
                     module_log_file="api_files/interaction_animations.log")
@@ -71,7 +95,7 @@ _EVENTS_FILE = (
 _IDLE_CTRL  = "AnimatorControllers/HumanM@Idles"
 _IDLE_STATE = "HumanM@Idles"
 
-# Interaction types that are never worth responding to
+# Event types that never get a response.
 _SILENT_TYPES = {"hover_exit"}
 
 
@@ -81,21 +105,19 @@ _SILENT_TYPES = {"hover_exit"}
 
 def _object_category(name: str) -> str:
     """
-    Derive a category token from a Unity object name.
+    Derive a lowercase category token from a Unity object name (used in logs).
 
-    Examples
-    --------
-    "Treadmill_01"    → "treadmill"
-    "WheelChair_01"   → "wheelchair"
-    "Utility_Cart_01" → "utility"
-    "Patient_01"      → "patient"
-    "Reception_Desk_01" → "reception"
+    Examples:
+        "Treadmill_01"      -> "treadmill"
+        "WheelChair_01"     -> "wheelchair"
+        "Utility_Cart_01"   -> "utility"
+        "Reception_Desk_01" -> "reception"
     """
     if not name:
         return ""
-    # Drop "(Clone)" suffix Unity adds on Instantiate
+    # Drop the "(Clone)" suffix Unity adds on Instantiate.
     name = name.replace("(Clone)", "").strip()
-    # Take the part before the first underscore or digit
+    # Keep everything before the first underscore or digit.
     token = ""
     for ch in name:
         if ch == "_" or ch.isdigit():
@@ -105,40 +127,46 @@ def _object_category(name: str) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Main handler class
+# Interaction handler
 # ---------------------------------------------------------------------------
 
 class InteractionAnimationHandler:
     """
-    Polls interaction_events.json and drives human character animations
-    in response to player interactions with scene objects.
+    Responds to player interaction events with the per-object reactions
+    defined in interaction_map.json (animations, speech bubbles, highlights).
     """
 
-    # Path to the agent-generated per-object map written at the end of Phase 1
+    # Per-object map generated by the LLM at the end of Phase 1.
     _MAP_FILE = _AGENT_ROOT / "api_files" / "interaction_map.json"
 
-    def __init__(self, events_file: Optional[Path] = None, interaction_log: Optional["InteractionLog"] = None):
+    def __init__(
+        self,
+        events_file: Optional[Path] = None,
+        interaction_log: Optional["InteractionLog"] = None,
+    ):
         self._events_file: Path = events_file or _EVENTS_FILE
-        # IDs we have already acted on (survive across ticks)
+        # Event IDs already handled (kept across ticks).
         self._processed_ids: set = set()
-        # Scheduled idle returns: list of (trigger_at_epoch, ctrl, state)
+        # Scheduled idle returns: list of (trigger_at_epoch, ctrl, state).
         self._pending_idles: List[tuple] = []
-        # Optional persistent log — always created so standalone runs also log
+        # Created even when not supplied, so standalone runs also log.
         self._log: InteractionLog = interaction_log or InteractionLog()
-        # Agent-generated per-object map: (objectName, event_type) → config dict
-        # Loaded from interaction_map.json written at end of Phase 1.
-        # Takes priority over the hardcoded ANIMATION_MAP (category-level fallback).
+        # (objectName, event_type) -> config dict, from interaction_map.json.
+        # Events with no entry here get no response.
         self._object_map: Dict[tuple, Dict] = {}
         self._load_object_map()
 
-    # ── object map loading ────────────────────────────────────────────────
+    # ---------------------------------------------------------------------------
+    # Object map loading
+    # ---------------------------------------------------------------------------
 
     def _load_object_map(self):
-        """Load the agent-generated interaction_map.json (written at end of Phase 1).
-        Entries are keyed by (objectName, event_type) and override the hardcoded
-        ANIMATION_MAP when a match is found."""
+        """Load interaction_map.json into ``_object_map``, keyed by (objectName, event_type)."""
         if not self._MAP_FILE.exists():
-            logger.debug("[InteractionAnimations] No interaction_map.json found — using hardcoded map only.")
+            logger.debug(
+                "[InteractionAnimations] No interaction_map.json found — "
+                "no ambient responses will fire."
+            )
             return
         try:
             data = json.loads(self._MAP_FILE.read_text(encoding="utf-8"))
@@ -147,23 +175,27 @@ class InteractionAnimationHandler:
                 for event_type, cfg in events.items():
                     self._object_map[(clean, event_type)] = cfg
             logger.info(
-                "[InteractionAnimations] Loaded agent interaction map: %d entries across %d objects",
+                "[InteractionAnimations] Loaded agent interaction map: "
+                "%d entries across %d objects",
                 len(self._object_map), len(data),
             )
         except Exception as exc:
             logger.warning("[InteractionAnimations] Could not load interaction_map.json: %s", exc)
 
-    # ── public API ────────────────────────────────────────────────────────
+    # ---------------------------------------------------------------------------
+    # Public API
+    # ---------------------------------------------------------------------------
 
     def tick(self) -> int:
         """
-        Standalone polling cycle — reads the events file, fires animations,
-        and marks events as processed in the file.
+        One standalone polling cycle: read the events file, respond to new
+        events, and mark them as processed in the file.
 
-        Use this when running the handler independently (not embedded in the
-        groq_static_test phase2 loop, which manages file marking itself).
+        Use this when running the handler on its own. The Phase 2 loop in
+        groq_static_test.py marks events itself and calls
+        ``process_events_list`` instead.
 
-        Returns the number of events that triggered an animation.
+        Returns the number of events that triggered a response.
         """
         self._fire_pending_idles()
         events = self._load_events()
@@ -180,13 +212,12 @@ class InteractionAnimationHandler:
 
     def process_events_list(self, events: List[dict]) -> int:
         """
-        Fire animations for a pre-loaded list of events without touching the
-        events file.  Use this when the caller (e.g. phase2_interaction_loop)
-        already loaded and will mark the events itself.
+        Respond to an already-loaded list of events without touching the
+        events file (the caller, e.g. phase2_interaction_loop, marks them).
 
         Also fires any overdue idle-return animations.
 
-        Returns the number of events that triggered an animation.
+        Returns the number of events that triggered a response.
         """
         self._fire_pending_idles()
         triggered = 0
@@ -200,7 +231,7 @@ class InteractionAnimationHandler:
         return triggered
 
     def run(self, poll_interval: float = 0.5):
-        """Block and poll indefinitely.  Ctrl-C to stop."""
+        """Poll forever, calling ``tick`` every ``poll_interval`` seconds. Ctrl-C to stop."""
         logger.info("InteractionAnimationHandler running (poll=%.1fs) …", poll_interval)
         while True:
             try:
@@ -214,24 +245,27 @@ class InteractionAnimationHandler:
                 logger.error("tick() error: %s", exc)
             time.sleep(poll_interval)
 
-    # ── event handling ────────────────────────────────────────────────────
+    # ---------------------------------------------------------------------------
+    # Event handling
+    # ---------------------------------------------------------------------------
 
     def _handle_event(self, event: dict) -> bool:
         """
-        Look up the animation config for this event and dispatch it.
-        Returns True if an animation was triggered.
+        Look up this event's config in the object map, dispatch the response,
+        and log the decision. Returns True if a response was dispatched.
         """
         event_type = event.get("type", "")
         obj_name   = event.get("objectName", "")
         category   = _object_category(obj_name)
 
-        # Skip events targeting the player rig itself — the camera collider
-        # frequently triggers touch/hover against its own GameObject and floods
-        # the log with self-interactions that have no narrative meaning.
-        if obj_name.startswith("XR Origin") or obj_name.startswith("XR ") or obj_name == "Main Camera":
+        # Skip events targeting the player rig itself: the camera collider
+        # often touches/hovers its own GameObject, flooding the log with
+        # self-interactions that have no narrative meaning.
+        if (obj_name.startswith("XR Origin") or obj_name.startswith("XR ")
+                or obj_name == "Main Camera"):
             return False
 
-        # Skip event types that are universally silent
+        # Skip event types that never get a response.
         if event_type in _SILENT_TYPES:
             self._log.append(
                 event_type, obj_name,
@@ -242,11 +276,11 @@ class InteractionAnimationHandler:
             )
             return False
 
-        # Look up config from the agent-generated per-object map only.
+        # Look up the response in the per-object map.
         clean_name = obj_name.replace("(Clone)", "").strip()
         config = self._object_map.get((clean_name, event_type))
 
-        # ── Touch events: deduplicate into a single log entry with a counter ──
+        # Touch events: collapse repeats into one log entry with a counter.
         if event_type == "touch":
             entry = self._log.touch_count_or_append(
                 obj_name,
@@ -254,14 +288,15 @@ class InteractionAnimationHandler:
                 player_pos=event.get("playerPosition"),
             )
             count = entry.get("touch_count", 1)
-            # Only trigger animation on the first touch per object
+            # Only the first of a run of touches on this object triggers a response.
             if count > 1:
                 logger.debug("[touch] %s — repeat #%d, skipping animation", obj_name, count)
                 return False
             if config is None:
-                logger.debug("[touch] %s (%s) — first touch, no animation mapped", obj_name, category)
+                logger.debug("[touch] %s (%s) — first touch, no animation mapped",
+                             obj_name, category)
                 return False
-            # First touch with a mapped animation — fall through to dispatch below
+            # First touch with a mapped response: fall through to dispatch below.
 
         elif config is None:
             reasoning = f"no mapping for ({category}, {event_type})"
@@ -276,18 +311,21 @@ class InteractionAnimationHandler:
             return False
 
         anim_state = config.get("state", "")
-        target_char = config.get("target_character") or config.get("target")  # optional NPC name; null = defaultHumanModel
-        bubble_msg = config.get("bubble_message")  # optional string — fires ShowSpeechBubble alongside
-        bubble_on = config.get("bubble_on") or obj_name  # which object the bubble attaches to
+        # Optional NPC name; None means Unity's defaultHumanModel.
+        target_char = config.get("target_character") or config.get("target")
+        # Optional speech bubble text, shown alongside (or instead of) the animation.
+        bubble_msg = config.get("bubble_message")
+        bubble_on = config.get("bubble_on") or obj_name  # object the bubble attaches to
         bubble_dur = float(config.get("bubble_duration", 4.0))
 
         logger.info("[%s] %s (%s) → anim=%s target=%s bubble=%s",
-                    event_type, obj_name, category, anim_state or "-", target_char or "default", bool(bubble_msg))
+                    event_type, obj_name, category, anim_state or "-",
+                    target_char or "default", bool(bubble_msg))
 
-        # Cancel any previously queued idle return — new interaction takes over
+        # Cancel any queued idle return; the new interaction takes over.
         self._pending_idles.clear()
 
-        # Animation: only play if controller+state are present (entries can be bubble-only).
+        # Animation: only if both controller and state are set (entries may be bubble-only).
         if config.get("controller") and anim_state:
             self._play(config["controller"], anim_state, config.get("fade", 0.25), target_char)
 
@@ -304,13 +342,14 @@ class InteractionAnimationHandler:
         if idle_delay > 0:
             self._schedule_idle(idle_delay)
 
-        # Highlight the object — skip for touch (PlayerTouchHighlighter already does it
-        # and a second concurrent HighlightCoroutine would save the tinted colour as
-        # "original" and never restore it, leaving the character permanently blue).
+        # Highlight the object, except on touch: PlayerTouchHighlighter already
+        # highlights it, and a second concurrent HighlightCoroutine would save the
+        # tinted color as "original" and never restore it, leaving the object
+        # permanently blue.
         if event_type != "touch":
             self._highlight(obj_name, duration=min(idle_delay, 2.0) if idle_delay else 1.0)
 
-        # Log the deterministic animation choice (touch already logged above)
+        # Log the map-driven choice (touch was already logged above).
         if event_type != "touch":
             self._log.append(
                 event_type, obj_name,
@@ -322,20 +361,26 @@ class InteractionAnimationHandler:
 
         return True
 
-    # ── animation helpers ─────────────────────────────────────────────────
+    # ---------------------------------------------------------------------------
+    # Animation helpers
+    # ---------------------------------------------------------------------------
 
-    def _play(self, controller: str, state: str, fade: float = 0.25, target: Optional[str] = None):
-        """Send PlayHumanAnimationFromResources. target = NPC name (e.g. "Nurse_01")
-        or None for defaultHumanModel (the auto-bound character)."""
+    def _play(self, controller: str, state: str, fade: float = 0.25,
+              target: Optional[str] = None):
+        """Send PlayHumanAnimationFromResources.
+
+        ``target`` is an NPC name (e.g. "Nurse_01"), or None for Unity's
+        defaultHumanModel.
+        """
         unity.play_human_animation(controller, state, fade, target_model=target)
 
     def _schedule_idle(self, delay: float):
-        """Queue a return-to-idle N seconds from now."""
+        """Queue a return to idle ``delay`` seconds from now."""
         trigger_at = time.time() + delay
         self._pending_idles.append((trigger_at, _IDLE_CTRL, _IDLE_STATE))
 
     def _fire_pending_idles(self):
-        """Play return-to-idle for any overdue scheduled returns."""
+        """Play the idle animation for every scheduled return that is now due."""
         now  = time.time()
         keep = []
         for trigger_at, ctrl, state in self._pending_idles:
@@ -347,7 +392,7 @@ class InteractionAnimationHandler:
         self._pending_idles = keep
 
     def _highlight(self, obj_name: str, duration: float = 1.0):
-        """Send a brief highlight pulse on the interacted object."""
+        """Briefly highlight the interacted object."""
         unity.add_command(
             "HighlightObject",
             objectName=obj_name,
@@ -355,10 +400,12 @@ class InteractionAnimationHandler:
             duration=duration,
         )
 
-    # ── file I/O ──────────────────────────────────────────────────────────
+    # ---------------------------------------------------------------------------
+    # File I/O
+    # ---------------------------------------------------------------------------
 
     def _load_events(self) -> List[dict]:
-        """Read the events JSON written by InteractionEventReporter.cs."""
+        """Read the events list written by InteractionEventReporter.cs ([] on error)."""
         if not self._events_file.exists():
             return []
         try:
@@ -372,9 +419,9 @@ class InteractionAnimationHandler:
 
     def _mark_processed(self, event_id: str):
         """
-        Set processed=true for the given event ID in the events file.
-        This signals InteractionEventReporter.cs that we handled the event,
-        so it won't re-write it as unprocessed on next load.
+        Set ``processed: true`` for one event in the events file, telling
+        InteractionEventReporter.cs the event was handled so it is not
+        re-written as unprocessed on the next load.
         """
         if not self._events_file.exists():
             return

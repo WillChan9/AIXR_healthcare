@@ -1,14 +1,66 @@
-import os
+"""Reflection loop for Phase 1 scene generation.
+
+After each batch of Phase 1 placement commands, ``groq_static_test.py`` calls
+``ReflectionModule.reflect_step()`` to critique the current Unity scene and
+produce corrections. The critique runs as five parallel workers whose results
+are merged into a single ``ReflectionResult``:
+
+    DispatcherThread  Python + LLM vision: floating / unsupported objects.
+    BoundsThread      Python + LLM vision: wall clipping, floor clipping and
+                      doorway blockage.
+    CollisionThread   Python + LLM vision: overlapping bounding boxes.
+    SurfaceThread     LLM: zone correctness, surface logic, rotation and room
+                      fullness (``room_status``).
+    RosterThread      Python only: required characters from experience.txt that
+                      are missing from the scene; their PlaceHuman commands are
+                      written straight to unity_commands.json.
+
+Corrections are emitted as text lines (``MoveObject <name> x=.. y=.. z=..
+rotationY=..  -- reason: ...``) in ``ReflectionResult.alignment_suggestions``,
+which the Phase 1 LLM is instructed to apply verbatim. Every name is checked
+against the live scene so hallucinated object names are dropped.
+
+Reads (paths relative to Agent/ unless noted):
+    api_files/plan.json               Layout plan produced earlier in Phase 1.
+    api_files/experience.txt          [room_config] keys and required characters.
+    api_files/scene_state.json        Live object positions/bounds written by
+                                      Unity's EnvironmentAgent (falls back to
+                                      replaying unity_commands.json).
+    api_files/scene_screenshot_{xz,xy,yz}.png
+                                      Orthographic screenshots (base path set by
+                                      the UNITY_SCREENSHOT_PATH env var).
+    api_files/reflection.json         Previous reflections (for context).
+
+Writes:
+    api_files/reflection.json         Appends one entry per reflection.
+    firefighter project/Assets/Scripts/unity_commands.json  (repo-relative)
+                                      PlaceHuman and DebugLog commands.
+    api_files/reflection_log.log      Module log (plus the combined agent.log).
+
+Requires the GROQ_API_KEY environment variable (a .env file is loaded).
+
+Usage::
+
+    from agent.Reflection_module import ReflectionModule
+
+    reflector = ReflectionModule()
+    result = reflector.reflect_step(plan_step, game_state)
+    print(result.alignment_suggestions)
+"""
+
+import base64
 import json
+import os
+import re
 import time
-from concurrent.futures import ThreadPoolExecutor, Future
+import uuid
+from concurrent.futures import Future, ThreadPoolExecutor
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Any, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from dotenv import load_dotenv
 from groq import Groq
 
-# Load environment variables
 load_dotenv()
 
 try:
@@ -18,8 +70,28 @@ except ImportError:
 
 logger = get_logger("ReflectionModule", module_log_file="api_files/reflection_log.log")
 
+
+# ---------------------------------------------------------------------------
+# Result type and config parsing
+# ---------------------------------------------------------------------------
+
+
 @dataclass
 class ReflectionResult:
+    """Outcome of one reflection pass, consumed by the Phase 1 generation loop.
+
+    Attributes:
+        step_complete: "yes" or "no" -- whether the current plan step is done.
+        current_action_thoughts: LLM description of the current layout.
+        next_action_thoughts: LLM summary of remaining issues.
+        alignment_suggestions: Newline-separated correction lines
+            (MoveObject / DeleteObject / PlaceObject / PlaceHuman) merged from
+            all reflection threads.
+        layout_comments: Short free-text critique of the layout.
+        room_status: "sparse", "good" or "cluttered".
+        suggest_additions: True only when room_status is "sparse".
+    """
+
     step_complete: str
     current_action_thoughts: str
     next_action_thoughts: str
@@ -29,6 +101,7 @@ class ReflectionResult:
     suggest_additions: bool = False  # True only when room_status == "sparse"
 
     def to_dict(self) -> Dict[str, Any]:
+        """Return the result as a JSON-serializable dict."""
         return {
             "step_complete": self.step_complete,
             "current_action_thoughts": self.current_action_thoughts,
@@ -38,6 +111,7 @@ class ReflectionResult:
             "room_status": self.room_status,
             "suggest_additions": self.suggest_additions,
         }
+
 
 def _parse_experience_config(txt: str) -> dict:
     """Parse key=value pairs from the [room_config] section of experience.txt."""
@@ -57,8 +131,23 @@ def _parse_experience_config(txt: str) -> dict:
     return cfg
 
 
+# ---------------------------------------------------------------------------
+# Reflection module
+# ---------------------------------------------------------------------------
+
+
 class ReflectionModule:
-    # Maximum number of reflection iterations per plan step before forcing step_complete=yes
+    """Critiques the live Unity scene and proposes layout corrections.
+
+    Room geometry and keyword lists come from the [room_config] section of
+    experience.txt (with built-in defaults). See the module docstring for the
+    files read and written.
+
+    Raises:
+        ValueError: If GROQ_API_KEY is not set.
+    """
+
+    # Maximum reflection iterations per plan step before forcing step_complete="yes".
     MAX_REFLECTIONS_PER_STEP = 3
 
     def __init__(self):
@@ -67,36 +156,42 @@ class ReflectionModule:
             raise ValueError("GROQ_API_KEY not found in environment variables")
         self.groq_client = Groq(api_key=groq_api_key)
 
-        self.actions_file = "api_files/actions.json"
         self.plan_file = "api_files/plan.json"
         self.reflection_file = "api_files/reflection.json"
 
-        # Track reflection counts per step to enforce iteration limit
+        # Reflection counts per step, used to enforce MAX_REFLECTIONS_PER_STEP.
         self._step_reflection_counts: Dict[str, int] = {}
 
-        # Shared state set by reflect_step before threads launch — threads read these directly
-        self._view_data: list = []              # [(label, base64_encoded), ...]
-        self._scene_state: List[Dict] = []      # live scene objects from scene_state.json (or fallback)
-        self._exact_scene_names: List[str] = [] # derived from _scene_state; used by _sanitize_correction_lines
-        self._denied_corrections: List[str] = [] # names dropped this round due to invalid names
+        # Shared state set by reflect_step() before the worker threads launch;
+        # the threads read these attributes directly.
+        self._view_data: list = []                # [(label, base64_png), ...]
+        self._scene_state: List[Dict] = []        # live objects (scene_state.json or fallback)
+        self._exact_scene_names: List[str] = []   # valid names for _sanitize_correction_lines
+        self._denied_corrections: List[str] = []  # names rejected this round
 
-        # Derive the 3-view screenshot base path from env var (strip .png if present)
+        # Derive the three screenshot paths from the env var (strip ".png" if present).
         raw_path = os.getenv("UNITY_SCREENSHOT_PATH", "api_files/scene_screenshot.png")
         base = raw_path[:-4] if raw_path.endswith(".png") else raw_path
         self.screenshot_xz = base + "_xz.png"  # top-down
         self.screenshot_xy = base + "_xy.png"  # front
         self.screenshot_yz = base + "_yz.png"  # side
 
-        # Load scene config from experience.txt
+        # Scene config from the [room_config] section of experience.txt.
         self._cfg = self._load_experience_config()
 
-        # Required-character roster parsed from experience.txt (Name_NN → x,y,z).
-        # Used by _roster_thread to detect characters Phase 1 LLM dropped.
-        self._required_characters: Dict[str, Tuple[float, float, float]] = self._load_required_characters()
+        # Required-character roster parsed from experience.txt (Name_NN -> x, y, z).
+        # Used by _roster_thread to detect characters the Phase 1 LLM dropped.
+        self._required_characters: Dict[str, Tuple[float, float, float]] = (
+            self._load_required_characters()
+        )
 
-        # IDs of PlaceHuman commands the roster thread has already queued, so we
-        # don't append duplicates across reflection iterations.
+        # Names of characters the roster thread has already queued, so duplicate
+        # PlaceHuman commands are not appended across reflection iterations.
         self._roster_queued: set = set()
+
+    # -----------------------------------------------------------------------
+    # Setup and configuration
+    # -----------------------------------------------------------------------
 
     def _load_experience_config(self) -> dict:
         """Load [room_config] from experience.txt. Returns empty dict if not found."""
@@ -111,15 +206,17 @@ class ReflectionModule:
             return {}
 
     def _load_required_characters(self) -> Dict[str, Tuple[float, float, float]]:
-        """Parse required character names + intended positions from experience.txt.
+        """Parse required character names and intended positions from experience.txt.
 
-        Looks for tokens of the form `Name_NN` where `Name` is one of the
-        configured character_prefixes (Doctor, Nurse, Surgeon, Patient, EMT…),
-        then extracts nearby `x~...` / `z~...` (and optional `y~...`) on the
-        same line. Lines past `[interactions]` are ignored to avoid pulling
-        narrative coordinates.
+        Looks for tokens of the form ``Name_NN`` where ``Name`` is one of the
+        configured character_prefixes (Doctor, Nurse, Surgeon, Patient, EMT, ...),
+        then extracts ``x~...`` / ``z~...`` (and optional ``y~...``) from the
+        same line. Lines from ``[interactions]`` onward are ignored so that
+        narrative coordinates are not picked up.
+
+        Returns:
+            Mapping of character name to (x, y, z); empty if none are found.
         """
-        import re
         experience_path = os.path.join(self._project_root(), "api_files", "experience.txt")
         if not os.path.exists(experience_path):
             return {}
@@ -151,33 +248,43 @@ class ReflectionModule:
                                       float(ym.group(1)) if ym else 0.0,
                                       float(zm.group(1)))
         if required:
-            logger.info(f"[ReflectionModule] Roster: {len(required)} required characters loaded "
-                        f"from experience.txt: {sorted(required.keys())}")
+            logger.info(f"[ReflectionModule] Roster: {len(required)} required characters "
+                        f"loaded from experience.txt: {sorted(required.keys())}")
         return required
 
     def reset_step_count(self, step_key: str = None):
-        """Reset reflection iteration count for a step (or all steps if step_key is None).
-        Call this when advancing to a new plan step."""
+        """Reset the reflection count for one step, or for all steps if step_key is None.
+
+        Call this when advancing to a new plan step.
+        """
         if step_key is None:
             self._step_reflection_counts.clear()
         else:
             self._step_reflection_counts.pop(str(step_key), None)
 
     def _project_root(self) -> str:
-        """Returns the Agent/ directory (where api_files/ lives)."""
+        """Return the Agent/ directory (where api_files/ lives)."""
         return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
     def _repo_root(self) -> str:
-        """Returns the repo root (one level above Agent/, where 'firefighter project/' lives)."""
+        """Return the repo root (parent of Agent/, containing 'firefighter project/')."""
         return os.path.dirname(self._project_root())
 
+    # -----------------------------------------------------------------------
+    # File I/O helpers
+    # -----------------------------------------------------------------------
     def _enqueue_debug_log(self, message: str) -> None:
         """Append a DebugLog command to unity_commands.json so Unity prints it in the Console."""
         commands_file = os.path.join(
             self._repo_root(), "firefighter project", "Assets", "Scripts", "unity_commands.json"
         )
-        import uuid
-        new_cmd = {"id": str(uuid.uuid4()), "executed": False, "done": False, "action": "DebugLog", "message": message}
+        new_cmd = {
+            "id": str(uuid.uuid4()),
+            "executed": False,
+            "done": False,
+            "action": "DebugLog",
+            "message": message,
+        }
         try:
             existing: list = []
             if os.path.exists(commands_file):
@@ -192,67 +299,19 @@ class ReflectionModule:
             logger.warning(f"[CollisionThread] _enqueue_debug_log failed: {e}")
 
     def _load_plan(self) -> Dict:
+        """Load api_files/plan.json; raise FileNotFoundError if it is missing."""
         plan_path = os.path.join(self._project_root(), self.plan_file)
         if not os.path.exists(plan_path):
             raise FileNotFoundError(f"Plan file not found: {plan_path}")
         with open(plan_path, "r") as f:
             return json.load(f)
 
-    def _load_recent_actions(self, limit: int = 10) -> List[Dict]:
-        actions_path = os.path.join(self._project_root(), self.actions_file)
-        if not os.path.exists(actions_path):
-            return []
-
-        try:
-            with open(actions_path, "r") as f:
-                content = f.read()
-                if not content:
-                    return []
-                data = json.loads(content)
-        except (json.JSONDecodeError, OSError) as e:
-            logger.warning(f"Failed to read actions.json: {str(e)}")
-            return []
-
-        flat_actions: List[Dict] = []
-        for entry in data:
-            timestamp = entry.get("timestamp")
-            entry_executed = entry.get("executed", False)
-            entry_complete = entry.get("complete", False)
-
-            if "actions" in entry:
-                for action in entry["actions"]:
-                    flat_actions.append({
-                        "timestamp": timestamp,
-                        "entry_executed": entry_executed,
-                        "entry_complete": entry_complete,
-                        "action_type": action.get("action_type"),
-                        "object_id": action.get("object_id"),
-                        "object_type": action.get("object_type"),
-                        "position": action.get("position"),
-                        "positions": action.get("positions"),
-                        "complete": action.get("complete", False),
-                    })
-            elif "action" in entry:
-                action = entry["action"]
-                flat_actions.append({
-                    "timestamp": timestamp,
-                    "entry_executed": entry_executed,
-                    "entry_complete": entry_complete,
-                    "action_type": action.get("action_type"),
-                    "object_id": action.get("object_id"),
-                    "object_type": action.get("object_type"),
-                    "position": action.get("position"),
-                    "positions": action.get("positions"),
-                    "complete": action.get("complete", False),
-                })
-
-        if limit and len(flat_actions) > limit:
-            return flat_actions[-limit:]
-        return flat_actions
-
     def _extract_json_object(self, content: str) -> str:
-        import re
+        """Return the first JSON object in an LLM response as a string.
 
+        Prefers a fenced ```json block; otherwise scans for the first balanced
+        ``{...}``. Raises ValueError if no complete object is found.
+        """
         code_block_match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", content, re.DOTALL)
         if code_block_match:
             return code_block_match.group(1).strip()
@@ -272,7 +331,13 @@ class ReflectionModule:
 
         raise ValueError("Incomplete JSON response")
 
-    def _log_reflection(self, reflection: ReflectionResult, plan_step: Optional[Dict] = None, denied_corrections: Optional[List[str]] = None):
+    def _log_reflection(
+        self,
+        reflection: ReflectionResult,
+        plan_step: Optional[Dict] = None,
+        denied_corrections: Optional[List[str]] = None,
+    ):
+        """Append a reflection (plus its step and rejected names) to reflection.json."""
         entry = {
             "timestamp": time.time(),
             "plan_step": plan_step,
@@ -301,19 +366,21 @@ class ReflectionModule:
         )
 
     def _load_scene_state(self) -> List[Dict]:
-        """Load live scene state from scene_state.json written by EnvironmentAgent.WriteSceneState().
+        """Load live scene state from api_files/scene_state.json.
 
-        Each record has: objectName, x, y, z, rotationY, and real renderer bounds
+        The file is written by Unity's ``EnvironmentAgent.WriteSceneState()``.
+        Each record has objectName, x, y, z, rotationY and real renderer bounds
         (boundsMinX/Y/Z, boundsMaxX/Y/Z, boundsSizeX/Y/Z).
 
-        Falls back to _load_placed_objects() if scene_state.json doesn't exist yet
-        (i.e. Unity hasn't run or the file hasn't been written on this session).
+        Falls back to ``_load_placed_objects()`` if the file is missing, empty
+        or malformed (e.g. Unity has not written it yet this session).
         """
         project_root = self._project_root()
         state_file = os.path.join(project_root, "api_files", "scene_state.json")
 
         if not os.path.exists(state_file):
-            logger.debug("[SceneState] scene_state.json not found — falling back to command-log reconstruction.")
+            logger.debug("[SceneState] scene_state.json not found — "
+                         "falling back to command-log reconstruction.")
             return self._load_placed_objects()
 
         try:
@@ -334,8 +401,11 @@ class ReflectionModule:
         return data
 
     def _load_placed_objects(self) -> List[Dict]:
-        """Reconstruct placed objects from unity_commands.json command log.
-        Used as fallback when scene_state.json is not available."""
+        """Reconstruct placed objects by replaying the unity_commands.json command log.
+
+        Used as a fallback when scene_state.json is not available. Records have
+        no bounds fields, so downstream checks use estimated sizes.
+        """
         commands_file = os.path.join(
             self._repo_root(), "firefighter project", "Assets", "Scripts", "unity_commands.json"
         )
@@ -370,16 +440,16 @@ class ReflectionModule:
                     "rotationY": cmd.get("rotationY", 0),
                 }
             elif action == "MoveObject" and name in placed_map:
-                if cmd.get("x") is not None: placed_map[name]["x"] = cmd["x"]
-                if cmd.get("y") is not None: placed_map[name]["y"] = cmd["y"]
-                if cmd.get("z") is not None: placed_map[name]["z"] = cmd["z"]
-                if cmd.get("rotationY") is not None: placed_map[name]["rotationY"] = cmd["rotationY"]
+                for key in ("x", "y", "z", "rotationY"):
+                    if cmd.get(key) is not None:
+                        placed_map[name][key] = cmd[key]
             elif action == "DeleteObject" and name in placed_map:
                 del placed_map[name]
 
         return list(placed_map.values())
 
     def _load_recent_reflections(self, limit: int = 5) -> List[Dict]:
+        """Return up to ``limit`` most recent entries from reflection.json."""
         reflection_path = os.path.join(self._project_root(), self.reflection_file)
         if not os.path.exists(reflection_path):
             return []
@@ -400,29 +470,34 @@ class ReflectionModule:
             return [data]
         return []
 
-    def _sanitize_correction_lines(self, lines: List[str], valid_names: List[str]) -> List[str]:
-        """Drop correction lines whose object name is not an exact match in the scene.
+    # -----------------------------------------------------------------------
+    # Name sanitization and shared LLM helper
+    # -----------------------------------------------------------------------
 
-        - Exact match  → keep as-is.
-        - No match     → drop line, log warning.
-        Fuzzy matching is intentionally omitted: substituting a visually-similar but wrong
-        name would move the wrong object. If the LLM cannot produce the exact name, the
-        correction is unsafe and must be discarded.
+    def _sanitize_correction_lines(self, lines: List[str], valid_names: List[str]) -> List[str]:
+        """Drop MoveObject/DeleteObject lines whose object name is not in the scene.
+
+        Exact matches are kept; anything else is dropped, logged, and recorded in
+        ``self._denied_corrections`` so the next round can warn the LLM. Lines
+        with other verbs pass through unchanged. Fuzzy matching is intentionally
+        omitted: substituting a similar but wrong name would move the wrong
+        object, so a correction without an exact name is unsafe.
         """
         if not valid_names:
-            logger.warning("[NameFix] valid_names is empty — all LLM correction lines dropped to prevent hallucinated moves.")
+            logger.warning("[NameFix] valid_names is empty — all LLM correction lines dropped "
+                           "to prevent hallucinated moves.")
             for line in lines:
                 parts = line.split()
                 if len(parts) >= 2 and parts[0] in ("MoveObject", "DeleteObject"):
                     self._denied_corrections.append(f"{parts[1]} (no valid names loaded)")
             return []
         valid_set = set(valid_names)
-        # Structural cubes — floor, walls, ceiling — share the name "Cube" in the
+        # Structural cubes (floor, walls, ceiling) share the name "Cube" in the
         # scene. Reflection threads sometimes hallucinate "MoveObject Cube" when
-        # they can't identify which actual object overlaps something visually;
-        # FindSpawnedObject("Cube") then matches the FLOOR cube and the
-        # correction physically displaces the floor / a wall, breaking the room
-        # geometry. Always drop these lines — structural cubes must never move.
+        # they can't identify which object overlaps something visually; Unity's
+        # FindSpawnedObject("Cube") then matches the floor cube and the
+        # correction displaces the floor or a wall, breaking the room geometry.
+        # Always drop these lines: structural cubes must never move.
         STRUCTURAL_NAMES = {"Cube"}
         cleaned: List[str] = []
         for line in lines:
@@ -439,7 +514,8 @@ class ReflectionModule:
             if name in valid_set:
                 cleaned.append(line)
             else:
-                logger.warning(f"[NameFix] '{name}' not in scene — line dropped (hallucinated name): {line}")
+                logger.warning(f"[NameFix] '{name}' not in scene — line dropped "
+                               f"(hallucinated name): {line}")
                 self._denied_corrections.append(name)
         return cleaned
 
@@ -450,16 +526,26 @@ class ReflectionModule:
         object_context: str,
         max_tokens: int = 600,
     ) -> List[str]:
-        """Shared helper: focused single-purpose LLM call used by every thread.
+        """Run a focused, single-purpose vision LLM check for one reflection thread.
 
-        Uses self._scene_state (full scene JSON with positions + bounds) and self._view_data
-        (screenshots). The strict name rule and scene JSON are always injected into the prompt.
-        All returned names are sanitized — unrecognised names are dropped."""
-        import re
+        The prompt combines a strict name rule and scene JSON (both built from
+        ``self._scene_state``) with the screenshots in ``self._view_data``.
 
-        # Build name rule from live scene state if available
+        Args:
+            thread_name: Tag used in log messages and the image caption.
+            system_prompt: Thread-specific instructions.
+            object_context: Thread-specific object listing appended to the
+                user message.
+            max_tokens: Completion token limit.
+
+        Returns:
+            Sanitized MoveObject/DeleteObject lines; an empty list on failure.
+        """
+        # Build the name rule from the live scene state, if available.
         if self._scene_state:
-            names_block = "\n".join(f"  - {o['objectName']}" for o in self._scene_state if o.get("objectName"))
+            names_block = "\n".join(
+                f"  - {o['objectName']}" for o in self._scene_state if o.get("objectName")
+            )
             name_rule = (
                 "══ STRICT NAME RULE — NO EXCEPTIONS ══\n"
                 "The scene contains EXACTLY these object names. You MUST copy them character-for-character:\n"
@@ -475,25 +561,38 @@ class ReflectionModule:
 
         messages: list = [{"role": "system", "content": full_system}]
 
-        # Always send screenshots — they are the primary source of truth
+        # Always send screenshots: they are the primary source of truth.
         if self._view_data:
             img_content: list = [{"type": "text", "text": (
                 f"[{thread_name}] Use these screenshots as your PRIMARY source. "
                 "Coordinates are supplementary only. XZ=top-down, XY=front, YZ=side.\n"
                 "Base every correction on what you can SEE in the images."
             )}]
-            for label, encoded in self._view_data:
-                img_content.append({"type": "image_url", "image_url": {"url": f"data:image/png;base64,{encoded}"}})
+            for _label, encoded in self._view_data:
+                img_content.append({
+                    "type": "image_url",
+                    "image_url": {"url": f"data:image/png;base64,{encoded}"},
+                })
             messages.append({"role": "user", "content": img_content})
 
-        # Pass scene state JSON directly if available; otherwise fall back to screenshots only
+        # Include the scene state JSON if available; otherwise rely on screenshots only.
         if self._scene_state:
             scene_json = json.dumps(
-                [{"objectName": o["objectName"], "x": o.get("x", 0), "y": o.get("y", 0), "z": o.get("z", 0),
-                  "rotationY": o.get("rotationY", 0),
-                  "boundsSize": {"x": o.get("boundsSizeX", 0), "y": o.get("boundsSizeY", 0), "z": o.get("boundsSizeZ", 0)}}
-                 for o in self._scene_state if o.get("objectName") and "Cube" not in o["objectName"]],
-                indent=2
+                [
+                    {
+                        "objectName": o["objectName"],
+                        "x": o.get("x", 0), "y": o.get("y", 0), "z": o.get("z", 0),
+                        "rotationY": o.get("rotationY", 0),
+                        "boundsSize": {
+                            "x": o.get("boundsSizeX", 0),
+                            "y": o.get("boundsSizeY", 0),
+                            "z": o.get("boundsSizeZ", 0),
+                        },
+                    }
+                    for o in self._scene_state
+                    if o.get("objectName") and "Cube" not in o["objectName"]
+                ],
+                indent=2,
             )
             user_text = f"SCENE STATE (from scene_state.json — use objectName values verbatim):\n{scene_json}\n\n{object_context}"
         else:
@@ -522,36 +621,37 @@ class ReflectionModule:
             logger.warning(f"[{thread_name}] focused LLM call failed: {e}")
             return []
 
-    # ──────────────────────────────────────────────────────────────────────────
-    # Threading helpers — run in parallel with the LLM surface thread
-    # ──────────────────────────────────────────────────────────────────────────
+    # -----------------------------------------------------------------------
+    # Reflection threads (run in parallel with the SurfaceThread LLM call)
+    # -----------------------------------------------------------------------
 
     def _roster_thread(self, placed_objects: List[Dict]) -> List[str]:
-        """Thread 4 (deterministic): catch required characters Phase 1 LLM dropped.
+        """RosterThread (deterministic): restore required characters Phase 1 dropped.
 
-        Phase 1 sometimes truncates its JSON output (rate-limit retries, hit
+        Phase 1 sometimes truncates its JSON output (rate-limit retries, hitting
         max_completion_tokens, etc.) and emits only a subset of the PlaceHuman
         commands listed in experience.txt. This thread compares the live scene
-        roster against the parsed required list and:
-          1. Writes PlaceHuman directly to unity_commands.json for any missing
-             character (deterministic — no LLM round-trip needed).
+        against the required roster and:
+
+          1. Writes PlaceHuman commands directly to unity_commands.json for any
+             missing character (no LLM round-trip needed).
           2. Returns advisory PlaceHuman lines so the next Phase 1 LLM iteration
              also sees them, in case Unity hasn't picked them up yet.
 
-        Tracks already-queued names in self._roster_queued to avoid emitting
+        Names already queued are tracked in ``self._roster_queued`` to avoid
         duplicate PlaceHuman commands across reflection iterations.
         """
         if not self._required_characters:
             return []
 
-        # Build set of currently-placed character names (strip Unity's "(Clone)" suffix).
+        # Currently placed object names, with Unity's "(Clone)" suffix stripped.
         placed_names = set()
         for o in placed_objects or []:
             n = (o.get("objectName") or "").replace("(Clone)", "").strip()
             if n:
                 placed_names.add(n)
 
-        # Already in scene OR already queued by a previous reflection iteration → skip.
+        # Skip anything already in the scene or queued by a previous iteration.
         missing = [(name, pos) for name, pos in self._required_characters.items()
                    if name not in placed_names and name not in self._roster_queued]
         if not missing:
@@ -586,11 +686,11 @@ class ReflectionModule:
             for name, _ in missing:
                 self._roster_queued.add(name)
             logger.warning(f"[RosterThread] {len(missing)} required character(s) missing — "
-                           f"queued PlaceHuman commands: {[n for n,_ in missing]}")
+                           f"queued PlaceHuman commands: {[n for n, _ in missing]}")
         except Exception as e:
             logger.error(f"[RosterThread] failed to append PlaceHuman commands: {e}")
 
-        # Advisory lines — also surface in alignment_suggestions for visibility.
+        # Advisory lines, surfaced in alignment_suggestions for visibility.
         return [
             f"PlaceHuman {name} x={x:.2f} y={y:.2f} z={z:.2f} rotationY=0  "
             f"— reason: required staff missing from scene"
@@ -598,18 +698,24 @@ class ReflectionModule:
         ]
 
     def _dispatcher_thread(self, placed_objects: List[Dict]) -> List[str]:
-        """Thread 0 (Python + LLM visual): detect floating objects and fix them.
+        """DispatcherThread (Python + LLM vision): detect and fix floating objects.
 
-        Only intervenes when an object is physically unsupported (floating in mid-air with
-        no surface beneath it). Does NOT push mid-room objects to walls — room layout
-        decisions belong to the LLM planner, not the reflection pass.
+        Only intervenes when an object is physically unsupported (floating in
+        mid-air with no surface beneath it). It does NOT push mid-room objects to
+        walls: layout decisions belong to the Phase 1 planner, not this pass.
 
         Issue tags embedded in the reason string:
-          [dispatcher→bounds]   object is also out of bounds (bounds thread will re-clamp)
+          [dispatcher→bounds]   object is also out of bounds (bounds thread re-clamps)
           [dispatcher→surface]  object needs a logical surface beneath it
+
+        Returns:
+            MoveObject correction lines.
         """
         cfg = self._cfg
-        def _kw(key, default): return [s.strip() for s in cfg.get(key, default).split(",") if s.strip()]
+
+        def _kw(key, default):
+            return [s.strip() for s in cfg.get(key, default).split(",") if s.strip()]
+
         SURFACE_KEYWORDS   = _kw("surface_keywords", "Cart,Trolley,Table,Desk,Counter,Shelf,Bed,Stand")
         # Character-supporting surfaces include props/furniture a person can sit/lie on.
         CHAR_SURFACE_KEYWORDS = _kw(
@@ -640,15 +746,15 @@ class ReflectionModule:
             # Characters use an expanded surface list (Bed/Stretcher/Chair/Bench/etc.)
             # so a doctor sitting on a stool or a patient lying on a stretcher isn't
             # mistakenly flagged as floating.
-            valid_surface_kws = (SURFACE_KEYWORDS + CHAR_SURFACE_KEYWORDS) if is_character else SURFACE_KEYWORDS
+            valid_surface_kws = ((SURFACE_KEYWORDS + CHAR_SURFACE_KEYWORDS) if is_character
+                                 else SURFACE_KEYWORDS)
 
-            # ── Floating check ────────────────────────────────────────────────
-            # Wall-mounted decor near a wall at height is intentional — skip.
+            # Floating check. Wall-mounted decor near a wall at height is intentional — skip.
             wall_mounted = is_decor and (abs(x) > 2.0 or z < 0.5 or z > 5.5) and y > 1.0
             if wall_mounted or y <= FLOAT_Y_THRESHOLD:
                 continue
 
-            # Search for a surface object within radius that is below this object
+            # Search for a surface object within SURFACE_RADIUS that is below this object.
             nearest_surface = None
             min_dist = float("inf")
             for other in objs:
@@ -670,29 +776,37 @@ class ReflectionModule:
             if nearest_surface is None:
                 out_of_bounds = not (x_min <= x <= x_max and z_min <= z <= z_max)
                 tag = "[dispatcher→bounds]" if out_of_bounds else "[dispatcher→surface]"
-                # Find nearest surface anywhere in the room to suggest a destination
-                best = None; best_dist = float("inf")
+                # Find the nearest surface anywhere in the room as a destination.
+                best = None
+                best_dist = float("inf")
                 for other in objs:
-                    if other["objectName"] == name: continue
-                    if not any(t in other["objectName"] for t in valid_surface_kws): continue
-                    d = ((x - float(other.get("x",0)))**2 + (z - float(other.get("z",0)))**2)**0.5
-                    if d < best_dist: best_dist = d; best = other
+                    if other["objectName"] == name:
+                        continue
+                    if not any(t in other["objectName"] for t in valid_surface_kws):
+                        continue
+                    d = ((x - float(other.get("x", 0))) ** 2
+                         + (z - float(other.get("z", 0))) ** 2) ** 0.5
+                    if d < best_dist:
+                        best_dist = d
+                        best = other
                 if best and best_dist < 4.0:
                     nx = float(best.get("x", x))
-                    # Place ON TOP of the surface — use boundsMaxY (real top), not the
-                    # surface's center y. Without this, "place on a 1m-tall desk" puts the
-                    # prop at y=0.1 (10cm above the floor) instead of y=1.05.
+                    # Place ON TOP of the surface using boundsMaxY (its real top), not
+                    # the surface's center y. Otherwise "place on a 1m-tall desk" puts
+                    # the prop at y=0.1 (10cm above the floor) instead of y=1.05.
                     surf_top = float(best.get("boundsMaxY", best.get("y", 0)))
                     ny = surf_top + 0.05
                     nz = float(best.get("z", z))
                     corrections.append(
                         f"MoveObject {name} x={nx:.2f} y={ny:.2f} z={nz:.2f} rotationY={rot:.0f}"
-                        f"  — reason: {tag} floating at y={y:.2f}, no surface below; nearest surface is {best['objectName']}"
+                        f"  — reason: {tag} floating at y={y:.2f}, no surface below; "
+                        f"nearest surface is {best['objectName']}"
                     )
                 else:
                     corrections.append(
                         f"MoveObject {name} x={x:.2f} y=0.00 z={z:.2f} rotationY={rot:.0f}"
-                        f"  — reason: {tag} floating at y={y:.2f} with no surface object in scene; dropped to floor"
+                        f"  — reason: {tag} floating at y={y:.2f} with no surface object in scene; "
+                        f"dropped to floor"
                     )
                 flagged.append(f"{name} → floating ({tag})")
 
@@ -701,12 +815,19 @@ class ReflectionModule:
         else:
             logger.info("[DispatcherThread] no floating objects detected.")
 
-        # Visual LLM check — catches floating cases the coordinate check missed
+        # Visual LLM check: catches floating cases the coordinate check missed.
         _d_cfg = self._cfg
         _dx_min = float(_d_cfg.get("x_min", -2.8)); _dx_max = float(_d_cfg.get("x_max", 2.8))
         _dz_min = float(_d_cfg.get("z_min",  0.1)); _dz_max = float(_d_cfg.get("z_max", 5.9))
-        names_corrected = {ln.split()[1] for ln in corrections if ln.startswith("MoveObject") and len(ln.split()) > 1}
-        obj_list = "\n".join(f"  {o['objectName']}: x={o.get('x',0):.2f} y={o.get('y',0):.2f} z={o.get('z',0):.2f}" for o in placed_objects if o.get("objectName") and "Cube" not in o["objectName"])
+        names_corrected = {
+            ln.split()[1] for ln in corrections
+            if ln.startswith("MoveObject") and len(ln.split()) > 1
+        }
+        obj_list = "\n".join(
+            f"  {o['objectName']}: x={o.get('x', 0):.2f} y={o.get('y', 0):.2f} "
+            f"z={o.get('z', 0):.2f}"
+            for o in placed_objects if o.get("objectName") and "Cube" not in o["objectName"]
+        )
         sys_prompt = (
             "You are checking ONLY for objects that are floating in mid-air with no surface beneath them. "
             "Do NOT flag objects based on their position in the room — mid-room placement is intentional. "
@@ -718,40 +839,47 @@ class ReflectionModule:
             "Do NOT flag anything else. If nothing is wrong, output nothing."
         )
         llm_lines = self._focused_llm("DispatcherThread", sys_prompt, f"Objects:\n{obj_list}")
-        # Exact-match drop: a line is dropped only when its target name (token after
-        # the verb) is exactly in names_corrected. Substring match would falsely
-        # suppress "PC_Monitor_01" when "Monitor_01" was already handled.
+        # Exact-match drop: a line is dropped only when its target name (the token
+        # after the verb) is exactly in names_corrected. A substring match would
+        # falsely suppress "PC_Monitor_01" when "Monitor_01" was already handled.
         def _tgt(ln: str) -> Optional[str]:
             p = ln.split()
-            return p[1] if len(p) >= 2 and p[0] in ("MoveObject", "DeleteObject", "PlaceObject") else None
+            if len(p) >= 2 and p[0] in ("MoveObject", "DeleteObject", "PlaceObject"):
+                return p[1]
+            return None
+
         new_lines = [ln for ln in llm_lines if _tgt(ln) not in names_corrected]
         corrections.extend(new_lines)
         if new_lines:
-            logger.info(f"[DispatcherThread] LLM visual check added {len(new_lines)} extra correction(s).")
+            logger.info(f"[DispatcherThread] LLM visual check added {len(new_lines)} "
+                        f"extra correction(s).")
 
         return corrections
 
     def _bounds_thread(self, placed_objects: List[Dict]) -> List[str]:
-        """Thread 1 (pure Python + LLM visual): enforce room bounds and doorway clearance.
+        """BoundsThread (Python + LLM vision): enforce room bounds and doorway clearance.
 
         Catches three categories:
-          1. Center position outside hard limits (x/z/y).
-          2. Bounding box edges partially clipping through a wall (partial out-of-bounds).
+          1. Bounding-box edges clipping through a wall, or the bottom through
+             the floor (the center is clamped so the edge clears the wall).
+          2. Objects below the floor when no Y bounds are available.
           3. Objects blocking or partially covering the doorway at the front wall.
-        Returns a list of ready-to-use MoveObject correction lines.
+
+        Returns:
+            Ready-to-use MoveObject correction lines.
         """
         cfg = self._cfg
         X_MIN = float(cfg.get("x_min", -2.8)); X_MAX = float(cfg.get("x_max", 2.8))
         Z_MIN = float(cfg.get("z_min",  0.1)); Z_MAX = float(cfg.get("z_max", 5.9))
         Y_MIN = 0.0
 
-        # Doorway geometry — objects within this z-depth of the front wall that overlap
-        # the doorway x-range are considered blocking the entrance.
+        # Doorway geometry: objects within this z-depth of the front wall that
+        # overlap the doorway x-range are considered to block the entrance.
         DOOR_WIDTH   = float(cfg.get("doorway_width", 1.4))
         DOOR_CX      = float(cfg.get("doorway_x",    0.0))
         DOOR_X_MIN   = DOOR_CX - DOOR_WIDTH / 2
         DOOR_X_MAX   = DOOR_CX + DOOR_WIDTH / 2
-        DOOR_Z_DEPTH = 1.2   # metres inward from z=0; anything within this zone + overlapping x blocks the door
+        DOOR_Z_DEPTH = 1.2   # metres inward from z=0 that count as the doorway zone
 
         corrections: List[str] = []
         handled: set = set()
@@ -766,7 +894,7 @@ class ReflectionModule:
             z   = float(obj.get("z",   0))
             rot = float(obj.get("rotationY", 0))
 
-            # Bounding box edges (fall back to center if not present)
+            # Bounding-box edges (fall back to the center if not present).
             bx_min = float(obj.get("boundsMinX", x))
             bx_max = float(obj.get("boundsMaxX", x))
             bz_min = float(obj.get("boundsMinZ", z))
@@ -777,12 +905,12 @@ class ReflectionModule:
             nx, ny, nz = x, y, z
             issues: List[str] = []
 
-            # Half-extents from the real renderer bounds (fall back to 0 if missing)
+            # Half-extents from the real renderer bounds (0 if bounds are missing).
             half_x = (bx_max - bx_min) / 2
             half_z = (bz_max - bz_min) / 2
 
-            # Valid center range for this object: wall + half_size + margin.
-            # This means the object's *edge* always clears the wall, regardless of size.
+            # Valid center range for this object: wall + half-size + margin, so the
+            # object's *edge* always clears the wall regardless of its size.
             MARGIN = 0.05
             FLOOR_TOL = 0.02   # tolerate up to 2cm of geometry sitting flush with the floor
             cx_min = X_MIN + half_x + MARGIN
@@ -790,17 +918,28 @@ class ReflectionModule:
             cz_min = Z_MIN + half_z + MARGIN
             cz_max = Z_MAX - half_z - MARGIN
 
-            if x < cx_min: nx = cx_min; issues.append(f"left edge clips wall (x={x:.2f}, half={half_x:.2f})")
-            elif x > cx_max: nx = cx_max; issues.append(f"right edge clips wall (x={x:.2f}, half={half_x:.2f})")
-            if z < cz_min: nz = cz_min; issues.append(f"front edge clips wall (z={z:.2f}, half={half_z:.2f})")
-            elif z > cz_max: nz = cz_max; issues.append(f"back edge clips wall (z={z:.2f}, half={half_z:.2f})")
-            # Floor clipping: bottom of bounding box below the floor — lift by the penetration depth
-            # so the object's bottom sits flush on the floor. Fall back to center-y check when bounds_y missing.
+            if x < cx_min:
+                nx = cx_min
+                issues.append(f"left edge clips wall (x={x:.2f}, half={half_x:.2f})")
+            elif x > cx_max:
+                nx = cx_max
+                issues.append(f"right edge clips wall (x={x:.2f}, half={half_x:.2f})")
+            if z < cz_min:
+                nz = cz_min
+                issues.append(f"front edge clips wall (z={z:.2f}, half={half_z:.2f})")
+            elif z > cz_max:
+                nz = cz_max
+                issues.append(f"back edge clips wall (z={z:.2f}, half={half_z:.2f})")
+
+            # Floor clipping: if the bottom of the bounding box is below the floor,
+            # lift by the penetration depth so it sits flush. Fall back to a
+            # center-y check when Y bounds are missing.
             if has_y_bounds:
                 if by_min < Y_MIN - FLOOR_TOL:
                     pen = Y_MIN - by_min
                     ny = y + pen
-                    issues.append(f"bottom clips floor (boundsMinY={by_min:.2f}, lifted by {pen:.2f}m)")
+                    issues.append(f"bottom clips floor (boundsMinY={by_min:.2f}, "
+                                  f"lifted by {pen:.2f}m)")
             elif y < Y_MIN:
                 ny = Y_MIN
                 issues.append(f"y={y:.2f} < {Y_MIN}")
@@ -814,12 +953,12 @@ class ReflectionModule:
                 handled.add(name)
                 logger.info(f"[BoundsThread] queued: {line}")
 
-            # ── 3. Doorway blockage ──────────────────────────────────────────
+            # Doorway blockage (only for objects not already corrected above).
             if name not in handled:
-                near_front = bz_min < DOOR_Z_DEPTH          # object is close to front wall
-                x_overlaps = bx_min < DOOR_X_MAX and bx_max > DOOR_X_MIN  # overlaps doorway x-range
+                near_front = bz_min < DOOR_Z_DEPTH                        # close to front wall
+                x_overlaps = bx_min < DOOR_X_MAX and bx_max > DOOR_X_MIN  # overlaps doorway x
                 if near_front and x_overlaps:
-                    # Move object sideways to clear the doorway — push to whichever side is closer
+                    # Push sideways out of the doorway, toward whichever side is closer.
                     dist_left  = abs(x - DOOR_X_MIN)
                     dist_right = abs(x - DOOR_X_MAX)
                     if dist_left <= dist_right:
@@ -829,7 +968,8 @@ class ReflectionModule:
                     line = (
                         f"MoveObject {name} x={nx:.2f} y={y:.2f} z={z:.2f} rotationY={rot:.0f}"
                         f"  — reason: [bounds] blocking/partially covering doorway "
-                        f"(door x=[{DOOR_X_MIN:.2f},{DOOR_X_MAX:.2f}], object bx=[{bx_min:.2f},{bx_max:.2f}], bz_min={bz_min:.2f})"
+                        f"(door x=[{DOOR_X_MIN:.2f},{DOOR_X_MAX:.2f}], "
+                        f"object bx=[{bx_min:.2f},{bx_max:.2f}], bz_min={bz_min:.2f})"
                     )
                     corrections.append(line)
                     handled.add(name)
@@ -837,12 +977,18 @@ class ReflectionModule:
 
         logger.info(f"[BoundsThread] {len(corrections)} bound/doorway corrections generated.")
 
-        # Visual LLM check — catches partial clips and doorway blockage that coordinate math missed
-        names_corrected = {ln.split()[1] for ln in corrections if ln.startswith("MoveObject") and len(ln.split()) > 1}
+        # Visual LLM check: catches partial clips and doorway blockage the math missed.
+        names_corrected = {
+            ln.split()[1] for ln in corrections
+            if ln.startswith("MoveObject") and len(ln.split()) > 1
+        }
         obj_list = "\n".join(
-            f"  {o['objectName']}: x={o.get('x',0):.2f} y={o.get('y',0):.2f} z={o.get('z',0):.2f} "
-            f"bx=[{o.get('boundsMinX',o.get('x',0)):.2f},{o.get('boundsMaxX',o.get('x',0)):.2f}] "
-            f"bz=[{o.get('boundsMinZ',o.get('z',0)):.2f},{o.get('boundsMaxZ',o.get('z',0)):.2f}]"
+            f"  {o['objectName']}: x={o.get('x', 0):.2f} y={o.get('y', 0):.2f} "
+            f"z={o.get('z', 0):.2f} "
+            f"bx=[{o.get('boundsMinX', o.get('x', 0)):.2f},"
+            f"{o.get('boundsMaxX', o.get('x', 0)):.2f}] "
+            f"bz=[{o.get('boundsMinZ', o.get('z', 0)):.2f},"
+            f"{o.get('boundsMaxZ', o.get('z', 0)):.2f}]"
             for o in placed_objects if o.get("objectName") and "Cube" not in o["objectName"]
         )
         _b_cfg = self._cfg
@@ -862,25 +1008,39 @@ class ReflectionModule:
             "MoveObject <exactName> x=<X> y=<Y> z=<Z> rotationY=<R>  — reason: <visually clipping wall / blocking doorway>\n"
             "Do NOT flag anything else. If nothing is wrong, output nothing."
         )
-        llm_lines = self._focused_llm("BoundsThread", sys_prompt, f"Objects (with bounds):\n{obj_list}")
+        llm_lines = self._focused_llm(
+            "BoundsThread", sys_prompt, f"Objects (with bounds):\n{obj_list}"
+        )
+
         def _tgt(ln: str) -> Optional[str]:
             p = ln.split()
-            return p[1] if len(p) >= 2 and p[0] in ("MoveObject", "DeleteObject", "PlaceObject") else None
+            if len(p) >= 2 and p[0] in ("MoveObject", "DeleteObject", "PlaceObject"):
+                return p[1]
+            return None
+
         new_lines = [ln for ln in llm_lines if _tgt(ln) not in names_corrected]
         corrections.extend(new_lines)
         if new_lines:
-            logger.info(f"[BoundsThread] LLM visual check added {len(new_lines)} extra correction(s).")
+            logger.info(f"[BoundsThread] LLM visual check added {len(new_lines)} "
+                        f"extra correction(s).")
 
         return corrections
 
     def _collision_thread(self, placed_objects: List[Dict]) -> List[str]:
-        """Thread 2 (math + LLM visual): detect pairs of objects that genuinely overlap
-        and nudge the less-important one aside.
+        """CollisionThread (math + LLM vision): separate genuinely overlapping objects.
 
-        Two independent detection paths — a collision is acted on if EITHER fires:
-          1. Math:  real bounding-box overlap (pen_x > 0 AND pen_z > 0) using Unity bounds.
-                    Falls back to a default assumed size only when bounds data is absent.
-          2. Image: LLM vision check on the three screenshots for pairs that look merged.
+        Two independent detection paths; a collision is acted on if EITHER fires:
+          1. Math:  real XZ bounding-box overlap (pen_x > 0 AND pen_z > 0) using
+                    Unity bounds, falling back to an assumed size only when bounds
+                    are absent. The second object of each pair is pushed out
+                    along the axis of least penetration.
+          2. Image: LLM vision check on the screenshots for meshes that look merged.
+
+        Each detected collision is also echoed to the Unity Console via a
+        DebugLog command.
+
+        Returns:
+            MoveObject correction lines.
         """
         CLEARANCE = 0.25          # gap to leave between edges after separating
         DEFAULT_HALF_SIZE = 0.35  # assumed half-size only when bounds fields are missing
@@ -889,12 +1049,12 @@ class ReflectionModule:
         X_MIN = float(cfg.get("x_min", -2.8)); X_MAX = float(cfg.get("x_max", 2.8))
         Z_MIN = float(cfg.get("z_min",  0.1)); Z_MAX = float(cfg.get("z_max", 5.9))
 
-        # Exclude structural cubes (walls, floor, ceiling)
+        # Exclude structural cubes (walls, floor, ceiling).
         objs = [o for o in placed_objects if o.get("objectName") and "Cube" not in o["objectName"]]
         corrections: List[str] = []
-        resolved: set = set()  # names already nudged this pass — don't double-move
+        resolved: set = set()  # names already nudged this pass; don't move them twice
 
-        # ── PATH 1: Math — bounding-box overlap ────────────────────────────────
+        # Path 1: math (bounding-box overlap).
         for i in range(len(objs)):
             for j in range(i + 1, len(objs)):
                 a, b = objs[i], objs[j]
@@ -919,31 +1079,38 @@ class ReflectionModule:
                 b_zmin = float(b["boundsMinZ"]) if has_bounds_b else bz - DEFAULT_HALF_SIZE
                 b_zmax = float(b["boundsMaxZ"]) if has_bounds_b else bz + DEFAULT_HALF_SIZE
 
-                # If bounds collapsed to a degenerate point, expand to assumed size
-                if a_xmax - a_xmin < 0.01: a_xmin = ax - DEFAULT_HALF_SIZE; a_xmax = ax + DEFAULT_HALF_SIZE
-                if a_zmax - a_zmin < 0.01: a_zmin = az - DEFAULT_HALF_SIZE; a_zmax = az + DEFAULT_HALF_SIZE
-                if b_xmax - b_xmin < 0.01: b_xmin = bx - DEFAULT_HALF_SIZE; b_xmax = bx + DEFAULT_HALF_SIZE
-                if b_zmax - b_zmin < 0.01: b_zmin = bz - DEFAULT_HALF_SIZE; b_zmax = bz + DEFAULT_HALF_SIZE
+                # If bounds collapsed to a degenerate point, expand to the assumed size.
+                if a_xmax - a_xmin < 0.01:
+                    a_xmin, a_xmax = ax - DEFAULT_HALF_SIZE, ax + DEFAULT_HALF_SIZE
+                if a_zmax - a_zmin < 0.01:
+                    a_zmin, a_zmax = az - DEFAULT_HALF_SIZE, az + DEFAULT_HALF_SIZE
+                if b_xmax - b_xmin < 0.01:
+                    b_xmin, b_xmax = bx - DEFAULT_HALF_SIZE, bx + DEFAULT_HALF_SIZE
+                if b_zmax - b_zmin < 0.01:
+                    b_zmin, b_zmax = bz - DEFAULT_HALF_SIZE, bz + DEFAULT_HALF_SIZE
 
-                # Actual penetration — must be positive on BOTH axes to be a real overlap
+                # Actual penetration: must be positive on BOTH axes to be a real overlap.
                 pen_x = min(a_xmax, b_xmax) - max(a_xmin, b_xmin)
                 pen_z = min(a_zmax, b_zmax) - max(a_zmin, b_zmin)
                 if pen_x <= 0 or pen_z <= 0:
-                    continue  # boxes are separated — no collision
+                    continue  # boxes are separated: no collision
 
-                # Resolve: push b out along the axis of least penetration
+                # Resolve: push b out along the axis of least penetration.
                 half_b_x = (b_xmax - b_xmin) / 2
                 half_b_z = (b_zmax - b_zmin) / 2
                 if pen_x <= pen_z:
-                    new_bx = (a_xmax + half_b_x + CLEARANCE) if bx >= ax else (a_xmin - half_b_x - CLEARANCE)
+                    new_bx = ((a_xmax + half_b_x + CLEARANCE) if bx >= ax
+                              else (a_xmin - half_b_x - CLEARANCE))
                     new_bx = max(X_MIN + half_b_x, min(X_MAX - half_b_x, new_bx))
                     new_bz = bz
                 else:
-                    new_bz = (a_zmax + half_b_z + CLEARANCE) if bz >= az else (a_zmin - half_b_z - CLEARANCE)
+                    new_bz = ((a_zmax + half_b_z + CLEARANCE) if bz >= az
+                              else (a_zmin - half_b_z - CLEARANCE))
                     new_bz = max(Z_MIN + half_b_z, min(Z_MAX - half_b_z, new_bz))
                     new_bx = bx
 
-                bounds_tag = "exact bounds" if (has_bounds_a and has_bounds_b) else "estimated bounds"
+                bounds_tag = ("exact bounds" if (has_bounds_a and has_bounds_b)
+                              else "estimated bounds")
                 line = (
                     f"MoveObject {nb} x={new_bx:.2f} y={by:.2f} z={new_bz:.2f} rotationY={rot_b:.0f}"
                     f"  — reason: overlaps {na} (pen_x={pen_x:.2f}m pen_z={pen_z:.2f}m; {bounds_tag})"
@@ -952,15 +1119,17 @@ class ReflectionModule:
                 resolved.add(nb)
                 logger.info(f"[CollisionThread][math] {line}")
                 self._enqueue_debug_log(
-                    f"COLLISION (math) {na} <-> {nb}  pen_x={pen_x:.2f}m pen_z={pen_z:.2f}m  moving {nb} to ({new_bx:.2f}, {by:.2f}, {new_bz:.2f})"
+                    f"COLLISION (math) {na} <-> {nb}  pen_x={pen_x:.2f}m pen_z={pen_z:.2f}m  "
+                    f"moving {nb} to ({new_bx:.2f}, {by:.2f}, {new_bz:.2f})"
                 )
 
         logger.info(f"[CollisionThread] math path: {len(corrections)} collision(s) found.")
 
-        # ── PATH 2: Image — LLM vision check ──────────────────────────────────
-        # Runs independently; only adds objects not already corrected by math.
+        # Path 2: image (LLM vision check). Runs independently and only adds
+        # objects not already corrected by the math path.
         _cx_min = float(cfg.get("x_min", -2.8)); _cx_max = float(cfg.get("x_max", 2.8))
         _cz_min = float(cfg.get("z_min",  0.1)); _cz_max = float(cfg.get("z_max", 5.9))
+
         def _fmt_bounds(o: Dict) -> str:
             bx0 = f"{o['boundsMinX']:.2f}" if "boundsMinX" in o else "?"
             bx1 = f"{o['boundsMaxX']:.2f}" if "boundsMaxX" in o else "?"
@@ -969,7 +1138,8 @@ class ReflectionModule:
             return f"bounds_x=[{bx0},{bx1}] bounds_z=[{bz0},{bz1}]"
 
         obj_list = "\n".join(
-            f"  {o['objectName']}: x={o.get('x',0):.2f} y={o.get('y',0):.2f} z={o.get('z',0):.2f}  {_fmt_bounds(o)}"
+            f"  {o['objectName']}: x={o.get('x', 0):.2f} y={o.get('y', 0):.2f} "
+            f"z={o.get('z', 0):.2f}  {_fmt_bounds(o)}"
             for o in placed_objects if o.get("objectName") and "Cube" not in o["objectName"]
         )
         sys_prompt = (
@@ -982,14 +1152,20 @@ class ReflectionModule:
             "MoveObject <exactName> x=<X> y=<Y> z=<Z> rotationY=<R>  — reason: visually overlaps <otherName>\n"
             "If no meshes overlap, output nothing."
         )
-        llm_lines = self._focused_llm("CollisionThread", sys_prompt, f"Objects (with bounds):\n{obj_list}")
+        llm_lines = self._focused_llm(
+            "CollisionThread", sys_prompt, f"Objects (with bounds):\n{obj_list}"
+        )
+
         def _tgt(ln: str) -> Optional[str]:
             p = ln.split()
-            return p[1] if len(p) >= 2 and p[0] in ("MoveObject", "DeleteObject", "PlaceObject") else None
+            if len(p) >= 2 and p[0] in ("MoveObject", "DeleteObject", "PlaceObject"):
+                return p[1]
+            return None
+
         new_lines = [ln for ln in llm_lines if _tgt(ln) not in resolved]
         for ln in new_lines:
             logger.info(f"[CollisionThread][image] {ln}")
-            # extract object name from "MoveObject <name> ..."
+            # Object name is the token after the verb ("MoveObject <name> ...").
             parts = ln.split()
             if len(parts) >= 2:
                 self._enqueue_debug_log(f"COLLISION (image) {parts[1]}: {ln}")
@@ -999,13 +1175,42 @@ class ReflectionModule:
 
         return corrections
 
-    def reflect_step(self, plan_step: Dict, game_state: Dict, relevant_knowledge: Optional[List[Dict]] = None) -> ReflectionResult:
-        """Reflect on the current step completion using plan, actions, and screenshots."""
+    # -----------------------------------------------------------------------
+    # Main entry point
+    # -----------------------------------------------------------------------
+
+    def reflect_step(
+        self,
+        plan_step: Dict,
+        game_state: Dict,
+        relevant_knowledge: Optional[List[Dict]] = None,
+    ) -> ReflectionResult:
+        """Run one reflection pass on the current scene and return merged corrections.
+
+        Loads the plan, live scene state, screenshots and recent reflections;
+        runs the five reflection threads in parallel; merges their correction
+        lines (priority: bounds > collision > dispatcher > surface LLM, with
+        roster lines first); and appends the result to reflection.json.
+
+        After MAX_REFLECTIONS_PER_STEP calls for the same step (except loop
+        steps), returns a forced step_complete="yes" result without calling
+        the LLM, to avoid endless correction loops.
+
+        Args:
+            plan_step: The current step dict from plan.json.
+            game_state: Current game state; its ``placed_objects`` list is used
+                for the object inventory.
+            relevant_knowledge: Optional knowledge snippets (dicts with "text").
+
+        Returns:
+            The merged ``ReflectionResult``.
+        """
         knowledge = relevant_knowledge or []
         is_loop_step = isinstance(plan_step, dict) and plan_step.get("step") == "loop"
 
-        # --- Iteration limit: force completion after MAX_REFLECTIONS_PER_STEP ---
-        step_key = str(plan_step.get("step", "unknown")) if isinstance(plan_step, dict) else "unknown"
+        # Iteration limit: force completion after MAX_REFLECTIONS_PER_STEP.
+        step_key = (str(plan_step.get("step", "unknown")) if isinstance(plan_step, dict)
+                    else "unknown")
         self._step_reflection_counts[step_key] = self._step_reflection_counts.get(step_key, 0) + 1
         current_count = self._step_reflection_counts[step_key]
 
@@ -1026,7 +1231,7 @@ class ReflectionModule:
             self._log_reflection(forced, plan_step=plan_step, denied_corrections=[])
             return forced
 
-        # Reset denied corrections accumulator for this round
+        # Reset the denied-corrections accumulator for this round.
         self._denied_corrections = []
 
         plan = self._load_plan()
@@ -1036,13 +1241,13 @@ class ReflectionModule:
         recent_reflections = self._load_recent_reflections(limit=5)
         reflections_str = json.dumps(recent_reflections, indent=2)
 
-        # Collect denied corrections from previous rounds to warn the LLM
+        # Collect denied corrections from previous rounds to warn the LLM.
         prev_denied: List[str] = []
         for entry in recent_reflections:
             prev_denied.extend(entry.get("denied_corrections", []))
         prev_denied = list(dict.fromkeys(prev_denied))  # deduplicate, preserve order
 
-        # Load live scene state (real positions + bounds from Unity) so reflection uses ground-truth data
+        # Live scene state (real positions + bounds from Unity) is the ground truth.
         placed_objects = self._load_scene_state()
         placed_objects_str = json.dumps(placed_objects, indent=2)
         placed_count = len(placed_objects)
@@ -1050,20 +1255,25 @@ class ReflectionModule:
             [f"Knowledge {i+1}: {k.get('text', '')}" for i, k in enumerate(knowledge)]
         )
 
-        # Build a dynamic object inventory from game_state for context injection
+        # Object inventory from game_state, injected into the surface prompt.
         placed_objects_list = game_state.get("placed_objects", [])
-        object_names_in_scene = [o.get("objectName", "") for o in placed_objects_list if o.get("objectName")]
+        object_names_in_scene = [
+            o.get("objectName", "") for o in placed_objects_list if o.get("objectName")
+        ]
         scene_inventory = ", ".join(object_names_in_scene) if object_names_in_scene else "none"
 
-        # Store live scene state and derive name list — both are set before threads launch
+        # Store the live scene state and valid name list before the threads launch.
         self._scene_state = placed_objects
         exact_scene_names = sorted({o["objectName"] for o in placed_objects if o.get("objectName")})
         self._exact_scene_names = exact_scene_names
 
-        # Load scene params from config (always re-read so any change to experience.txt is picked up)
+        # Re-read the config every pass so edits to experience.txt are picked up.
         self._cfg = self._load_experience_config()
         cfg = self._cfg
-        def _kw(key, default): return [s.strip() for s in cfg.get(key, default).split(",") if s.strip()]
+
+        def _kw(key, default):
+            return [s.strip() for s in cfg.get(key, default).split(",") if s.strip()]
+
         supply_types    = _kw("supply_keywords",    "Cart,Trolley,Basin,Sink,Dispenser,Drip,Stand")
         char_prefixes   = _kw("character_prefixes", "Doctor,Nurse,Patient,Surgeon,EMT")
         small_prop_kws  = _kw("small_prop_keywords","Folder,Box,Syringe,Thermometer,Tray")
@@ -1077,13 +1287,18 @@ class ReflectionModule:
         room_w = float(cfg.get("room_width",  6))
         room_d = float(cfg.get("room_depth",  6))
 
-        supply_objects    = [n for n in object_names_in_scene if any(t in n for t in supply_types)]
-        character_objects = [n for n in object_names_in_scene if any(n.startswith(p) for p in char_prefixes)]
-        small_prop_objects= [n for n in object_names_in_scene if any(t in n for t in small_prop_kws)]
-        decor_objects     = [n for n in object_names_in_scene if any(t in n for t in decor_kws)]
+        names = object_names_in_scene
+        supply_objects     = [n for n in names if any(t in n for t in supply_types)]
+        character_objects  = [n for n in names if any(n.startswith(p) for p in char_prefixes)]
+        small_prop_objects = [n for n in names if any(t in n for t in small_prop_kws)]
+        decor_objects      = [n for n in names if any(t in n for t in decor_kws)]
 
-        exact_names_str = "\n".join(f"  - {n}" for n in exact_scene_names) if exact_scene_names else "  (none yet)"
+        exact_names_str = (
+            "\n".join(f"  - {n}" for n in exact_scene_names)
+            if exact_scene_names else "  (none yet)"
+        )
 
+        # Derived wall-zone thresholds used in the surface prompt.
         wall_x = room_w / 2; wall_z_far = room_d
         wall_near_x = x_max - 0.8; wall_near_z_back = z_max - 0.9; wall_near_z_front = z_min + 0.4
         mid_x = x_max - 0.7
@@ -1215,9 +1430,8 @@ Look at each screenshot carefully before generating edit_commands. The screensho
         {reflections_str}
         """
 
-        # Load the 3 orthographic view screenshots (XZ=top-down, XY=front, YZ=side)
-        import base64
-        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        # Load the three orthographic screenshots (XZ=top-down, XY=front, YZ=side).
+        project_root = self._project_root()
         view_labels = [
             ("XZ (top-down)", self.screenshot_xz),
             ("XY (front)", self.screenshot_xy),
@@ -1234,23 +1448,29 @@ Look at each screenshot carefully before generating edit_commands. The screensho
                 except Exception as e:
                     logger.warning(f"Error reading {label} screenshot: {e}")
 
-        # Store as instance state — all threads read from self._view_data directly
+        # Store as instance state; all threads read self._view_data directly.
         self._view_data = view_data
 
         if not view_data:
             logger.info("No screenshots available — threads will use coordinate-only reasoning.")
 
-        # ── Build LLM messages (Thread 3 input) ───────────────────────────────
+        # Build the SurfaceThread LLM messages.
         messages = [{"role": "system", "content": system_prompt}]
         if view_data:
             image_content = [{"type": "text", "text": "These are the current orthographic screenshots of the scene. Study them carefully before reading the object list.\nXZ=top-down (shows x/z layout), XY=front, YZ=side."}]
-            for label, encoded in view_data:
-                image_content.append({"type": "image_url", "image_url": {"url": f"data:image/png;base64,{encoded}"}})
+            for _label, encoded in view_data:
+                image_content.append({
+                    "type": "image_url",
+                    "image_url": {"url": f"data:image/png;base64,{encoded}"},
+                })
             messages.append({"role": "user", "content": image_content})
         messages.append({"role": "user", "content": base_content})
 
         def _run_surface_llm() -> dict:
-            """Thread 3 (LLM): zone, surface logic, rotation, room status."""
+            """SurfaceThread (LLM): zone, surface logic, rotation and room status.
+
+            Retries up to 3 times on empty or unparsable responses, then re-raises.
+            """
             max_retries, retry_delay = 3, 2.0
             for attempt in range(max_retries):
                 try:
@@ -1276,13 +1496,14 @@ Look at each screenshot carefully before generating edit_commands. The screensho
                     return json.loads(self._extract_json_object(raw))
                 except (ValueError, json.JSONDecodeError) as e:
                     if attempt < max_retries - 1:
-                        logger.warning(f"[SurfaceThread] attempt {attempt+1}/{max_retries} failed: {e}")
+                        logger.warning(f"[SurfaceThread] attempt {attempt + 1}/{max_retries} "
+                                       f"failed: {e}")
                         time.sleep(retry_delay)
                         continue
                     logger.error(f"[SurfaceThread] failed after {max_retries} attempts: {e}")
                     raise
 
-        # ── Launch all 5 threads in parallel ──────────────────────────────────
+        # Launch all five threads in parallel.
         logger.info("Launching reflection threads: [DispatcherThread] [BoundsThread] "
                     "[CollisionThread] [SurfaceThread] [RosterThread]")
         with ThreadPoolExecutor(max_workers=5) as executor:
@@ -1299,10 +1520,11 @@ Look at each screenshot carefully before generating edit_commands. The screensho
             try:
                 reflection_dict = future_surface.result()
             except Exception as e:
-                logger.error(f"[SurfaceThread] unrecoverable error — falling back to empty result: {e}")
+                logger.error(f"[SurfaceThread] unrecoverable error — "
+                             f"falling back to empty result: {e}")
                 reflection_dict = {}
 
-        # ── Merge alignment_suggestions ────────────────────────────────────────
+        # Merge alignment_suggestions.
         # Priority: bounds > collision > dispatcher > LLM surface.
         # If a higher-priority thread already corrected an object, lower-priority
         # threads skip it to prevent conflicting moves on the same object.
@@ -1310,13 +1532,19 @@ Look at each screenshot carefully before generating edit_commands. The screensho
         # Exception: collision-vs-dispatcher overlap on the same object is NOT
         # mutually exclusive — Collision fixes XZ (push out of overlap) while
         # Dispatcher fixes Y (drop floating object onto a surface). When both
-        # fire on the same name we splice Dispatcher's Y into Collision's XZ.
+        # fire on the same name, Dispatcher's Y is spliced into Collision's XZ.
         def _corrected_names(lines: List[str]) -> set:
-            return {ln.split()[1] for ln in lines if ln.startswith("MoveObject") and len(ln.split()) > 1}
+            """Return the target names of all MoveObject lines."""
+            return {
+                ln.split()[1] for ln in lines
+                if ln.startswith("MoveObject") and len(ln.split()) > 1
+            }
 
         def _parse_move_xyz(line: str) -> Optional[Dict[str, float]]:
-            # Parse `MoveObject <name> x=<X> y=<Y> z=<Z> rotationY=<R>` → dict.
-            # Returns None on malformed lines (e.g. DeleteObject, or missing fields).
+            """Parse ``MoveObject <name> x=<X> y=<Y> z=<Z> rotationY=<R>`` into a dict.
+
+            Returns None for non-MoveObject lines or lines missing x, y or z.
+            """
             if not line.startswith("MoveObject"):
                 return None
             out: Dict[str, float] = {}
@@ -1330,7 +1558,7 @@ Look at each screenshot carefully before generating edit_commands. The screensho
                             pass
             return out if {"x", "y", "z"}.issubset(out.keys()) else None
 
-        # Map name → dispatcher's MoveObject line, so we can look up Y per object.
+        # Map name -> Dispatcher's MoveObject line, to look up Y per object.
         dispatch_by_name: Dict[str, str] = {}
         for ln in dispatch_corrections:
             if ln.startswith("MoveObject") and len(ln.split()) > 1:
@@ -1360,15 +1588,16 @@ Look at each screenshot carefully before generating edit_commands. The screensho
             spliced = ln.replace(old_y_tok, new_y_tok, 1)
             spliced += f" [+dispatcher Y={disp_xyz['y']:.2f}]"
             merged_collision.append(spliced)
-            logger.info(f"[Merge] spliced Dispatcher Y into Collision for {name}: y {coll_xyz['y']:.2f} → {disp_xyz['y']:.2f}")
+            logger.info(f"[Merge] spliced Dispatcher Y into Collision for {name}: "
+                        f"y {coll_xyz['y']:.2f} → {disp_xyz['y']:.2f}")
         collision_corrections = merged_collision
 
         bounds_names    = _corrected_names(bounds_corrections)
         collision_names = _corrected_names(collision_corrections)
         already_handled = bounds_names | collision_names
 
-        # Skip lines whose target object name is in `handled`. Compares by exact
-        # MoveObject/<name> token, NOT substring — otherwise "Monitor_01" in handled
+        # Skip lines whose target object name is already handled. Compares the exact
+        # <verb> <name> token, NOT a substring; otherwise "Monitor_01" being handled
         # would falsely drop "PC_Monitor_01" (and similar prefix collisions).
         def _line_target(line: str) -> Optional[str]:
             parts = line.split()
@@ -1378,21 +1607,24 @@ Look at each screenshot carefully before generating edit_commands. The screensho
                 return None
             return parts[1]
 
-        # Dispatcher: skip objects already corrected by bounds/collision
-        filtered_dispatch = [ln for ln in dispatch_corrections if _line_target(ln) not in already_handled]
+        # Dispatcher: skip objects already corrected by bounds/collision.
+        filtered_dispatch = [
+            ln for ln in dispatch_corrections if _line_target(ln) not in already_handled
+        ]
         dispatch_names = _corrected_names(filtered_dispatch)
         already_handled |= dispatch_names
 
-        # LLM surface: sanitize names first, then skip anything corrected by Python threads
+        # Surface LLM: sanitize names first, then skip anything the other threads corrected.
         llm_suggestions_raw = str(reflection_dict.get("alignment_suggestions", "")).strip()
         llm_lines_raw = [ln.strip() for ln in llm_suggestions_raw.splitlines() if ln.strip()]
         llm_lines = self._sanitize_correction_lines(llm_lines_raw, exact_scene_names)
         filtered_llm = [ln for ln in llm_lines if _line_target(ln) not in already_handled]
 
-        # Roster lines (PlaceHuman ...) are appended at the front so the next
-        # Phase 1 LLM iteration sees them prominently in the alignment_suggestions.
+        # Roster lines (PlaceHuman ...) go first so the next Phase 1 LLM iteration
+        # sees them prominently in alignment_suggestions.
         merged_suggestions = "\n".join(
-            roster_corrections + bounds_corrections + collision_corrections + filtered_dispatch + filtered_llm
+            roster_corrections + bounds_corrections + collision_corrections
+            + filtered_dispatch + filtered_llm
         )
 
         def _log_corrections(tag: str, lines: List[str], skipped: int = 0) -> None:
@@ -1407,18 +1639,22 @@ Look at each screenshot carefully before generating edit_commands. The screensho
         _log_corrections("RosterThread",     roster_corrections)
         _log_corrections("BoundsThread",     bounds_corrections)
         _log_corrections("CollisionThread",  collision_corrections)
-        _log_corrections("DispatcherThread", filtered_dispatch, skipped=len(dispatch_corrections) - len(filtered_dispatch))
-        _log_corrections("SurfaceThread",    filtered_llm,      skipped=len(llm_lines) - len(filtered_llm))
+        _log_corrections("DispatcherThread", filtered_dispatch,
+                         skipped=len(dispatch_corrections) - len(filtered_dispatch))
+        _log_corrections("SurfaceThread",    filtered_llm,
+                         skipped=len(llm_lines) - len(filtered_llm))
 
-        # ── Assemble final ReflectionResult ───────────────────────────────────
+        # Assemble the final ReflectionResult.
         step_complete = str(reflection_dict.get("step_complete", "no")).strip().lower()
         if step_complete not in {"yes", "no"}:
             step_complete = "no"
 
         raw_status = str(reflection_dict.get("room_status", "good")).strip().lower()
         room_status = raw_status if raw_status in {"sparse", "good", "cluttered"} else "good"
-        suggest_additions = bool(reflection_dict.get("suggest_additions", False)) and room_status == "sparse"
+        suggest_additions = (bool(reflection_dict.get("suggest_additions", False))
+                             and room_status == "sparse")
 
+        # Without screenshots the "sparse" judgment is unreliable; never add objects.
         if not view_data:
             if room_status == "sparse":
                 room_status = "good"
@@ -1433,5 +1669,6 @@ Look at each screenshot carefully before generating edit_commands. The screensho
             room_status=room_status,
             suggest_additions=suggest_additions,
         )
-        self._log_reflection(reflection, plan_step=plan_step, denied_corrections=list(self._denied_corrections))
+        self._log_reflection(reflection, plan_step=plan_step,
+                             denied_corrections=list(self._denied_corrections))
         return reflection

@@ -2,11 +2,24 @@
 using UnityEditor;
 using UnityEngine;
 
+/// <summary>
+/// Editor-only bootstrap that adds a <see cref="ScreenshotLoopSender"/> to the scene
+/// whenever Play Mode is entered, so the LLM pipeline always receives screenshots
+/// without any manual scene setup.
+///
+/// Loaded automatically on every domain reload via <see cref="InitializeOnLoadAttribute"/>.
+/// The check runs both from the play-mode-changed callback and on the next editor
+/// update tick (as a fallback in case the scene was not ready yet). If a sender
+/// already exists (for example one created by <see cref="AutoScreenshotBootstrap"/>),
+/// nothing is added.
+/// </summary>
 [InitializeOnLoad]
 public static class ScreenshotLoopEditorBootstrap
 {
+    /// <summary>Set on any play-mode change; consumed by the next <see cref="OnEditorUpdate"/> while playing.</summary>
     private static bool _ensureScheduled;
 
+    /// <summary>Registers the editor callbacks. Called by Unity on domain reload.</summary>
     static ScreenshotLoopEditorBootstrap()
     {
         EditorApplication.playModeStateChanged += OnPlayModeChanged;
@@ -14,6 +27,7 @@ public static class ScreenshotLoopEditorBootstrap
         Debug.LogWarning("ScreenshotLoopEditorBootstrap loaded.");
     }
 
+    /// <summary>Creates the ScreenshotSender as soon as Play Mode has been entered.</summary>
     private static void OnPlayModeChanged(PlayModeStateChange state)
     {
         Debug.LogWarning($"ScreenshotLoopEditorBootstrap: PlayModeStateChange={state}");
@@ -37,6 +51,10 @@ public static class ScreenshotLoopEditorBootstrap
             : "ScreenshotLoopEditorBootstrap: FAILED to add ScreenshotLoopSender.");
     }
 
+    /// <summary>
+    /// Fallback check on the first editor update after a play-mode change, in case
+    /// the sender could not be created from <see cref="OnPlayModeChanged"/>.
+    /// </summary>
     private static void OnEditorUpdate()
     {
         if (!EditorApplication.isPlaying)

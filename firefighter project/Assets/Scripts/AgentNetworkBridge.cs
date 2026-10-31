@@ -3,36 +3,69 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 /// <summary>
-/// Bridge script for communicating with the external Python FastAPI server.
-/// Unity acts as a client, periodically polling the Python /command endpoint
-/// and forwarding received commands to EnvironmentAgent to modify the scene.
+/// Receives commands from the external Python LLM agent and dispatches them to
+/// <see cref="EnvironmentAgent"/>.
+///
+/// Two transport modes are supported:
+/// <list type="bullet">
+/// <item><description><b>File mode</b> (default, <see cref="useFileCommands"/> = true):
+/// every <see cref="pollIntervalSeconds"/> the JSON array in
+/// <c>Assets/{commandsFileRelativePath}</c> (default <c>Assets/Scripts/unity_commands.json</c>)
+/// is read, every command whose <c>executed</c> flag is false is run, and the file is
+/// written back with <c>executed</c>/<c>done</c> set to true so the history is kept.</description></item>
+/// <item><description><b>HTTP mode</b>: <c>GET {serverBaseUrl}/command</c> is polled and the
+/// response is parsed as a single command object.</description></item>
+/// </list>
+///
+/// Each command is a flat JSON object with an <c>action</c> name plus the fields that
+/// action needs (see <see cref="AgentCommand"/> and <c>Assets/Scripts/readme.md</c>).
+///
+/// Setup: add this component to the same GameObject as EnvironmentAgent (AI_Manager).
+/// If <see cref="environmentAgent"/> is left empty it is found automatically. In the
+/// Editor, <c>AgentNetworkBridgeBootstrap</c> also adds this component automatically
+/// on entering Play Mode if the scene does not contain one.
 /// </summary>
 public class AgentNetworkBridge : MonoBehaviour
 {
-    [Header("Python FastAPI server base URL, e.g. http://192.168.1.10:8000")]
+    /// <summary>Base URL of the Python FastAPI server (HTTP mode only).</summary>
+    [Header("Python FastAPI server base URL (HTTP mode), e.g. http://192.168.1.10:8000")]
     public string serverBaseUrl = "http://127.0.0.1:8000";
 
-    [Header("Read commands from local JSON file instead of HTTP")]
+    /// <summary>When true, commands are read from a local JSON file instead of over HTTP.</summary>
+    [Header("Read commands from a local JSON file instead of HTTP")]
     public bool useFileCommands = true;
 
-    [Header("Relative to Assets/, default: Scripts/unity_commands.json")]
+    /// <summary>Path of the command file, relative to the Assets folder (file mode only).</summary>
+    [Header("Command file path relative to Assets/ (default: Scripts/unity_commands.json)")]
     public string commandsFileRelativePath = "Scripts/unity_commands.json";
 
+    /// <summary>Seconds between polls of the command file or HTTP endpoint.</summary>
     [Header("Polling interval (seconds)")]
     public float pollIntervalSeconds = 0.25f;
 
-    [Header("Reference to EnvironmentAgent script")]
+    /// <summary>Target that executes the commands. Auto-found in <c>Awake</c> if left empty.</summary>
+    [Header("EnvironmentAgent that executes commands (auto-found if empty)")]
     public EnvironmentAgent environmentAgent;
 
+    // ---- Command data model ----
 
+    /// <summary>
+    /// One command as written by the Python agent. This is a flat union of the fields
+    /// used by every action; each action reads only the fields it needs and the rest
+    /// keep their default values. Field names are part of the JSON protocol and must
+    /// match the Python side exactly.
+    /// </summary>
     [System.Serializable]
     private class AgentCommand
     {
+        /// <summary>Optional unique id assigned by the Python agent (used for logging).</summary>
         public string id;
+        /// <summary>Set to true by Unity once the command has been run (file mode).</summary>
         public bool executed;
+        /// <summary>Name of the action to run, e.g. "PlaceObject".</summary>
         public string action;
 
-        // Common parameters shared by multiple actions
+        // Environment parameters
         public float hour;
         public bool enabled;
         public float density;
@@ -44,10 +77,11 @@ public class AgentNetworkBridge : MonoBehaviour
         public float gravityY;
         public float scale;
 
+        // Object / character placement
         public string objectName;
         public string humanName;
         public string controllerPath;
-        // Legacy: keep for backwards compatibility with older JSON files.
+        // Legacy alias of controllerPath, kept for backwards compatibility with older JSON files.
         public string controllerPathInResources;
         public string stateName;
         public float crossFadeTime;
@@ -59,35 +93,42 @@ public class AgentNetworkBridge : MonoBehaviour
         public float scaleY;
         public float scaleZ;
 
-        // Animation params
+        // Animator parameters
         public string paramName;
         public float value;
         public bool boolValue;
 
-        // DebugLog
+        // DebugLog / ShowSpeechBubble text
         public string message;
 
-        // Highlight params
+        // HighlightObject / ShowSpeechBubble / WalkCharacterTo duration (seconds)
         public float duration;
 
-        // Status flags (optional)
+        // Status flag written back together with "executed"
         public bool done;
 
-        // Animation target: "player" → playerModel, null/empty → defaultHumanModel (NPC)
+        // Animation target character name (e.g. "player" or a placed character's name).
+        // Null/empty targets EnvironmentAgent's default human model.
         public string targetModel;
 
-        // Phase control
+        // SetPhase
         public int phase;
 
-        // WalkCharacterTo: idle animation to crossfade into when arrived
+        // WalkCharacterTo: idle controller to crossfade into on arrival
         public string idleControllerPath;
     }
 
+    /// <summary>
+    /// Wrapper that lets <see cref="JsonUtility"/> parse the top-level JSON array in
+    /// the command file (JsonUtility cannot deserialize a bare array).
+    /// </summary>
     [System.Serializable]
     private class AgentCommandList
     {
         public AgentCommand[] commands;
     }
+
+    // ---- Lifecycle ----
 
     private void Awake()
     {
@@ -100,6 +141,9 @@ public class AgentNetworkBridge : MonoBehaviour
         StartCoroutine(PollLoop());
     }
 
+    // ---- Polling ----
+
+    /// <summary>Polls for new commands forever, waiting <see cref="pollIntervalSeconds"/> between polls.</summary>
     private IEnumerator PollLoop()
     {
         while (true)
@@ -109,6 +153,11 @@ public class AgentNetworkBridge : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Performs a single poll: reads the command file in file mode, otherwise fetches
+    /// one command from <c>{serverBaseUrl}/command</c>. A response of <c>null</c> or an
+    /// empty body means there is no pending command.
+    /// </summary>
     private IEnumerator PollOnce()
     {
         if (useFileCommands)
@@ -133,7 +182,8 @@ public class AgentNetworkBridge : MonoBehaviour
             if (www.result == UnityWebRequest.Result.ConnectionError ||
                 www.result == UnityWebRequest.Result.ProtocolError)
             {
-                // You may choose to log this, but avoid spamming every frame
+                // Deliberately silent: this runs several times per second and the
+                // server is often simply not running yet.
                 yield break;
             }
 
@@ -158,6 +208,11 @@ public class AgentNetworkBridge : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// File mode: reads the command array, runs every command not yet marked
+    /// <c>executed</c>, then rewrites the file with the updated flags. An exception in
+    /// one command is logged and does not prevent the remaining commands from running.
+    /// </summary>
     private void PollFromFile()
     {
         var path = System.IO.Path.Combine(Application.dataPath, commandsFileRelativePath);
@@ -223,6 +278,9 @@ public class AgentNetworkBridge : MonoBehaviour
         }
     }
 
+    // ---- Write-back serialization ----
+
+    /// <summary>Serializes the command list back to a pretty-printed JSON array.</summary>
     private string SerializeCommandArray(AgentCommand[] commands)
     {
         if (commands == null || commands.Length == 0)
@@ -239,6 +297,12 @@ public class AgentNetworkBridge : MonoBehaviour
         return sb.ToString();
     }
 
+    /// <summary>
+    /// Serializes one command, writing only the fields relevant to its action so the
+    /// written-back file stays readable. (JsonUtility.ToJson would emit every field
+    /// of the union.) Actions not listed in the switch are written back with only
+    /// their id, status flags and action name.
+    /// </summary>
     private string SerializeCommand(AgentCommand cmd)
     {
         var sb = new System.Text.StringBuilder();
@@ -323,7 +387,7 @@ public class AgentNetworkBridge : MonoBehaviour
                 AddString("objectName", cmd.objectName);
                 break;
             case "ClearScene":
-                // No additional fields needed
+                // No additional fields.
                 break;
             case "SetHumanAnimationController":
                 AddString("controllerPath", cmd.controllerPath ?? cmd.controllerPathInResources);
@@ -390,12 +454,19 @@ public class AgentNetworkBridge : MonoBehaviour
         return sb.ToString();
     }
 
+    /// <summary>Escapes backslashes and double quotes for embedding in a JSON string.</summary>
     private string EscapeJson(string s)
     {
         if (string.IsNullOrEmpty(s)) return "";
         return s.Replace("\\", "\\\\").Replace("\"", "\\\"");
     }
 
+    // ---- Command dispatch ----
+
+    /// <summary>
+    /// Maps a command's <c>action</c> to the corresponding <see cref="EnvironmentAgent"/>
+    /// call. Unknown actions are logged as warnings and ignored.
+    /// </summary>
     private void HandleCommand(AgentCommand cmd)
     {
         switch (cmd.action)
@@ -433,6 +504,8 @@ public class AgentNetworkBridge : MonoBehaviour
                 break;
 
             case "PlaceObject":
+                // Character prefab names (e.g. "Doctor_01_Body") are redirected to
+                // PlaceHuman so they get idle pose, collider and character registration.
                 var pos = new Vector3(cmd.x, cmd.y, cmd.z);
                 if (TryGetFullCharacterName(cmd.objectName, out var fullHumanName))
                 {
@@ -559,6 +632,17 @@ public class AgentNetworkBridge : MonoBehaviour
         }
     }
 
+    // ---- Helpers ----
+
+    /// <summary>
+    /// Detects whether <paramref name="name"/> refers to a medical character prefab
+    /// (it starts with a known role prefix such as "doctor_" or "nurse_") and, if so,
+    /// strips a trailing body-part / clothing suffix such as "_Body" or "_Coat".
+    /// </summary>
+    /// <param name="name">Object name sent by the agent.</param>
+    /// <param name="fullName">The character name without the part suffix, or the
+    /// unchanged name if it has no known suffix.</param>
+    /// <returns>True if the name looks like a character; false otherwise.</returns>
     private static bool TryGetFullCharacterName(string name, out string fullName)
     {
         fullName = null;

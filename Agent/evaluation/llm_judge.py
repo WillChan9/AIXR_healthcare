@@ -1,17 +1,37 @@
 """
-LLM-as-Judge evaluation for semantic quality of generated scenes.
+LLM-as-judge evaluation of the semantic quality of a generated scene.
 
-Calls an LLM (OpenAI GPT-4o or Groq) to rate:
-  1. Scene-Type Coherence (1-5): Are the objects appropriate for the scene type?
-  2. Spatial Semantics (1-5): Are objects placed in logical locations?
+Phase 1 (from ``scene_state.json``), each rated 1-5:
+    coherence_score  Are the placed objects appropriate for the scene type?
+    spatial_score    Are objects placed in logical locations?
+
+Phase 2 (from ``interaction_map.json`` / ``story_chain.json``, if present), each 1-5:
+    bubble_informativeness, narrative_coherence,
+    character_voice_consistency, bubble_object_fit
+
+Providers / default models:
+    groq    meta-llama/llama-4-scout-17b-16e-instruct  (needs GROQ_API_KEY)
+    openai  gpt-5.5                                    (needs OPENAI_API_KEY)
+``--model`` overrides the provider default. Keys are read from the environment
+or a ``.env`` file (via python-dotenv).
+
+Output:
+    A JSON dict with the scores, the model's reasoning, ``raw_response``,
+    ``judge_model`` and a nested ``phase2`` dict. Printed summary on stdout;
+    full JSON written to ``--output`` if given. ``run_experiment.py`` saves it
+    as ``llm_judge_report.json``.
 
 Usage:
-    python llm_judge.py --results-dir path/to/run_output --experience path/to/experience.txt
+    python llm_judge.py --results-dir results/S03/trial_1 \
+        --experience scenarios/experience_S03.txt \
+        --provider openai --model gpt-5.5 \
+        --output results/S03/trial_1/llm_judge_report.json
 """
 
 import argparse
 import json
 import os
+import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -20,7 +40,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
 def _load_json(path: Path) -> Any:
+    """Load JSON from ``path``; return None if the file is missing or empty."""
     if not path.exists():
         return None
     text = path.read_text(encoding="utf-8-sig")
@@ -30,6 +55,7 @@ def _load_json(path: Path) -> Any:
 
 
 def _parse_experience_config(txt: str) -> dict:
+    """Parse ``key = value`` lines from the ``[room_config]`` section of an experience file."""
     cfg: dict = {}
     in_section = False
     for line in txt.splitlines():
@@ -47,7 +73,7 @@ def _parse_experience_config(txt: str) -> dict:
 
 
 def _build_scene_summary(scene_state: List[Dict]) -> str:
-    """Build a concise text summary of the scene for the LLM judge."""
+    """List each non-structural object with its position, for the judge prompt."""
     objects = [obj for obj in scene_state if obj.get("objectName", "") != "Cube"]
     if not objects:
         return "The scene is empty (no objects placed)."
@@ -60,8 +86,12 @@ def _build_scene_summary(scene_state: List[Dict]) -> str:
     return f"Objects in scene ({len(objects)} total):\n" + "\n".join(lines)
 
 
+# ---------------------------------------------------------------------------
+# LLM clients
+# ---------------------------------------------------------------------------
+
 def _call_groq(messages: list, model: str = "meta-llama/llama-4-scout-17b-16e-instruct") -> str:
-    """Call Groq API."""
+    """Call the Groq chat-completions API (temperature 0.1) and return the reply text."""
     from groq import Groq
     client = Groq(api_key=os.getenv("GROQ_API_KEY"))
     completion = client.chat.completions.create(
@@ -74,8 +104,11 @@ def _call_groq(messages: list, model: str = "meta-llama/llama-4-scout-17b-16e-in
 
 
 def _call_openai(messages: list, model: str = "gpt-5.5") -> str:
-    """Call OpenAI API. GPT-5 / o1 / o3 family use max_completion_tokens and
-    reject custom temperature; everything else uses max_tokens + temperature."""
+    """Call the OpenAI chat-completions API and return the reply text.
+
+    GPT-5 / o1 / o3 models require ``max_completion_tokens`` and reject a custom
+    temperature; other models use ``max_tokens`` with temperature 0.1.
+    """
     from openai import OpenAI
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     kwargs: Dict[str, Any] = dict(model=model, messages=messages)
@@ -89,20 +122,29 @@ def _call_openai(messages: list, model: str = "gpt-5.5") -> str:
 
 
 def _call_llm(messages: list, provider: str = "groq", model: Optional[str] = None) -> str:
-    """Dispatch a chat-completion call to either Groq (Llama-4-Scout) or
-    OpenAI (frontier). `model` overrides the provider default — pass e.g.
-    'gpt-5.5' to use the latest frontier model regardless of provider."""
+    """Dispatch to OpenAI (``provider == "openai"``) or Groq (anything else).
+
+    ``model`` overrides the provider's default model.
+    """
     if provider == "openai":
         return _call_openai(messages, model=model or "gpt-5.5")
     else:
         return _call_groq(messages, model=model or "meta-llama/llama-4-scout-17b-16e-instruct")
 
 
+# ---------------------------------------------------------------------------
+# Response parsing
+# ---------------------------------------------------------------------------
+
 def _parse_rating(response: str) -> Dict[str, Any]:
-    """Parse structured rating from LLM response."""
+    """Parse the judge's reply into a dict (always includes ``raw_response``).
+
+    Tries strict JSON first; otherwise falls back to regex extraction of
+    ``coherence_score`` / ``spatial_score`` / ``overall_score`` (also accepting
+    e.g. ``coherence: 4``).
+    """
     result = {"raw_response": response}
     try:
-        # Try JSON parse first
         data = json.loads(response)
         if isinstance(data, dict):
             result.update(data)
@@ -110,14 +152,11 @@ def _parse_rating(response: str) -> Dict[str, Any]:
     except json.JSONDecodeError:
         pass
 
-    # Fallback: regex extraction
-    import re
     for key in ("coherence_score", "spatial_score", "overall_score"):
         m = re.search(rf'"{key}"\s*:\s*(\d+)', response)
         if m:
             result[key] = int(m.group(1))
         else:
-            # Try alternative patterns
             alt_key = key.replace("_score", "")
             m2 = re.search(rf'{alt_key}\s*[:=]\s*(\d+)', response, re.IGNORECASE)
             if m2:
@@ -125,6 +164,10 @@ def _parse_rating(response: str) -> Dict[str, Any]:
 
     return result
 
+
+# ---------------------------------------------------------------------------
+# Judges
+# ---------------------------------------------------------------------------
 
 def judge_scene(
     scene_state: List[Dict],
@@ -134,7 +177,7 @@ def judge_scene(
     provider: str = "groq",
     model: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """Ask LLM to rate scene quality on coherence and spatial semantics."""
+    """Ask the LLM to rate Phase 1 scene coherence and spatial semantics (1-5 each)."""
 
     scene_summary = _build_scene_summary(scene_state)
     room_w = room_config.get("room_width", "?")
@@ -178,11 +221,14 @@ def judge_phase2(
     provider: str = "groq",
     model: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """Rate Phase 2 artifacts (interaction_map.json + story_chain.json) on
-    semantic quality: bubble informativeness, narrative coherence, character
-    voice consistency, and bubble-object fit. Each on a 1–5 scale."""
+    """Ask the LLM to rate the Phase 2 artifacts (1-5 each).
 
-    # Compact summaries — keep token cost predictable.
+    Criteria: bubble informativeness, narrative coherence, character voice
+    consistency, bubble-object fit. To keep token cost predictable, the prompt
+    includes at most one bubble for each of the first 30 map entries and a
+    summary of the first 8 story beats.
+    """
+
     map_objects = interaction_map or {}
     sample_bubbles = []
     for obj_name, ev_map in list(map_objects.items())[:30]:
@@ -248,28 +294,30 @@ def run_judge(
     provider: str = "groq",
     model: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """Run LLM judge on a single experiment run.
-    Includes both Phase 1 scene scoring and Phase 2 artifact scoring.
+    """Run the LLM judge on one trial directory and return the ratings dict.
 
-    `model` overrides the provider default (e.g. "gpt-5.5" for OpenAI,
-    "meta-llama/llama-4-scout-17b-16e-instruct" for Groq)."""
-
+    Always scores Phase 1; also scores Phase 2 (under ``"phase2"``) if either
+    ``interaction_map.json`` or ``story_chain.json`` exists. A Phase 2 failure is
+    recorded as ``{"error": ...}`` rather than raised. ``model`` overrides the
+    provider default.
+    """
     scene_state = _load_json(results_dir / "scene_state.json") or []
     exp_text = experience_path.read_text(encoding="utf-8")
     cfg = _parse_experience_config(exp_text)
-    description = exp_text[:exp_text.find("[room_config]")].strip() if "[room_config]" in exp_text else exp_text.strip()
+    if "[room_config]" in exp_text:
+        description = exp_text[:exp_text.find("[room_config]")].strip()
+    else:
+        description = exp_text.strip()
     scene_type = cfg.get("scene_type", "Unknown")
 
-    # Phase 1 ratings
     ratings = judge_scene(scene_state, scene_type, description, cfg,
                           provider=provider, model=model)
-    ratings["scene_type"]  = scene_type
+    ratings["scene_type"] = scene_type
     ratings["results_dir"] = str(results_dir)
     ratings["judge_model"] = model or ("gpt-5.5" if provider == "openai" else "llama-4-scout")
 
-    # Phase 2 ratings (only if both artifacts exist)
     interaction_map = _load_json(results_dir / "interaction_map.json")
-    chain           = _load_json(results_dir / "story_chain.json")
+    chain = _load_json(results_dir / "story_chain.json")
     if interaction_map or chain:
         try:
             phase2_ratings = judge_phase2(interaction_map or {}, chain or {},
@@ -282,15 +330,24 @@ def run_judge(
     return ratings
 
 
+# ---------------------------------------------------------------------------
+# CLI
+# ---------------------------------------------------------------------------
+
 def main():
     parser = argparse.ArgumentParser(description="LLM-as-Judge scene evaluation")
-    parser.add_argument("--results-dir", type=Path, required=True)
-    parser.add_argument("--experience", type=Path, required=True)
-    parser.add_argument("--provider", choices=["groq", "openai"], default="groq")
+    parser.add_argument("--results-dir", type=Path, required=True,
+                        help="Trial directory containing scene_state.json (and optionally "
+                             "interaction_map.json / story_chain.json)")
+    parser.add_argument("--experience", type=Path, required=True,
+                        help="Path to the experience.txt used for this run")
+    parser.add_argument("--provider", choices=["groq", "openai"], default="groq",
+                        help="LLM provider for the judge (default: groq)")
     parser.add_argument("--model", type=str, default=None,
                         help="Override the model (e.g. 'gpt-5.5', 'gpt-5.2'). "
                              "Defaults to the provider's standard model.")
-    parser.add_argument("--output", type=Path, default=None)
+    parser.add_argument("--output", type=Path, default=None,
+                        help="Write JSON ratings to this file")
     args = parser.parse_args()
 
     ratings = run_judge(args.results_dir, args.experience,
