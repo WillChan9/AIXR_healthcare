@@ -22,3 +22,14 @@ venv/
 /firefighter project/Assets/Scripts/unity_commands.json*
 /firefighter project/Assets/Scripts/interaction_events.json*
 /firefighter project/Assets/Scripts/scene_state.json*
+
+# Third-party Asset Store packs: licensed for use, not redistribution.
+# Import them locally from the Asset Store (see README "Third-party assets").
+/firefighter project/Assets/Kevin Iglesias/
+/firefighter project/Assets/Kevin Iglesias.meta
+/firefighter project/Assets/Tables and Chairs/
+/firefighter project/Assets/Tables and Chairs.meta
+/firefighter project/Assets/Resources/Medical_Pack/
+/firefighter project/Assets/Resources/Medical_Pack.meta
+/firefighter project/Assets/ithappy/
+/firefighter project/Assets/ithappy.meta
