@@ -1,201 +1,174 @@
-# Quest 3 AI Environment Builder
+# Unity Scripts
 
-This project is a Unity-based simulation environment designed to bridge AI agents with Mixed Reality (MR).
-It allows an external system or internal logic to procedurally build environments by placing 3D assets and
-triggering actions based on descriptions.
+Runtime and editor C# scripts that let the Python LLM agent (`Agent/` at the repository
+root) build and drive a VR healthcare training scene. Python and Unity communicate only
+through JSON and PNG files, so no network setup is needed.
 
-## Prerequisites
+```
+Python agent ──► Assets/Scripts/unity_commands.json ──► AgentNetworkBridge ──► EnvironmentAgent
+     ▲                                                                              │
+     ├──── Agent/api_files/scene_state.json ◄───────────────────────────────────────┤
+     ├──── Agent/api_files/scene_screenshot_{xz,xy,yz,iso}.png ◄── ScreenshotLoopSender
+     └──── Assets/Scripts/interaction_events.json ◄── InteractionEventReporter / PlayerTouchHighlighter
+```
 
-Before starting, ensure you have the following installed:
-- Unity Hub and Unity 6 (recommended: 2022.3 LTS or newer)
-- Meta Quest Link App (for PCVR testing)
-- Cursor IDE (recommended for AI-assisted development)
-- Android Build Support (installed via Unity Hub)
+## Scripts
 
-## Environment Setup
+### Runtime (`Assets/Scripts/`)
 
-### 1. Clone and Open
-1. Clone this repository to your local machine.
-2. Open Unity Hub, click **Add**, and select the project folder.
+| Script | Role |
+|---|---|
+| `AgentNetworkBridge` | Polls `unity_commands.json` (or an HTTP endpoint), runs each new command on `EnvironmentAgent`, and marks it as executed. |
+| `EnvironmentAgent` | The scene-control API: spawns, moves and deletes objects and characters, controls lighting and fog, plays animations, highlights objects, shows speech bubbles, and writes `scene_state.json` after every change. |
+| `InteractionSetup` | Adds a collider, a kinematic Rigidbody and an `XRGrabInteractable` to spawned objects so the player can hover over and grab them. |
+| `InteractionEventReporter` | Records XR hover / grab / release / activate events (and touch events) to `interaction_events.json`. |
+| `InteractionAnimationController` | Plays an immediate character animation and highlight when the player interacts with an object, without waiting for Python. |
+| `PlayerTouchHighlighter` | Phase 2 proximity detection: highlights objects and characters the player walks into and reports them as `touch` events. |
+| `PlayerAvatarController` | Gives the player a visible body that follows the XR rig and can be animated by the agent. |
+| `SpeechBubble` | World-space text bubble above a character's head, built entirely in code. |
+| `ScreenshotLoopSender` | Saves top-down, front, side and 45-degree screenshots of the room every few seconds for the LLM. |
+| `AutoScreenshotBootstrap` | Ensures a `ScreenshotLoopSender` exists in every scene (runtime and builds). |
 
-### 2. Configure XR and Platform
-1. Go to `File > Build Settings`.
-2. Select **Android** and click **Switch Platform**.
-3. Navigate to `Project Settings > XR Plug-in Management`.
-4. Enable **Oculus (Meta XR)** for both Desktop and Android tabs.
+### Editor (`Assets/Editor/`)
 
-### 3. Handle Shader Issues ("Pink" Asset Fix)
-If models appear pink, convert to URP:
-1. Go to `Window > Rendering > Render Pipeline Converter`.
-2. Select **Built-in to URP** and check **Material Upgrade**.
-3. Click **Initialize Converters** and then **Convert Assets**.
+| Script | Role |
+|---|---|
+| `AgentNetworkBridgeBootstrap` | Adds an `AgentNetworkBridge` to the `EnvironmentAgent` GameObject when entering Play Mode, if the scene has none. |
+| `ScreenshotLoopEditorBootstrap` | Adds a `ScreenshotLoopSender` when entering Play Mode, if the scene has none. |
+| `PlayerAvatarResourceLinker` | Copies the Kevin Iglesias dummy prefabs into `Assets/Resources/Prefabs/` so the Male / Female avatar presets can be loaded at runtime. |
 
-## Project Structure
+## Scene setup
 
-- `Assets/Resources/Prefabs`: 3D models that the AI can spawn
-- `Assets/Scripts`: core C# logic
-  - `EnvironmentAgent.cs`: main handler for spawning and placing objects
-- `Assets/Scenes`: main simulation scene
+`Assets/Scenes/SampleScene.unity` is already set up. For a new scene:
 
-## Running the Simulation Demo
+1. Create an empty GameObject (the sample scene calls it **AI_Manager**) and add
+   `EnvironmentAgent`. This automatically adds `InteractionSetup`,
+   `InteractionAnimationController` and `InteractionEventReporter`; a
+   `PlayerAvatarController` is added at Start.
+2. Optionally add `AgentNetworkBridge` to the same GameObject. In the Editor it is added
+   automatically on entering Play Mode if missing.
+3. Make sure the scene has an XR rig (e.g. XR Origin) and a camera tagged **MainCamera**.
+4. Enter Play Mode, then start the Python agent (see the repository `README.md`).
 
-### Step 1: Prepare the Scene
-1. Open `SampleScene` from `Assets/Scenes`.
-2. Ensure the **AI_Manager** GameObject exists in the Hierarchy and has `EnvironmentAgent` attached.
+`ScreenshotLoopSender` and `PlayerTouchHighlighter` are created automatically and need no
+setup. `PlayerTouchHighlighter` stays disabled until the agent sends `SetPhase` with
+`phase` 2.
 
-### Step 2: Enter Play Mode
-1. Click **Play** in the Unity Editor.
-2. If testing on Meta Quest 3, connect via Link/Air Link first.
+## Files exchanged with Python
 
-### Step 3: Trigger AI Placement
-1. Select **AI_Manager** in the Hierarchy.
-2. In the Inspector, right-click the **Environment Agent** component header.
-3. Select **Test Spawn Chair** or **Test Spawn Table**.
-4. Observe objects appearing in the Game View.
+| File | Written by | Read by | Contents |
+|---|---|---|---|
+| `Assets/Scripts/unity_commands.json` | Python (`Agent/main.py`) | `AgentNetworkBridge` | JSON array of commands. Unity sets `executed` / `done` to `true` after running each one and writes the file back. |
+| `Agent/api_files/scene_state.json` | `EnvironmentAgent` | Python | One entry per tracked object: `objectName`, `x`, `y`, `z`, `rotationY`, and world-space renderer bounds (`boundsMinX/Y/Z`, `boundsMaxX/Y/Z`, `boundsSizeX/Y/Z`). |
+| `Agent/api_files/scene_screenshot_{xz,xy,yz,iso}.png` | `ScreenshotLoopSender` | Python | Top-down, front, side and perspective views. The location can be changed with the `UNITY_SCREENSHOT_PATH` environment variable or the component's `overrideBasePath`. |
+| `Assets/Scripts/interaction_events.json` | `InteractionEventReporter` | Python | JSON array of player events: `id`, `timestamp`, `type`, `objectName`, `objectPosition`, `playerPosition`, `playerLookDir`, `processed`. |
 
-## Let the Agent Control Environment Parameters
+## Command protocol
 
-`EnvironmentAgent` provides a unified interface for external AI or game logic to control the scene.
-After attaching the script to a GameObject (e.g., **AI_Manager**), you can call:
+Each command is a flat JSON object with an `action` and the fields that action uses.
+`unity_commands.json` holds an array of these objects; commands whose `executed` flag is
+`false` (or missing) are run in order. `id` is optional and only used in log messages.
 
-| Function | Method | Example |
+```json
+[
+  { "id": "cmd_1", "action": "SetTimeOfDay", "hour": 18 },
+  { "id": "cmd_2", "action": "PlaceObject", "objectName": "Bed_01", "x": 1.0, "y": 0.0, "z": 2.0, "rotationY": 90 },
+  { "id": "cmd_3", "action": "PlaceHuman", "humanName": "Doctor_01", "x": -1.0, "y": 0.0, "z": 3.0, "rotationY": 180 },
+  { "id": "cmd_4", "action": "ShowSpeechBubble", "objectName": "Doctor_01", "message": "Welcome!", "duration": 4 }
+]
+```
+
+Fields that are omitted take their default value (`0`, `false` or empty), so for example
+an omitted `rotationY` means 0 degrees. Positions are in world meters; rotations are yaw in
+degrees. Colors use channels from 0 to 1.
+
+### Environment
+
+| `action` | Fields | Effect |
 |---|---|---|
-| Place object | `PlaceObject(objectName, position, rotationY)` | `PlaceObject("Chair1", new Vector3(0,0,2), 0)` |
-| Light intensity | `SetLightIntensity(float)` | `SetLightIntensity(0.5f)` |
-| Light color | `SetLightColor(r, g, b)` | `SetLightColor(1f, 0.9f, 0.8f)` |
-| Time of day | `SetTimeOfDay(hour)` | `SetTimeOfDay(18f)` |
-| Fog toggle | `SetFogEnabled(bool)` | `SetFogEnabled(true)` |
-| Fog density | `SetFogDensity(float)` | `SetFogDensity(0.02f)` |
-| Fog color | `SetFogColor(r, g, b)` | `SetFogColor(0.7f, 0.7f, 0.8f)` |
-| Ambient light | `SetAmbientColor(r, g, b)` | `SetAmbientColor(0.2f, 0.2f, 0.3f)` |
-| Gravity | `SetGravity(gravityY)` | `SetGravity(-9.81f)` |
-| Time scale | `SetTimeScale(scale)` | `SetTimeScale(0f)` |
+| `SetTimeOfDay` | `hour` | Rotates the main directional light to simulate the sun at that hour (0 to 24). |
+| `SetLightIntensity` | `scale` | Sets the main directional light intensity (clamped to 0 to 2). |
+| `SetLightColor` | `r`, `g`, `b` | Sets the main directional light color. |
+| `SetAmbientColor` | `r`, `g`, `b` | Sets the ambient light color. |
+| `SetFogEnabled` | `enabled` | Turns fog on or off. |
+| `SetFogDensity` | `density` | Sets fog density (clamped to 0 to 0.2). |
+| `SetGravity` | `gravityY` | Sets gravity to (0, `gravityY`, 0). Unity's default is -9.81. |
+| `SetTimeScale` | `scale` | Sets the time scale (clamped to 0 to 2; 0 pauses, 1 is normal). |
 
-**Called from Unity scripts:**
+### Objects
 
-```csharp
-var agent = FindFirstObjectByType<EnvironmentAgent>();
-if (agent != null)
-{
-    agent.SetTimeOfDay(20f);      // night
-    agent.SetFogEnabled(true);
-    agent.SetFogDensity(0.015f);
-    agent.PlaceObject("Chair1", new Vector3(1, 0, 3), 45);
-}
-```
-
-**Inspector quick test:** select a GameObject with `EnvironmentAgent`, right-click the component header,
-and choose **Env: Night (18h)**, **Env: Day (12h)**, **Env: Fog On/Off** for quick checks.
-
-## Python FastAPI Agent Communication
-
-### Unity side (this project)
-
-1. Add two components to `AI_Manager` (or any scene object):
-   - `EnvironmentAgent`
-   - `AgentNetworkBridge`
-2. In the `AgentNetworkBridge` Inspector:
-   - Set `Server Base Url` to your FastAPI address, e.g.:
-     - Local: `http://127.0.0.1:8000`
-     - Quest on PC: `http://<your LAN IP>:8000` (e.g. `http://192.168.1.10:8000`)
-   - Drag `EnvironmentAgent` into the field (or leave empty and it will auto-find one in the scene).
-3. When the scene is running, Unity polls:
-   - `GET {serverBaseUrl}/command`
-4. The returned JSON is deserialized into a command object and mapped to `EnvironmentAgent` methods.
-
-### Command JSON protocol (FastAPI response format)
-
-Unity expects **flat JSON fields**, for example:
-
-```json
-{ "action": "SetTimeOfDay", "hour": 18 }
-```
-
-or:
-
-```json
-{ "action": "SetFogEnabled", "enabled": true }
-```
-
-or:
-
-```json
-{
-  "action": "PlaceObject",
-  "objectName": "Chair1",
-  "x": 1.0,
-  "y": 0.0,
-  "z": 2.0,
-  "rotationY": 45.0
-}
-```
-
-Supported actions and fields:
-
-| action | fields | effect |
+| `action` | Fields | Effect |
 |---|---|---|
-| `SetTimeOfDay` | `hour` | calls `SetTimeOfDay(hour)` |
-| `SetFogEnabled` | `enabled` | calls `SetFogEnabled(enabled)` |
-| `SetFogDensity` | `density` | calls `SetFogDensity(density)` |
-| `SetLightIntensity` | `scale` | calls `SetLightIntensity(scale)` |
-| `SetLightColor` | `r, g, b` | calls `SetLightColor(r, g, b)` |
-| `SetAmbientColor` | `r, g, b` | calls `SetAmbientColor(r, g, b)` |
-| `SetGravity` | `gravityY` | calls `SetGravity(gravityY)` |
-| `SetTimeScale` | `scale` | calls `SetTimeScale(scale)` |
-| `PlaceObject` | `objectName, x, y, z, rotationY` | places a prefab in the scene |
+| `PlaceObject` | `objectName`, `x`, `y`, `z`, `rotationY` | Spawns a prefab (looked up by name in any `Resources` folder), drops it onto the surface below and makes it grabbable. Repeated names are tracked as `Name__inst_2`, `Name__inst_3`, ... If the name looks like a character (e.g. `Doctor_01` or `Nurse_02_Body`), it is handled like `PlaceHuman` instead. |
+| `CreateObjectByName` | `objectName`, `x`, `y`, `z`, `rotationY`, `scaleX`, `scaleY`, `scaleZ` | Creates a prefab from `Resources/Prefabs/` or a primitive (`Cube`/`Box`, `Sphere`/`Ball`, `Capsule`, `Cylinder`, `Plane`, `Quad`) with the given scale (values of 0 or less mean 1). Used to build the floor, walls and ceiling. Objects above y = 0.05 or taller than 1.5 are not floor-snapped. |
+| `MoveObject` | `objectName`, `x`, `y`, `z`, `rotationY` | Teleports an existing object. |
+| `DeleteObject` | `objectName` | Destroys an existing object. |
+| `ClearScene` | none | Destroys all spawned objects and characters. Floor Cubes, cameras, lights, XR rigs and objects tagged `Player` are kept. |
+| `HighlightObject` | `objectName`, `r`, `g`, `b`, `duration` | Tints the object and makes it glow. After `duration` seconds the original colors are restored; 0 or less keeps the highlight. |
+| `ClearHighlight` | `objectName` | Turns off the object's emission glow. |
 
-### Python FastAPI example (separate repo)
+Objects are found by exact name first, then with Unity's `(Clone)` suffix, then by
+case-insensitive name prefix.
 
-In your Python project (separate repo/folder), create `main.py`:
+### Characters and animation
 
-```python
-from fastapi import FastAPI
-from pydantic import BaseModel
-from typing import Optional
+| `action` | Fields | Effect |
+|---|---|---|
+| `PlaceHuman` | `humanName` (or `objectName`), `x`, `y`, `z`, `rotationY` | Spawns a character prefab on the floor in an idle pose and registers it under its name. The most recently placed character becomes the default animation target. |
+| `MoveCharacter` | `objectName` (or `humanName`), `x`, `y`, `z`, `rotationY` | Teleports a character. |
+| `WalkCharacterTo` | `objectName` (or `humanName`), `x`, `y`, `z`, `rotationY`, `duration`, `controllerPath`, `idleControllerPath` | Plays a walk animation while moving the character to the target over `duration` seconds (default 2), then switches to idle. Controllers default to `AnimatorControllers/HumanM@Walk01_Forward` and `AnimatorControllers/HumanM@Idles`. |
+| `PlayHumanAnimationFromResources` | `controllerPath`, `stateName`, `crossFadeTime`, `targetModel` | Loads an AnimatorController and crossfades into `stateName`. This is the most reliable way to play an animation. |
+| `PlayHumanAnimation` | `stateName`, `crossFadeTime`, `targetModel` | Crossfades into a state of the character's current controller. |
+| `SetHumanAnimationController` | `controllerPath` | Replaces the default character's AnimatorController. |
+| `SetHumanAnimatorFloat` | `paramName`, `value` | Sets a float parameter on the default character's Animator. |
+| `SetHumanAnimatorBool` | `paramName`, `boolValue` | Sets a bool parameter on the default character's Animator. |
+| `SetHumanAnimatorTrigger` | `paramName` | Fires a trigger on the default character's Animator. |
+| `ShowSpeechBubble` | `objectName` (or `humanName`), `message`, `duration` | Shows a speech bubble above a character for `duration` seconds (default 5). |
+| `AttachPlayerAvatar` | `objectName` (or `humanName`) | Replaces the player's visible body with the given prefab and registers it as the character `player`. |
 
-class AgentCommand(BaseModel):
-    action: str
+Notes:
 
-    hour: Optional[float] = None
-    enabled: Optional[bool] = None
-    density: Optional[float] = None
+- `targetModel` is a character name (as placed, e.g. `Doctor_01`, or `player` for the
+  player avatar). When it is empty, the default character is animated.
+- `crossFadeTime` defaults to 0.25 seconds when it is 0 or omitted.
+- `controllerPath` is a path inside a `Resources` folder without the file extension, e.g.
+  `AnimatorControllers/HumanF@Talking`. For the Kevin Iglesias controllers the state name
+  matches the controller name (`HumanF@Talking`). The older field name
+  `controllerPathInResources` is still accepted.
 
-    r: Optional[float] = None
-    g: Optional[float] = None
-    b: Optional[float] = None
+### Other
 
-    gravityY: Optional[float] = None
-    scale: Optional[float] = None
+| `action` | Fields | Effect |
+|---|---|---|
+| `SetPhase` | `phase` | `2` (or higher) starts Phase 2: the XR rig is tagged `Player` and touch detection is enabled. |
+| `DebugLog` | `message` | Writes `message` to the Unity console. |
 
-    objectName: Optional[str] = None
-    x: Optional[float] = None
-    y: Optional[float] = None
-    z: Optional[float] = None
-    rotationY: Optional[float] = None
+## HTTP mode (optional)
 
-app = FastAPI()
+`AgentNetworkBridge` can poll a server instead of reading a file. Untick
+**Use File Commands** and set **Server Base Url** (e.g. `http://127.0.0.1:8000`, or the
+PC's LAN address when running on a Quest). Unity then calls `GET {serverBaseUrl}/command`
+every poll interval and expects a single command object in the format above, or `null`
+when there is nothing to do. In this mode commands are not marked as executed, so the
+server must return each command only once.
 
-@app.get("/command", response_model=Optional[AgentCommand])
-def get_command():
-    """Call your own Python agent logic here to decide the next command.
-    Return None/null if no command is available.
-    """
-    # Example: return a simple fixed time/fog command
-    return AgentCommand(action="SetTimeOfDay", hour=18.0)
-```
+## Adding new assets
 
-Run:
+Any prefab placed under a `Resources` folder can be spawned by its file name; the lookup
+is case-insensitive. See `EnvironmentAgent_Resources.md` for how to add characters and
+animator controllers.
 
-```bash
-pip install fastapi uvicorn
-uvicorn main:app --host 0.0.0.0 --port 8000
-```
+If imported models appear pink, convert their materials to URP with
+**Window > Rendering > Render Pipeline Converter > Built-in to URP > Material Upgrade**.
 
-Verify that you can open `http://127.0.0.1:8000/command` in a browser,
-then set the same address in Unity.
+## Inspector test tools
 
-## Extending the AI Logic
+With the `EnvironmentAgent` component selected in Play Mode, right-click its header to
+access:
 
-To add more complex models:
-1. Drag your new 3D model into the scene, configure its scale and colliders, and save it as a Prefab in `Assets/Resources/Prefabs`.
-2. Update `EnvironmentAgent.cs` to include new action triggers or movement logic.
+- **Debug Human Rig (Default)**: logs the Animators and skinned-mesh bindings of the
+  default character.
+- **ithappy: Spawn Furniture / Prop / Character (test)**: spawns the test prefabs assigned
+  in the Inspector.
+- **ithappy Anim: Idle / Walk Forward / Run Forward / Attack Punch**: plays a test
+  animation on the spawned test character.

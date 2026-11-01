@@ -130,12 +130,14 @@ public class AgentNetworkBridge : MonoBehaviour
 
     // ---- Lifecycle ----
 
+    /// <summary>Finds the EnvironmentAgent in the scene if none is assigned.</summary>
     private void Awake()
     {
         if (environmentAgent == null)
             environmentAgent = FindFirstObjectByType<EnvironmentAgent>();
     }
 
+    /// <summary>Starts the polling loop (which stops automatically when the component is disabled).</summary>
     private void OnEnable()
     {
         StartCoroutine(PollLoop());

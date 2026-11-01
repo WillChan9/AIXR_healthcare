@@ -54,6 +54,12 @@ Agent/                          Python agent
 ├── agent/
 │   ├── Reflection_module.py    Phase 1 critique-and-retry loop
 │   ├── animation_planner.py    Experimental LLM animation planner (not yet wired into the pipeline)
+│   ├── Sensing_module.py       ┐
+│   ├── Context_module.py       │ Modular agent architecture:
+│   ├── Parser_module.py        │ sense → context → parse → decide → operate
+│   ├── Decision_module.py      │
+│   ├── Operation_module.py     ┘
+│   ├── unity_bridge.py         HTTP alternative to the file-based Unity command channel
 │   └── logger.py               Shared logging setup
 ├── api_files/experience.txt    The scene description to generate (edit this)
 ├── evaluation/                 Experiment harness, scenarios, and published results

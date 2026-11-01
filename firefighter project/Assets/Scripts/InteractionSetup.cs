@@ -2,28 +2,35 @@ using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
 /// <summary>
-/// Automatically adds XR interaction components to AI-spawned objects so they
-/// become grabbable / hoverable in VR.  Attach to the same GameObject as
-/// <see cref="EnvironmentAgent"/> (the AI_Manager).
+/// Adds XR interaction components to objects so they can be hovered and grabbed in VR,
+/// which in turn lets <see cref="InteractionEventReporter"/> and
+/// <see cref="InteractionAnimationController"/> receive interaction events for them.
 ///
-/// After EnvironmentAgent.PlaceObject / CreateObjectByName spawns a GameObject,
-/// call <see cref="MakeInteractable"/> on it.
+/// <see cref="EnvironmentAgent"/> calls <see cref="MakeInteractable"/> on every object
+/// spawned by PlaceObject / CreateObjectByName, and InteractionAnimationController can
+/// call it on pre-placed scene objects at startup.
 ///
-/// Structural elements (names containing "Cube", "wall", "floor", "ceiling")
-/// are skipped — they should remain static scenery.
+/// Structural elements (names containing "cube", "wall", "floor", "ceiling" or "plane",
+/// case-insensitive) are skipped so they remain static scenery.
+///
+/// Setup: added automatically to the EnvironmentAgent GameObject (AI_Manager) through
+/// <c>RequireComponent</c>.
 /// </summary>
 public class InteractionSetup : MonoBehaviour
 {
-    [Tooltip("Layer index to assign to interactable objects (must match XR Interactor interaction layer).")]
+    /// <summary>Intended interaction layer index for interactable objects. Currently not applied by this component.</summary>
+    [Tooltip("Interaction layer index for interactable objects (should match the XR Interactor). Currently not applied by this component.")]
     public int interactionLayer = 0;
 
-    [Tooltip("If true, grabbed objects use physics (Rigidbody kinematic=false while held).")]
+    /// <summary>If true, grabbed objects follow the hand with velocity tracking (physics) instead of instantaneous movement.</summary>
+    [Tooltip("If true, grabbed objects move with velocity tracking (physics) instead of instantaneous movement.")]
     public bool usePhysicsOnGrab = false;
 
     /// <summary>
-    /// Add Collider + Rigidbody + XRGrabInteractable to the given object so the
-    /// player can point at / grab it in VR.  Safe to call multiple times — skips
-    /// objects that already have an XRBaseInteractable.
+    /// Adds a Collider (if none exists), a kinematic Rigidbody without gravity and an
+    /// XRGrabInteractable to <paramref name="obj"/> so the player can point at and grab
+    /// it in VR. Safe to call multiple times: objects that already have an
+    /// XRBaseInteractable, and structural objects, are skipped.
     /// </summary>
     public void MakeInteractable(GameObject obj)
     {
@@ -41,7 +48,7 @@ public class InteractionSetup : MonoBehaviour
             // Transform world bounds into local space of the root object.
             box.center = obj.transform.InverseTransformPoint(bounds.center);
             box.size   = obj.transform.InverseTransformVector(bounds.size);
-            // Ensure minimum size so ray-cast can hit tiny objects
+            // Enforce a minimum size so ray casts can hit tiny objects.
             box.size = Vector3.Max(box.size, Vector3.one * 0.05f);
         }
 
@@ -59,9 +66,9 @@ public class InteractionSetup : MonoBehaviour
         grab.movementType = usePhysicsOnGrab
             ? XRGrabInteractable.MovementType.VelocityTracking
             : XRGrabInteractable.MovementType.Instantaneous;
-        grab.throwOnDetach = false;  // don't fling medical equipment
+        grab.throwOnDetach = false;  // Don't fling medical equipment on release.
 
-        // Keep the object where the user drops it (don't snap back)
+        // Keep the object where the user drops it (don't snap back).
         grab.trackPosition = true;
         grab.trackRotation = true;
 
@@ -69,19 +76,24 @@ public class InteractionSetup : MonoBehaviour
     }
 
     /// <summary>
-    /// Strip interaction components so the object becomes static scenery again.
+    /// Removes the first XRBaseInteractable found on the object or its children so it
+    /// becomes static scenery again.
     /// </summary>
     public void MakeNonInteractable(GameObject obj)
     {
         if (obj == null) return;
         var interactable = obj.GetComponentInChildren<XRBaseInteractable>();
         if (interactable != null) Destroy(interactable);
-        // Leave Rigidbody and Collider in place — they don't hurt and removing
+        // Leave the Rigidbody and Collider in place: they do no harm, and removing
         // them could break physics queries (SnapToFloor, etc.).
     }
 
     // ---- Helpers ----
 
+    /// <summary>
+    /// Returns true for empty names and for names containing "cube", "wall", "floor",
+    /// "ceiling" or "plane" (case-insensitive).
+    /// </summary>
     private static bool IsStructural(string name)
     {
         if (string.IsNullOrEmpty(name)) return true;
@@ -94,8 +106,8 @@ public class InteractionSetup : MonoBehaviour
     }
 
     /// <summary>
-    /// Compute a world-space AABB that encloses every Renderer in the hierarchy.
-    /// Falls back to a 0.3m cube at the object's position if no renderers are found.
+    /// Computes a world-space AABB that encloses every Renderer in the hierarchy.
+    /// Falls back to a 0.3 m cube at the object's position if no renderers are found.
     /// </summary>
     private static Bounds CalculateRendererBounds(GameObject root)
     {

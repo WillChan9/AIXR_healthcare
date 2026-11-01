@@ -4,17 +4,21 @@ using UnityEngine.UI;
 
 /// <summary>
 /// World-space speech bubble that floats above a character's head and faces the camera.
-/// Created entirely in code — no prefab or Canvas setup required.
+/// The UI (canvas, background panel and text) is built entirely in code, so no prefab
+/// or Canvas setup is required.
 ///
-/// Usage: call Show(text, duration) from EnvironmentAgent.ShowSpeechBubble().
-/// The component is auto-added to character GameObjects as needed.
+/// Usage: <see cref="EnvironmentAgent.ShowSpeechBubble"/> adds this component to a
+/// character on first use and calls <see cref="Show"/>. A new message replaces the
+/// current one and restarts the timer.
 /// </summary>
 public class SpeechBubble : MonoBehaviour
 {
-    [Tooltip("Height above the GameObject's local origin (metres).")]
+    /// <summary>Height of the bubble above the character's origin, in meters.</summary>
+    [Tooltip("Height above the GameObject's origin (meters).")]
     public float heightOffset = 2.2f;
 
-    [Tooltip("Font size for bubble text.")]
+    /// <summary>Font size of the bubble text. Read once, when the UI is built.</summary>
+    [Tooltip("Font size for the bubble text.")]
     public int fontSize = 28;
 
     // ---- Runtime ----
@@ -26,20 +30,22 @@ public class SpeechBubble : MonoBehaviour
 
     // ---- Lifecycle ----
 
+    /// <summary>Builds the bubble UI and hides it.</summary>
     private void Awake()
     {
         BuildUI();
         _canvas.gameObject.SetActive(false);
     }
 
+    /// <summary>Keeps the visible bubble above the character and facing the camera.</summary>
     private void LateUpdate()
     {
         if (_canvas == null || !_canvas.gameObject.activeSelf) return;
 
-        // Float above the character's current world position
+        // Float above the character's current world position.
         _canvas.transform.position = transform.position + Vector3.up * heightOffset;
 
-        // Billboard: match camera rotation so text is never mirrored
+        // Billboard: match the camera rotation so the text is never mirrored.
         if (_cam == null && Camera.main != null)
             _cam = Camera.main.transform;
         if (_cam != null)
@@ -48,13 +54,13 @@ public class SpeechBubble : MonoBehaviour
 
     // ---- Public API ----
 
-    /// <summary>Display <paramref name="text"/> for <paramref name="duration"/> seconds.</summary>
+    /// <summary>Displays <paramref name="text"/> for <paramref name="duration"/> seconds, resizing the panel to fit.</summary>
     public void Show(string text, float duration = 5f)
     {
         if (_hideCoroutine != null) StopCoroutine(_hideCoroutine);
         _label.text = text;
 
-        // Grow panel height based on approximate line count
+        // Grow the panel height based on an approximate line count.
         int charsPerLine = 26;
         int lines = Mathf.Max(1, Mathf.CeilToInt((float)text.Length / charsPerLine));
         _panel.sizeDelta = new Vector2(300, 44 + lines * 30);
@@ -63,7 +69,7 @@ public class SpeechBubble : MonoBehaviour
         _hideCoroutine = StartCoroutine(HideAfter(duration));
     }
 
-    /// <summary>Hide immediately.</summary>
+    /// <summary>Hides the bubble immediately.</summary>
     public void Hide()
     {
         if (_hideCoroutine != null) { StopCoroutine(_hideCoroutine); _hideCoroutine = null; }
@@ -72,25 +78,27 @@ public class SpeechBubble : MonoBehaviour
 
     // ---- Helpers ----
 
+    /// <summary>Hides the bubble after <paramref name="duration"/> seconds.</summary>
     private IEnumerator HideAfter(float duration)
     {
         yield return new WaitForSeconds(duration);
         _canvas.gameObject.SetActive(false);
     }
 
+    /// <summary>Creates the world-space canvas, background panel and text label as children of this GameObject.</summary>
     private void BuildUI()
     {
-        // World-space canvas — separate GameObject so it can be repositioned freely
+        // World-space canvas on its own child GameObject so it can be positioned freely.
         var canvasGo = new GameObject("[SpeechBubble]");
         canvasGo.transform.SetParent(transform, worldPositionStays: false);
 
         _canvas = canvasGo.AddComponent<Canvas>();
         _canvas.renderMode  = RenderMode.WorldSpace;
         _canvas.sortingOrder = 100;
-        // 0.005 scale → 300×80 canvas units = 1.5m × 0.4m in world space (readable in VR)
+        // A 0.005 scale makes 300x80 canvas units 1.5 m x 0.4 m in world space (readable in VR).
         _canvas.transform.localScale = Vector3.one * 0.005f;
 
-        // Background panel
+        // Background panel.
         var panelGo = new GameObject("Panel");
         panelGo.transform.SetParent(_canvas.transform, worldPositionStays: false);
         _panel = panelGo.AddComponent<RectTransform>();
@@ -98,7 +106,7 @@ public class SpeechBubble : MonoBehaviour
         var img = panelGo.AddComponent<Image>();
         img.color = new Color(0.04f, 0.04f, 0.12f, 0.88f);
 
-        // Text label
+        // Text label.
         var textGo = new GameObject("Label");
         textGo.transform.SetParent(panelGo.transform, worldPositionStays: false);
         var textRect = textGo.AddComponent<RectTransform>();
@@ -108,7 +116,7 @@ public class SpeechBubble : MonoBehaviour
         textRect.offsetMax = new Vector2(-10, -8);
         _label = textGo.AddComponent<Text>();
 
-        // Use whichever built-in font is available (Unity 6 vs earlier)
+        // Use whichever built-in font is available ("LegacyRuntime.ttf" in newer Unity versions, "Arial.ttf" in older ones).
         Font builtIn = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         if (builtIn == null)
             builtIn = Resources.GetBuiltinResource<Font>("Arial.ttf");

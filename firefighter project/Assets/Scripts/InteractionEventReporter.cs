@@ -5,44 +5,59 @@ using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
 /// <summary>
-/// Listens for XR interaction events (hover, grab, release, activate) on every
-/// <see cref="XRBaseInteractable"/> in the scene and writes them to a JSON file
-/// that the Python Agent reads during Phase 2.
+/// Records player interactions to a JSON file that the Python agent reads during
+/// Phase 2 (player interaction).
 ///
-/// Attach to the same GameObject as EnvironmentAgent / AgentNetworkBridge.
+/// Listens for XR events (hover enter/exit, grab, release, activate) on every
+/// <see cref="XRBaseInteractable"/> in the scene, rescanning periodically to pick up
+/// objects spawned at runtime. <see cref="PlayerTouchHighlighter"/> also reports
+/// proximity "touch" events through <see cref="RecordEvent"/>.
 ///
-/// Output file: <c>interaction_events.json</c> next to <c>unity_commands.json</c>.
-/// The Python agent marks events as <c>"processed": true</c>; this script only
-/// appends new events and never touches processed ones.
+/// Output: <c>Assets/{eventsFileRelativePath}</c> (default
+/// <c>Assets/Scripts/interaction_events.json</c>, next to <c>unity_commands.json</c>),
+/// a JSON array of events with <c>id</c>, <c>timestamp</c> (Unix seconds), <c>type</c>,
+/// <c>objectName</c>, <c>objectPosition</c>, <c>playerPosition</c>, <c>playerLookDir</c>
+/// and <c>processed</c>. Existing events are loaded once at startup; afterwards the
+/// whole file is rewritten from the in-memory list on every new event, keeping at most
+/// <see cref="maxEvents"/> entries. The Python agent sets <c>"processed": true</c> on
+/// events it has handled.
+///
+/// Setup: added automatically to the EnvironmentAgent GameObject (AI_Manager) through
+/// <c>RequireComponent</c>.
 /// </summary>
 public class InteractionEventReporter : MonoBehaviour
 {
+    /// <summary>Output file path, relative to the Assets folder.</summary>
     [Header("Output path (relative to Assets/)")]
     public string eventsFileRelativePath = "Scripts/interaction_events.json";
 
-    [Tooltip("Seconds between scanning for new interactables that lack listeners.")]
+    /// <summary>Seconds between scans for interactables that have no listeners yet.</summary>
+    [Tooltip("Seconds between scans for new interactables that have no listeners yet.")]
     public float rescanInterval = 2f;
 
-    [Tooltip("Maximum events kept in file (oldest are trimmed).")]
+    /// <summary>Maximum number of events kept in the file; the oldest are dropped first.</summary>
+    [Tooltip("Maximum number of events kept in the file (oldest are dropped first).")]
     public int maxEvents = 200;
 
     // ---- Runtime state ----
+
     private string _filePath;
     private List<InteractionEvent> _events = new List<InteractionEvent>();
     private readonly HashSet<int> _subscribedIds = new HashSet<int>();
     private float _nextRescan;
 
-    // Reference to the XR player rig (auto-found)
+    // Player head (Main Camera), used for player position and look direction.
     private Transform _playerHead;
 
     // ---- Data model ----
 
+    /// <summary>One interaction record. Field names are part of the JSON format read by Python.</summary>
     [Serializable]
     private class InteractionEvent
     {
         public string id;
         public double timestamp;
-        public string type;         // "hover_enter", "hover_exit", "grab", "release", "activate"
+        public string type;         // "hover_enter", "hover_exit", "grab", "release", "activate", "touch"
         public string objectName;
         public Vec3 objectPosition;
         public Vec3 playerPosition;
@@ -50,6 +65,7 @@ public class InteractionEventReporter : MonoBehaviour
         public bool processed;
     }
 
+    /// <summary>Serializable 3D vector, written as <c>{"x":..,"y":..,"z":..}</c>.</summary>
     [Serializable]
     private class Vec3
     {
@@ -57,6 +73,7 @@ public class InteractionEventReporter : MonoBehaviour
         public Vec3(Vector3 v) { x = v.x; y = v.y; z = v.z; }
     }
 
+    /// <summary>Wrapper that lets JsonUtility parse the top-level JSON array.</summary>
     [Serializable]
     private class EventList
     {
@@ -65,6 +82,7 @@ public class InteractionEventReporter : MonoBehaviour
 
     // ---- Lifecycle ----
 
+    /// <summary>Resolves the output path, loads existing events and finds the player head.</summary>
     private void Awake()
     {
         _filePath = Path.Combine(Application.dataPath, eventsFileRelativePath);
@@ -72,6 +90,7 @@ public class InteractionEventReporter : MonoBehaviour
         FindPlayerHead();
     }
 
+    /// <summary>Rescans for new interactables every <see cref="rescanInterval"/> seconds.</summary>
     private void Update()
     {
         if (Time.time >= _nextRescan)
@@ -83,6 +102,7 @@ public class InteractionEventReporter : MonoBehaviour
 
     // ---- Subscribe to XR events ----
 
+    /// <summary>Adds event listeners to every XRBaseInteractable that has not been subscribed yet.</summary>
     private void SubscribeToNewInteractables()
     {
         var interactables = FindObjectsByType<XRBaseInteractable>(FindObjectsSortMode.None);
@@ -106,8 +126,14 @@ public class InteractionEventReporter : MonoBehaviour
         }
     }
 
-    // ---- Record + persist ----
+    // ---- Record and persist ----
 
+    /// <summary>
+    /// Appends an event for <paramref name="target"/> (with the current object and
+    /// player transforms), trims the list to <see cref="maxEvents"/> and writes the file.
+    /// </summary>
+    /// <param name="eventType">Event type, e.g. "grab" or "touch".</param>
+    /// <param name="target">Object the player interacted with; "(Clone)" is stripped from its name.</param>
     public void RecordEvent(string eventType, GameObject target)
     {
         var evt = new InteractionEvent
@@ -125,13 +151,14 @@ public class InteractionEventReporter : MonoBehaviour
         _events.Add(evt);
         Debug.Log($"[InteractionEvent] {evt.type} -> {evt.objectName}");
 
-        // Trim oldest events if we exceed the cap
+        // Drop the oldest events once the cap is exceeded.
         while (_events.Count > maxEvents)
             _events.RemoveAt(0);
 
         WriteToDisk();
     }
 
+    /// <summary>Rewrites the events file from the in-memory list as a pretty-printed JSON array.</summary>
     private void WriteToDisk()
     {
         try
@@ -140,7 +167,7 @@ public class InteractionEventReporter : MonoBehaviour
             if (!string.IsNullOrEmpty(dir))
                 Directory.CreateDirectory(dir);
 
-            // Manual JSON serialisation (JsonUtility doesn't handle List<T> at top level)
+            // Build the array by hand: JsonUtility cannot serialize a top-level array or List<T>.
             var sb = new System.Text.StringBuilder();
             sb.Append("[\n");
             for (int i = 0; i < _events.Count; i++)
@@ -158,8 +185,8 @@ public class InteractionEventReporter : MonoBehaviour
     }
 
     /// <summary>
-    /// Load existing events from disk so we don't clobber events the Python
-    /// agent hasn't processed yet.
+    /// Loads existing events from disk at startup so events the Python agent has not
+    /// processed yet are not lost when the file is next rewritten.
     /// </summary>
     private void LoadExisting()
     {
@@ -175,36 +202,38 @@ public class InteractionEventReporter : MonoBehaviour
         }
         catch
         {
-            // Corrupted file — start fresh
+            // Unreadable or corrupted file: start with an empty list.
             _events = new List<InteractionEvent>();
         }
     }
 
     // ---- Player tracking ----
 
+    /// <summary>Uses the Main Camera (the XR camera under the XR Origin) as the player's head.</summary>
     private void FindPlayerHead()
     {
-        // Try to find the XR camera (Main Camera under XR Origin)
         var cam = Camera.main;
         if (cam != null)
             _playerHead = cam.transform;
     }
 
+    /// <summary>Player head position, or the origin if no camera is available.</summary>
     private Vector3 GetPlayerPosition()
     {
         if (_playerHead == null) FindPlayerHead();
         return _playerHead != null ? _playerHead.position : Vector3.zero;
     }
 
+    /// <summary>Player head forward direction, or world forward if no camera is available.</summary>
     private Vector3 GetPlayerLookDir()
     {
         if (_playerHead == null) FindPlayerHead();
         return _playerHead != null ? _playerHead.forward : Vector3.forward;
     }
 
-    // ---- Utility ----
+    // ---- Helpers ----
 
-    /// <summary>Strip "(Clone)" suffix that Unity adds on Instantiate.</summary>
+    /// <summary>Strips the "(Clone)" suffix that Unity adds on Instantiate.</summary>
     private static string CleanName(string name)
     {
         if (string.IsNullOrEmpty(name)) return name;

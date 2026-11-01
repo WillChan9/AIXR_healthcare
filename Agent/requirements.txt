@@ -3,6 +3,12 @@ groq>=1.0
 openai>=1.99        # frontier-model scene synthesis and the LLM judge
 python-dotenv>=1.0
 
+# Modular agent architecture (agent/Context, Parser, Decision, Sensing, Operation)
+pinecone
+tqdm
+pygame
+requests            # agent/unity_bridge.py
+
 # Evaluation charts (Agent/evaluation/aggregate_results.py)
 matplotlib>=3.8
 numpy>=1.26

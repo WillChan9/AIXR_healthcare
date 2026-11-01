@@ -2,41 +2,61 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Polls Physics.OverlapSphere each frame around the player (camera rig / head)
-/// and highlights any scene object the player is physically touching.
-///
-/// Does NOT rely on OnTriggerEnter — XR rigs use CharacterController and
-/// don't generate trigger callbacks reliably.
-///
-/// Setup:
-///   1. Attach this script to any convenient GameObject (e.g. AI_Manager).
-///   2. Drag your XR Origin / Camera Rig (or Main Camera) into "Player Transform".
-///   3. Tune "Touch Radius" to match how close the player needs to be.
+/// Phase 2 proximity "touch" detection. Every frame, checks a sphere of
+/// <see cref="touchRadius"/> around <see cref="playerTransform"/> with
+/// <c>Physics.OverlapSphere</c>, highlights each object or character the player is
+/// touching, and logs a "touch" event through <see cref="InteractionEventReporter"/>
+/// so the Python agent can react.
 /// </summary>
+/// <remarks>
+/// OnTriggerEnter is deliberately not used: XR rigs move with a CharacterController
+/// and do not generate trigger callbacks reliably.
+///
+/// Objects that belong to the player (tagged "Player" or under
+/// <see cref="playerTransform"/>) and bare primitive meshes (walls, floor) are ignored.
+/// Each object is reported at most once per <see cref="cooldownPerObject"/> seconds.
+///
+/// The component disables itself in <c>Awake</c> and is enabled by
+/// <c>EnvironmentAgent.SetPhase(2)</c>, which also adds it to the EnvironmentAgent
+/// GameObject if the scene does not contain one. To set it up manually instead:
+/// <list type="number">
+/// <item><description>Add it to any convenient GameObject (e.g. AI_Manager).</description></item>
+/// <item><description>Assign the XR Origin / Camera Rig (or Main Camera) to Player Transform;
+/// the Main Camera is used if left empty.</description></item>
+/// <item><description>Tune Touch Radius to match how close the player needs to be.</description></item>
+/// </list>
+/// </remarks>
 public class PlayerTouchHighlighter : MonoBehaviour
 {
     [Header("Player Reference")]
-    [Tooltip("Drag your XR Origin, Camera Rig, or Main Camera here.")]
+    /// <summary>Center of the touch sphere. Defaults to the Main Camera if empty.</summary>
+    [Tooltip("XR Origin, Camera Rig, or Main Camera. Defaults to the Main Camera if empty.")]
     public Transform playerTransform;
 
     [Header("Detection")]
-    [Tooltip("Radius (metres) around the player that counts as a 'touch'.")]
+    /// <summary>Radius in meters around the player that counts as a touch.</summary>
+    [Tooltip("Radius (meters) around the player that counts as a 'touch'.")]
     public float touchRadius = 0.5f;
 
-    [Tooltip("LayerMask to restrict which objects are checked. Leave as 'Everything' to check all.")]
+    /// <summary>Layers included in the overlap check.</summary>
+    [Tooltip("Layers to check. Leave as 'Everything' to check all objects.")]
     public LayerMask touchLayers = ~0;
 
     [Header("Highlight")]
-    [Tooltip("Colour flashed on touched scene objects.")]
+    /// <summary>Highlight color for touched objects.</summary>
+    [Tooltip("Color flashed on touched scene objects.")]
     public Color touchColor = new Color(1.0f, 0.7f, 0.1f);
 
-    [Tooltip("Colour flashed on touched characters (NPCs with an Animator).")]
+    /// <summary>Highlight color for touched characters.</summary>
+    [Tooltip("Color flashed on touched characters (NPCs with an Animator).")]
     public Color characterTouchColor = new Color(0.2f, 0.8f, 1.0f);
 
+    /// <summary>Seconds each highlight lasts.</summary>
     [Tooltip("Seconds the highlight lasts.")]
     public float highlightDuration = 1.5f;
 
-    [Tooltip("Minimum seconds between highlights on the SAME object (prevents spam).")]
+    /// <summary>Minimum seconds between two touches reported for the same object.</summary>
+    [Tooltip("Minimum seconds between highlights / touch events on the same object (prevents spam).")]
     public float cooldownPerObject = 2.0f;
 
     // ---- Runtime ----
@@ -44,14 +64,15 @@ public class PlayerTouchHighlighter : MonoBehaviour
     private EnvironmentAgent _envAgent;
     private InteractionEventReporter _eventReporter;
 
-    // instanceID → last-highlighted timestamp
+    // Instance ID -> time of the last highlight.
     private readonly Dictionary<int, float> _lastHighlight = new Dictionary<int, float>();
 
     // ---- Lifecycle ----
 
+    /// <summary>Disables the component until Phase 2 and resolves references.</summary>
     private void Awake()
     {
-        // Stays disabled until EnvironmentAgent.SetPhase(2) enables it
+        // Stays disabled until EnvironmentAgent.SetPhase(2) enables it.
         enabled = false;
 
         _envAgent = FindFirstObjectByType<EnvironmentAgent>();
@@ -76,11 +97,12 @@ public class PlayerTouchHighlighter : MonoBehaviour
 
     // ---- Per-frame overlap check ----
 
+    /// <summary>Detects overlapping objects and highlights / reports each one (subject to the cooldown).</summary>
     private void Update()
     {
         if (playerTransform == null) return;
 
-        // Lazy-resolve reporter in case it wasn't ready during Awake()
+        // Resolve the reporter lazily in case it did not exist yet during Awake().
         if (_eventReporter == null)
         {
             _eventReporter = FindFirstObjectByType<InteractionEventReporter>();
@@ -116,7 +138,7 @@ public class PlayerTouchHighlighter : MonoBehaviour
                     _envAgent.HighlightObject(objName, touchColor.r, touchColor.g, touchColor.b, highlightDuration);
             }
 
-            // Log the touch event so the Python agent can process it
+            // Log the touch event so the Python agent can process it.
             if (_eventReporter != null)
             {
                 _eventReporter.RecordEvent("touch", propRoot);
@@ -132,12 +154,17 @@ public class PlayerTouchHighlighter : MonoBehaviour
     private static readonly System.Collections.Generic.HashSet<string> PrimitiveMeshNames
         = new System.Collections.Generic.HashSet<string> { "Cube", "Sphere", "Capsule", "Cylinder", "Plane", "Quad" };
 
+    /// <summary>
+    /// True if the object renders a built-in primitive mesh (Cube, Sphere, ...), which
+    /// in this project means room structure rather than a prop.
+    /// </summary>
     private static bool IsPrimitive(GameObject go)
     {
         var mf = go.GetComponent<MeshFilter>();
         return mf != null && mf.sharedMesh != null && PrimitiveMeshNames.Contains(mf.sharedMesh.name);
     }
 
+    /// <summary>True if the object is tagged "Player" or is <see cref="playerTransform"/> or one of its children.</summary>
     private bool IsPlayerPart(GameObject go)
     {
         if (go.CompareTag("Player")) return true;
@@ -150,6 +177,11 @@ public class PlayerTouchHighlighter : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// Returns the GameObject to highlight and report for a hit collider: the scene
+    /// root for characters (anything with an Animator), otherwise the nearest object
+    /// with a Renderer, walking up from the collider (excluding the scene root).
+    /// </summary>
     private static GameObject GetPropRoot(GameObject go)
     {
         // Character prefabs (NPCs) have Animators. Walk to the scene root so the
@@ -167,8 +199,9 @@ public class PlayerTouchHighlighter : MonoBehaviour
         return go;
     }
 
-    // ---- Gizmo: visualise touch sphere in Scene view ----
+    // ---- Gizmos ----
 
+    /// <summary>Draws the touch sphere in the Scene view when the component is selected.</summary>
     private void OnDrawGizmosSelected()
     {
         if (playerTransform == null) return;
@@ -176,7 +209,7 @@ public class PlayerTouchHighlighter : MonoBehaviour
         Gizmos.DrawSphere(playerTransform.position, touchRadius);
         Gizmos.color = touchColor;
         Gizmos.DrawWireSphere(playerTransform.position, touchRadius);
-        // Second ring shows character highlight colour for reference
+        // Second ring shows the character highlight color for reference.
         Gizmos.color = characterTouchColor;
         Gizmos.DrawWireSphere(playerTransform.position, touchRadius * 0.9f);
     }

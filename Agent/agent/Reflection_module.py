@@ -156,6 +156,7 @@ class ReflectionModule:
             raise ValueError("GROQ_API_KEY not found in environment variables")
         self.groq_client = Groq(api_key=groq_api_key)
 
+        self.actions_file = "api_files/actions.json"
         self.plan_file = "api_files/plan.json"
         self.reflection_file = "api_files/reflection.json"
 
@@ -297,6 +298,63 @@ class ReflectionModule:
                 json.dump(existing, f, indent=2)
         except Exception as e:
             logger.warning(f"[CollisionThread] _enqueue_debug_log failed: {e}")
+
+    def _load_recent_actions(self, limit: int = 10) -> List[Dict]:
+        """Return the most recent actions from api_files/actions.json, flattened.
+
+        actions.json is written by the Decision/Operation modules; each entry
+        holds a list of actions, which are flattened into one list here.
+        """
+        actions_path = os.path.join(self._project_root(), self.actions_file)
+        if not os.path.exists(actions_path):
+            return []
+
+        try:
+            with open(actions_path, "r") as f:
+                content = f.read()
+                if not content:
+                    return []
+                data = json.loads(content)
+        except (json.JSONDecodeError, OSError) as e:
+            logger.warning(f"Failed to read actions.json: {str(e)}")
+            return []
+
+        flat_actions: List[Dict] = []
+        for entry in data:
+            timestamp = entry.get("timestamp")
+            entry_executed = entry.get("executed", False)
+            entry_complete = entry.get("complete", False)
+
+            if "actions" in entry:
+                for action in entry["actions"]:
+                    flat_actions.append({
+                        "timestamp": timestamp,
+                        "entry_executed": entry_executed,
+                        "entry_complete": entry_complete,
+                        "action_type": action.get("action_type"),
+                        "object_id": action.get("object_id"),
+                        "object_type": action.get("object_type"),
+                        "position": action.get("position"),
+                        "positions": action.get("positions"),
+                        "complete": action.get("complete", False),
+                    })
+            elif "action" in entry:
+                action = entry["action"]
+                flat_actions.append({
+                    "timestamp": timestamp,
+                    "entry_executed": entry_executed,
+                    "entry_complete": entry_complete,
+                    "action_type": action.get("action_type"),
+                    "object_id": action.get("object_id"),
+                    "object_type": action.get("object_type"),
+                    "position": action.get("position"),
+                    "positions": action.get("positions"),
+                    "complete": action.get("complete", False),
+                })
+
+        if limit and len(flat_actions) > limit:
+            return flat_actions[-limit:]
+        return flat_actions
 
     def _load_plan(self) -> Dict:
         """Load api_files/plan.json; raise FileNotFoundError if it is missing."""

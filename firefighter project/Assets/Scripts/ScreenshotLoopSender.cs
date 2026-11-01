@@ -4,50 +4,86 @@ using System.IO;
 using UnityEngine;
 
 /// <summary>
-/// Captures three orthographic views every <see cref="intervalSeconds"/> seconds:
-///   _xz.png  – top-down  (camera above looking straight down, shows X/Z layout)
-///   _xy.png  – front     (camera in front looking toward +Z, shows X/Y layout)
-///   _yz.png  – side      (camera to the right looking toward -X, shows Y/Z layout)
-///
-/// Output paths are derived from UNITY_SCREENSHOT_PATH env var (strip .png → base),
-/// or from <see cref="overrideBasePath"/>, or default to Agent/api_files/scene_screenshot.
+/// Periodically renders the scene from fixed cameras and saves PNGs that the Python
+/// agent sends to the LLM as visual feedback on the room layout.
 /// </summary>
+/// <remarks>
+/// Every <see cref="intervalSeconds"/> seconds four images are written:
+/// <list type="bullet">
+/// <item><description><c>{base}_xz.png</c>: top-down orthographic view (camera below the
+/// ceiling looking straight down; shows the X/Z layout).</description></item>
+/// <item><description><c>{base}_xy.png</c>: front orthographic view (camera near the
+/// far wall looking toward -Z; shows the X/Y layout).</description></item>
+/// <item><description><c>{base}_yz.png</c>: side orthographic view (camera near the
+/// left wall looking toward +X; shows the Y/Z layout).</description></item>
+/// <item><description><c>{base}_iso.png</c>: elevated 45-degree perspective view from
+/// outside the front-right corner (used for paper figures).</description></item>
+/// </list>
+/// The room is assumed to be centered on x = 0 and to extend from z = 0 to z = depth.
+/// Its size is re-detected before every capture from the floor and wall Cubes created
+/// in Phase 1 (falling back to the Inspector values), and wall/ceiling Cubes are
+/// hidden during capture so they do not block the view.
+///
+/// The output base path is, in order of priority: <see cref="overrideBasePath"/>, the
+/// <c>UNITY_SCREENSHOT_PATH</c> environment variable (a trailing ".png" is removed), or
+/// <c>Agent/api_files/scene_screenshot</c>. Relative paths are resolved against the
+/// repository root (the folder that contains the Unity project).
+///
+/// Setup: none required. <see cref="AutoScreenshotBootstrap"/> (runtime) and
+/// <c>ScreenshotLoopEditorBootstrap</c> (Editor) create a persistent "ScreenshotSender"
+/// GameObject with this component automatically.
+/// </remarks>
 public class ScreenshotLoopSender : MonoBehaviour
 {
+    /// <summary>Seconds between capture rounds.</summary>
     [Tooltip("Seconds between screenshot captures.")]
     public float intervalSeconds = 3f;
 
-    [Tooltip("Base path for output files (without extension). Leave empty to use UNITY_SCREENSHOT_PATH env or repo default.")]
+    /// <summary>Optional output base path (without extension); overrides the environment variable and default.</summary>
+    [Tooltip("Base path for output files (without extension). Leave empty to use the UNITY_SCREENSHOT_PATH environment variable or the repository default.")]
     public string overrideBasePath = "";
 
-    [Tooltip("Orthographic half-size fallback. Auto-derived from room dimensions when a floor Cube is detected.")]
+    /// <summary>Fallback orthographic half-size; in practice each view computes its own size from the room.</summary>
+    [Tooltip("Fallback orthographic half-size. Each view normally derives its size from the room dimensions.")]
     public float orthoSize = 5.5f;
 
-    [Tooltip("Render resolution for each view.")]
+    /// <summary>Width in pixels of each orthographic view.</summary>
+    [Tooltip("Render resolution (width, height) for each orthographic view.")]
     public int renderWidth = 1024;
+    /// <summary>Height in pixels of each orthographic view.</summary>
     public int renderHeight = 1024;
 
-    [Tooltip("Fallback room dimensions used when no floor Cube can be detected in the scene.")]
+    /// <summary>Room width (X) used when no floor Cube is found.</summary>
+    [Tooltip("Fallback room dimensions (width, depth, height) used when no floor or wall Cubes can be detected in the scene.")]
     public float fallbackRoomWidth  = 10f;
+    /// <summary>Room depth (Z) used when no floor Cube is found.</summary>
     public float fallbackRoomDepth  = 10f;
+    /// <summary>Room height (Y) used when no wall Cubes are found.</summary>
     public float fallbackRoomHeight = 3.5f;
 
-    [Tooltip("Extra metres added around the room edge so objects flush with walls aren't clipped.")]
+    /// <summary>Extra meters of view around the room edge.</summary>
+    [Tooltip("Extra meters added around the room edge so objects flush with walls aren't clipped.")]
     public float viewMargin = 0.5f;
 
-    [Tooltip("Render resolution for the 45° perspective view (paper figures). Larger than ortho views for print quality.")]
+    /// <summary>Width in pixels of the perspective view.</summary>
+    [Tooltip("Render resolution (width, height) for the 45° perspective view used for paper figures. Larger than the orthographic views for print quality.")]
     public int isoRenderWidth  = 1920;
+    /// <summary>Height in pixels of the perspective view.</summary>
     public int isoRenderHeight = 1280;
 
+    /// <summary>Vertical field of view of the perspective camera, in degrees.</summary>
     [Tooltip("Field of view (degrees) for the 45° perspective camera.")]
     public float isoFieldOfView = 45f;
 
-    [Tooltip("How far outside the room the iso camera sits, as a multiple of the longer room side.")]
+    /// <summary>Distance of the perspective camera outside the room, as a multiple of the longer room side.</summary>
+    [Tooltip("How far outside the room the perspective camera sits, as a multiple of the longer room side.")]
     public float isoOffsetMultiplier = 0.35f;
 
-    [Tooltip("Iso camera height as a multiple of room height (1.5 = 50% above ceiling).")]
+    /// <summary>Perspective camera height as a multiple of the room height.</summary>
+    [Tooltip("Perspective camera height as a multiple of the room height (e.g. 1.5 = 50% above the ceiling).")]
     public float isoHeightMultiplier = 1.6f;
 
+    /// <summary>Logs the output location and starts the capture loop.</summary>
     private void Start()
     {
         string basePath = ResolveBasePath();
@@ -55,14 +91,15 @@ public class ScreenshotLoopSender : MonoBehaviour
         StartCoroutine(CaptureLoop());
     }
 
+    /// <summary>Captures all four views, then waits <see cref="intervalSeconds"/>, forever.</summary>
     private IEnumerator CaptureLoop()
     {
-        yield return null; // wait one frame for scene to initialize
+        yield return null; // Wait one frame for the scene to initialize.
         while (true)
         {
             string basePath = ResolveBasePath();
 
-            // Hide walls/ceiling so they don't occlude the interior view
+            // Hide walls and ceiling so they don't occlude the interior view.
             System.Collections.Generic.List<Renderer> hidden = null;
             try { hidden = HideStructuralCubes(); }
             catch (Exception ex) { Debug.LogWarning($"[ScreenshotLoopSender] HideStructuralCubes failed: {ex.Message}"); }
@@ -103,7 +140,7 @@ public class ScreenshotLoopSender : MonoBehaviour
                 farClip: diag
             );
 
-            // 45° perspective hero shot for paper figures.
+            // 45° perspective overview for paper figures.
             // Camera sits outside the front-right corner, elevated above the ceiling,
             // looking down toward the room interior so 3 walls + floor + objects are visible.
             float isoOffset = Mathf.Max(roomW, roomD) * isoOffsetMultiplier;
@@ -127,9 +164,10 @@ public class ScreenshotLoopSender : MonoBehaviour
     }
 
     /// <summary>
-    /// Try to read the room footprint from the structural floor Cube spawned by Phase 1.
-    /// The floor is a flat slab near y=0 with large X/Z scale and small Y scale.
-    /// Falls back to the inspector defaults when no floor is found.
+    /// Reads the room size from the structural Cubes created in Phase 1: width and depth
+    /// from the floor (a flat slab near y = 0 with large X/Z scale and small Y scale) and
+    /// height from the top of the tallest wall. Falls back to the Inspector values for
+    /// any dimension that cannot be detected.
     /// </summary>
     private void DetectRoomDimensions(out float roomWidth, out float roomDepth, out float roomHeight)
     {
@@ -171,21 +209,22 @@ public class ScreenshotLoopSender : MonoBehaviour
     }
 
     /// <summary>
-    /// Temporarily disable MeshRenderers on wall/ceiling Cubes so they don't block the camera.
-    /// Floor Cubes (near y=0, flat) are kept visible.
+    /// Temporarily disables the renderers of wall and ceiling Cubes so they don't block
+    /// the camera. Floor Cubes (flat, near y = 0) stay visible.
     /// </summary>
+    /// <returns>The renderers that were disabled, for <see cref="RestoreRenderers"/>.</returns>
     private System.Collections.Generic.List<Renderer> HideStructuralCubes()
     {
         var hidden = new System.Collections.Generic.List<Renderer>();
         foreach (var go in FindObjectsByType<GameObject>(FindObjectsSortMode.None))
         {
             if (go == null || !go.name.Contains("Cube")) continue;
-            // Keep floor visible (near ground + flat)
+            // Keep the floor visible (near the ground and flat).
             Vector3 pos = go.transform.position;
             Vector3 scale = go.transform.localScale;
             bool isFloor = pos.y <= 0.15f && scale.y <= 0.5f && scale.x >= 1f && scale.z >= 1f;
             if (isFloor) continue;
-            // This is a wall or ceiling — hide it
+            // This is a wall or ceiling: hide it.
             var r = go.GetComponent<Renderer>();
             if (r != null && r.enabled)
             {
@@ -196,6 +235,7 @@ public class ScreenshotLoopSender : MonoBehaviour
         return hidden;
     }
 
+    /// <summary>Re-enables renderers hidden by <see cref="HideStructuralCubes"/>.</summary>
     private void RestoreRenderers(System.Collections.Generic.List<Renderer> hidden)
     {
         foreach (var r in hidden)
@@ -203,8 +243,9 @@ public class ScreenshotLoopSender : MonoBehaviour
     }
 
     /// <summary>
-    /// Capture a perspective view (used for the 45° iso hero shot for paper figures).
-    /// Renders at <see cref="isoRenderWidth"/> × <see cref="isoRenderHeight"/> for higher print quality.
+    /// Renders a perspective view with a temporary camera and saves it as a PNG.
+    /// Used for the 45° overview; renders at <see cref="isoRenderWidth"/> x
+    /// <see cref="isoRenderHeight"/> for higher print quality.
     /// </summary>
     private void CapturePerspectiveView(Vector3 position, Vector3 lookAt, string outputPath, string label, float fov, float farClip)
     {
@@ -249,6 +290,11 @@ public class ScreenshotLoopSender : MonoBehaviour
         Destroy(rt);
     }
 
+    /// <summary>
+    /// Renders an orthographic view with a temporary camera at
+    /// <see cref="renderWidth"/> x <see cref="renderHeight"/> and saves it as a PNG.
+    /// </summary>
+    /// <param name="orthoOverride">Orthographic half-size; values &lt;= 0 use <see cref="orthoSize"/>.</param>
     private void CaptureView(Vector3 position, Quaternion rotation, string outputPath, string label, float orthoOverride = -1f, float farClip = 10f)
     {
         RenderTexture rt = new RenderTexture(renderWidth, renderHeight, 24);
@@ -292,6 +338,7 @@ public class ScreenshotLoopSender : MonoBehaviour
         Destroy(rt);
     }
 
+    /// <summary>Returns the absolute output base path (see the class remarks for the priority order).</summary>
     private string ResolveBasePath()
     {
         if (!string.IsNullOrEmpty(overrideBasePath))
@@ -300,7 +347,7 @@ public class ScreenshotLoopSender : MonoBehaviour
         string envPath = Environment.GetEnvironmentVariable("UNITY_SCREENSHOT_PATH");
         if (!string.IsNullOrEmpty(envPath))
         {
-            // Strip .png suffix to get the base
+            // Strip the .png suffix to get the base path.
             string stripped = envPath.EndsWith(".png", StringComparison.OrdinalIgnoreCase)
                 ? envPath.Substring(0, envPath.Length - 4)
                 : envPath;
@@ -310,6 +357,7 @@ public class ScreenshotLoopSender : MonoBehaviour
         return MakeAbsolute(Path.Combine("Agent", "api_files", "scene_screenshot"));
     }
 
+    /// <summary>Resolves a relative path against the repository root (the parent of the Unity project folder).</summary>
     private string MakeAbsolute(string path)
     {
         if (Path.IsPathRooted(path))
