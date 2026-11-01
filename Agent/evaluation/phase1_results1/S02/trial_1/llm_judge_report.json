@@ -3,5 +3,5 @@
   "coherence_score": 4,
   "spatial_score": 4,
   "scene_type": "Hospital Ward 4-Bed",
-  "results_dir": "C:\\Users\\Allison\\Programming\\GitHub\\AIXR_healthcare\\Agent\\evaluation\\results\\S02\\trial_1"
+  "results_dir": "Agent\\evaluation\\results\\S02\\trial_1"
 }

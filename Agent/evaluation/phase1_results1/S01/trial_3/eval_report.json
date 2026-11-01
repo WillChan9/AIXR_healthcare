@@ -1,6 +1,6 @@
 {
-  "results_dir": "C:\\Users\\Allison\\Programming\\GitHub\\AIXR_healthcare\\Agent\\evaluation\\results\\S01\\trial_3",
-  "experience_file": "C:\\Users\\Allison\\Programming\\GitHub\\AIXR_healthcare\\Agent\\evaluation\\scenarios\\experience_S01.txt",
+  "results_dir": "Agent\\evaluation\\results\\S01\\trial_3",
+  "experience_file": "Agent\\evaluation\\scenarios\\experience_S01.txt",
   "scene_type": "Emergency Triage Room",
   "geometric": {
     "object_count": 10,

@@ -1,6 +1,6 @@
 {
-  "results_dir": "C:\\Users\\Allison\\Programming\\GitHub\\AIXR_healthcare\\Agent\\evaluation\\results\\S09\\trial_2",
-  "experience_file": "C:\\Users\\Allison\\Programming\\GitHub\\AIXR_healthcare\\Agent\\evaluation\\scenarios\\experience_S09.txt",
+  "results_dir": "Agent\\evaluation\\results\\S09\\trial_2",
+  "experience_file": "Agent\\evaluation\\scenarios\\experience_S09.txt",
   "scene_type": "Doctor Office",
   "geometric": {
     "object_count": 0,

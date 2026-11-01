@@ -1,6 +1,6 @@
 {
-  "results_dir": "C:\\Users\\Allison\\Programming\\GitHub\\AIXR_healthcare\\Agent\\evaluation\\results\\S03\\trial_1",
-  "experience_file": "C:\\Users\\Allison\\Programming\\GitHub\\AIXR_healthcare\\Agent\\evaluation\\scenarios\\experience_S03.txt",
+  "results_dir": "Agent\\evaluation\\results\\S03\\trial_1",
+  "experience_file": "Agent\\evaluation\\scenarios\\experience_S03.txt",
   "scene_type": "Physical Therapy Gym",
   "geometric": {
     "object_count": 0,

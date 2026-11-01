@@ -3,5 +3,5 @@
   "coherence_score": 1,
   "spatial_score": 1,
   "scene_type": "ICU Single-Patient Room",
-  "results_dir": "C:\\Users\\Allison\\Programming\\GitHub\\AIXR_healthcare\\Agent\\evaluation\\results\\S06\\trial_1"
+  "results_dir": "Agent\\evaluation\\results\\S06\\trial_1"
 }

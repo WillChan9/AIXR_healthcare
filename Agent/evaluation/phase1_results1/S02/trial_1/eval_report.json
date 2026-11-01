@@ -1,6 +1,6 @@
 {
-  "results_dir": "C:\\Users\\Allison\\Programming\\GitHub\\AIXR_healthcare\\Agent\\evaluation\\results\\S02\\trial_1",
-  "experience_file": "C:\\Users\\Allison\\Programming\\GitHub\\AIXR_healthcare\\Agent\\evaluation\\scenarios\\experience_S02.txt",
+  "results_dir": "Agent\\evaluation\\results\\S02\\trial_1",
+  "experience_file": "Agent\\evaluation\\scenarios\\experience_S02.txt",
   "scene_type": "Hospital Ward 4-Bed",
   "geometric": {
     "object_count": 25,
